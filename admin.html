@@ -34,6 +34,33 @@
   .feat-row { display: grid; grid-template-columns: 1fr 1.6fr auto; gap: 8px; align-items: center; margin-bottom: 8px; }
   .feat-row input { width: 100%; font-family: var(--sans); font-size: 14px; background: var(--card);
     border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; }
+  /* image upload field */
+  .img-field { border: 1px solid var(--line); border-radius: 6px; padding: 12px; margin-bottom: 14px; background: var(--card); }
+  .img-field > label { display: block; font-family: var(--mono); font-size: 12px; letter-spacing: .04em; color: var(--ink); margin-bottom: 6px; }
+  .img-where { font-size: 12.5px; line-height: 1.5; color: var(--muted); margin-bottom: 12px;
+    border-left: 2px solid var(--clay); padding: 4px 0 4px 10px; }
+  .img-where strong { color: var(--ink-soft); font-weight: 600; }
+  .img-row { display: flex; gap: 12px; align-items: stretch; }
+  .img-prev { flex: 0 0 auto; width: 116px; height: 86px; border-radius: 5px; border: 1px solid var(--line);
+    background: var(--paper-2) repeating-linear-gradient(-45deg, transparent 0 9px, color-mix(in srgb, var(--faint) 26%, transparent) 9px 10px);
+    display: grid; place-items: center; overflow: hidden; position: relative; }
+  .img-prev img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+  .img-prev .ph-mini { font-family: var(--mono); font-size: 10px; color: var(--muted); text-align: center; padding: 4px; }
+  .img-drop { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px; text-align: center; border: 1.5px dashed var(--line); border-radius: 5px; padding: 12px;
+    cursor: pointer; color: var(--muted); font-size: 13px; transition: border-color .15s, background .15s; }
+  .img-drop:hover { border-color: var(--clay); color: var(--ink-soft); }
+  .img-drop.drag { border-color: var(--clay); background: color-mix(in srgb, var(--clay) 8%, transparent); color: var(--ink); }
+  .img-drop .big { font-size: 22px; line-height: 1; }
+  .img-drop .sub { font-family: var(--mono); font-size: 10.5px; letter-spacing: .03em; }
+  .img-path { margin-top: 10px; }
+  .img-path label { display: block; font-family: var(--mono); font-size: 10.5px; color: var(--muted); margin-bottom: 4px; letter-spacing: .03em; }
+  .img-path input { width: 100%; font-family: var(--mono); font-size: 12px; background: var(--paper);
+    border: 1px solid var(--line); border-radius: 4px; padding: 7px 9px; }
+  .img-up-status { font-family: var(--mono); font-size: 11.5px; margin-top: 8px; min-height: 0; }
+  .img-up-status.busy { color: var(--muted); }
+  .img-up-status.ok { color: #1c6b3c; }
+  .img-up-status.err { color: #9b2226; }
   .gh-panel { background: var(--card); border: 1px solid var(--line); border-radius: 7px; padding: 16px; margin-bottom: 16px; }
   .gh-status { font-family: var(--mono); font-size: 12px; line-height: 1.7; padding: 11px 14px; border-radius: 6px; margin-bottom: 16px; border: 1px solid var(--line); }
   .gh-status a { color: inherit; }
@@ -186,11 +213,40 @@
   }
   function saveBtn(model){return '<button class="admin-btn" data-act="save" data-model="'+model+'">↑ Save &amp; publish</button>';}
 
+  /* Image upload field: live preview + drag/drop + path. opts.where = a
+     plain-English caption telling the user exactly where this image appears on
+     the live site. opts.dir = repo folder the upload is committed to.
+     opts.name = filename hint. The path input stays editable for power users. */
+  function imgField(label,model,path,opts){
+    opts=opts||{};
+    var v=getPath(models[model],path)||"";
+    var dir=opts.dir||"assets/uploads", nameHint=opts.name||"img";
+    var prev=v
+      ? '<img src="'+esc(v)+'" alt="" onerror="this.replaceWith(Object.assign(document.createElement(\'span\'),{className:\'ph-mini\',textContent:\'(path set,\\nnot found yet)\'}))">'
+      : '<span class="ph-mini">no image<br>yet</span>';
+    return '<div class="img-field">'+
+      '<label>'+label+'</label>'+
+      (opts.where?'<div class="img-where">'+opts.where+'</div>':'')+
+      '<div class="img-row">'+
+        '<div class="img-prev">'+prev+'</div>'+
+        '<label class="img-drop">'+
+          '<span class="big">⬆</span>'+
+          '<span>Drop an image here, or click to choose</span>'+
+          '<span class="sub">PNG · JPG · WebP · max 5 MB</span>'+
+          '<input type="file" accept="image/*" hidden data-imgfile data-model="'+model+'" data-path="'+path+'" data-dir="'+esc(dir)+'" data-name="'+esc(nameHint)+'">'+
+        '</label>'+
+      '</div>'+
+      '<div class="img-path"><label>Image path (auto-filled when you upload — only edit if you know the file path)</label>'+
+        '<input type="text" data-model="'+model+'" data-path="'+path+'" value="'+esc(v)+'"></div>'+
+      '<div class="img-up-status"></div>'+
+    '</div>';
+  }
+
   /* ---- templates for "add" ---- */
   var TEMPLATES = {
     project: function(){var id=slug("project-"+Date.now()).slice(0,40);return {id:id,name:"New Project",description:"Describe this project.",tags:["Tag"],role:"Product Manager",year:"2025",stage:"Working app",screenshot:"assets/screenshots/"+id+".png",path:"./apps/"+id+"/",displayMode:"modal",featured:false};},
     lab: function(){var id=slug("lab-"+Date.now()).slice(0,40);return {id:id,name:"New Lab",desc:"What this lab is about.",blurb:"A longer description of this lab.",products:[]};},
-    labproduct: function(){var id=slug("product-"+Date.now()).slice(0,40);return {id:id,name:"New Product",stage:"Working app",tags:["Tag"],tagline:"One line about it.",what:"What it does.",features:[["Feature","Description."]],role:"Product Manager",year:"2025",stage2:"Working app",stack:["Tag"],url:"https://example.com"};},
+    labproduct: function(){var id=slug("product-"+Date.now()).slice(0,40);return {id:id,name:"New Product",stage:"Working app",tags:["Tag"],tagline:"One line about it.",what:"What it does.",features:[["Feature","Description."]],role:"Product Manager",year:"2025",stage2:"Working app",stack:["Tag"],url:"https://example.com",image:""};},
     feature: function(){return ["Feature","Description."];},
     para: function(){return "New paragraph.";},
     timeline: function(){return {yr:"Year",h4:"Role",org:"Organization",p:"What you did."};},
@@ -208,8 +264,8 @@
       '<div class="section-block"><h3>Site identity</h3>'+
         '<div class="grid2">'+F("Owner name",b,"meta.owner")+F("Role / title",b,"meta.role")+'</div>'+
         '<div class="grid2">'+F("Glyph (nav badge)",b,"meta.glyph")+F("Status",b,"meta.status")+'</div>'+
-        '<div class="grid2">'+F("Email",b,"meta.email")+F("Location",b,"meta.location")+'</div>'+
-        '<div class="grid2">'+F("LinkedIn URL",b,"meta.linkedin")+F("LinkedIn label",b,"meta.linkedinLabel")+'</div>'+
+        '<div class="grid2">'+F("Email",b,"meta.email")+F("LinkedIn URL",b,"meta.linkedin")+'</div>'+
+        '<p class="subhint">To edit your visible location, use the <strong>Contact</strong> tab → Contact links → Location.</p>'+
         '<div class="grid2">'+F("Résumé path",b,"meta.resume")+
           F("Show role on Work cards",b,"meta.showRoleOnCards",{select:[{value:"false",label:"No"},{value:"true",label:"Yes"}],type:"bool"})+'</div>'+
       '</div>';
@@ -229,7 +285,8 @@
         F("Display mode",b,base+".displayMode",{select:["modal","page","link"]})+
         F("Featured (flagship)",b,base+".featured",{select:[{value:"false",label:"No"},{value:"true",label:"Yes"}],type:"bool"})+
       '</div>'+
-      F("Screenshot path",b,base+".screenshot")+
+      imgField("Screenshot",b,base+".screenshot",{dir:"assets/screenshots",name:p.id||"project",
+        where:"Shows as the <strong>thumbnail</strong> beside this project in the Work list. If this project is the <strong>Featured</strong> one (star), the same image also fills the big <strong>flagship hero</strong> at the top of the Work page."})+
       F("App path",b,base+".path")+
     '</div>';
   }
@@ -284,6 +341,8 @@
       '<div class="grid2">'+F("Role",b,base+".role")+F("Year",b,base+".year")+'</div>'+
       '<div class="grid2">'+F("Stage (card)",b,base+".stage")+F("Stage (detail)",b,base+".stage2")+'</div>'+
       F("Explore URL",b,base+".url")+
+      imgField("Product image",b,base+".image",{dir:"assets/labs",name:p.id||"product",
+        where:"Appears on this product's <strong>card</strong> in its lab, and as the large <strong>hero image</strong> on the product's detail page. Leave empty to keep the patterned placeholder."})+
       '<div class="subhint">FEATURES</div>'+feats+
       '<button class="admin-btn ghost" data-act="add" data-model="labs" data-path="'+base+'.features" data-tmpl="feature">+ Add feature</button>'+
       moveSel+
@@ -336,6 +395,8 @@
     H+='<div class="section-block"><h3>Hero</h3>'+
       F("Eyebrow",b,"hero.eyebrow")+
       F("Heading (HTML — &lt;em&gt; allowed)",b,"hero.heading")+
+      imgField("Portrait photo",b,"hero.portrait",{dir:"assets/about",name:"portrait",
+        where:"Appears as your <strong>portrait photo</strong> at the top of the About page, beside the headline (portrait / 4:5 crop). Leave empty to keep the patterned placeholder."})+
       F("Lead",b,"hero.lead",{area:true})+
       '<div class="subhint">PARAGRAPHS</div>'+
       (hero.paras||[]).map(function(p,k){return repeatItem("about","hero.paras",k,(hero.paras||[]).length,'<textarea data-model="about" data-path="hero.paras.'+k+'">'+esc(p)+'</textarea>');}).join("")+
@@ -436,6 +497,54 @@
     return ghApi("/contents/"+encodeURIComponent(file),{method:"PUT",body:JSON.stringify(body)})
       .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.message||("HTTP "+r.status));return j;});});
   }
+  // PUT a file whose content is ALREADY base64 (used for binary image uploads).
+  function ghPutRaw(file,b64content,sha,msg){
+    var c=gh(),body={message:msg,content:b64content,branch:c.branch};
+    if(sha)body.sha=sha;
+    return ghApi("/contents/"+encodeURIComponent(file),{method:"PUT",body:JSON.stringify(body)})
+      .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.message||("HTTP "+r.status));return j;});});
+  }
+  // Read a File/Blob into base64 (chunked so large images don't blow the stack).
+  function fileToB64(file){
+    return new Promise(function(res,rej){
+      var r=new FileReader();
+      r.onerror=function(){rej(new Error("Could not read the file."));};
+      r.onload=function(){
+        var bytes=new Uint8Array(r.result),bin="",CH=0x8000;
+        for(var i=0;i<bytes.length;i+=CH)bin+=String.fromCharCode.apply(null,bytes.subarray(i,i+CH));
+        res(btoa(bin));
+      };
+      r.readAsArrayBuffer(file);
+    });
+  }
+  // Commit an image to the repo, then point the field's path at it (in place —
+  // no full re-render, so the preview + open state survive). The JSON path is a
+  // draft until the user hits the page's Save & publish.
+  function uploadImage(input,fileOverride){
+    var field=input.closest(".img-field"),st=field?field.querySelector(".img-up-status"):null;
+    function show(kind,html){if(st){st.className="img-up-status "+kind;st.innerHTML=html;}}
+    var c=gh();
+    if(!c.token){show("err","Add a GitHub token first — click <strong>⚙ GitHub</strong> above.");document.getElementById("ghPanel").style.display="block";return;}
+    var file=fileOverride||(input.files&&input.files[0]);
+    if(!file)return;
+    if(!/^image\//.test(file.type)){show("err","That isn't an image file.");return;}
+    if(file.size>5*1024*1024){show("err","Image is over 5 MB — please compress it first.");return;}
+    var model=input.getAttribute("data-model"),path=input.getAttribute("data-path"),
+        dir=(input.getAttribute("data-dir")||"assets/uploads").replace(/\/+$/,""),
+        nameHint=input.getAttribute("data-name")||"img",
+        ext=((file.name.split(".").pop()||"png").toLowerCase().replace(/[^a-z0-9]/g,""))||"png",
+        fname=dir+"/"+slug(nameHint)+"-"+Date.now().toString(36)+"."+ext;
+    show("busy","Uploading "+esc(file.name)+"…");
+    fileToB64(file).then(function(b64c){return ghPutRaw(fname,b64c,null,"CMS: upload image "+fname);}).then(function(){
+      setPath(models[model],path,fname);saveDraft(model);
+      var prev=field.querySelector(".img-prev"),pin=field.querySelector(".img-path input");
+      if(prev){try{prev.innerHTML='<img alt="">';prev.firstChild.src=URL.createObjectURL(file);}catch(e){prev.innerHTML='<img src="'+esc(fname)+'" alt="">';}}
+      if(pin)pin.value=fname;
+      show("ok","✓ Committed to <strong>"+esc(fname)+"</strong>. Now hit <strong>↑ Save &amp; publish</strong> on this tab to show it on the live site.");
+      if(input.value!==undefined)input.value="";
+    }).catch(function(e){show("err","✗ "+esc(e.message)+" — check the token grants <em>Contents: Read &amp; write</em>.");});
+  }
+
   function modelText(name){return JSON.stringify(models[name],null,2)+"\n";}
   function publishOne(name){
     var file=FILES[name].file,text=modelText(name);
@@ -505,6 +614,7 @@
   }
   function handleEdit(e){
     var el=e.target;
+    if(el.hasAttribute("data-imgfile"))return; // image uploads handled separately
     if(el.hasAttribute("data-movelab")){onMoveLab(el);return;}
     var model=el.getAttribute("data-model"),path=el.getAttribute("data-path");
     if(!model||!path)return;
@@ -518,6 +628,15 @@
     var panel=document.getElementById("panel");
     panel.addEventListener("input",handleEdit);
     panel.addEventListener("change",handleEdit);
+    // image upload: file picker (via the label-wrapped input) + drag and drop
+    panel.addEventListener("change",function(e){if(e.target.hasAttribute("data-imgfile"))uploadImage(e.target);});
+    panel.addEventListener("dragover",function(e){var d=e.target.closest(".img-drop");if(!d)return;e.preventDefault();d.classList.add("drag");});
+    panel.addEventListener("dragleave",function(e){var d=e.target.closest(".img-drop");if(d)d.classList.remove("drag");});
+    panel.addEventListener("drop",function(e){
+      var d=e.target.closest(".img-drop");if(!d)return;e.preventDefault();d.classList.remove("drag");
+      var inp=d.querySelector("[data-imgfile]"),files=e.dataTransfer&&e.dataTransfer.files;
+      if(inp&&files&&files.length)uploadImage(inp,files[0]);
+    });
     panel.addEventListener("click",function(e){
       var el=e.target.closest("[data-act]");if(!el)return;
       var act=el.getAttribute("data-act");

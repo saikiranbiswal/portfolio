@@ -43,6 +43,14 @@
     return String(s == null ? "" : s)
       .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
   }
+  // Fill a .ph placeholder with the product's uploaded image, or fall back to
+  // the design's label block when no image has been set in the CMS.
+  function phShot(src, label) {
+    if (!src) return '<span class="ph-label">' + esc(label) + '</span>';
+    return '<img src="' + esc(src) + '" alt="' + esc(label) + '" ' +
+      'style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" ' +
+      'onerror="this.outerHTML=\'<span class=&quot;ph-label&quot;>' + esc(label) + '</span>\'">';
+  }
   /* editable span/heading. tag = element tag, path = model path, cls = classes */
   function ed(tag, path, cls, extra) {
     var v = getPath(path);
@@ -140,7 +148,7 @@
     var cards = lab.products.map(function (p, j) {
       var base = "labs." + i + ".products." + j;
       return '<div class="product-card" data-nav="product" data-lab="' + lab.id + '" data-prod="' + p.id + '">' +
-        '<div class="ph"><span class="ph-label">' + esc(p.name.toLowerCase()) + ' — preview</span></div>' +
+        '<div class="ph">' + phShot(p.image, p.name.toLowerCase() + ' — preview') + '</div>' +
         '<div class="pc-tags">' + tagsHTML(base, p.tags) + '</div>' +
         ed("div", base + ".name", "pc-name") +
         ed("div", base + ".tagline", "pc-tagline") +
@@ -216,7 +224,7 @@
               '<a class="btn" data-explore href="' + esc(p.url) + '" target="_blank" rel="noopener">Explore ' + esc(p.name) + ' <span class="arrow">→</span></a>' +
             '</div>' +
           '</div>' +
-          '<div class="ph prod-cover"><span class="ph-label">' + esc(p.name.toLowerCase()) + ' — product shot</span></div>' +
+          '<div class="ph prod-cover">' + phShot(p.image, p.name.toLowerCase() + ' — product shot') + '</div>' +
         '</div>' +
 
         '<div class="prod-body">' +

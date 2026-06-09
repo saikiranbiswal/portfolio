@@ -65,15 +65,33 @@
   "skills": [
     {
       "h": "Product",
-      "items": ["Discovery & research", "Strategy & positioning", "Roadmapping & prioritization", "JTBD & personas", "0→1 & platform scaling"]
+      "items": [
+        "Discovery & research",
+        "Strategy & positioning",
+        "Roadmapping & prioritization",
+        "JTBD & personas",
+        "0→1 & platform scaling"
+      ]
     },
     {
       "h": "Technical",
-      "items": ["Domain & data modeling", "System & event architecture", "API & integration design", "AI / RAG product design", "Evaluation & guardrails"]
+      "items": [
+        "Domain & data modeling",
+        "System & event architecture",
+        "API & integration design",
+        "AI / RAG product design",
+        "Evaluation & guardrails"
+      ]
     },
     {
       "h": "Commercial",
-      "items": ["Metric trees & analytics", "Experimentation", "Pricing & packaging", "GTM strategy", "Unit economics"]
+      "items": [
+        "Metric trees & analytics",
+        "Experimentation",
+        "Pricing & packaging",
+        "GTM strategy",
+        "Unit economics"
+      ]
     }
   ],
   "cta": {

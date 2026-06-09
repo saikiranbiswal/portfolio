@@ -65,9 +65,12 @@ Flagship and high-traffic apps first.
 | 4 | **synthesis** | Framework builder, *already 3 `@media`* | **M** | Finish the responsive pass it started; stack import→configure→export steps |
 | 5 | **excel-transformer** | 1 table, file drop | **M** | Table→cards; ensure file picker (not just drag) on mobile; fluid controls |
 | 6 | **excel-merger** | 2 tables, multi-file | **M** | Same as transformer; column-strategy UI stacks vertically |
-| 7 | **contract-intelligence** | Small (12 KB) | **S** | Single-column layout; scale type; verify upload affordance |
-| 8 | **loan-origination-system** | Small (12 KB) | **S** | Single-column; touch targets |
-| 9 | **neuralpath** | ✅ already mobile-native | — | Spot-check only |
+| 7 | **neuralpath** | ✅ already mobile-native | — | Spot-check only |
+
+> **Scope:** only the **7 apps currently live in the Work list** are listed.
+> `apps/contract-intelligence/` and `apps/loan-origination-system/` were removed
+> from `products.json` and are no longer shown on the portfolio — they're orphaned
+> folders to be deleted, not made mobile-friendly.
 
 **Effort key:** S ≈ <½ day · M ≈ ~1 day · L ≈ 1–2 days each.
 
@@ -75,13 +78,11 @@ Flagship and high-traffic apps first.
 
 ## Suggested phasing (the "one shot")
 
-- **Phase 0 — Foundation (½ day):** ship the shared `mobile.css` + table/card and
-  sidebar/drawer patterns; wire them into all apps. Many small apps (7, 8) are
-  basically done after this.
-- **Phase 1 — Quick wins (1 day):** contract-intelligence, loan-origination,
-  excel-transformer, excel-merger, synthesis.
+- **Phase 0 — Foundation (½ day):** ship the shared `mobile.css` baseline and wire
+  it into all live apps. ✅ **Done** (see "Phase 0 status" below).
+- **Phase 1 — Quick wins (1 day):** excel-transformer, excel-merger, synthesis.
 - **Phase 2 — Heavy hitters (2–3 days):** dashboard-studio (touch drag-drop),
-  lending-cloud (tables), collections-cloud (flagship polish).
+  lending-cloud (tables→cards), collections-cloud (flagship polish, in-bundle CSS).
 - **Phase 3 — QA pass (½ day):** every app verified at 375 × 812 and 768 × 1024.
 
 Total ≈ **4–5 focused days**, front-loaded so the portfolio reads as mobile-ready
@@ -99,6 +100,26 @@ after Phase 1.
 - [ ] Charts/canvas resize to fit width
 - [ ] No action depends on hover alone
 - [ ] Verified in the preview at **375×812** *and* **768×1024**
+
+---
+
+## Phase 0 status — ✅ shipped (2026-06-10)
+
+Live on `main`. `apps/_shared/mobile.css` created and linked into all 7 live apps
+(except neuralpath, already mobile-native and zoom-locked). Baseline: overflow
+guard, 16px inputs, 44px touch targets, code wrap, tables → self-contained
+horizontal scrollers. App-specific overrides added where the baseline wasn't
+enough:
+
+- **lending-cloud** — un-froze the `overflow:hidden` full-height flex shell;
+  sidebar is now a sticky horizontal scrolling nav bar. (Tables still scroll, not
+  yet cards — that's Phase 2.)
+- **dashboard-studio** — topbar actions now wrap instead of overflowing.
+- **collections-cloud** — **not wired**: it rewrites its whole document from an
+  embedded bundle string at runtime, discarding a `<head>` link. Needs CSS injected
+  *inside* the bundle (Phase 2). No overflow on its own today.
+
+Verified: every wired app has no horizontal overflow at 375 px, no console errors.
 
 ---
 

@@ -1,7 +1,7 @@
-# Local-only admin CMS — kept OUT of the public deploy.
-# Edit it locally (open admin.html in your browser), Export the JSON,
-# commit the JSON files, and push. The admin itself is never published.
-admin.html
+# admin.html (the CMS) is now PUBLISHED — it logs in with a GitHub
+# fine-grained token and commits content via the GitHub API. The token
+# is entered in-browser and never committed, so publishing the page is
+# safe. The "noindex,nofollow" meta keeps it out of search engines.
 
 # Local tooling / scratch (not part of the site)
 .claude/

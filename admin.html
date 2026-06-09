@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Portfolio CMS</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/admin.css">
+<style>
+  /* admin-only layout extras (kept here so the public design system is untouched) */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 22px; border-bottom: 1px solid var(--line-soft); }
+  .tab-btn { font-family: var(--mono); font-size: 12.5px; letter-spacing: .04em; background: transparent;
+    border: 0; border-bottom: 2px solid transparent; color: var(--muted); padding: 10px 14px; cursor: pointer; }
+  .tab-btn.active { color: var(--ink); border-bottom-color: var(--clay); }
+  .tab-btn:hover { color: var(--ink-soft); }
+  .section-block { background: var(--card); border: 1px solid var(--line); border-radius: 7px; padding: 18px; margin-bottom: 16px; }
+  .section-block > h3 { font-family: var(--serif); font-size: 18px; margin-bottom: 14px; }
+  .inline-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+  .lab-block { border: 1px solid var(--line); border-radius: 7px; margin-bottom: 14px; overflow: hidden; }
+  .lab-bar { display: flex; align-items: center; gap: 12px; padding: 13px 16px; background: var(--card); }
+  .lab-bar .lt { font-family: var(--serif); font-size: 18px; }
+  .lab-bar .lc { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+  .lab-body { padding: 16px; border-top: 1px solid var(--line-soft); }
+  .prod-mini { border: 1px solid var(--line-soft); border-radius: 6px; padding: 12px; margin-bottom: 10px; background: var(--paper); }
+  .prod-mini-bar { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .prod-mini-bar .pmn { font-weight: 600; font-size: 15px; }
+  .repeat-item { border: 1px solid var(--line-soft); border-radius: 6px; padding: 12px; margin-bottom: 10px; background: var(--paper); }
+  .repeat-foot { display: flex; gap: 6px; margin-top: 6px; }
+  .row-btns { display: flex; gap: 6px; flex: 0 0 auto; }
+  .row-btns .admin-btn { padding: 6px 10px; }
+  .subhint { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: .05em; margin: 12px 0 8px; }
+  .feat-row { display: grid; grid-template-columns: 1fr 1.6fr auto; gap: 8px; align-items: center; margin-bottom: 8px; }
+  .feat-row input { width: 100%; font-family: var(--sans); font-size: 14px; background: var(--card);
+    border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; }
+  .gh-panel { background: var(--card); border: 1px solid var(--line); border-radius: 7px; padding: 16px; margin-bottom: 16px; }
+  .gh-status { font-family: var(--mono); font-size: 12px; line-height: 1.7; padding: 11px 14px; border-radius: 6px; margin-bottom: 16px; border: 1px solid var(--line); }
+  .gh-status a { color: inherit; }
+  .gh-status.ok { color: #1c6b3c; border-color: #b6e0c4; background: #eefaf1; }
+  .gh-status.err { color: #9b2226; border-color: #f0c0c2; background: #fdeeee; }
+  .gh-status.busy { color: var(--muted); }
+  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- LOGIN GATE -->
+<div class="admin-gate" id="gate">
+  <div class="gate-card">
+    <h1>Portfolio CMS</h1>
+    <p>Enter the password to manage the whole portfolio.</p>
+    <div class="field">
+      <label for="pw">Password</label>
+      <input type="password" id="pw" autocomplete="current-password" placeholder="••••••••">
+    </div>
+    <button class="admin-btn" id="loginBtn">Unlock</button>
+    <div class="gate-err" id="gateErr"></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="admin-wrap" id="dash" style="display:none;">
+  <div class="admin-top">
+    <div>
+      <h1>Portfolio CMS</h1>
+      <div class="sub">Edit → Publish → live in ~1 min</div>
+    </div>
+    <div class="admin-actions">
+      <button class="admin-btn" id="publishAllBtn">↑ Publish to GitHub</button>
+      <button class="admin-btn ghost" id="ghSettingsBtn">⚙ GitHub</button>
+      <button class="admin-btn ghost" id="exportAllBtn">⤓ Export all</button>
+      <button class="admin-btn ghost" id="discardBtn">Discard local edits</button>
+      <button class="admin-btn ghost" id="logoutBtn">Lock</button>
+    </div>
+  </div>
+
+  <div class="save-note">
+    Edits autosave in this browser as you work. Hit <strong>↑ Publish to GitHub</strong> to commit
+    the changed files straight to your repo — the live site rebuilds in about a minute. No export,
+    no terminal. First time? Click <strong>⚙ GitHub</strong> and paste a fine-grained token
+    (<em>Contents: Read &amp; write</em> on this repo). It's stored only in this browser.
+    <strong>Export</strong> stays as an offline fallback.
+  </div>
+
+  <div class="gh-panel" id="ghPanel" style="display:none;">
+    <div class="grid2">
+      <div class="field"><label>Repo owner</label><input id="ghOwner" placeholder="saikiranbiswal"></div>
+      <div class="field"><label>Repo name</label><input id="ghRepo" placeholder="portfolio"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Branch</label><input id="ghBranch" placeholder="main"></div>
+      <div class="field"><label>Fine-grained token (Contents: R/W)</label><input id="ghToken" type="password" placeholder="github_pat_…" autocomplete="off"></div>
+    </div>
+    <div class="inline-actions">
+      <button class="admin-btn" id="ghSaveBtn">Save &amp; test connection</button>
+      <button class="admin-btn ghost" id="ghClearBtn">Forget token</button>
+      <a class="admin-btn ghost" id="ghTokenLink" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Create a token ↗</a>
+    </div>
+  </div>
+
+  <div class="gh-status" id="ghStatus" style="display:none;"></div>
+
+  <div class="tabs" id="tabs"></div>
+  <div id="panel"></div>
+</div>
+
+<script>
+/* =========================================================
+   Portfolio CMS — single password-gated admin for the whole site.
+   Manages four data files:
+     products.json  → Site identity (meta) + Work projects
+     labs.json      → Labs + their products
+     about.json     → About page content
+     contact.json   → Contact page content
+   NOTE: the password ("portfolio123") gates the UI only — it is NOT
+   real security (source is readable). The real lock is the GitHub
+   fine-grained token: without it, nobody can publish. The token is
+   entered by you, stored only in this browser (localStorage), and is
+   never committed. Publishing uses the GitHub Contents API. See README.
+   ========================================================= */
+(function () {
+  "use strict";
+
+  var PASSWORD = "portfolio123";
+  var AUTH_KEY = "portfolio.admin.auth.v1";
+  var FILES = {
+    products: { file: "products.json", key: "portfolio.cms.products.v1" },
+    labs:     { file: "labs.json",     key: "portfolio.cms.labs.v1" },
+    about:    { file: "about.json",    key: "portfolio.cms.about.v1" },
+    contact:  { file: "contact.json",  key: "portfolio.cms.contact.v1" }
+  };
+
+  var models = {};
+  var openState = {};
+  var currentTab = "site";
+
+  /* ---- helpers ---- */
+  function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+  function slug(s){return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");}
+  function getPath(root,p){var parts=p.split("."),cur=root;for(var i=0;i<parts.length;i++){if(cur==null)return undefined;cur=cur[parts[i]];}return cur;}
+  function setPath(root,p,val){var parts=p.split("."),cur=root;for(var i=0;i<parts.length-1;i++)cur=cur[parts[i]];cur[parts[parts.length-1]]=val;}
+
+  function defModel(name){
+    if(name==="products") return {meta:{owner:"Sai Kiran Biswal",role:"Enterprise · AI Product",glyph:"S",showRoleOnCards:false},projects:[]};
+    if(name==="labs")     return {meta:{},labs:[]};
+    if(name==="about")    return {hero:{eyebrow:"",heading:"",lead:"",paras:[]},timeline:[],principles:[],skills:[],cta:{}};
+    if(name==="contact")  return {hero:{eyebrow:"",heading:"",body:""},links:[]};
+    return {};
+  }
+  function loadOne(name){
+    try{var d=localStorage.getItem(FILES[name].key);if(d)return Promise.resolve(JSON.parse(d));}catch(e){}
+    return fetch(FILES[name].file,{cache:"no-store"}).then(function(r){return r.ok?r.json():defModel(name);}).catch(function(){return defModel(name);});
+  }
+  function loadAll(){return Promise.all(Object.keys(FILES).map(function(n){return loadOne(n).then(function(m){models[n]=m;});}));}
+  function saveDraft(name){try{localStorage.setItem(FILES[name].key,JSON.stringify(models[name]));}catch(e){}}
+
+  /* ---- auth ---- */
+  function isAuthed(){try{return sessionStorage.getItem(AUTH_KEY)==="1";}catch(e){return false;}}
+  function setAuthed(v){try{v?sessionStorage.setItem(AUTH_KEY,"1"):sessionStorage.removeItem(AUTH_KEY);}catch(e){}}
+  function login(){var pw=document.getElementById("pw").value;if(pw===PASSWORD){setAuthed(true);showDash();}else{document.getElementById("gateErr").textContent="Incorrect password.";}}
+
+  /* ---- field builders ---- */
+  function arrVal(v,opts){if(opts.type==="csv")return (v||[]).join(", ");if(opts.type==="lines")return (v||[]).join("\n");return v==null?"":v;}
+  function F(label,model,path,opts){
+    opts=opts||{};
+    var v=getPath(models[model],path);
+    var common='data-model="'+model+'" data-path="'+path+'"'+(opts.type?' data-type="'+opts.type+'"':"");
+    var inner;
+    if(opts.area) inner='<textarea '+common+'>'+esc(arrVal(v,opts))+'</textarea>';
+    else if(opts.select) inner='<select '+common+'>'+opts.select.map(function(o){
+        var val=(o.value!==undefined?o.value:o), lab=(o.label!==undefined?o.label:o);
+        return '<option value="'+esc(val)+'"'+(String(v)===String(val)?' selected':'')+'>'+esc(lab)+'</option>';
+      }).join("")+'</select>';
+    else inner='<input '+common+' value="'+esc(arrVal(v,opts))+'">';
+    return '<div class="field"><label>'+label+'</label>'+inner+'</div>';
+  }
+  function ctlBtns(model,arrPath,idx,len){
+    return '<button class="admin-btn ghost" data-act="up" data-model="'+model+'" data-path="'+arrPath+'" data-i="'+idx+'"'+(idx===0?' disabled':'')+'>▲</button>'+
+           '<button class="admin-btn ghost" data-act="down" data-model="'+model+'" data-path="'+arrPath+'" data-i="'+idx+'"'+(idx===len-1?' disabled':'')+'>▼</button>'+
+           '<button class="admin-btn danger" data-act="del" data-model="'+model+'" data-path="'+arrPath+'" data-i="'+idx+'">Delete</button>';
+  }
+  function repeatItem(model,arrPath,idx,len,inner){
+    return '<div class="repeat-item">'+inner+'<div class="repeat-foot">'+ctlBtns(model,arrPath,idx,len)+'</div></div>';
+  }
+  function exportBtn(model,file){return '<button class="admin-btn ghost" data-act="export" data-model="'+model+'">⤓ Export '+file+'</button>';}
+
+  /* ---- templates for "add" ---- */
+  var TEMPLATES = {
+    project: function(){var id=slug("project-"+Date.now()).slice(0,40);return {id:id,name:"New Project",description:"Describe this project.",tags:["Tag"],role:"Product Manager",year:"2025",stage:"Working app",screenshot:"assets/screenshots/"+id+".png",path:"./apps/"+id+"/",displayMode:"modal",featured:false};},
+    lab: function(){var id=slug("lab-"+Date.now()).slice(0,40);return {id:id,name:"New Lab",desc:"What this lab is about.",blurb:"A longer description of this lab.",products:[]};},
+    labproduct: function(){var id=slug("product-"+Date.now()).slice(0,40);return {id:id,name:"New Product",stage:"Working app",tags:["Tag"],tagline:"One line about it.",what:"What it does.",features:[["Feature","Description."]],role:"Product Manager",year:"2025",stage2:"Working app",stack:["Tag"],url:"https://example.com"};},
+    feature: function(){return ["Feature","Description."];},
+    para: function(){return "New paragraph.";},
+    timeline: function(){return {yr:"Year",h4:"Role",org:"Organization",p:"What you did."};},
+    principle: function(){return {n:"00",h4:"Principle",p:"Describe it."};},
+    skill: function(){return {h:"Column",items:["Item"]};},
+    link: function(){return {k:"Label",v:"Value",type:"none",href:"#",external:false};}
+  };
+
+  /* =====================================================
+     TAB: Site (products.json → meta)
+     ===================================================== */
+  function renderSite(){
+    var b="products";
+    return '<div class="inline-actions">'+exportBtn("products","products.json")+'</div>'+
+      '<div class="section-block"><h3>Site identity</h3>'+
+        '<div class="grid2">'+F("Owner name",b,"meta.owner")+F("Role / title",b,"meta.role")+'</div>'+
+        '<div class="grid2">'+F("Glyph (nav badge)",b,"meta.glyph")+F("Status",b,"meta.status")+'</div>'+
+        '<div class="grid2">'+F("Email",b,"meta.email")+F("Location",b,"meta.location")+'</div>'+
+        '<div class="grid2">'+F("LinkedIn URL",b,"meta.linkedin")+F("LinkedIn label",b,"meta.linkedinLabel")+'</div>'+
+        '<div class="grid2">'+F("Résumé path",b,"meta.resume")+
+          F("Show role on Work cards",b,"meta.showRoleOnCards",{select:[{value:"false",label:"No"},{value:"true",label:"Yes"}],type:"bool"})+'</div>'+
+      '</div>';
+  }
+
+  /* =====================================================
+     TAB: Work (products.json → projects[])
+     ===================================================== */
+  function workForm(p,i){
+    var b="products",base="projects."+i;
+    return '<div class="edit-form">'+
+      F("Name",b,base+".name")+
+      F("Description",b,base+".description",{area:true})+
+      '<div class="grid2">'+F("Tags (comma-separated)",b,base+".tags",{type:"csv"})+F("Role",b,base+".role")+'</div>'+
+      '<div class="grid2">'+F("Year",b,base+".year")+F("Stage",b,base+".stage")+'</div>'+
+      '<div class="grid2">'+
+        F("Display mode",b,base+".displayMode",{select:["modal","page","link"]})+
+        F("Featured (flagship)",b,base+".featured",{select:[{value:"false",label:"No"},{value:"true",label:"Yes"}],type:"bool"})+
+      '</div>'+
+      F("Screenshot path",b,base+".screenshot")+
+      F("App path",b,base+".path")+
+    '</div>';
+  }
+  function renderWork(){
+    var ps=models.products.projects||[];
+    var html='<div class="inline-actions">'+
+      '<button class="admin-btn" data-act="add" data-model="products" data-path="projects" data-tmpl="project">+ Add project</button>'+
+      exportBtn("products","products.json")+'</div>'+
+      '<div class="subhint">'+ps.length+' projects</div>';
+    html+=ps.map(function(p,i){
+      var open=openState["work:"+i];
+      var head='<div class="proj-card"><div class="proj-main">'+
+          '<div class="pn">'+esc(p.name)+(p.featured?' ★':'')+'</div>'+
+          '<div class="pd">'+esc(p.description)+'</div>'+
+          '<div class="proj-meta-row">'+esc((p.tags||[]).join(" · "))+' · '+esc(p.displayMode||"modal")+'</div>'+
+        '</div><div class="proj-ctl">'+
+          '<button class="admin-btn ghost" data-act="toggle" data-key="work:'+i+'">'+(open?"Close":"Edit")+'</button>'+
+          ctlBtns("products","projects",i,ps.length)+
+        '</div></div>';
+      return head+(open?workForm(p,i):"");
+    }).join("");
+    return html;
+  }
+
+  /* =====================================================
+     TAB: Labs (labs.json)
+     ===================================================== */
+  function prodMini(p,i,j,n){
+    var open=openState["labprod:"+i+":"+j];
+    var b="labs",base="labs."+i+".products."+j,arrPath="labs."+i+".products";
+    var bar='<div class="prod-mini-bar"><span class="pmn">'+esc(p.name)+'</span>'+
+      '<span class="row-btns">'+
+        '<button class="admin-btn ghost" data-act="toggle" data-key="labprod:'+i+':'+j+'">'+(open?"Close":"Edit")+'</button>'+
+        ctlBtns("labs",arrPath,j,n)+
+      '</span></div>';
+    if(!open) return '<div class="prod-mini">'+bar+'</div>';
+    var feats=(p.features||[]).map(function(f,k){
+      return '<div class="feat-row">'+
+        '<input data-model="labs" data-path="'+base+'.features.'+k+'.0" value="'+esc(f[0])+'">'+
+        '<input data-model="labs" data-path="'+base+'.features.'+k+'.1" value="'+esc(f[1])+'">'+
+        '<button class="admin-btn danger" data-act="del" data-model="labs" data-path="'+base+'.features" data-i="'+k+'">✕</button>'+
+      '</div>';
+    }).join("");
+    var labsList=models.labs.labs||[];
+    var moveSel='<div class="field"><label>Move to lab</label><select data-movelab data-from="'+i+'" data-i="'+j+'">'+
+      labsList.map(function(l,k){return '<option value="'+k+'"'+(k===i?' selected':'')+'>'+esc(l.name)+'</option>';}).join("")+'</select></div>';
+    var body='<div style="margin-top:12px;">'+
+      F("Name",b,base+".name")+
+      F("Tagline",b,base+".tagline")+
+      F("What it does",b,base+".what",{area:true})+
+      '<div class="grid2">'+F("Tags (comma-separated)",b,base+".tags",{type:"csv"})+F("Stack (comma-separated)",b,base+".stack",{type:"csv"})+'</div>'+
+      '<div class="grid2">'+F("Role",b,base+".role")+F("Year",b,base+".year")+'</div>'+
+      '<div class="grid2">'+F("Stage (card)",b,base+".stage")+F("Stage (detail)",b,base+".stage2")+'</div>'+
+      F("Explore URL",b,base+".url")+
+      '<div class="subhint">FEATURES</div>'+feats+
+      '<button class="admin-btn ghost" data-act="add" data-model="labs" data-path="'+base+'.features" data-tmpl="feature">+ Add feature</button>'+
+      moveSel+
+    '</div>';
+    return '<div class="prod-mini">'+bar+body+'</div>';
+  }
+  function labBlock(lab,i,n){
+    var open=openState["lab:"+i],b="labs";
+    var bar='<div class="lab-bar">'+
+      '<span class="lt" data-act="toggle" data-key="lab:'+i+'" style="cursor:pointer;flex:1 1 auto;">'+esc(lab.name)+'</span>'+
+      '<span class="lc">'+(lab.products||[]).length+' products</span>'+
+      '<span class="row-btns">'+ctlBtns("labs","labs",i,n)+'</span></div>';
+    if(!open) return '<div class="lab-block">'+bar+'</div>';
+    var body='<div class="lab-body">'+
+      F("Lab name",b,"labs."+i+".name")+
+      F("Short description",b,"labs."+i+".desc",{area:true})+
+      F("Blurb",b,"labs."+i+".blurb",{area:true})+
+      '<div class="subhint">PRODUCTS</div>'+
+      (lab.products||[]).map(function(p,j){return prodMini(p,i,j,(lab.products||[]).length);}).join("")+
+      '<button class="admin-btn" data-act="add" data-model="labs" data-path="labs.'+i+'.products" data-tmpl="labproduct">+ Add product</button>'+
+    '</div>';
+    return '<div class="lab-block">'+bar+body+'</div>';
+  }
+  function renderLabs(){
+    var L=models.labs,labs=L.labs||[],b="labs";
+    var html='<div class="inline-actions">'+
+      '<button class="admin-btn" data-act="add" data-model="labs" data-path="labs" data-tmpl="lab">+ Add lab</button>'+
+      exportBtn("labs","labs.json")+'</div>';
+    var metaOpen=openState["labsmeta"];
+    html+='<div class="lab-block"><div class="lab-bar"><span class="lt" data-act="toggle" data-key="labsmeta" style="cursor:pointer;flex:1 1 auto;">Labs page header</span><span class="lc">'+(metaOpen?"▲":"▼")+'</span></div>';
+    if(metaOpen){
+      html+='<div class="lab-body">'+
+        F("Eyebrow",b,"meta.eyebrow")+F("Title",b,"meta.title")+F("Intro",b,"meta.intro",{area:true})+
+        '<div class="grid2">'+F("Stat 1 value",b,"meta.statLabs")+F("Stat 1 label",b,"meta.statLabsLabel")+'</div>'+
+        '<div class="grid2">'+F("Stat 2 value",b,"meta.statProducts")+F("Stat 2 label",b,"meta.statProductsLabel")+'</div>'+
+        '<div class="grid2">'+F("Stat 3 value",b,"meta.statYears")+F("Stat 3 label",b,"meta.statYearsLabel")+'</div>'+
+      '</div>';
+    }
+    html+='</div>';
+    html+=labs.map(function(lab,i){return labBlock(lab,i,labs.length);}).join("");
+    return html;
+  }
+
+  /* =====================================================
+     TAB: About (about.json)
+     ===================================================== */
+  function renderAbout(){
+    var b="about",a=models.about,hero=a.hero||{};
+    var H='<div class="inline-actions">'+exportBtn("about","about.json")+'</div>';
+    H+='<div class="section-block"><h3>Hero</h3>'+
+      F("Eyebrow",b,"hero.eyebrow")+
+      F("Heading (HTML — &lt;em&gt; allowed)",b,"hero.heading")+
+      F("Lead",b,"hero.lead",{area:true})+
+      '<div class="subhint">PARAGRAPHS</div>'+
+      (hero.paras||[]).map(function(p,k){return repeatItem("about","hero.paras",k,(hero.paras||[]).length,'<textarea data-model="about" data-path="hero.paras.'+k+'">'+esc(p)+'</textarea>');}).join("")+
+      '<button class="admin-btn" data-act="add" data-model="about" data-path="hero.paras" data-tmpl="para">+ Add paragraph</button>'+
+    '</div>';
+    H+='<div class="section-block"><h3>Background / timeline</h3>'+
+      '<div class="grid2">'+F("Eyebrow",b,"timelineEyebrow")+F("Count label",b,"timelineCount")+'</div>'+
+      (a.timeline||[]).map(function(r,k){return repeatItem("about","timeline",k,(a.timeline||[]).length,
+        '<div class="grid2">'+F("Years",b,"timeline."+k+".yr")+F("Role",b,"timeline."+k+".h4")+'</div>'+
+        F("Organization",b,"timeline."+k+".org")+F("Description",b,"timeline."+k+".p",{area:true}));}).join("")+
+      '<button class="admin-btn" data-act="add" data-model="about" data-path="timeline" data-tmpl="timeline">+ Add row</button>'+
+    '</div>';
+    H+='<div class="section-block"><h3>Operating principles</h3>'+
+      '<div class="grid2">'+F("Eyebrow",b,"principlesEyebrow")+F("Count label",b,"principlesCount")+'</div>'+
+      (a.principles||[]).map(function(r,k){return repeatItem("about","principles",k,(a.principles||[]).length,
+        '<div class="grid2">'+F("Number",b,"principles."+k+".n")+F("Title",b,"principles."+k+".h4")+'</div>'+
+        F("Text",b,"principles."+k+".p",{area:true}));}).join("")+
+      '<button class="admin-btn" data-act="add" data-model="about" data-path="principles" data-tmpl="principle">+ Add principle</button>'+
+    '</div>';
+    H+='<div class="section-block"><h3>Toolkit / skills</h3>'+
+      '<div class="grid2">'+F("Eyebrow",b,"skillsEyebrow")+F("Count label",b,"skillsCount")+'</div>'+
+      (a.skills||[]).map(function(c,k){return repeatItem("about","skills",k,(a.skills||[]).length,
+        F("Column heading",b,"skills."+k+".h")+F("Items (one per line)",b,"skills."+k+".items",{area:true,type:"lines"}));}).join("")+
+      '<button class="admin-btn" data-act="add" data-model="about" data-path="skills" data-tmpl="skill">+ Add column</button>'+
+    '</div>';
+    H+='<div class="section-block"><h3>Call to action</h3>'+
+      F("Eyebrow",b,"cta.eyebrow")+F("Heading",b,"cta.heading")+F("Button label",b,"cta.btn")+
+    '</div>';
+    return H;
+  }
+
+  /* =====================================================
+     TAB: Contact (contact.json)
+     ===================================================== */
+  function renderContact(){
+    var b="contact",c=models.contact,hero=c.hero||{};
+    var H='<div class="inline-actions">'+exportBtn("contact","contact.json")+'</div>';
+    H+='<div class="section-block"><h3>Hero</h3>'+
+      F("Eyebrow",b,"hero.eyebrow")+
+      F("Heading (HTML — &lt;em&gt; allowed)",b,"hero.heading")+
+      F("Body",b,"hero.body",{area:true})+
+    '</div>';
+    H+='<div class="section-block"><h3>Contact links</h3>'+
+      (c.links||[]).map(function(l,k){return repeatItem("contact","links",k,(c.links||[]).length,
+        '<div class="grid2">'+F("Label",b,"links."+k+".k")+F("Value",b,"links."+k+".v")+'</div>'+
+        '<div class="grid2">'+
+          F("Type",b,"links."+k+".type",{select:[{value:"none",label:"Plain link"},{value:"email",label:"Email (uses Site email)"},{value:"resume",label:"Résumé (uses Site résumé)"}]})+
+          F("Open in new tab",b,"links."+k+".external",{select:[{value:"false",label:"No"},{value:"true",label:"Yes"}],type:"bool"})+
+        '</div>'+
+        F("Href (for plain links)",b,"links."+k+".href"));}).join("")+
+      '<button class="admin-btn" data-act="add" data-model="contact" data-path="links" data-tmpl="link">+ Add link</button>'+
+    '</div>';
+    return H;
+  }
+
+  /* =====================================================
+     TABS + RENDER
+     ===================================================== */
+  var TABS=[["site","Site"],["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"]];
+  var RENDER={site:renderSite,work:renderWork,labs:renderLabs,about:renderAbout,contact:renderContact};
+  function renderTabs(){document.getElementById("tabs").innerHTML=TABS.map(function(t){return '<button class="tab-btn'+(currentTab===t[0]?" active":"")+'" data-tab="'+t[0]+'">'+t[1]+'</button>';}).join("");}
+  function renderTab(t){document.getElementById("panel").innerHTML=RENDER[t]();}
+  function showDash(){document.getElementById("gate").style.display="none";document.getElementById("dash").style.display="block";ghFill();renderTabs();renderTab(currentTab);}
+
+  /* ---- export ---- */
+  function download(filename,obj){
+    var blob=new Blob([JSON.stringify(obj,null,2)+"\n"],{type:"application/json"});
+    var url=URL.createObjectURL(blob),a=document.createElement("a");
+    a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();
+    setTimeout(function(){URL.revokeObjectURL(url);},800);
+  }
+  function exportModel(name){download(FILES[name].file,models[name]);}
+  function exportAll(){["products","labs","about","contact"].forEach(function(n,k){setTimeout(function(){exportModel(n);},k*450);});}
+
+  /* ---- publish to GitHub (Contents API — no server needed) ---- */
+  var GH_KEY="portfolio.cms.gh.v1";
+  function ghCfg(){try{return JSON.parse(localStorage.getItem(GH_KEY))||{};}catch(e){return {};}}
+  function gh(){var c=ghCfg();return {owner:c.owner||"saikiranbiswal",repo:c.repo||"portfolio",branch:c.branch||"main",token:c.token||""};}
+  function b64(s){return btoa(unescape(encodeURIComponent(s)));}              // UTF-8 safe encode
+  function unb64(b){return decodeURIComponent(escape(atob(b.replace(/\n/g,""))));}
+  function ghStatus(msg,kind){var el=document.getElementById("ghStatus");el.style.display="block";el.className="gh-status"+(kind?" "+kind:"");el.innerHTML=msg;}
+  function ghApi(path,opts){
+    var c=gh();opts=opts||{};
+    opts.headers=Object.assign({Accept:"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28",Authorization:"Bearer "+c.token},opts.headers||{});
+    return fetch("https://api.github.com/repos/"+c.owner+"/"+c.repo+path,opts);
+  }
+  function ghGetFile(file){
+    var c=gh();
+    return ghApi("/contents/"+encodeURIComponent(file)+"?ref="+encodeURIComponent(c.branch)+"&t="+Date.now())
+      .then(function(r){
+        if(r.status===404)return {sha:null,content:null};
+        return r.json().then(function(j){if(!r.ok)throw new Error(j.message||("HTTP "+r.status));return {sha:j.sha,content:unb64(j.content||"")};});
+      });
+  }
+  function ghPutFile(file,text,sha,msg){
+    var c=gh(),body={message:msg,content:b64(text),branch:c.branch};
+    if(sha)body.sha=sha;
+    return ghApi("/contents/"+encodeURIComponent(file),{method:"PUT",body:JSON.stringify(body)})
+      .then(function(r){return r.json().then(function(j){if(!r.ok)throw new Error(j.message||("HTTP "+r.status));return j;});});
+  }
+  function modelText(name){return JSON.stringify(models[name],null,2)+"\n";}
+  function publishOne(name){
+    var file=FILES[name].file,text=modelText(name);
+    return ghGetFile(file).then(function(cur){
+      if(cur.content!=null&&cur.content===text)return {file:file,status:"unchanged"};
+      return ghPutFile(file,text,cur.sha,"CMS: update "+file).then(function(){return {file:file,status:cur.sha?"updated":"created"};});
+    }).then(null,function(e){return {file:file,status:"error",error:e.message};});
+  }
+  function publishAll(){
+    var c=gh();
+    if(!c.token){ghStatus("No token yet — click <strong>⚙ GitHub</strong> and paste a fine-grained token first.","err");document.getElementById("ghPanel").style.display="block";return;}
+    ghStatus("Publishing to "+esc(c.owner)+"/"+esc(c.repo)+" ("+esc(c.branch)+")…","busy");
+    var names=["products","labs","about","contact"],results=[];
+    (function next(i){
+      if(i>=names.length){
+        var any=results.some(function(r){return r.status==="error";});
+        var changed=results.filter(function(r){return r.status==="updated"||r.status==="created";}).length;
+        var lines=results.map(function(r){return r.file+": "+(r.status==="error"?("✗ "+esc(r.error)):"✓ "+r.status);});
+        var foot=any?"Some files failed — see above.":changed?("Published "+changed+" file(s). Live in ~1 min → <a href=\"https://"+esc(c.owner)+".github.io/"+esc(c.repo)+"/\" target=\"_blank\" rel=\"noopener\">view site ↗</a>"):"Nothing changed — everything already up to date.";
+        ghStatus(lines.join("<br>")+"<br><br>"+foot,any?"err":"ok");
+        return;
+      }
+      publishOne(names[i]).then(function(r){results.push(r);next(i+1);});
+    })(0);
+  }
+  function ghFill(){var c=gh();document.getElementById("ghOwner").value=c.owner;document.getElementById("ghRepo").value=c.repo;document.getElementById("ghBranch").value=c.branch;document.getElementById("ghToken").value=c.token;}
+  function ghSaveSettings(){
+    var cfg={owner:document.getElementById("ghOwner").value.trim()||"saikiranbiswal",repo:document.getElementById("ghRepo").value.trim()||"portfolio",branch:document.getElementById("ghBranch").value.trim()||"main",token:document.getElementById("ghToken").value.trim()};
+    localStorage.setItem(GH_KEY,JSON.stringify(cfg));
+    if(!cfg.token){ghStatus("Settings saved, but no token entered — paste one to publish.","err");return;}
+    ghStatus("Testing connection…","busy");
+    ghApi("").then(function(r){return r.json().then(function(j){
+      if(!r.ok)throw new Error(j.message||("HTTP "+r.status));
+      ghStatus("✓ Connected to "+esc(j.full_name)+" (default branch: "+esc(j.default_branch)+"). You can Publish now.","ok");
+    });}).catch(function(e){ghStatus("✗ "+esc(e.message)+" — check the token grants <em>Contents: Read &amp; write</em> on this repo.","err");});
+  }
+
+  /* ---- edit + structural handlers (delegated on #panel) ---- */
+  function coerce(el){
+    var t=el.getAttribute("data-type"),v=el.value;
+    if(t==="csv")return v.split(",").map(function(s){return s.trim();}).filter(Boolean);
+    if(t==="lines")return v.split("\n").map(function(s){return s.trim();}).filter(Boolean);
+    if(t==="bool")return v==="true";
+    return v;
+  }
+  function onMoveLab(el){
+    var from=+el.getAttribute("data-from"),i=+el.getAttribute("data-i"),to=+el.value;
+    if(to===from)return;
+    var labs=models.labs.labs,prod=labs[from].products.splice(i,1)[0];
+    labs[to].products.push(prod);
+    openState={};saveDraft("labs");renderTab("labs");
+  }
+  function handleEdit(e){
+    var el=e.target;
+    if(el.hasAttribute("data-movelab")){onMoveLab(el);return;}
+    var model=el.getAttribute("data-model"),path=el.getAttribute("data-path");
+    if(!model||!path)return;
+    setPath(models[model],path,coerce(el));
+    var m=path.match(/^projects\.(\d+)\.featured$/);
+    if(m&&coerce(el)===true){var idx=+m[1];models.products.projects.forEach(function(p,k){if(k!==idx)p.featured=false;});}
+    saveDraft(model);
+  }
+
+  function wirePanel(){
+    var panel=document.getElementById("panel");
+    panel.addEventListener("input",handleEdit);
+    panel.addEventListener("change",handleEdit);
+    panel.addEventListener("click",function(e){
+      var el=e.target.closest("[data-act]");if(!el)return;
+      var act=el.getAttribute("data-act");
+      if(act==="toggle"){var key=el.getAttribute("data-key");openState[key]=!openState[key];renderTab(currentTab);return;}
+      if(act==="export"){exportModel(el.getAttribute("data-model"));return;}
+      var model=el.getAttribute("data-model"),path=el.getAttribute("data-path"),arr=getPath(models[model],path);
+      if(act==="add"){
+        if(!Array.isArray(arr)){setPath(models[model],path,[]);arr=getPath(models[model],path);}
+        arr.push(TEMPLATES[el.getAttribute("data-tmpl")]());saveDraft(model);renderTab(currentTab);return;
+      }
+      var i=+el.getAttribute("data-i");
+      if(act==="del"){if(confirm("Delete this item? (draft only until you export)")){arr.splice(i,1);openState={};saveDraft(model);renderTab(currentTab);}return;}
+      if(act==="up"&&i>0){var a=arr[i-1];arr[i-1]=arr[i];arr[i]=a;openState={};saveDraft(model);renderTab(currentTab);return;}
+      if(act==="down"&&i<arr.length-1){var d=arr[i+1];arr[i+1]=arr[i];arr[i]=d;openState={};saveDraft(model);renderTab(currentTab);return;}
+    });
+  }
+
+  /* ---- boot ---- */
+  document.getElementById("loginBtn").onclick=login;
+  document.getElementById("pw").addEventListener("keydown",function(e){if(e.key==="Enter")login();});
+  document.getElementById("logoutBtn").onclick=function(){setAuthed(false);location.reload();};
+  document.getElementById("exportAllBtn").onclick=exportAll;
+  document.getElementById("publishAllBtn").onclick=publishAll;
+  document.getElementById("ghSettingsBtn").onclick=function(){var p=document.getElementById("ghPanel");p.style.display=(p.style.display==="none"?"block":"none");};
+  document.getElementById("ghSaveBtn").onclick=ghSaveSettings;
+  document.getElementById("ghClearBtn").onclick=function(){var c=ghCfg();delete c.token;localStorage.setItem(GH_KEY,JSON.stringify(c));document.getElementById("ghToken").value="";ghStatus("Token forgotten from this browser.","ok");};
+  document.getElementById("discardBtn").onclick=function(){
+    if(confirm("Discard all local edits and reload from the published files?")){
+      Object.keys(FILES).forEach(function(n){try{localStorage.removeItem(FILES[n].key);}catch(e){}});
+      location.reload();
+    }
+  };
+  document.getElementById("tabs").addEventListener("click",function(e){
+    var b=e.target.closest("[data-tab]");if(!b)return;
+    currentTab=b.getAttribute("data-tab");openState={};renderTabs();renderTab(currentTab);
+  });
+
+  wirePanel();
+  loadAll().then(function(){if(isAuthed())showDash();});
+})();
+</script>
+</body>
+</html>

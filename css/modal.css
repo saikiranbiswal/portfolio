@@ -60,7 +60,8 @@
 
 /* card screenshot vs placeholder */
 .work-row .shot {
-  width: 84px; height: 56px; border-radius: 4px; object-fit: cover;
+  width: 84px; height: 56px; border-radius: 4px;
+  object-fit: cover; object-position: top center;
   border: 1px solid var(--line-soft); flex: 0 0 auto;
 }
 

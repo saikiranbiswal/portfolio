@@ -51,7 +51,7 @@
     var label = esc(p.name.toLowerCase()) + ' — product hero';
     if (!p.screenshot) return '<span class="ph-label">' + label + '</span>';
     return '<img src="' + esc(p.screenshot) + '" alt="" ' +
-      'style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" ' +
+      'style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center" ' +
       'onerror="this.outerHTML=\'<span class=&quot;ph-label&quot;>' + label + '</span>\'">';
   }
 
@@ -68,8 +68,8 @@
           (p.screenshot ? cardShot(p) : '') +
           '<span class="cat">' + esc((p.tags || []).slice(0, 2).join(" · ")) +
             (showRole && p.role ? ' · ' + esc(p.role) : '') + '</span>' +
-          '<span class="go">' + (mode === "modal" ? "↗" : "→") + '</span>' +
         '</span>' +
+        '<span class="go">' + (mode === "modal" ? "↗" : "→") + '</span>' +
       '</a>';
   }
 

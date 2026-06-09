@@ -49,41 +49,6 @@
       "featured": false
     },
     {
-      "id": "contract-intelligence",
-      "name": "Contract Intelligence Platform",
-      "description": "An AI platform that reads enterprise contracts, extracts the obligations that matter, and surfaces risk before it becomes a missed renewal or a breach.",
-      "tags": [
-        "AI",
-        "Enterprise",
-        "Legal",
-        "Case study"
-      ],
-      "role": "Product Manager",
-      "year": "2023–2024",
-      "stage": "Case study",
-      "screenshot": "assets/screenshots/contract-intelligence.png",
-      "path": "./apps/contract-intelligence/",
-      "displayMode": "page",
-      "featured": false
-    },
-    {
-      "id": "loan-origination-system",
-      "name": "Loan Origination System",
-      "description": "A modern, configurable LOS that compresses application-to-disbursal from days to minutes — without losing the controls a risk team depends on.",
-      "tags": [
-        "Fintech",
-        "Lending",
-        "Case study"
-      ],
-      "role": "Product Manager",
-      "year": "2022–2023",
-      "stage": "Case study",
-      "screenshot": "assets/screenshots/loan-origination-system.png",
-      "path": "./apps/loan-origination-system/",
-      "displayMode": "page",
-      "featured": false
-    },
-    {
       "id": "dashboard-studio",
       "name": "Dashboard Studio",
       "description": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
@@ -95,7 +60,7 @@
       "role": "Product Manager",
       "year": "2025",
       "stage": "Working app",
-      "screenshot": "assets/screenshots/dashboard-studio.png",
+      "screenshot": "assets/screenshots/dashboard-studio-mq78n3sv.png",
       "path": "./apps/dashboard-studio/",
       "displayMode": "modal",
       "featured": false

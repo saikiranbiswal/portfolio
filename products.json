@@ -5,6 +5,8 @@
     "glyph": "S",
     "email": "saikiranbiswal14@gmail.com",
     "linkedin": "https://www.linkedin.com/in/sai-kiran-biswal",
+    "linkedinLabel": "/in/sai-kiran-biswal",
+    "location": "Hyderabad / Bengaluru · Remote",
     "resume": "assets/resume.pdf",
     "status": "Open to lead PM roles",
     "showRoleOnCards": false
@@ -23,7 +25,7 @@
       "role": "Product Manager",
       "year": "2024–2025",
       "stage": "Flagship",
-      "screenshot": "assets/screenshots/collections-cloud.png",
+      "screenshot": "assets/screenshots/collections-cloud-mq78agi7.png",
       "path": "./apps/collections-cloud/",
       "displayMode": "page",
       "featured": true
@@ -41,7 +43,7 @@
       "role": "Product Manager",
       "year": "2024",
       "stage": "Working app",
-      "screenshot": "assets/screenshots/lending-cloud.png",
+      "screenshot": "assets/screenshots/lending-cloud-mq78bpbv.png",
       "path": "./apps/lending-cloud/",
       "displayMode": "modal",
       "featured": false

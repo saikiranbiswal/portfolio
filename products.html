@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work — Sai Kiran Biswal</title>
+<link rel="stylesheet" href="css/styles.css">
+<link rel="stylesheet" href="css/modal.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="products.html">
+      <span class="glyph" id="wm-glyph">S</span>
+      <span><span class="name" id="wm-name">Sai Kiran Biswal</span><br>
+      <span class="role" id="wm-role">Enterprise · AI Product</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="products.html" class="active">Work</a>
+      <a href="labs.html">Labs</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <span class="nav-status"><span class="pulse"></span> <span id="wm-status">Open to lead PM roles</span></span>
+    </div>
+  </div>
+</nav>
+
+<header class="hero wrap">
+  <div class="reveal">
+    <p class="eyebrow">Product Manager <span class="dot">·</span> Enterprise SaaS · Fintech · AI</p>
+    <h1 class="display">I build enterprise products that <em>think</em> — from problem to platform.</h1>
+  </div>
+  <div class="hero-foot reveal">
+    <p class="lead">Working products, platforms, and case studies — built end-to-end, from discovery through architecture, AI, and go-to-market.</p>
+  </div>
+</header>
+
+<!-- FLAGSHIP (rendered from products.json featured project) -->
+<section class="section wrap" id="flagship-section" style="padding-top:0;"></section>
+
+<!-- SELECTED WORK GRID -->
+<section class="section wrap" style="padding-top:0;">
+  <div class="sec-head reveal">
+    <p class="eyebrow">Selected work</p>
+    <span class="count" id="work-count">Projects across lending, banking & AI</span>
+  </div>
+  <div class="work-list reveal" id="work-list"></div>
+</section>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div><p class="big">Building products from <em>problem</em> to <em>platform.</em></p></div>
+      <div class="footer-col"><h4>Navigate</h4><a href="products.html">Work</a><a href="labs.html">Labs</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+      <div class="footer-col"><h4>Elsewhere</h4>
+        <a id="f-linkedin" href="#" target="_blank" rel="noopener">LinkedIn</a>
+        <a id="f-email" href="#">Email</a>
+        <a id="f-resume" href="assets/resume.pdf" target="_blank" rel="noopener">Résumé (PDF)</a>
+      </div>
+    </div>
+    <div class="footer-base"><span id="f-copy">© 2026 Sai Kiran Biswal — Product Portfolio</span><span>Designed &amp; built end-to-end</span></div>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="app-modal" id="app-modal" aria-hidden="true">
+  <div class="app-modal-backdrop" data-close></div>
+  <div class="app-modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="app-modal-bar">
+      <div class="amb-left">
+        <span class="amb-dot"></span>
+        <span class="amb-title" id="modal-title">Project</span>
+      </div>
+      <div class="amb-right">
+        <a class="amb-link" id="modal-fullpage" href="#" target="_blank" rel="noopener">Open full page ↗</a>
+        <button class="amb-close" data-close aria-label="Close">✕</button>
+      </div>
+    </div>
+    <iframe class="app-modal-frame" id="modal-frame" title="Project preview" loading="lazy"></iframe>
+  </div>
+</div>
+
+<script src="js/reveal.js"></script>
+<script src="js/site.js"></script>
+<script>renderShowcase();</script>
+</body>
+</html>

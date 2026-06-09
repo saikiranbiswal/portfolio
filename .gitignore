@@ -1,0 +1,15 @@
+# Local-only admin CMS — kept OUT of the public deploy.
+# Edit it locally (open admin.html in your browser), Export the JSON,
+# commit the JSON files, and push. The admin itself is never published.
+admin.html
+
+# Local tooling / scratch (not part of the site)
+.claude/
+CLAUDE_CODE_PROMPT.txt
+
+# Browser CMS drafts never live here, but ignore stray exports landing in-repo
+# (export downloads go to your Downloads folder, not here).
+
+# OS noise
+.DS_Store
+Thumbs.db

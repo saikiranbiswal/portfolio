@@ -1,0 +1,133 @@
+{
+  "meta": {
+    "owner": "Sai Kiran Biswal",
+    "role": "Enterprise · AI Product",
+    "glyph": "S",
+    "email": "saikiranbiswal14@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/sai-kiran-biswal",
+    "linkedinLabel": "/in/sai-kiran-biswal",
+    "location": "Hyderabad / Bengaluru · Remote",
+    "resume": "assets/resume.pdf",
+    "status": "Open to lead PM roles",
+    "showRoleOnCards": false
+  },
+  "projects": [
+    {
+      "id": "collections-cloud",
+      "name": "AI Collections Cloud",
+      "description": "An AI-native recovery platform for lenders — collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.",
+      "tags": ["AI", "Fintech", "Collections", "Flagship"],
+      "role": "Product Manager",
+      "year": "2024–2025",
+      "stage": "Flagship",
+      "screenshot": "assets/screenshots/collections-cloud.png",
+      "path": "./apps/collections-cloud/",
+      "displayMode": "page",
+      "featured": true
+    },
+    {
+      "id": "lending-cloud",
+      "name": "Enterprise Lending Cloud",
+      "description": "A unified LOS + LMS + collections + analytics engine — workflow state machines, EMI math, and deterministic demo data, all client-side.",
+      "tags": ["Fintech", "Lending", "SaaS", "Platform"],
+      "role": "Product Manager",
+      "year": "2024",
+      "stage": "Working app",
+      "screenshot": "assets/screenshots/lending-cloud.png",
+      "path": "./apps/lending-cloud/",
+      "displayMode": "modal",
+      "featured": false
+    },
+    {
+      "id": "contract-intelligence",
+      "name": "Contract Intelligence Platform",
+      "description": "An AI platform that reads enterprise contracts, extracts the obligations that matter, and surfaces risk before it becomes a missed renewal or a breach.",
+      "tags": ["AI", "Enterprise", "Legal", "Case study"],
+      "role": "Product Manager",
+      "year": "2023–2024",
+      "stage": "Case study",
+      "screenshot": "assets/screenshots/contract-intelligence.png",
+      "path": "./apps/contract-intelligence/",
+      "displayMode": "page",
+      "featured": false
+    },
+    {
+      "id": "loan-origination-system",
+      "name": "Loan Origination System",
+      "description": "A modern, configurable LOS that compresses application-to-disbursal from days to minutes — without losing the controls a risk team depends on.",
+      "tags": ["Fintech", "Lending", "Case study"],
+      "role": "Product Manager",
+      "year": "2022–2023",
+      "stage": "Case study",
+      "screenshot": "assets/screenshots/loan-origination-system.png",
+      "path": "./apps/loan-origination-system/",
+      "displayMode": "page",
+      "featured": false
+    },
+    {
+      "id": "dashboard-studio",
+      "name": "Dashboard Studio",
+      "description": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
+      "tags": ["Data", "Visualization", "Tools"],
+      "role": "Product Manager",
+      "year": "2025",
+      "stage": "Working app",
+      "screenshot": "assets/screenshots/dashboard-studio.png",
+      "path": "./apps/dashboard-studio/",
+      "displayMode": "modal",
+      "featured": false
+    },
+    {
+      "id": "synthesis",
+      "name": "Synthesis — Strategic Framework Engine",
+      "description": "An offline strategic-framework builder: import data, configure the analysis, and export to PDF, Markdown, CSV, or JSON — entirely in-browser.",
+      "tags": ["Strategy", "Tools", "AI"],
+      "role": "Product Manager",
+      "year": "2025",
+      "stage": "Working app",
+      "screenshot": "assets/screenshots/synthesis.png",
+      "path": "./apps/synthesis/",
+      "displayMode": "modal",
+      "featured": false
+    },
+    {
+      "id": "excel-transformer",
+      "name": "Excel Transformer",
+      "description": "A client-side spreadsheet tool to drop, rename, filter, and re-export Excel/CSV files — no data leaves the page.",
+      "tags": ["Tools", "Data", "Productivity"],
+      "role": "Product Manager",
+      "year": "2025",
+      "stage": "Working app",
+      "screenshot": "assets/screenshots/excel-transformer.png",
+      "path": "./apps/excel-transformer/",
+      "displayMode": "modal",
+      "featured": false
+    },
+    {
+      "id": "excel-merger",
+      "name": "Excel Merger",
+      "description": "An in-browser tool to merge multiple Excel/CSV files — column strategies, header normalization, and gap-fill — fully offline.",
+      "tags": ["Tools", "Data", "Productivity"],
+      "role": "Product Manager",
+      "year": "2025",
+      "stage": "Working app",
+      "screenshot": "assets/screenshots/excel-merger.png",
+      "path": "./apps/excel-merger/",
+      "displayMode": "modal",
+      "featured": false
+    },
+    {
+      "id": "neuralpath",
+      "name": "NeuralPath — AI Concepts Game",
+      "description": "A gamified AI-learning app — concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
+      "tags": ["AI", "Education", "Interactive"],
+      "role": "Product Manager",
+      "year": "2025",
+      "stage": "Working app",
+      "screenshot": "assets/screenshots/neuralpath.png",
+      "path": "./apps/neuralpath/",
+      "displayMode": "modal",
+      "featured": false
+    }
+  ]
+}

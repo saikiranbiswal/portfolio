@@ -1,0 +1,13 @@
+{
+  "hero": {
+    "eyebrow": "Contact",
+    "heading": "Let's build something <em>worth</em> building.",
+    "body": "I'm open to lead, principal, and senior product roles in enterprise SaaS, fintech, and AI — and to a good conversation about a hard problem. The fastest way to reach me is email."
+  },
+  "links": [
+    { "k": "Email", "v": "saikiranbiswal14@gmail.com", "type": "email" },
+    { "k": "LinkedIn", "v": "/in/sai-kiran-biswal", "href": "https://www.linkedin.com/in/sai-kiran-biswal", "external": true },
+    { "k": "Résumé", "v": "Download PDF", "type": "resume", "external": true },
+    { "k": "Location", "v": "Hyderabad / Bengaluru · Remote", "href": "#" }
+  ]
+}

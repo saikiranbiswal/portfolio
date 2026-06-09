@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Excel Merger</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root {
+  --bg: #0a0c10;
+  --surface: #111418;
+  --surface2: #181c23;
+  --surface3: #1f242e;
+  --border: #252b38;
+  --border2: #2e3648;
+  --ink: #e4e9f2;
+  --muted: #6b7794;
+  --muted2: #8b96b2;
+  --gold: #d4ff4f;
+  --gold-dim: rgba(212,255,79,.12);
+  --gold-ink: #0a0c10;
+  --red: #ff5c5c;
+  --blue: #5ca8ff;
+  --green: #4fffa0;
+  --purple: #c084fc;
+  --orange: #ff9a3c;
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+html.light {
+  --bg: #f0f2f7;
+  --surface: #ffffff;
+  --surface2: #f5f7fb;
+  --surface3: #ebeef5;
+  --border: #d4d9e8;
+  --border2: #c0c8dc;
+  --ink: #1a1f2e;
+  --muted: #6b7794;
+  --muted2: #4a5270;
+  --gold: #7c6f00;
+  --gold-dim: rgba(124,111,0,.1);
+  --gold-ink: #ffffff;
+  --red: #d42020;
+  --blue: #1a6fd4;
+  --green: #0d8a4a;
+  --purple: #7c3aed;
+  --orange: #c45a00;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{
+  font-family:"Georgia","Iowan Old Style",serif;
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100vh;
+  padding:36px 20px 80px;
+  transition:background .25s,color .25s;
+}
+html.light body { background: linear-gradient(135deg,#f0f2f7 0%,#e8ecf7 100%); }
+.wrap{max-width:980px;margin:0 auto;}
+
+/* ---- Header ---- */
+header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:36px;gap:12px;}
+.header-left h1{font-size:2.4rem;letter-spacing:-1.5px;font-weight:700;line-height:1;}
+.header-left h1 .dot{color:var(--gold);}
+.header-left .sub{color:var(--muted);font-family:ui-monospace,monospace;font-size:.78rem;margin-top:6px;}
+.theme-toggle{
+  background:var(--surface2);border:1px solid var(--border);color:var(--ink);
+  border-radius:var(--radius-sm);padding:8px 13px;font-size:.8rem;cursor:pointer;
+  font-family:ui-monospace,monospace;white-space:nowrap;flex-shrink:0;margin-top:4px;
+  transition:border-color .15s;
+}
+.theme-toggle:hover{border-color:var(--gold);}
+
+/* ---- Cards ---- */
+.card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--radius);padding:22px;margin-bottom:16px;
+}
+.card-title{
+  font-family:ui-monospace,monospace;font-size:.72rem;text-transform:uppercase;
+  letter-spacing:2.5px;color:var(--gold);display:flex;align-items:center;gap:8px;margin-bottom:16px;
+}
+.step-badge{
+  background:var(--gold);color:var(--gold-ink);width:20px;height:20px;
+  border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  font-size:.68rem;font-weight:800;font-family:ui-monospace,monospace;flex-shrink:0;
+}
+
+/* ---- Drop zone ---- */
+.drop-zone{
+  border:2px dashed var(--border2);border-radius:var(--radius);
+  padding:48px 24px;text-align:center;cursor:pointer;transition:.2s;
+}
+.drop-zone:hover,.drop-zone.over{border-color:var(--gold);background:var(--gold-dim);}
+.drop-zone .dz-icon{font-size:2.4rem;margin-bottom:10px;}
+.drop-zone strong{color:var(--ink);font-size:1.05rem;}
+.drop-zone p{color:var(--muted);font-family:ui-monospace,monospace;font-size:.78rem;margin-top:5px;}
+input[type=file]{display:none;}
+
+/* ---- File cards ---- */
+.file-cards{display:flex;flex-direction:column;gap:8px;margin-top:14px;}
+.file-card{
+  background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 14px;display:flex;align-items:center;gap:10px;
+}
+.file-card .fc-name{flex:1;font-family:ui-monospace,monospace;font-size:.8rem;color:var(--ink);}
+.file-card .fc-rows{font-family:ui-monospace,monospace;font-size:.72rem;color:var(--muted);}
+.fc-sheet{background:var(--surface3);border:1px solid var(--border);color:var(--ink);
+  padding:4px 8px;border-radius:5px;font-family:ui-monospace,monospace;font-size:.75rem;max-width:160px;}
+.fc-remove{background:transparent;border:none;color:var(--red);cursor:pointer;font-size:.9rem;padding:2px 5px;border-radius:4px;}
+.fc-remove:hover{background:rgba(255,92,92,.12);}
+
+/* ---- Stats bar ---- */
+.stats-bar{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:16px;}
+.stat-pill{
+  background:var(--surface2);border:1px solid var(--border);border-radius:20px;
+  padding:5px 14px;font-family:ui-monospace,monospace;font-size:.75rem;color:var(--muted2);
+  display:flex;align-items:center;gap:6px;
+}
+.stat-pill b{color:var(--ink);}
+
+/* ---- Form elements ---- */
+label.field{display:block;font-size:.72rem;color:var(--muted);margin-bottom:5px;font-family:ui-monospace,monospace;}
+select,input[type=text],input[type=number]{
+  background:var(--surface2);border:1px solid var(--border);color:var(--ink);
+  padding:8px 10px;border-radius:var(--radius-sm);
+  font-family:ui-monospace,monospace;font-size:.82rem;width:100%;transition:.15s;
+}
+select:focus,input:focus{outline:none;border-color:var(--gold);}
+.hint{font-family:ui-monospace,monospace;font-size:.7rem;color:var(--muted);margin-top:4px;}
+
+/* ---- Buttons ---- */
+button{font-family:ui-monospace,monospace;cursor:pointer;border:none;border-radius:var(--radius-sm);font-size:.8rem;}
+.btn-add{background:transparent;border:1px solid var(--border);color:var(--muted2);padding:8px 14px;}
+.btn-add:hover{border-color:var(--gold);color:var(--gold);}
+.btn-del{background:transparent;border:1px solid var(--border);color:var(--red);padding:8px 11px;height:36px;}
+.btn-del:hover{background:rgba(255,92,92,.1);}
+.btn-mini{background:var(--surface2);border:1px solid var(--border);color:var(--muted2);padding:5px 11px;font-size:.72rem;}
+.btn-mini:hover{border-color:var(--gold);color:var(--gold);}
+.btn-primary{
+  background:var(--gold);color:var(--gold-ink);padding:12px 26px;
+  font-weight:700;font-size:.88rem;letter-spacing:.4px;
+}
+.btn-primary:hover{filter:brightness(1.08);}
+.btn-primary:disabled{opacity:.35;cursor:not-allowed;}
+.btn-secondary{
+  background:var(--surface2);color:var(--ink);border:1px solid var(--border);
+  padding:12px 22px;font-size:.85rem;
+}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold);}
+.btn-merge{
+  background:var(--gold);color:var(--gold-ink);padding:14px 36px;
+  font-weight:800;font-size:1rem;letter-spacing:.5px;border-radius:var(--radius);
+  width:100%;
+}
+.btn-merge:hover{filter:brightness(1.1);}
+.btn-merge:disabled{opacity:.35;cursor:not-allowed;}
+
+/* ---- Grid helpers ---- */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;}
+@media(max-width:600px){.grid-2,.grid-3{grid-template-columns:1fr;}}
+.row-end{display:flex;gap:10px;align-items:flex-end;}
+
+/* ---- Column chips ---- */
+.cols-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:8px;}
+.col-chip{
+  display:flex;align-items:center;gap:7px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:8px 10px;font-family:ui-monospace,monospace;font-size:.78rem;cursor:pointer;user-select:none;
+}
+.col-chip input{accent-color:var(--gold);width:14px;height:14px;flex-shrink:0;}
+.col-chip.dropped{opacity:.38;text-decoration:line-through;}
+
+/* ---- Rename / filter rows ---- */
+.rename-row,.filter-row{display:grid;gap:10px;margin-bottom:10px;align-items:end;}
+.rename-row{grid-template-columns:1fr 22px 1fr auto;}
+.filter-row{grid-template-columns:1fr 120px 1fr auto;}
+.arrow-mid{text-align:center;color:var(--muted);padding-bottom:8px;font-size:.9rem;}
+.conj-wrap{font-family:ui-monospace,monospace;font-size:.72rem;color:var(--muted);margin:4px 0 10px;}
+.conj-wrap select{width:auto;display:inline-block;padding:3px 7px;}
+
+/* ---- Merge settings ---- */
+.strategy-hint{font-family:ui-monospace,monospace;font-size:.7rem;color:var(--blue);margin-top:5px;}
+.radio-group{display:flex;flex-direction:column;gap:6px;margin-top:4px;}
+.radio-opt{
+  display:flex;align-items:flex-start;gap:8px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:var(--radius-sm);padding:8px 10px;
+  cursor:pointer;transition:.15s;
+}
+.radio-opt:hover{border-color:var(--border2);}
+.radio-opt.selected{border-color:var(--gold);background:var(--gold-dim);}
+.radio-opt input[type=radio]{accent-color:var(--gold);margin-top:2px;flex-shrink:0;}
+.radio-opt .ro-label{font-family:ui-monospace,monospace;font-size:.8rem;color:var(--ink);}
+.radio-opt .ro-desc{font-family:ui-monospace,monospace;font-size:.68rem;color:var(--muted);margin-top:2px;}
+
+/* ---- NEW: Fill strategy special options ---- */
+.fill-strategy-panel{margin-top:12px;}
+.seed-row{display:flex;gap:8px;align-items:center;margin-top:8px;}
+.seed-row label{font-family:ui-monospace,monospace;font-size:.72rem;color:var(--muted);white-space:nowrap;}
+.seed-row input[type=text]{width:140px;}
+.seed-row input[type=checkbox]{accent-color:var(--gold);width:14px;height:14px;}
+.gen-badge{
+  display:inline-block;background:var(--purple);color:#fff;
+  font-family:ui-monospace,monospace;font-size:.6rem;padding:1px 5px;border-radius:3px;
+  vertical-align:middle;margin-left:4px;text-transform:uppercase;letter-spacing:.5px;
+}
+.ref-badge{
+  display:inline-block;background:var(--green);color:#0a0c10;
+  font-family:ui-monospace,monospace;font-size:.6rem;padding:1px 5px;border-radius:3px;
+  vertical-align:middle;margin-left:4px;text-transform:uppercase;letter-spacing:.5px;
+}
+
+/* ---- Column analysis ---- */
+.analysis-grid{display:flex;flex-direction:column;gap:6px;}
+.analysis-row{
+  display:grid;gap:8px;align-items:center;
+  font-family:ui-monospace,monospace;font-size:.75rem;
+}
+.analysis-row{grid-template-columns:180px 1fr;}
+.analysis-fname{color:var(--muted2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.chips-row{display:flex;flex-wrap:wrap;gap:4px;}
+.achip{
+  display:inline-flex;align-items:center;padding:2px 7px;border-radius:3px;
+  font-size:.65rem;font-family:ui-monospace,monospace;
+}
+.achip.present{background:rgba(79,255,160,.15);color:var(--green);border:1px solid rgba(79,255,160,.3);}
+.achip.missing{background:rgba(255,92,92,.12);color:var(--red);border:1px solid rgba(255,92,92,.25);}
+.legend{display:flex;gap:12px;margin-bottom:10px;align-items:center;}
+.legend-item{display:flex;align-items:center;gap:5px;font-family:ui-monospace,monospace;font-size:.7rem;color:var(--muted);}
+.legend-dot{width:10px;height:10px;border-radius:2px;}
+
+/* ---- Per-column gap panel ---- */
+.gap-table{width:100%;border-collapse:collapse;font-family:ui-monospace,monospace;font-size:.75rem;margin-top:10px;}
+.gap-table th{
+  background:var(--surface2);color:var(--gold);padding:6px 10px;text-align:left;
+  border-bottom:1px solid var(--border);font-size:.68rem;text-transform:uppercase;letter-spacing:1.5px;
+}
+.gap-table td{padding:6px 10px;border-bottom:1px solid var(--border);color:var(--muted2);}
+.gap-table td select,.gap-table td input{font-size:.72rem;padding:4px 7px;}
+
+/* ---- Preview table ---- */
+.preview-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-sm);max-height:380px;}
+table.preview{border-collapse:collapse;width:100%;font-family:ui-monospace,monospace;font-size:.75rem;}
+table.preview th{
+  background:var(--surface2);color:var(--gold);padding:7px 10px;
+  position:sticky;top:0;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;
+}
+table.preview td{padding:6px 10px;border-bottom:1px solid var(--border);color:var(--muted2);white-space:nowrap;}
+table.preview td.filled-ref{color:var(--green);}
+table.preview td.filled-gen{color:var(--purple);}
+.src-pill{
+  display:inline-block;border-radius:3px;font-size:.6rem;padding:1px 5px;
+  font-family:ui-monospace,monospace;margin-right:4px;vertical-align:middle;
+}
+
+/* ---- Toast ---- */
+.toast-wrap{position:fixed;bottom:20px;right:20px;display:flex;flex-direction:column;gap:7px;z-index:999;}
+.toast{
+  background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 16px;font-family:ui-monospace,monospace;font-size:.78rem;color:var(--ink);
+  max-width:320px;animation:fadeIn .2s ease;
+}
+.toast.error{border-color:var(--red);color:var(--red);}
+.toast.success{border-color:var(--green);color:var(--green);}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ---- Actions ---- */
+.export-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;}
+.export-info{font-family:ui-monospace,monospace;font-size:.75rem;color:var(--muted);}
+.export-info b{color:var(--ink);}
+
+/* ---- Sortable column reorder ---- */
+.sortable-cols{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
+.sort-col-item{
+  display:flex;align-items:center;gap:8px;background:var(--surface2);
+  border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:7px 10px;font-family:ui-monospace,monospace;font-size:.78rem;cursor:grab;
+  user-select:none;transition:.1s;
+}
+.sort-col-item:active{cursor:grabbing;}
+.sort-col-item.dragging{opacity:.4;}
+.sort-col-item.drag-over{border-color:var(--gold);background:var(--gold-dim);}
+.drag-handle{color:var(--muted);font-size:.9rem;}
+
+.hidden{display:none;}
+.divider{height:1px;background:var(--border);margin:14px 0;}
+footer{text-align:center;color:var(--muted);font-family:ui-monospace,monospace;font-size:.68rem;margin-top:36px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="header-left">
+    <h1>Excel Merger<span class="dot">.</span></h1>
+    <div class="sub">merge · fill gaps · generate data · export — 100% in-browser</div>
+  </div>
+  <button class="theme-toggle" id="themeToggle">☀️ Light</button>
+</header>
+
+<!-- ═══ STEP 1: FILES ═══ -->
+<div class="card">
+  <div class="card-title"><span class="step-badge">1</span>Upload Files</div>
+  <div class="drop-zone" id="dropZone">
+    <div class="dz-icon">📂</div>
+    <strong>Drop Excel / CSV files here</strong>
+    <p>or click to browse · .xlsx .xls .csv · multiple files supported</p>
+  </div>
+  <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" multiple>
+  <div class="file-cards" id="fileCards"></div>
+</div>
+
+<!-- ═══ STEP 2: MERGE SETTINGS ═══ -->
+<div class="card hidden" id="settingsCard">
+  <div class="card-title"><span class="step-badge">2</span>Merge Settings</div>
+
+  <div class="grid-2">
+    <div>
+      <label class="field">Column Strategy</label>
+      <select id="colStrategy">
+        <option value="union">Union — all columns from all files</option>
+        <option value="intersection">Intersection — only shared columns</option>
+        <option value="first">First File — columns from file 1 only</option>
+        <option value="majority">Majority — columns in ≥50% of files</option>
+        <option value="priority">Priority Order — first file wins</option>
+      </select>
+      <div class="strategy-hint" id="stratHint"></div>
+    </div>
+    <div>
+      <label class="field">Header Normalization</label>
+      <select id="normStrat">
+        <option value="none">None — exact match</option>
+        <option value="trim">Trim whitespace</option>
+        <option value="lower">Lowercase + trim</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- GAP FILL STRATEGY -->
+  <label class="field" style="margin-bottom:8px;">Gap Fill Strategy — what to put in missing cells</label>
+  <div class="radio-group" id="fillRadioGroup">
+
+    <label class="radio-opt" onclick="selectFill(this,'empty')">
+      <input type="radio" name="fillStrat" value="empty" checked>
+      <div><div class="ro-label">Leave Empty</div><div class="ro-desc">Missing cells stay blank</div></div>
+    </label>
+
+    <label class="radio-opt" onclick="selectFill(this,'na')">
+      <input type="radio" name="fillStrat" value="na">
+      <div><div class="ro-label">N/A</div><div class="ro-desc">Fill missing with the text "N/A"</div></div>
+    </label>
+
+    <label class="radio-opt" onclick="selectFill(this,'zero')">
+      <input type="radio" name="fillStrat" value="zero">
+      <div><div class="ro-label">Zero (0)</div><div class="ro-desc">Fill missing cells with 0</div></div>
+    </label>
+
+    <label class="radio-opt" onclick="selectFill(this,'dash')">
+      <input type="radio" name="fillStrat" value="dash">
+      <div><div class="ro-label">Dash (—)</div><div class="ro-desc">Fill missing with an em-dash placeholder</div></div>
+    </label>
+
+    <label class="radio-opt" onclick="selectFill(this,'custom')">
+      <input type="radio" name="fillStrat" value="custom">
+      <div style="flex:1">
+        <div class="ro-label">Custom Value</div>
+        <div class="ro-desc">Specify any text or number</div>
+        <input type="text" id="customFillVal" placeholder="e.g. MISSING" style="margin-top:6px;" onclick="event.stopPropagation()">
+      </div>
+    </label>
+
+    <!-- NEW: Copy from Matched File -->
+    <label class="radio-opt" onclick="selectFill(this,'copy_ref')">
+      <input type="radio" name="fillStrat" value="copy_ref">
+      <div>
+        <div class="ro-label">Copy from Matched File <span class="ref-badge">Smart</span></div>
+        <div class="ro-desc">For each missing cell, find a file that has the column and copy its value. For multi-file merges, uses the first file that has real data in that column (row-matched where possible, otherwise cycled).</div>
+      </div>
+    </label>
+
+    <!-- NEW: Generate Random Data -->
+    <label class="radio-opt" onclick="selectFill(this,'random_gen')">
+      <input type="radio" name="fillStrat" value="random_gen">
+      <div style="flex:1">
+        <div class="ro-label">Generate Random Data <span class="gen-badge">Synthetic</span></div>
+        <div class="ro-desc">Auto-detects column type (email, phone, name, date, ID, address, number…) and generates realistic dummy data.</div>
+        <div class="seed-row" onclick="event.stopPropagation()">
+          <input type="checkbox" id="useSeed" checked>
+          <label for="useSeed" style="font-family:ui-monospace,monospace;font-size:.7rem;color:var(--muted);">Seeded (consistent per-column)</label>
+          <input type="text" id="seedVal" value="42" placeholder="seed" style="width:70px;" title="Seed value">
+        </div>
+      </div>
+    </label>
+
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- PER-COLUMN GAP DECISIONS -->
+  <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+    <input type="checkbox" id="perColToggle" style="accent-color:var(--gold);width:15px;height:15px;">
+    <label for="perColToggle" style="font-family:ui-monospace,monospace;font-size:.78rem;color:var(--ink);cursor:pointer;">
+      Per-Column Gap Decisions (override global fill per column)
+    </label>
+  </div>
+  <div class="hidden" id="perColPanel">
+    <div style="display:flex;gap:8px;margin-bottom:8px;">
+      <button class="btn-mini" id="applyGlobalToAll">↺ Reset all to global</button>
+    </div>
+    <div id="perColTable"></div>
+  </div>
+</div>
+
+<!-- ═══ STEP 3: COLUMN ANALYSIS ═══ -->
+<div class="card hidden" id="analysisCard">
+  <div class="card-title"><span class="step-badge">3</span>Column Analysis</div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(79,255,160,.5);border:1px solid var(--green);"></div>Present in file</div>
+    <div class="legend-item"><div class="legend-dot" style="background:rgba(255,92,92,.3);border:1px solid var(--red);"></div>Missing from file</div>
+  </div>
+  <div class="analysis-grid" id="analysisGrid"></div>
+</div>
+
+<!-- ═══ STEP 4: MERGE ═══ -->
+<div class="card hidden" id="mergeCard">
+  <div class="card-title"><span class="step-badge">4</span>Merge</div>
+  <button class="btn-merge" id="mergeBtn">⚡ Merge Files</button>
+</div>
+
+<!-- ═══ STEP 5: RESULT ═══ -->
+<div class="card hidden" id="resultCard">
+  <div class="card-title"><span class="step-badge">5</span>Preview &amp; Export</div>
+
+  <!-- Stats -->
+  <div class="stats-bar" id="statsBar"></div>
+
+  <!-- Column reorder -->
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+      <label class="field" style="margin:0;">Column Order (drag to reorder)</label>
+      <button class="btn-mini" id="resetColOrder">Reset order</button>
+    </div>
+    <div class="sortable-cols" id="sortableCols"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Preview -->
+  <div class="export-info" id="previewMeta" style="margin-bottom:8px;"></div>
+  <div class="preview-wrap"><table class="preview" id="previewTable"></table></div>
+
+  <!-- Export -->
+  <div class="export-row">
+    <button class="btn-primary" id="downloadXlsx">⬇ Download .xlsx</button>
+    <button class="btn-secondary" id="downloadCsv">⬇ Download .csv</button>
+    <span class="export-info" id="exportInfo"></span>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<footer>100% client-side · no data leaves this browser · share this file to share the tool</footer>
+
+<script>
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let files = [];          // [{id, name, wb, sheetName, rows, headers}]
+let mergeResult = null;  // {headers, rows, filledCells}
+let colOrder = [];       // current output column order (post-merge)
+let perColFills = {};    // {colKey: {type, custom}}
+
+const $ = id => document.getElementById(id);
+
+// ── Theme ──────────────────────────────────────
+const savedTheme = localStorage.getItem('xl-theme');
+if (savedTheme === 'light') applyTheme('light');
+function applyTheme(t) {
+  document.documentElement.classList.toggle('light', t === 'light');
+  $('themeToggle').textContent = t === 'light' ? '🌙 Dark' : '☀️ Light';
+  localStorage.setItem('xl-theme', t);
+}
+$('themeToggle').onclick = () => applyTheme(document.documentElement.classList.contains('light') ? 'dark' : 'light');
+
+// ══════════════════════════════════════════════
+//  RANDOM DATA GENERATOR
+// ══════════════════════════════════════════════
+
+// Seeded PRNG (mulberry32)
+function makePRNG(seed) {
+  let s = seed >>> 0;
+  if (s === 0) s = 1;
+  return function() {
+    s += 0x6D2B79F5;
+    let t = s;
+    t = Math.imul(t ^ t >>> 15, t | 1);
+    t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+    return ((t ^ t >>> 14) >>> 0) / 4294967296;
+  };
+}
+
+function hashStr(str) {
+  let h = 5381;
+  for (let i = 0; i < str.length; i++) h = (h * 33 ^ str.charCodeAt(i)) >>> 0;
+  return h;
+}
+
+// Column type detector based on header name
+function detectColType(header) {
+  const h = header.toLowerCase().replace(/[\s_-]/g, '');
+  if (/email|mail/.test(h)) return 'email';
+  if (/phone|mobile|cell|tel/.test(h)) return 'phone';
+  if (/firstname|fname|givenname/.test(h)) return 'firstname';
+  if (/lastname|lname|surname|familyname/.test(h)) return 'lastname';
+  if (/(^|_)(name|fullname|personname|username)/.test(h) || /^name$/.test(h)) return 'fullname';
+  if (/dob|birthdate|dateofbirth|birthday/.test(h)) return 'dob';
+  if (/date|time|timestamp|created|updated|modified/.test(h)) return 'date';
+  if (/age/.test(h)) return 'age';
+  if (/salary|income|revenue|amount|price|cost|budget|pay/.test(h)) return 'money';
+  if (/zip|postal|pincode/.test(h)) return 'zip';
+  if (/city|town/.test(h)) return 'city';
+  if (/state|province|region/.test(h)) return 'state';
+  if (/country|nation/.test(h)) return 'country';
+  if (/address|street|addr/.test(h)) return 'address';
+  if (/gender|sex/.test(h)) return 'gender';
+  if (/company|employer|org|organisation|organization/.test(h)) return 'company';
+  if (/department|dept|division/.test(h)) return 'department';
+  if (/jobtitle|title|position|role|designation/.test(h)) return 'jobtitle';
+  if (/id$|_id|uuid|guid|ref|code/.test(h)) return 'id';
+  if (/score|rating|rank/.test(h)) return 'score';
+  if (/percent|pct|ratio/.test(h)) return 'percent';
+  if (/count|qty|quantity|num|number/.test(h)) return 'count';
+  if (/url|website|link|domain/.test(h)) return 'url';
+  if (/ip|ipaddr/.test(h)) return 'ip';
+  if (/status|state/.test(h)) return 'status';
+  if (/note|comment|remark|desc|description/.test(h)) return 'text';
+  return 'generic';
+}
+
+const DATA = {
+  firstnames: ['James','Emma','Liam','Olivia','Noah','Ava','William','Sophia','Oliver','Isabella','Benjamin','Mia','Elijah','Charlotte','Lucas','Amelia','Mason','Harper','Logan','Evelyn','Alexander','Abigail','Ethan','Emily','Daniel','Ella','Jacob','Madison','Michael','Scarlett','Henry','Victoria','Jackson','Aria','Sebastian','Chloe','Aiden','Penelope','Matthew','Layla','Samuel','Grace','David','Zoey','Joseph','Nora','Owen','Lily','Wyatt','Eleanor','John','Hannah','Ryan','Lillian','Nathan','Addison','Carter','Aubrey','Caleb','Ellie','Luke','Stella','Isaac','Natalie','Gabriel','Zoe','Anthony','Leah','Dylan','Hazel','Lincoln','Violet','Jayden','Aurora','Easton','Savannah','Jordan','Audrey','Evan','Brooklyn','Landon','Bella','Hunter','Claire','Jaxon','Skylar','Jonathan','Lucy','Grayson','Paisley','Cooper','Everly','Adam','Anna'],
+  lastnames: ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas','Taylor','Moore','Jackson','Martin','Lee','Perez','Thompson','White','Harris','Sanchez','Clark','Ramirez','Lewis','Robinson','Walker','Young','Hall','Allen','King','Wright','Scott','Torres','Nguyen','Hill','Flores','Green','Adams','Nelson','Baker','Hall','Rivera','Campbell','Mitchell','Carter','Roberts','Gomez','Phillips','Evans','Turner','Diaz','Parker','Cruz','Edwards','Collins','Reyes','Stewart','Morris','Morales','Murphy','Cook','Rogers','Gutierrez','Ortiz','Morgan','Cooper','Peterson','Bailey','Reed','Kelly','Howard','Ramos','Kim','Cox','Ward','Richardson','Watson','Brooks','Chavez','Wood','James','Bennett','Gray','Mendoza','Ruiz','Hughes','Price','Alvarez','Castillo','Sanders','Patel','Myers'],
+  companies: ['Acme Corp','Bright Solutions','Nexus Analytics','Horizon Tech','Blue Ridge Partners','Summit Consulting','Delta Systems','Apex Global','Vertex Labs','Core Dynamics','Pinnacle Group','Fusion Works','Echo Industries','Nova Digital','Orbit Media','Cascade Technologies','Ember Ventures','Crest Capital','Peak Innovations','Slate Enterprises','Forge Creative','Drift Analytics','Pulse Networks','Spark Media','Radius Group','Beacon Consulting','Flux Systems','Prism Solutions','Ridge Partners','Anchor Tech'],
+  cities: ['New York','Los Angeles','Chicago','Houston','Phoenix','Philadelphia','San Antonio','San Diego','Dallas','San Jose','Austin','Jacksonville','Fort Worth','Columbus','Charlotte','Indianapolis','San Francisco','Seattle','Denver','Washington','Nashville','Oklahoma City','El Paso','Boston','Portland','Las Vegas','Memphis','Louisville','Baltimore','Milwaukee'],
+  states: ['Alabama','Alaska','Arizona','Arkansas','California','Colorado','Connecticut','Delaware','Florida','Georgia','Hawaii','Idaho','Illinois','Indiana','Iowa','Kansas','Kentucky','Louisiana','Maine','Maryland','Massachusetts','Michigan','Minnesota','Mississippi','Missouri','Montana','Nebraska','Nevada','New Hampshire','New Jersey','New Mexico','New York','North Carolina','North Dakota','Ohio','Oklahoma','Oregon','Pennsylvania','Rhode Island','South Carolina','South Dakota','Tennessee','Texas','Utah','Vermont','Virginia','Washington','West Virginia','Wisconsin','Wyoming'],
+  countries: ['United States','United Kingdom','Canada','Australia','Germany','France','Japan','India','Brazil','China','Mexico','South Korea','Italy','Spain','Netherlands','Sweden','Norway','Denmark','Finland','Switzerland','Singapore','New Zealand','South Africa','Argentina','Nigeria'],
+  departments: ['Engineering','Marketing','Sales','Finance','HR','Operations','Legal','Product','Design','Support','Research','IT','Procurement','Logistics','Strategy'],
+  jobtitles: ['Software Engineer','Product Manager','Data Analyst','Marketing Manager','Sales Representative','HR Specialist','Financial Analyst','Operations Manager','Business Analyst','UX Designer','DevOps Engineer','Data Scientist','Account Executive','Project Manager','Content Strategist','QA Engineer','Solutions Architect','Customer Success Manager','Growth Hacker','CTO'],
+  statuses: ['Active','Inactive','Pending','Approved','Rejected','Under Review','Completed','Cancelled','On Hold','Archived'],
+  domains: ['gmail.com','outlook.com','yahoo.com','icloud.com','protonmail.com','company.io','enterprise.co','techfirm.net','biz.org','corp.com'],
+  streets: ['Main St','Oak Ave','Elm St','Maple Dr','Cedar Ln','Pine Rd','Walnut Blvd','Willow Way','Birch Ct','Spruce St','Ash Ave','Poplar Dr','Cherry Ln','Hickory Rd','Chestnut Blvd'],
+  tlds: ['.com','.io','.co','.net','.org','.app','.tech'],
+};
+
+function randItem(arr, rng) { return arr[Math.floor(rng() * arr.length)]; }
+function randInt(min, max, rng) { return Math.floor(rng() * (max - min + 1)) + min; }
+function padNum(n, len=2) { return String(n).padStart(len,'0'); }
+
+function generateValue(colType, rng) {
+  switch(colType) {
+    case 'firstname': return randItem(DATA.firstnames, rng);
+    case 'lastname': return randItem(DATA.lastnames, rng);
+    case 'fullname': return randItem(DATA.firstnames, rng) + ' ' + randItem(DATA.lastnames, rng);
+    case 'email': {
+      const fn = randItem(DATA.firstnames, rng).toLowerCase();
+      const ln = randItem(DATA.lastnames, rng).toLowerCase();
+      return fn + '.' + ln + randInt(1,999,rng) + '@' + randItem(DATA.domains, rng);
+    }
+    case 'phone': {
+      const area = randInt(200,999,rng);
+      const mid = randInt(200,999,rng);
+      const end = randInt(1000,9999,rng);
+      return `(${area}) ${mid}-${end}`;
+    }
+    case 'dob':
+    case 'date': {
+      const y = randInt(1970, 2024, rng);
+      const m = randInt(1, 12, rng);
+      const d = randInt(1, 28, rng);
+      return `${y}-${padNum(m)}-${padNum(d)}`;
+    }
+    case 'age': return randInt(18, 72, rng);
+    case 'money': return parseFloat((randInt(30000, 250000, rng) + rng()).toFixed(2));
+    case 'zip': return padNum(randInt(10000, 99999, rng), 5);
+    case 'city': return randItem(DATA.cities, rng);
+    case 'state': return randItem(DATA.states, rng);
+    case 'country': return randItem(DATA.countries, rng);
+    case 'address': {
+      const num = randInt(1, 9999, rng);
+      const st = randItem(DATA.streets, rng);
+      const city = randItem(DATA.cities, rng);
+      const state = randItem(DATA.states, rng).substring(0,2).toUpperCase();
+      return `${num} ${st}, ${city}, ${state} ${padNum(randInt(10000,99999,rng),5)}`;
+    }
+    case 'gender': return rng() > 0.5 ? 'Male' : 'Female';
+    case 'company': return randItem(DATA.companies, rng);
+    case 'department': return randItem(DATA.departments, rng);
+    case 'jobtitle': return randItem(DATA.jobtitles, rng);
+    case 'id': {
+      const hex = () => randInt(0, 0xffff, rng).toString(16).padStart(4,'0');
+      return `${hex()}${hex()}-${hex()}-${hex()}-${hex()}-${hex()}${hex()}${hex()}`;
+    }
+    case 'score': return parseFloat((rng() * 10).toFixed(1));
+    case 'percent': return parseFloat((rng() * 100).toFixed(2));
+    case 'count': return randInt(0, 1000, rng);
+    case 'url': {
+      const fn = randItem(DATA.firstnames, rng).toLowerCase();
+      const ln = randItem(DATA.lastnames, rng).toLowerCase();
+      const tld = randItem(DATA.tlds, rng);
+      return `https://${fn}${ln}${tld}`;
+    }
+    case 'ip': return `${randInt(1,254,rng)}.${randInt(0,255,rng)}.${randInt(0,255,rng)}.${randInt(1,254,rng)}`;
+    case 'status': return randItem(DATA.statuses, rng);
+    case 'text': {
+      const words = ['Looks good','Needs review','Follow up required','High priority','Completed successfully','Pending approval','In progress','No action needed','Escalated','Resolved'];
+      return randItem(words, rng);
+    }
+    default: return `VAL-${randInt(1000,9999,rng)}`;
+  }
+}
+
+// ══════════════════════════════════════════════
+//  FILE HANDLING
+// ══════════════════════════════════════════════
+const dropZone = $('dropZone');
+dropZone.onclick = () => $('fileInput').click();
+['dragover','dragenter'].forEach(e => dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.add('over'); }));
+['dragleave','drop'].forEach(e => dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.remove('over'); }));
+dropZone.addEventListener('drop', ev => { if (ev.dataTransfer.files.length) handleFiles(ev.dataTransfer.files); });
+$('fileInput').onchange = () => { if ($('fileInput').files.length) handleFiles($('fileInput').files); };
+
+function handleFiles(fileList) {
+  [...fileList].forEach(f => {
+    if (files.find(x => x.name === f.name)) { toast(`"${f.name}" already added`, 'error'); return; }
+    const id = Date.now() + Math.random();
+    const reader = new FileReader();
+    reader.onload = e => {
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      const sheetName = wb.SheetNames[0];
+      const { rows, headers } = parseSheet(wb, sheetName);
+      files.push({ id, name: f.name, wb, sheetName, rows, headers });
+      renderFileCards();
+      updateUI();
+    };
+    reader.readAsArrayBuffer(f);
+  });
+}
+
+function parseSheet(wb, sheetName) {
+  const ws = wb.Sheets[sheetName];
+  const hdrMatrix = XLSX.utils.sheet_to_json(ws, { header: 1 });
+  const headers = (hdrMatrix[0] || []).map(h => String(h));
+  const rows = XLSX.utils.sheet_to_json(ws, { defval: '', raw: true });
+  return { rows, headers };
+}
+
+function removeFile(id) {
+  files = files.filter(f => f.id != id);
+  renderFileCards();
+  updateUI();
+  mergeResult = null;
+  $('resultCard').classList.add('hidden');
+}
+
+function changeSheet(id, sheetName) {
+  const f = files.find(x => x.id == id);
+  if (!f) return;
+  f.sheetName = sheetName;
+  const { rows, headers } = parseSheet(f.wb, sheetName);
+  f.rows = rows; f.headers = headers;
+  updateUI();
+}
+
+function renderFileCards() {
+  const container = $('fileCards');
+  container.innerHTML = '';
+  files.forEach(f => {
+    const div = document.createElement('div');
+    div.className = 'file-card';
+    const multiSheet = f.wb.SheetNames.length > 1;
+    const sheetSel = multiSheet
+      ? `<select class="fc-sheet" onchange="changeSheet(${f.id}, this.value)">${f.wb.SheetNames.map(s=>`<option value="${escAttr(s)}" ${s===f.sheetName?'selected':''}>${escHtml(s)}</option>`).join('')}</select>`
+      : '';
+    div.innerHTML = `
+      <span class="fc-name">${escHtml(f.name)}</span>
+      ${sheetSel}
+      <span class="fc-rows">${f.rows.length} rows · ${f.headers.length} cols</span>
+      <button class="fc-remove" onclick="removeFile(${f.id})">✕</button>
+    `;
+    container.appendChild(div);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  UI STATE
+// ══════════════════════════════════════════════
+function updateUI() {
+  const has = files.length > 0;
+  $('settingsCard').classList.toggle('hidden', !has);
+  $('analysisCard').classList.toggle('hidden', !has);
+  $('mergeCard').classList.toggle('hidden', !has);
+  if (has) { renderAnalysis(); renderPerColPanel(); }
+}
+
+// ── Strategy hint ──────────────────────────────
+const HINTS = {
+  union: 'Output contains every column found across all files. Missing cells get the gap fill value.',
+  intersection: 'Output contains only columns that appear in every single file. No missing cells.',
+  first: 'Output follows the column list of the first file. Extra columns in other files are ignored.',
+  majority: 'Output contains columns present in at least half of the uploaded files.',
+  priority: 'Output columns ordered by their first appearance across files in upload order.'
+};
+$('colStrategy').onchange = function() {
+  $('stratHint').textContent = HINTS[this.value] || '';
+  updateUI();
+};
+$('stratHint').textContent = HINTS[$('colStrategy').value];
+$('normStrat').onchange = updateUI;
+
+// ── Fill strategy radio ─────────────────────────
+function selectFill(label, val) {
+  document.querySelectorAll('.radio-opt').forEach(l => l.classList.remove('selected'));
+  label.classList.add('selected');
+  label.querySelector('input[type=radio]').checked = true;
+  $('customFillVal').disabled = val !== 'custom';
+  $('customFillVal').style.opacity = val !== 'custom' ? .4 : 1;
+  const seedRow = document.querySelector('.seed-row');
+  seedRow.style.display = val === 'random_gen' ? 'flex' : 'none';
+}
+// init state
+$('customFillVal').disabled = true;
+document.querySelector('.seed-row').style.display = 'none';
+// Mark first radio as selected
+document.querySelector('.radio-opt').classList.add('selected');
+
+// ── Per-column ─────────────────────────────────
+$('perColToggle').onchange = function() {
+  $('perColPanel').classList.toggle('hidden', !this.checked);
+};
+$('applyGlobalToAll').onclick = () => {
+  perColFills = {};
+  renderPerColPanel();
+};
+
+function getFillType() {
+  return document.querySelector('input[name="fillStrat"]:checked')?.value || 'empty';
+}
+function getCustomFill() { return $('customFillVal').value; }
+function getGlobalFillValue(colType, rng) {
+  const t = getFillType();
+  return resolveStratFill(t, getCustomFill(), colType, rng);
+}
+function resolveStratFill(type, custom, colType, rng) {
+  switch(type) {
+    case 'empty': return '';
+    case 'na': return 'N/A';
+    case 'zero': return 0;
+    case 'dash': return '—';
+    case 'custom': return custom || '';
+    case 'copy_ref': return '__COPY_REF__'; // sentinel, resolved during merge
+    case 'random_gen': return rng ? generateValue(colType || 'generic', rng) : '';
+    default: return '';
+  }
+}
+
+function renderPerColPanel() {
+  // Only show columns that are missing from at least one file
+  if (files.length === 0) return;
+  const norm = $('normStrat').value;
+  const allCols = resolveColumns();
+  const missingCols = allCols.filter(col => {
+    return files.some(f => !f.headers.some(h => normalizeHeader(h, norm) === normalizeHeader(col, norm)));
+  });
+  const container = $('perColTable');
+  if (missingCols.length === 0) {
+    container.innerHTML = '<div class="hint" style="padding:6px 0;">No gaps — all columns exist in all files.</div>';
+    return;
+  }
+  const fillOpts = `
+    <option value="global">Global setting</option>
+    <option value="empty">Leave Empty</option>
+    <option value="na">N/A</option>
+    <option value="zero">Zero (0)</option>
+    <option value="dash">Dash (—)</option>
+    <option value="custom">Custom…</option>
+    <option value="copy_ref">Copy from Matched File</option>
+    <option value="random_gen">Generate Random Data</option>
+  `;
+  container.innerHTML = `
+    <table class="gap-table">
+      <thead><tr><th>Column</th><th>Missing From</th><th>Fill Strategy</th><th>Custom Value</th></tr></thead>
+      <tbody id="perColBody"></tbody>
+    </table>`;
+  const tbody = $('perColBody');
+  missingCols.forEach(col => {
+    const key = normalizeHeader(col, norm);
+    const cur = perColFills[key] || { type: 'global', custom: '' };
+    const missingIn = files.filter(f => !f.headers.some(h => normalizeHeader(h, norm) === key)).map(f => f.name).join(', ');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="color:var(--ink);">${escHtml(col)}</td>
+      <td style="color:var(--red);font-size:.68rem;">${escHtml(missingIn)}</td>
+      <td><select class="pcf-type">${fillOpts}</select></td>
+      <td><input type="text" class="pcf-custom" value="${escAttr(cur.custom)}" placeholder="value"></td>
+    `;
+    const typeSelect = tr.querySelector('.pcf-type');
+    const customInput = tr.querySelector('.pcf-custom');
+    typeSelect.value = cur.type;
+    typeSelect.onchange = () => {
+      perColFills[key] = { type: typeSelect.value, custom: customInput.value };
+      customInput.disabled = typeSelect.value !== 'custom';
+      customInput.style.opacity = typeSelect.value !== 'custom' ? .4 : 1;
+    };
+    customInput.oninput = () => { perColFills[key] = { type: typeSelect.value, custom: customInput.value }; };
+    customInput.disabled = cur.type !== 'custom';
+    customInput.style.opacity = cur.type !== 'custom' ? .4 : 1;
+    tbody.appendChild(tr);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  HEADER NORMALIZATION
+// ══════════════════════════════════════════════
+function normalizeHeader(h, norm) {
+  if (!norm || norm === 'none') return String(h);
+  if (norm === 'trim') return String(h).trim();
+  return String(h).trim().toLowerCase();
+}
+
+// ══════════════════════════════════════════════
+//  COLUMN RESOLUTION
+// ══════════════════════════════════════════════
+function resolveColumns() {
+  if (files.length === 0) return [];
+  const norm = $('normStrat').value;
+  const strat = $('colStrategy').value;
+
+  // Build per-file normalized header lists
+  const fileCols = files.map(f => f.headers.map(h => normalizeHeader(h, norm)));
+  // Unique, ordered
+  const allUnique = [];
+  const seen = new Set();
+  fileCols.forEach(cols => cols.forEach(c => { if (!seen.has(c)) { seen.add(c); allUnique.push(c); } }));
+
+  switch(strat) {
+    case 'union': return allUnique;
+    case 'intersection': return allUnique.filter(c => fileCols.every(fc => fc.includes(c)));
+    case 'first': return fileCols[0] || [];
+    case 'majority': {
+      const threshold = Math.ceil(files.length / 2);
+      return allUnique.filter(c => fileCols.filter(fc => fc.includes(c)).length >= threshold);
+    }
+    case 'priority': return allUnique;
+    default: return allUnique;
+  }
+}
+
+// ══════════════════════════════════════════════
+//  COLUMN ANALYSIS RENDER
+// ══════════════════════════════════════════════
+function renderAnalysis() {
+  const norm = $('normStrat').value;
+  const outCols = resolveColumns();
+  const grid = $('analysisGrid');
+  grid.innerHTML = '';
+  files.forEach(f => {
+    const fNorm = f.headers.map(h => normalizeHeader(h, norm));
+    const row = document.createElement('div');
+    row.className = 'analysis-row';
+    const chips = outCols.map(c => {
+      const has = fNorm.includes(c);
+      return `<span class="achip ${has?'present':'missing'}">${escHtml(c)}</span>`;
+    }).join('');
+    row.innerHTML = `<div class="analysis-fname" title="${escAttr(f.name)}">${escHtml(f.name)}</div><div class="chips-row">${chips}</div>`;
+    grid.appendChild(row);
+  });
+}
+
+// ══════════════════════════════════════════════
+//  MERGE ENGINE
+// ══════════════════════════════════════════════
+$('mergeBtn').onclick = doMerge;
+
+function doMerge() {
+  if (files.length === 0) return;
+  const norm = $('normStrat').value;
+  const outCols = resolveColumns();
+  const fillType = getFillType();
+  const customFill = getCustomFill();
+  const useSeed = $('useSeed').checked;
+  const seedBase = parseInt($('seedVal').value) || 42;
+
+  // Build a lookup: for each output col key → which files have it and sample values (for copy_ref)
+  // Map: colKey → array of {fileIdx, rows[]} that have this column
+  const colFileMap = {};
+  outCols.forEach(colKey => {
+    colFileMap[colKey] = files.map((f, fi) => {
+      const matchHdr = f.headers.find(h => normalizeHeader(h, norm) === colKey);
+      return { fi, matchHdr, rows: f.rows };
+    }).filter(x => x.matchHdr !== undefined);
+  });
+
+  let filledCells = 0;
+  let genFilledCells = 0;
+  let refFilledCells = 0;
+  const mergedRows = [];
+
+  files.forEach((f, fi) => {
+    const fNorm = f.headers.map(h => normalizeHeader(h, norm));
+
+    f.rows.forEach((srcRow, rowIdx) => {
+      const outRow = { __source: f.name };
+      outCols.forEach(colKey => {
+        const localHdr = f.headers.find(h => normalizeHeader(h, norm) === colKey);
+
+        if (localHdr !== undefined) {
+          // File has this column
+          outRow[colKey] = srcRow[localHdr] !== undefined ? srcRow[localHdr] : '';
+          outRow[`__filled_${colKey}`] = false;
+        } else {
+          // File is missing this column — apply fill
+          filledCells++;
+          const pcf = perColFills[colKey];
+          const effectiveType = (pcf && pcf.type !== 'global') ? pcf.type : fillType;
+          const effectiveCustom = (pcf && pcf.type === 'custom') ? pcf.custom : customFill;
+
+          if (effectiveType === 'copy_ref') {
+            // Find a file that has this column and copy value (row-matched if same length, else cycled)
+            const donors = colFileMap[colKey];
+            if (donors.length > 0) {
+              // Prefer a donor that isn't this file (already filtered above since matchHdr would exist)
+              const donor = donors[0];
+              const donorRow = donor.rows[rowIdx % donor.rows.length];
+              outRow[colKey] = donorRow[donor.matchHdr] !== undefined ? donorRow[donor.matchHdr] : '';
+            } else {
+              outRow[colKey] = '';
+            }
+            outRow[`__filled_${colKey}`] = 'ref';
+            refFilledCells++;
+          } else if (effectiveType === 'random_gen') {
+            const colType = detectColType(colKey);
+            let rng;
+            if (useSeed) {
+              // Seed = base + hash of colKey + rowIdx for consistent per-cell values
+              const cellSeed = (seedBase + hashStr(colKey) + rowIdx * 7919) >>> 0;
+              rng = makePRNG(cellSeed);
+            } else {
+              // Truly random
+              rng = Math.random;
+            }
+            outRow[colKey] = generateValue(colType, rng);
+            outRow[`__filled_${colKey}`] = 'gen';
+            genFilledCells++;
+          } else {
+            const colType = detectColType(colKey);
+            outRow[colKey] = resolveStratFill(effectiveType, effectiveCustom, colType, null);
+            outRow[`__filled_${colKey}`] = true;
+          }
+        }
+      });
+      mergedRows.push(outRow);
+    });
+  });
+
+  mergeResult = {
+    headers: outCols,
+    rows: mergedRows,
+    filledCells,
+    genFilledCells,
+    refFilledCells,
+    totalRows: mergedRows.length,
+    fileCount: files.length
+  };
+
+  colOrder = [...outCols];
+  renderResult();
+  toast(`Merged ${files.length} files → ${mergedRows.length} rows`, 'success');
+}
+
+// ══════════════════════════════════════════════
+//  RESULT RENDER
+// ══════════════════════════════════════════════
+function renderResult() {
+  if (!mergeResult) return;
+  $('resultCard').classList.remove('hidden');
+
+  // Stats bar
+  const { headers, rows, filledCells, genFilledCells, refFilledCells, totalRows, fileCount } = mergeResult;
+  $('statsBar').innerHTML = `
+    <div class="stat-pill">📁 <b>${fileCount}</b> Source Files</div>
+    <div class="stat-pill">📋 <b>${totalRows}</b> Merged Rows</div>
+    <div class="stat-pill">📊 <b>${headers.length}</b> Output Columns</div>
+    <div class="stat-pill">🔲 <b>${filledCells - genFilledCells - refFilledCells}</b> Filled Gaps</div>
+    ${refFilledCells > 0 ? `<div class="stat-pill" style="border-color:var(--green);color:var(--green);">🔗 <b>${refFilledCells}</b> Ref-Copied</div>` : ''}
+    ${genFilledCells > 0 ? `<div class="stat-pill" style="border-color:var(--purple);color:var(--purple);">🎲 <b>${genFilledCells}</b> Generated</div>` : ''}
+  `;
+
+  renderSortableCols();
+  renderPreview();
+
+  $('downloadXlsx').disabled = false;
+  $('downloadCsv').disabled = false;
+  $('exportInfo').innerHTML = `<b>${colOrder.length}</b> cols · <b>${totalRows}</b> rows`;
+}
+
+// ── Sortable column reorder ──────────────────────
+function renderSortableCols() {
+  const container = $('sortableCols');
+  container.innerHTML = '';
+  colOrder.forEach((col, idx) => {
+    const item = document.createElement('div');
+    item.className = 'sort-col-item';
+    item.draggable = true;
+    item.dataset.col = col;
+    item.innerHTML = `<span class="drag-handle">⠿</span><span>${escHtml(col)}</span>`;
+
+    item.addEventListener('dragstart', e => {
+      e.dataTransfer.setData('text/plain', col);
+      item.classList.add('dragging');
+    });
+    item.addEventListener('dragend', () => item.classList.remove('dragging'));
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      item.classList.remove('drag-over');
+      const fromCol = e.dataTransfer.getData('text/plain');
+      const toCol = col;
+      if (fromCol === toCol) return;
+      const fi = colOrder.indexOf(fromCol);
+      const ti = colOrder.indexOf(toCol);
+      colOrder.splice(fi, 1);
+      colOrder.splice(ti, 0, fromCol);
+      renderSortableCols();
+      renderPreview();
+    });
+    container.appendChild(item);
+  });
+}
+
+$('resetColOrder').onclick = () => {
+  colOrder = [...mergeResult.headers];
+  renderSortableCols();
+  renderPreview();
+};
+
+// ── Preview table ──────────────────────────────
+const SOURCE_COLORS = ['#5ca8ff','#d4ff4f','#4fffa0','#ff9a3c','#c084fc','#ff6b9d','#67e8f9','#fcd34d'];
+function renderPreview() {
+  if (!mergeResult) return;
+  const { rows } = mergeResult;
+  const heads = colOrder;
+  const tbl = $('previewTable');
+
+  const fileColorMap = {};
+  files.forEach((f, i) => { fileColorMap[f.name] = SOURCE_COLORS[i % SOURCE_COLORS.length]; });
+
+  const head = `<tr>
+    <th style="min-width:110px;">_source</th>
+    ${heads.map(h => `<th>${escHtml(h)}</th>`).join('')}
+  </tr>`;
+
+  const body = rows.slice(0, 200).map(r => {
+    const srcColor = fileColorMap[r.__source] || '#8b93a3';
+    const srcPill = `<span class="src-pill" style="background:${srcColor}22;color:${srcColor};border:1px solid ${srcColor}44;">${escHtml(r.__source || '')}</span>`;
+    const cells = heads.map(h => {
+      const filled = r[`__filled_${h}`];
+      let cls = '';
+      if (filled === 'ref') cls = ' class="filled-ref"';
+      else if (filled === 'gen') cls = ' class="filled-gen"';
+      return `<td${cls}>${escHtml(r[h] === undefined || r[h] === null ? '' : r[h])}</td>`;
+    }).join('');
+    return `<tr><td>${srcPill}</td>${cells}</tr>`;
+  }).join('');
+
+  tbl.innerHTML = head + body;
+  $('previewMeta').innerHTML = `Showing first <b>${Math.min(200, rows.length)}</b> of <b>${rows.length}</b> rows · <span style="color:var(--green);">■ ref-copied</span> · <span style="color:var(--purple);">■ generated</span>`;
+}
+
+// ══════════════════════════════════════════════
+//  EXPORT
+// ══════════════════════════════════════════════
+function buildExportRows() {
+  const { rows } = mergeResult;
+  return rows.map(r => {
+    const o = {};
+    colOrder.forEach(c => { o[c] = r[c] !== undefined ? r[c] : ''; });
+    return o;
+  });
+}
+
+$('downloadXlsx').onclick = () => {
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(buildExportRows(), { header: colOrder });
+  XLSX.utils.book_append_sheet(wb, ws, 'Merged');
+  XLSX.writeFile(wb, 'merged_output.xlsx');
+};
+
+$('downloadCsv').onclick = () => {
+  const ws = XLSX.utils.json_to_sheet(buildExportRows(), { header: colOrder });
+  const csv = XLSX.utils.sheet_to_csv(ws);
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'merged_output.csv';
+  a.click();
+};
+
+// ══════════════════════════════════════════════
+//  TOAST
+// ══════════════════════════════════════════════
+function toast(msg, type = '') {
+  const wrap = $('toastWrap');
+  const el = document.createElement('div');
+  el.className = 'toast ' + type;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  setTimeout(() => el.remove(), 3200);
+}
+
+// ══════════════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════════════
+function escHtml(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function escAttr(s){ return escHtml(s).replace(/'/g,'&#39;'); }
+</script>
+</body>
+</html>

@@ -11,7 +11,6 @@
     owner: "Sai Kiran Biswal", role: "Enterprise · AI Product", glyph: "S",
     email: "saikiranbiswal14@gmail.com",
     linkedin: "https://www.linkedin.com/in/sai-kiran-biswal",
-    location: "Hyderabad / Bengaluru · Remote",
     resume: "assets/resume.pdf", status: "Open to lead PM roles"
   };
 
@@ -21,6 +20,15 @@
   }
   // Owner-authored fields may contain <em>…</em>; render as trusted HTML.
   function rich(s) { return String(s == null ? "" : s); }
+
+  // Fill a .ph placeholder with an uploaded image, or fall back to the label
+  // block the design ships with when no image has been set in the CMS.
+  function phShot(src, label) {
+    if (!src) return '<span class="ph-label">' + esc(label) + '</span>';
+    return '<img src="' + esc(src) + '" alt="' + esc(label) + '" ' +
+      'style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" ' +
+      'onerror="this.outerHTML=\'<span class=&quot;ph-label&quot;>' + esc(label) + '</span>\'">';
+  }
 
   async function loadJSON(path) {
     try { var r = await fetch(path, { cache: "no-store" }); if (r.ok) return await r.json(); }
@@ -94,7 +102,7 @@
             '<p class="eyebrow">' + esc(d.hero.eyebrow) + '</p>' +
             '<h1 class="display" style="margin-top:20px;max-width:14ch;">' + rich(d.hero.heading) + '</h1>' +
           '</div>' +
-          '<div class="ph portrait reveal"><span class="ph-label">portrait</span></div>' +
+          '<div class="ph portrait reveal">' + phShot(d.hero.portrait, "portrait") + '</div>' +
         '</div>' +
         '<div class="reveal" style="margin-top:clamp(36px,5vw,64px);max-width:62ch;">' +
           '<p class="lead" style="max-width:none;">' + esc(d.hero.lead) + '</p>' + paras +

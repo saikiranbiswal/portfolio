@@ -45,6 +45,16 @@
       'onerror="this.outerHTML=\'<span class=&quot;shot&quot; style=&quot;background:var(--paper-2)&quot;></span>\'">';
   }
 
+  // Full-bleed hero image for the flagship card; falls back to the placeholder
+  // label block when the featured project has no screenshot set.
+  function heroShot(p) {
+    var label = esc(p.name.toLowerCase()) + ' — product hero';
+    if (!p.screenshot) return '<span class="ph-label">' + label + '</span>';
+    return '<img src="' + esc(p.screenshot) + '" alt="" ' +
+      'style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" ' +
+      'onerror="this.outerHTML=\'<span class=&quot;ph-label&quot;>' + label + '</span>\'">';
+  }
+
   function workRow(p, i, showRole) {
     const mode = p.displayMode || "modal";
     return '' +
@@ -78,7 +88,7 @@
           '<p class="body-text">' + esc(p.description) + '</p>' +
           '<div style="margin-top:26px;" class="btn">View the full story <span class="arrow">→</span></div>' +
         '</div>' +
-        '<div class="ph"><span class="ph-label">' + esc(p.name.toLowerCase()) + ' — product hero</span></div>' +
+        '<div class="ph">' + heroShot(p) + '</div>' +
       '</a>';
   }
 

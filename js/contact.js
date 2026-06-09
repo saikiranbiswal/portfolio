@@ -10,7 +10,6 @@
     owner: "Sai Kiran Biswal", role: "Enterprise · AI Product", glyph: "S",
     email: "saikiranbiswal14@gmail.com",
     linkedin: "https://www.linkedin.com/in/sai-kiran-biswal",
-    location: "Hyderabad / Bengaluru · Remote",
     resume: "assets/resume.pdf", status: "Open to lead PM roles"
   };
 

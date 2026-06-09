@@ -152,6 +152,11 @@ select:focus,input:focus{outline:none;border-color:var(--accent);}
 .color-chip{width:22px;height:22px;border-radius:4px;border:2px solid transparent;cursor:pointer;transition:.15s;}
 .color-chip:hover,.color-chip.active{border-color:var(--ink);transform:scale(1.15);}
 @media(max-width:768px){:root{--sidebar-w:0px;}.sidebar{display:none;}}
+@media(max-width:640px){
+  .topbar{flex-wrap:wrap;height:auto;padding:8px 14px;row-gap:8px;}
+  .topbar-actions{margin-left:auto;flex-wrap:wrap;justify-content:flex-end;}
+  .topbar-tab{padding:6px 10px;}
+}
 #themeToggleBtn{font-size:.9rem;padding:5px 9px;transition:transform .2s,border-color .15s;}
 #themeToggleBtn:hover{border-color:var(--accent);transform:rotate(20deg);}
 
@@ -254,6 +259,7 @@ select:focus,input:focus{outline:none;border-color:var(--accent);}
 .insight-dot{width:7px;height:7px;background:#fff;border-radius:50%;animation:pulse 1.5s ease infinite;}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.7)}}
 </style>
+<link rel="stylesheet" href="../_shared/mobile.css">
 </head>
 <body>
 <div class="app" id="app">

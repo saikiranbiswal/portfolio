@@ -76,9 +76,10 @@
   </div>
 
   <div class="save-note">
-    Edits autosave in this browser as you work. Hit <strong>↑ Publish to GitHub</strong> to commit
-    the changed files straight to your repo — the live site rebuilds in about a minute. No export,
-    no terminal. First time? Click <strong>⚙ GitHub</strong> and paste a fine-grained token
+    Edits autosave in this browser as you work. Hit each page's <strong>↑ Save &amp; publish</strong>
+    button to commit just that page to your repo, or <strong>↑ Publish to GitHub</strong> to push every
+    changed file at once — the live site rebuilds in about a minute. No export, no terminal. First time?
+    Click <strong>⚙ GitHub</strong> and paste a fine-grained token
     (<em>Contents: Read &amp; write</em> on this repo). It's stored only in this browser.
     <strong>Export</strong> stays as an offline fallback.
   </div>
@@ -183,7 +184,7 @@
   function repeatItem(model,arrPath,idx,len,inner){
     return '<div class="repeat-item">'+inner+'<div class="repeat-foot">'+ctlBtns(model,arrPath,idx,len)+'</div></div>';
   }
-  function exportBtn(model,file){return '<button class="admin-btn ghost" data-act="export" data-model="'+model+'">⤓ Export '+file+'</button>';}
+  function saveBtn(model){return '<button class="admin-btn" data-act="save" data-model="'+model+'">↑ Save &amp; publish</button>';}
 
   /* ---- templates for "add" ---- */
   var TEMPLATES = {
@@ -203,7 +204,7 @@
      ===================================================== */
   function renderSite(){
     var b="products";
-    return '<div class="inline-actions">'+exportBtn("products","products.json")+'</div>'+
+    return '<div class="inline-actions">'+saveBtn("products")+'</div>'+
       '<div class="section-block"><h3>Site identity</h3>'+
         '<div class="grid2">'+F("Owner name",b,"meta.owner")+F("Role / title",b,"meta.role")+'</div>'+
         '<div class="grid2">'+F("Glyph (nav badge)",b,"meta.glyph")+F("Status",b,"meta.status")+'</div>'+
@@ -236,7 +237,7 @@
     var ps=models.products.projects||[];
     var html='<div class="inline-actions">'+
       '<button class="admin-btn" data-act="add" data-model="products" data-path="projects" data-tmpl="project">+ Add project</button>'+
-      exportBtn("products","products.json")+'</div>'+
+      saveBtn("products")+'</div>'+
       '<div class="subhint">'+ps.length+' projects</div>';
     html+=ps.map(function(p,i){
       var open=openState["work:"+i];
@@ -310,7 +311,7 @@
     var L=models.labs,labs=L.labs||[],b="labs";
     var html='<div class="inline-actions">'+
       '<button class="admin-btn" data-act="add" data-model="labs" data-path="labs" data-tmpl="lab">+ Add lab</button>'+
-      exportBtn("labs","labs.json")+'</div>';
+      saveBtn("labs")+'</div>';
     var metaOpen=openState["labsmeta"];
     html+='<div class="lab-block"><div class="lab-bar"><span class="lt" data-act="toggle" data-key="labsmeta" style="cursor:pointer;flex:1 1 auto;">Labs page header</span><span class="lc">'+(metaOpen?"▲":"▼")+'</span></div>';
     if(metaOpen){
@@ -331,7 +332,7 @@
      ===================================================== */
   function renderAbout(){
     var b="about",a=models.about,hero=a.hero||{};
-    var H='<div class="inline-actions">'+exportBtn("about","about.json")+'</div>';
+    var H='<div class="inline-actions">'+saveBtn("about")+'</div>';
     H+='<div class="section-block"><h3>Hero</h3>'+
       F("Eyebrow",b,"hero.eyebrow")+
       F("Heading (HTML — &lt;em&gt; allowed)",b,"hero.heading")+
@@ -371,7 +372,7 @@
      ===================================================== */
   function renderContact(){
     var b="contact",c=models.contact,hero=c.hero||{};
-    var H='<div class="inline-actions">'+exportBtn("contact","contact.json")+'</div>';
+    var H='<div class="inline-actions">'+saveBtn("contact")+'</div>';
     H+='<div class="section-block"><h3>Hero</h3>'+
       F("Eyebrow",b,"hero.eyebrow")+
       F("Heading (HTML — &lt;em&gt; allowed)",b,"hero.heading")+
@@ -443,9 +444,24 @@
       return ghPutFile(file,text,cur.sha,"CMS: update "+file).then(function(){return {file:file,status:cur.sha?"updated":"created"};});
     }).then(null,function(e){return {file:file,status:"error",error:e.message};});
   }
-  function publishAll(){
+  function requireToken(){
     var c=gh();
-    if(!c.token){ghStatus("No token yet — click <strong>⚙ GitHub</strong> and paste a fine-grained token first.","err");document.getElementById("ghPanel").style.display="block";return;}
+    if(!c.token){ghStatus("No token yet — click <strong>⚙ GitHub</strong> and paste a fine-grained token first.","err");document.getElementById("ghPanel").style.display="block";return null;}
+    return c;
+  }
+  function siteLink(c){return "<a href=\"https://"+esc(c.owner)+".github.io/"+esc(c.repo)+"/\" target=\"_blank\" rel=\"noopener\">view site ↗</a>";}
+  function publishCurrent(model){
+    var c=requireToken();if(!c)return;
+    var file=FILES[model].file;
+    ghStatus("Saving <strong>"+esc(file)+"</strong> to "+esc(c.owner)+"/"+esc(c.repo)+" ("+esc(c.branch)+")…","busy");
+    publishOne(model).then(function(r){
+      if(r.status==="error"){ghStatus(esc(file)+": ✗ "+esc(r.error)+" — check the token grants <em>Contents: Read &amp; write</em>.","err");return;}
+      if(r.status==="unchanged"){ghStatus(esc(file)+": nothing changed — already up to date.","ok");return;}
+      ghStatus(esc(file)+": ✓ "+r.status+". Live in ~1 min → "+siteLink(c),"ok");
+    });
+  }
+  function publishAll(){
+    var c=requireToken();if(!c)return;
     ghStatus("Publishing to "+esc(c.owner)+"/"+esc(c.repo)+" ("+esc(c.branch)+")…","busy");
     var names=["products","labs","about","contact"],results=[];
     (function next(i){
@@ -453,7 +469,7 @@
         var any=results.some(function(r){return r.status==="error";});
         var changed=results.filter(function(r){return r.status==="updated"||r.status==="created";}).length;
         var lines=results.map(function(r){return r.file+": "+(r.status==="error"?("✗ "+esc(r.error)):"✓ "+r.status);});
-        var foot=any?"Some files failed — see above.":changed?("Published "+changed+" file(s). Live in ~1 min → <a href=\"https://"+esc(c.owner)+".github.io/"+esc(c.repo)+"/\" target=\"_blank\" rel=\"noopener\">view site ↗</a>"):"Nothing changed — everything already up to date.";
+        var foot=any?"Some files failed — see above.":changed?("Published "+changed+" file(s). Live in ~1 min → "+siteLink(c)):"Nothing changed — everything already up to date.";
         ghStatus(lines.join("<br>")+"<br><br>"+foot,any?"err":"ok");
         return;
       }
@@ -506,14 +522,14 @@
       var el=e.target.closest("[data-act]");if(!el)return;
       var act=el.getAttribute("data-act");
       if(act==="toggle"){var key=el.getAttribute("data-key");openState[key]=!openState[key];renderTab(currentTab);return;}
-      if(act==="export"){exportModel(el.getAttribute("data-model"));return;}
+      if(act==="save"){publishCurrent(el.getAttribute("data-model"));return;}
       var model=el.getAttribute("data-model"),path=el.getAttribute("data-path"),arr=getPath(models[model],path);
       if(act==="add"){
         if(!Array.isArray(arr)){setPath(models[model],path,[]);arr=getPath(models[model],path);}
         arr.push(TEMPLATES[el.getAttribute("data-tmpl")]());saveDraft(model);renderTab(currentTab);return;
       }
       var i=+el.getAttribute("data-i");
-      if(act==="del"){if(confirm("Delete this item? (draft only until you export)")){arr.splice(i,1);openState={};saveDraft(model);renderTab(currentTab);}return;}
+      if(act==="del"){if(confirm("Delete this item? (draft only until you Save & publish)")){arr.splice(i,1);openState={};saveDraft(model);renderTab(currentTab);}return;}
       if(act==="up"&&i>0){var a=arr[i-1];arr[i-1]=arr[i];arr[i]=a;openState={};saveDraft(model);renderTab(currentTab);return;}
       if(act==="down"&&i<arr.length-1){var d=arr[i+1];arr[i+1]=arr[i];arr[i]=d;openState={};saveDraft(model);renderTab(currentTab);return;}
     });

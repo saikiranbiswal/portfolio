@@ -75,7 +75,7 @@
     return '' +
     '<nav class="nav"><div class="nav-inner">' +
       '<a class="wordmark" href="#/">' +
-        '<span class="glyph">a</span>' +
+        '<span class="glyph">' + esc(model.meta.glyph || "SK") + '</span>' +
         '<span><span class="name">' + esc(model.meta.owner) + '</span><br>' +
         '<span class="role">' + esc(model.meta.role) + '</span></span>' +
       '</a>' +

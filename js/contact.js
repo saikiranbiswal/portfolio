@@ -7,7 +7,7 @@
   "use strict";
 
   var META_FALLBACK = {
-    owner: "Sai Kiran Biswal", role: "Enterprise · AI Product", glyph: "S",
+    owner: "Sai Kiran Biswal", role: "Enterprise · AI Product", glyph: "SK",
     email: "saikiranbiswal14@gmail.com",
     linkedin: "https://www.linkedin.com/in/sai-kiran-biswal",
     resume: "assets/resume.pdf", status: "Open to lead PM roles"
@@ -28,7 +28,7 @@
   function navHTML(meta) {
     return '<nav class="nav"><div class="nav-inner">' +
       '<a class="wordmark" href="products.html">' +
-        '<span class="glyph">' + esc(meta.glyph || (meta.owner || "S")[0]) + '</span>' +
+        '<span class="glyph">' + esc(meta.glyph || "SK") + '</span>' +
         '<span><span class="name">' + esc(meta.owner) + '</span><br>' +
         '<span class="role">' + esc(meta.role) + '</span></span>' +
       '</a>' +

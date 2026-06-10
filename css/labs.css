@@ -123,7 +123,7 @@ body.editing .edit-toggle .led { background: var(--accent); box-shadow: 0 0 8px 
 .nav { position: sticky; top: 0; z-index: 80; background: color-mix(in srgb, var(--paper) 86%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line-soft); }
 .nav-inner { max-width: var(--maxw); margin: 0 auto; padding: 16px var(--gutter); display: flex; align-items: center; justify-content: space-between; }
 .wordmark { display: flex; align-items: center; gap: 11px; }
-.wordmark .glyph { width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-family: var(--serif); font-size: 16px; font-style: italic; }
+.wordmark .glyph { width: 30px; height: 30px; flex: 0 0 30px; border-radius: 50%; background: var(--ink); color: var(--paper); display: grid; place-items: center; font-family: var(--sans); font-size: 10px; font-weight: 700; letter-spacing: -0.04em; }
 .wordmark .name { font-weight: 600; font-size: 15.5px; letter-spacing: -0.01em; color: var(--ink); }
 .wordmark .role { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; white-space: nowrap; }
 .nav-links { display: flex; align-items: center; gap: 28px; }

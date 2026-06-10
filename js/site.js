@@ -31,7 +31,7 @@
     const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
     set("wm-name", meta.owner);
     set("wm-role", meta.role);
-    set("wm-glyph", meta.glyph || (meta.owner || "S")[0]);
+    set("wm-glyph", meta.glyph || "SK");
     set("wm-status", meta.status);
     set("f-copy", "© 2026 " + meta.owner + " — Product Portfolio");
     const li = document.getElementById("f-linkedin"); if (li) li.href = meta.linkedin || "#";

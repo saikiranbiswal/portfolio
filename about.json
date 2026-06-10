@@ -10,30 +10,36 @@
     "portrait": "assets/about/portrait-mq78fxvi.png"
   },
   "timelineEyebrow": "Background",
-  "timelineCount": "A decade in enterprise & fintech",
+  "timelineCount": "7 Years in enterprise & fintech",
   "timeline": [
     {
-      "yr": "2023 — Now",
-      "h4": "Lead Product Manager — AI & Platforms",
-      "org": "Enterprise SaaS · Fintech",
+      "yr": "2025 — Now",
+      "h4": "Product Consultant - Collections Cloud",
+      "org": "Highradius",
       "p": "Leading 0→1 AI products across collections and contract intelligence — owning discovery, domain modeling, AI design, and go-to-market."
     },
     {
-      "yr": "2020 — 2023",
-      "h4": "Senior Product Manager — Lending",
-      "org": "Digital Lending Platform",
+      "yr": "2024 — 2025",
+      "h4": "Product Manager - Digital Channels Retail Banking",
+      "org": "Intellect Design Arena",
       "p": "Rebuilt loan origination as a configurable platform; shipped collections and customer-experience products across web and mobile."
     },
     {
-      "yr": "2017 — 2020",
-      "h4": "Product Manager — Digital Banking",
-      "org": "Banking Technology",
+      "yr": "2022 — 2024",
+      "h4": "MBA - Business Management Student",
+      "org": "Xavier Institute of Management, Bhubaneswar",
+      "p": "Deepened my expertise in strategy and operations, refining my ability to map complex business domains. This provided the strategic lens to transition from executing feature-based tasks to owning end-to-end product vision."
+    },
+    {
+      "yr": "2020 — 2022",
+      "h4": "Senior Business Analyst",
+      "org": "Etech Global Services",
       "p": "Owned mobile and internet banking experiences — engagement, onboarding, and servicing journeys for retail customers."
     },
     {
-      "yr": "2015 — 2017",
-      "h4": "Business Analyst — Core Systems",
-      "org": "Financial Services",
+      "yr": "2019 — 2020",
+      "h4": "Business Analyst",
+      "org": "DIATOZ",
       "p": "Bridged operations and engineering on core banking and payments — where I learned to model a domain before designing a screen."
     }
   ],

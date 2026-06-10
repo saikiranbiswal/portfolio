@@ -81,6 +81,8 @@ Flagship and high-traffic apps first.
 - **Phase 0 — Foundation (½ day):** ship the shared `mobile.css` baseline and wire
   it into all live apps. ✅ **Done** (see "Phase 0 status" below).
 - **Phase 1 — Quick wins (1 day):** excel-transformer, excel-merger, synthesis.
+  ✅ **Done** (2026-06-10): responsive workflow controls, demo onboarding,
+  data-quality summaries, decision/action outputs, and audit-ready exports.
 - **Phase 2 — Heavy hitters (2–3 days):** dashboard-studio (touch drag-drop),
   lending-cloud (tables→cards), collections-cloud (flagship polish, in-bundle CSS).
 - **Phase 3 — QA pass (½ day):** every app verified at 375 × 812 and 768 × 1024.

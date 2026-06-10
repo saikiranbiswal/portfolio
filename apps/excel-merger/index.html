@@ -269,6 +269,7 @@ table.preview td.filled-gen{color:var(--purple);}
 .export-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px;}
 .export-info{font-family:ui-monospace,monospace;font-size:.75rem;color:var(--muted);}
 .export-info b{color:var(--ink);}
+.report-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px;margin-top:14px;font-family:ui-monospace,monospace;font-size:.74rem;color:var(--muted2);line-height:1.7;}
 
 /* ---- Sortable column reorder ---- */
 .sortable-cols{display:flex;flex-direction:column;gap:4px;margin-bottom:12px;}
@@ -286,6 +287,11 @@ table.preview td.filled-gen{color:var(--purple);}
 .hidden{display:none;}
 .divider{height:1px;background:var(--border);margin:14px 0;}
 footer{text-align:center;color:var(--muted);font-family:ui-monospace,monospace;font-size:.68rem;margin-top:36px;}
+@media(max-width:700px){
+  body{padding:22px 12px 60px}.card{padding:17px}.file-card{align-items:stretch;flex-direction:column}
+  .fc-sheet{max-width:none}.rename-row,.filter-row,.analysis-row{grid-template-columns:1fr}
+  .export-row button{width:100%}.drop-zone{padding:32px 14px}.legend{flex-wrap:wrap}
+}
 </style>
 <link rel="stylesheet" href="../_shared/mobile.css">
 </head>
@@ -309,6 +315,10 @@ footer{text-align:center;color:var(--muted);font-family:ui-monospace,monospace;f
     <p>or click to browse · .xlsx .xls .csv · multiple files supported</p>
   </div>
   <input type="file" id="fileInput" accept=".xlsx,.xls,.csv" multiple>
+  <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <button class="btn-add" id="loadSample">Try with 3 sample files</button>
+    <span class="hint">Explore schema differences, gap fill, lineage, and audit exports.</span>
+  </div>
   <div class="file-cards" id="fileCards"></div>
 </div>
 
@@ -455,10 +465,12 @@ footer{text-align:center;color:var(--muted);font-family:ui-monospace,monospace;f
 
   <!-- Export -->
   <div class="export-row">
-    <button class="btn-primary" id="downloadXlsx">⬇ Download .xlsx</button>
+    <button class="btn-primary" id="downloadXlsx">⬇ Workbook + merge report</button>
     <button class="btn-secondary" id="downloadCsv">⬇ Download .csv</button>
+    <button class="btn-secondary" id="downloadReport">⬇ Audit report (.json)</button>
     <span class="export-info" id="exportInfo"></span>
   </div>
+  <div class="report-card" id="reportCard"></div>
 </div>
 
 </div><!-- /wrap -->
@@ -634,6 +646,22 @@ dropZone.onclick = () => $('fileInput').click();
 ['dragleave','drop'].forEach(e => dropZone.addEventListener(e, ev => { ev.preventDefault(); dropZone.classList.remove('over'); }));
 dropZone.addEventListener('drop', ev => { if (ev.dataTransfer.files.length) handleFiles(ev.dataTransfer.files); });
 $('fileInput').onchange = () => { if ($('fileInput').files.length) handleFiles($('fileInput').files); };
+
+$('loadSample').onclick = () => {
+  const samples = [
+    {name:'north_region.csv', rows:[{customer_id:'C-1001',name:'Aarav Shah',region:'North',balance:18500},{customer_id:'C-1002',name:'Maya Rao',region:'North',balance:0}]},
+    {name:'south_region.csv', rows:[{customer_id:'C-1003',name:'Rohan Mehta',email:'rohan@example.com',balance:9200},{customer_id:'C-1004',name:'Nisha Kapoor',email:'nisha@example.com',balance:43000}]},
+    {name:'partner_export.csv', rows:[{customer_id:'C-1005',name:'Kabir Singh',region:'West',email:'kabir@example.com',status:'Review'}]}
+  ];
+  files = samples.map((s,i) => {
+    const ws = XLSX.utils.json_to_sheet(s.rows), wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'Customers');
+    return {id:Date.now()+i,name:s.name,wb,sheetName:'Customers',rows:s.rows,headers:Object.keys(s.rows[0])};
+  });
+  mergeResult = null; renderFileCards(); updateUI();
+  $('settingsCard').scrollIntoView({behavior:'smooth',block:'start'});
+  toast('Sample files loaded — choose a strategy and merge','success');
+};
 
 function handleFiles(fileList) {
   [...fileList].forEach(f => {
@@ -1007,6 +1035,8 @@ function renderResult() {
   $('downloadXlsx').disabled = false;
   $('downloadCsv').disabled = false;
   $('exportInfo').innerHTML = `<b>${colOrder.length}</b> cols · <b>${totalRows}</b> rows`;
+  const report = buildMergeReport();
+  $('reportCard').innerHTML = `<b style="color:var(--gold)">Merge readiness report</b><br>${report.summary}<br>Lineage is preserved in the audit report. The workbook includes merged data, source summary, and configuration.`;
 }
 
 // ── Sortable column reorder ──────────────────────
@@ -1095,10 +1125,25 @@ function buildExportRows() {
   });
 }
 
+function buildMergeReport() {
+  const totalCells = mergeResult.totalRows * mergeResult.headers.length;
+  const completed = totalCells ? Math.round((1 - mergeResult.filledCells / totalCells) * 100) : 100;
+  return {
+    generated:new Date().toISOString(),
+    summary:`${mergeResult.fileCount} files combined into ${mergeResult.totalRows} rows and ${mergeResult.headers.length} columns · ${completed}% native-cell coverage · ${mergeResult.filledCells} gaps handled`,
+    configuration:{columnStrategy:$('colStrategy').value,headerNormalization:$('normStrat').value,gapFill:getFillType(),columnOrder:colOrder},
+    sources:files.map(f=>({name:f.name,sheet:f.sheetName,rows:f.rows.length,columns:f.headers.join(', ')})),
+    output:{rows:mergeResult.totalRows,columns:mergeResult.headers.length,gapsHandled:mergeResult.filledCells,generatedCells:mergeResult.genFilledCells,referenceCopiedCells:mergeResult.refFilledCells,nativeCoveragePercent:completed}
+  };
+}
+
 $('downloadXlsx').onclick = () => {
   const wb = XLSX.utils.book_new();
   const ws = XLSX.utils.json_to_sheet(buildExportRows(), { header: colOrder });
   XLSX.utils.book_append_sheet(wb, ws, 'Merged');
+  const report = buildMergeReport();
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(report.sources), 'Source Summary');
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(Object.entries(report.configuration).map(([Setting,Value])=>({Setting,Value:Array.isArray(Value)?Value.join(', '):Value}))), 'Merge Configuration');
   XLSX.writeFile(wb, 'merged_output.xlsx');
 };
 
@@ -1110,6 +1155,11 @@ $('downloadCsv').onclick = () => {
   a.href = URL.createObjectURL(blob);
   a.download = 'merged_output.csv';
   a.click();
+};
+$('downloadReport').onclick = () => {
+  const blob = new Blob([JSON.stringify(buildMergeReport(),null,2)],{type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'merge_audit_report.json'; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),1000);
 };
 
 // ══════════════════════════════════════════════

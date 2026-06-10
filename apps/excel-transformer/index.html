@@ -163,6 +163,16 @@
   .btn-mini:hover { color: var(--ink); border-color: var(--accent); }
   .filter-conj { font-family: ui-monospace, monospace; font-size: .75rem; color: var(--muted); margin: 4px 0 10px; }
   .filter-conj select { width: auto; display: inline-block; padding: 4px 8px; }
+  .insight-grid { display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0; }
+  .insight { background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:12px; }
+  .insight b { display:block;color:var(--ink);font-size:1.25rem;margin-bottom:3px; }
+  .insight span { color:var(--muted);font-family:ui-monospace,monospace;font-size:.7rem; }
+  .recipe { background:var(--panel-2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;color:var(--muted);font-family:ui-monospace,monospace;font-size:.75rem;line-height:1.7;margin-bottom:14px; }
+  @media(max-width:700px){
+    body{padding:24px 12px 60px}.card{padding:18px}.insight-grid{grid-template-columns:1fr 1fr}
+    .rename-row,.filter-row{grid-template-columns:1fr}.arrow{display:none}.btn-del{width:100%}
+    .actions .btn-primary,.actions .btn-add{width:100%}
+  }
   footer { text-align: center; color: var(--muted); font-family: ui-monospace, monospace; font-size: .72rem; margin-top: 40px; }
 </style>
 <link rel="stylesheet" href="../_shared/mobile.css">
@@ -183,6 +193,10 @@
       <p class="file-info" id="fileInfo"></p>
     </div>
     <input type="file" id="fileInput" accept=".xlsx,.xls,.csv">
+    <div class="actions" style="margin-top:14px;">
+      <button class="btn-add" id="loadSample">Try with sample customer data</button>
+      <span class="meta">New here? Load a safe demo and see the full workflow.</span>
+    </div>
     <div id="sheetPick" class="hidden" style="margin-top:16px;">
       <label class="field">Worksheet</label>
       <select id="sheetSelect"></select>
@@ -224,10 +238,13 @@
     <div class="card">
       <h2><span class="step-num">5</span>Preview &amp; Export</h2>
       <div class="meta" id="previewMeta"></div>
+      <div class="insight-grid" id="insightGrid"></div>
+      <div class="recipe" id="recipeSummary"></div>
       <div class="preview-wrap"><table id="previewTable"></table></div>
       <div class="actions" style="margin-top:18px;">
-        <button class="btn-primary" id="downloadXlsx">Download .xlsx</button>
+        <button class="btn-primary" id="downloadXlsx">Download workbook + audit</button>
         <button class="btn-primary" id="downloadCsv" style="background:var(--panel-2);color:var(--ink);border:1px solid var(--border);">Download .csv</button>
+        <button class="btn-add" id="downloadRecipe">Download recipe</button>
         <span class="meta" id="rowCount"></span>
       </div>
     </div>
@@ -258,6 +275,25 @@ drop.onclick = () => fileInput.click();
 ["dragleave","drop"].forEach(e => drop.addEventListener(e, ev => { ev.preventDefault(); drop.classList.remove("over"); }));
 drop.addEventListener("drop", ev => { if (ev.dataTransfer.files.length) handleFile(ev.dataTransfer.files[0]); });
 fileInput.onchange = () => { if (fileInput.files.length) handleFile(fileInput.files[0]); };
+
+$("loadSample").onclick = () => {
+  baseFileName = "customer_operations_sample";
+  rawRows = [
+    {Customer_ID:"C-1001",Customer_Name:"Aarav Shah",Region:"South",Balance:18500,Status:"Active",Email:"aarav@example.com"},
+    {Customer_ID:"C-1002",Customer_Name:"Maya Rao",Region:"West",Balance:0,Status:"Closed",Email:""},
+    {Customer_ID:"C-1003",Customer_Name:"Rohan Mehta",Region:"South",Balance:9200,Status:"Active",Email:"rohan@example.com"},
+    {Customer_ID:"C-1004",Customer_Name:"Nisha Kapoor",Region:"North",Balance:43000,Status:"Review",Email:"nisha@example.com"},
+    {Customer_ID:"C-1005",Customer_Name:"Kabir Singh",Region:"South",Balance:12600,Status:"Active",Email:""}
+  ];
+  headers = Object.keys(rawRows[0]);
+  $("fileInfo").textContent = "▸ customer_operations_sample.csv · demo loaded";
+  $("sheetPick").classList.add("hidden");
+  $("config").classList.remove("hidden");
+  buildColsGrid();
+  $("renames").innerHTML = ""; $("filters").innerHTML = "";
+  updateConjVisibility(); render();
+  $("config").scrollIntoView({behavior:"smooth",block:"start"});
+};
 
 function handleFile(file) {
   baseFileName = file.name.replace(/\.[^.]+$/, "") || "output";
@@ -443,8 +479,36 @@ function render() {
   tbl.innerHTML = head + body;
   $("previewMeta").innerHTML = `<b>${outHeaders.length}</b> columns · showing first ${Math.min(50, rows.length)} of <b>${rows.length}</b> rows`;
   $("rowCount").textContent = `${rows.length} rows · ${outHeaders.length} cols → export`;
+  renderInsights(outHeaders, rows);
   const empty = rows.length === 0 || outHeaders.length === 0;
   $("downloadXlsx").disabled = empty; $("downloadCsv").disabled = empty;
+}
+
+function qualityModel(outHeaders, rows) {
+  const totalCells = rows.length * outHeaders.length;
+  const emptyCells = rows.reduce((sum,row) => sum + outHeaders.filter(h => row[h] === "" || row[h] === null || row[h] === undefined).length, 0);
+  const duplicateRows = rows.length - new Set(rows.map(r => JSON.stringify(outHeaders.map(h => r[h])))).size;
+  return {
+    inputRows: rawRows.length, outputRows: rows.length, columns: outHeaders.length,
+    removedRows: rawRows.length - rows.length, emptyCells, duplicateRows,
+    completeness: totalCells ? Math.round((1 - emptyCells / totalCells) * 100) : 0
+  };
+}
+function recipeModel() {
+  return {
+    generated: new Date().toISOString(), source: baseFileName, keptColumns: keptColumns(),
+    renames: getRenameMap(), filters: getFilters().filter(f => f.col), filterMode: $("conj").value
+  };
+}
+function renderInsights(outHeaders, rows) {
+  const q = qualityModel(outHeaders, rows);
+  $("insightGrid").innerHTML = `
+    <div class="insight"><b>${q.outputRows}</b><span>output rows · ${q.removedRows} removed</span></div>
+    <div class="insight"><b>${q.columns}</b><span>output columns</span></div>
+    <div class="insight"><b>${q.completeness}%</b><span>data completeness</span></div>
+    <div class="insight"><b>${q.duplicateRows}</b><span>duplicate rows detected</span></div>`;
+  const r = recipeModel();
+  $("recipeSummary").innerHTML = `<b style="color:var(--accent)">Transformation recipe</b><br>${r.keptColumns.length} columns kept · ${Object.keys(r.renames).length} renamed · ${r.filters.length} filters using ${r.filterMode} logic · audit sheet included in workbook`;
 }
 
 /* ---------- Export ---------- */
@@ -453,8 +517,19 @@ function buildSheet() {
   return XLSX.utils.json_to_sheet(rows, { header: outHeaders });
 }
 $("downloadXlsx").onclick = () => {
+  const { outHeaders, rows } = transform();
   const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, buildSheet(), "Output");
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows, { header: outHeaders }), "Output");
+  const q = qualityModel(outHeaders, rows), r = recipeModel();
+  const audit = [
+    {Metric:"Generated",Value:new Date().toLocaleString()},{Metric:"Source",Value:baseFileName},
+    {Metric:"Input rows",Value:q.inputRows},{Metric:"Output rows",Value:q.outputRows},
+    {Metric:"Rows removed",Value:q.removedRows},{Metric:"Output columns",Value:q.columns},
+    {Metric:"Completeness",Value:q.completeness + "%"},{Metric:"Empty cells",Value:q.emptyCells},
+    {Metric:"Duplicate rows",Value:q.duplicateRows},{Metric:"Kept columns",Value:r.keptColumns.join(", ")},
+    {Metric:"Renames",Value:JSON.stringify(r.renames)},{Metric:"Filters",Value:JSON.stringify(r.filters)}
+  ];
+  XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(audit), "Transformation Audit");
   XLSX.writeFile(wb, baseFileName + "_transformed.xlsx");
 };
 $("downloadCsv").onclick = () => {
@@ -464,6 +539,13 @@ $("downloadCsv").onclick = () => {
   a.href = URL.createObjectURL(blob);
   a.download = baseFileName + "_transformed.csv";
   a.click();
+};
+$("downloadRecipe").onclick = () => {
+  const { outHeaders, rows } = transform();
+  const blob = new Blob([JSON.stringify({recipe:recipeModel(),quality:qualityModel(outHeaders,rows)},null,2)], {type:"application/json"});
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob);
+  a.download = baseFileName + "_transformation_recipe.json"; a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
 
 /* ---------- utils ---------- */

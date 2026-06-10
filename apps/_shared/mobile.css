@@ -12,6 +12,21 @@ img, svg, video { max-width: 100%; height: auto; }
 /* Canvas: cap width but leave height alone so Chart.js sizing isn't squished. */
 canvas { max-width: 100%; }
 
+/* Keyboard users should always be able to see where they are across every app. */
+:focus-visible {
+  outline: 3px solid #d4ff4f;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
 /* --- Phone baseline --- */
 @media (max-width: 640px) {
   /* No accidental sideways scroll of the whole page. */

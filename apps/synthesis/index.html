@@ -211,6 +211,9 @@ textarea.paste:focus{outline:none;border-color:var(--accent)}
 .recs .rec:last-child{border-bottom:none}
 .recs .rec .num{counter-increment:r;font-family:'Fraunces';font-weight:700;color:var(--accent);font-size:18px;flex:none}
 .recs .rec .num::before{content:counter(r,decimal-leading-zero)}
+.action-grid{display:grid;grid-template-columns:1.4fr .7fr .7fr;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12.5px}
+.action-grid>*{padding:10px 12px;border-bottom:1px solid var(--line)}.action-grid>*:nth-last-child(-n+3){border-bottom:none}
+.action-grid .ah{background:var(--paper-2);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
 .empty{text-align:center;padding:50px 20px;color:var(--muted)}
 .empty .ic{font-size:42px;opacity:.5;margin-bottom:14px}
 .toast{
@@ -231,6 +234,13 @@ textarea.paste:focus{outline:none;border-color:var(--accent)}
 }
 .menu button:hover{background:var(--paper-2)}
 footer{text-align:center;font-size:12px;color:var(--muted);padding:30px 0;border-top:1px solid var(--line)}
+@media(max-width:640px){
+  .bar{align-items:flex-start}.tools .pill{display:none}.stepper{flex-wrap:nowrap;overflow-x:auto;padding-bottom:12px}
+  .step{white-space:nowrap}.panel .body{padding:14px}.matrix2{grid-template-columns:1fr}
+  .matrix2 .cell{border-right:none}.matrix2 .cell:nth-last-child(2){border-bottom:1px solid var(--line)}
+  .previewhead>div{width:100%}.previewhead .btn,.exportmenu{flex:1}.exportmenu .btn{width:100%}
+  .action-grid{grid-template-columns:1fr}.action-grid .ah{display:none}.action-grid>*{border-bottom:none}.action-grid .action{border-top:1px solid var(--line);font-weight:600}
+}
 @media print{
   header,.rail,.stepper,.previewhead,footer,.toast{display:none!important}
   body{background:#fff}.grid{display:block;padding:0}#preview{border:none;box-shadow:none;padding:0}
@@ -334,6 +344,7 @@ footer{text-align:center;font-size:12px;color:var(--muted);padding:30px 0;border
         <h2>Preview</h2>
         <div style="display:flex;gap:10px">
           <button class="btn ghost" data-goto="configure">← Edit</button>
+          <button class="btn ghost" id="copyBrief">Copy brief</button>
           <div class="exportmenu">
             <button class="btn primary" id="exportBtn">Export ▾</button>
             <div class="menu" id="exportMenu">
@@ -450,7 +461,7 @@ const TEMPLATES={
 };
 
 /* ============ STATE ============ */
-const state={fwk:"swot",raw:"",fileName:"",data:{}};
+const state={fwk:"swot",raw:"",fileName:"",data:{},title:"",decision:""};
 const $=s=>document.querySelector(s);
 const $$=s=>[...document.querySelectorAll(s)];
 
@@ -474,7 +485,10 @@ function loadTemplate(k){
 function buildForm(){
   const f=FRAMEWORKS[state.fwk];
   $("#cfgTitle").textContent="Configure · "+f.name;
-  $("#formArea").innerHTML=f.fields.map(fl=>{
+  $("#formArea").innerHTML=`<div class="quad">
+    <div class="field"><label>Analysis title <small>(used in exports)</small></label><input data-meta="title" value="${esc(state.title)}" placeholder="e.g. FY27 market-entry decision"></div>
+    <div class="field"><label>Decision question <small>(what this should resolve)</small></label><input data-meta="decision" value="${esc(state.decision)}" placeholder="e.g. Where should we invest first?"></div>
+  </div>`+f.fields.map(fl=>{
     const v=state.data[fl.k]||"";
     if(fl.force){
       return `<div class="field"><label>${fl.label} <small>(${fl.hint})</small></label>
@@ -484,6 +498,7 @@ function buildForm(){
       <textarea data-k="${fl.k}" placeholder="${fl.ph||'One item per line'}">${esc(v)}</textarea></div>`;
   }).join("");
   $$("#formArea [data-k]").forEach(el=>el.oninput=()=>state.data[el.dataset.k]=el.value);
+  $$("#formArea [data-meta]").forEach(el=>el.oninput=()=>state[el.dataset.meta]=el.value);
 }
 function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
 
@@ -546,15 +561,19 @@ function renderPreview(){
   // synthesis recommendations (deterministic heuristics)
   const recs=buildRecs(f,d);
   const recHtml=recs.length?`<div class="blockh">⟶ Strategic implications</div><div class="recs">${recs.map(r=>`<div class="rec"><span class="num"></span><div>${esc(r)}</div></div>`).join("")}</div>`:"";
+  const actions=recs.slice(0,3);
+  const actionHtml=actions.length?`<div class="blockh">✓ 30-60-90 day action plan</div><div class="action-grid">
+    <div class="ah">Action</div><div class="ah">Owner</div><div class="ah">Timing</div>
+    ${actions.map((r,i)=>`<div class="action">${esc(r)}</div><div>${i===0?'Strategy lead':i===1?'Functional owner':'Executive sponsor'}</div><div>${[30,60,90][i]} days</div>`).join("")}</div>`:"";
 
-  const title=(TEMPLATES[state.fwk]&&Object.values(state.data).join("")===Object.values(TEMPLATES[state.fwk].data).join(""))?TEMPLATES[state.fwk].title:f.name;
+  const title=state.title||(TEMPLATES[state.fwk]&&Object.values(state.data).join("")===Object.values(TEMPLATES[state.fwk].data).join("")?TEMPLATES[state.fwk].title:f.name);
 
   $("#preview").innerHTML=`
     <div class="docttl">${esc(title)}</div>
     <div class="docmeta">${f.name} · Generated ${date} · Synthesis Engine</div>
-    ${state.fwk!=="porter"?`<div class="exec"><b>Overview.</b> This ${f.name} captures ${f.fields.reduce((a,fl)=>a+toList(d[fl.k]).length,0)} data points across ${f.fields.length} dimensions, structured for executive review.</div>`:""}
+    ${state.fwk!=="porter"?`<div class="exec"><b>${state.decision?'Decision question.':'Overview.'}</b> ${state.decision?esc(state.decision):`This ${f.name} captures ${f.fields.reduce((a,fl)=>a+toList(d[fl.k]).length,0)} data points across ${f.fields.length} dimensions, structured for executive review.`}</div>`:""}
     ${body}
-    ${recHtml}`;
+    ${recHtml}${actionHtml}`;
 }
 
 function buildRecs(f,d){
@@ -590,9 +609,10 @@ function buildRecs(f,d){
 /* ============ EXPORTS ============ */
 function plainModel(){
   const f=FRAMEWORKS[state.fwk];
-  return {framework:f.name,generated:new Date().toISOString(),
+  return {title:state.title||f.name,decisionQuestion:state.decision,framework:f.name,generated:new Date().toISOString(),
     sections:f.fields.map(fl=>({field:fl.label,key:fl.k,items:toList(state.data[fl.k]),raw:state.data[fl.k]||""})),
-    recommendations:buildRecs(f,state.data)};
+    recommendations:buildRecs(f,state.data),
+    actionPlan:buildRecs(f,state.data).slice(0,3).map((action,i)=>({action,owner:i===0?"Strategy lead":i===1?"Functional owner":"Executive sponsor",timingDays:[30,60,90][i]}))};
 }
 function dl(name,content,type){
   const b=new Blob([content],{type});const u=URL.createObjectURL(b);
@@ -608,9 +628,11 @@ function expCSV(){
   dl("synthesis.csv",csv,"text/csv");toast("CSV exported");
 }
 function expMD(){
-  const m=plainModel();let md=`# ${m.framework}\n\n*Generated ${new Date().toLocaleString()} · Synthesis Engine*\n\n`;
+  const m=plainModel();let md=`# ${m.title}\n\n*${m.framework} · Generated ${new Date().toLocaleString()} · Synthesis Engine*\n\n`;
+  if(m.decisionQuestion)md+=`> Decision question: ${m.decisionQuestion}\n\n`;
   m.sections.forEach(s=>{md+=`## ${s.field}\n\n`;if(s.items.length)s.items.forEach(i=>md+=`- ${i}\n`);else md+=`${s.raw||"_—_"}\n`;md+="\n";});
   if(m.recommendations.length){md+=`## Strategic Implications\n\n`;m.recommendations.forEach((r,i)=>md+=`${i+1}. ${r}\n`);}
+  if(m.actionPlan.length){md+=`\n## 30-60-90 Day Action Plan\n\n| Action | Owner | Timing |\n|---|---|---|\n`;m.actionPlan.forEach(a=>md+=`| ${a.action} | ${a.owner} | ${a.timingDays} days |\n`);}
   dl("synthesis.md",md,"text/markdown");toast("Markdown exported");
 }
 function expHTML(){
@@ -696,6 +718,11 @@ $$("#exportMenu button").forEach(b=>b.onclick=()=>{
 $("#themeBtn").onclick=()=>{
   const cur=document.documentElement.getAttribute("data-theme");
   document.documentElement.setAttribute("data-theme",cur==="dark"?"light":"dark");
+};
+$("#copyBrief").onclick=async()=>{
+  const m=plainModel();
+  const text=`${m.title}\n${m.decisionQuestion?`Decision: ${m.decisionQuestion}\n`:''}\nStrategic implications\n${m.recommendations.map((r,i)=>`${i+1}. ${r}`).join("\n")}\n\nAction plan\n${m.actionPlan.map(a=>`- ${a.action} — ${a.owner}, ${a.timingDays} days`).join("\n")}`;
+  try{await navigator.clipboard.writeText(text);toast("Executive brief copied");}catch(e){toast("Copy unavailable — export Markdown instead");}
 };
 // respect system theme on load
 if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)

@@ -410,40 +410,6 @@
           "url": "./apps/collections-cloud/"
         },
         {
-          "id": "contract-intelligence",
-          "name": "Contract Intelligence Platform",
-          "stage": "Case study",
-          "tags": [
-            "AI",
-            "Enterprise"
-          ],
-          "tagline": "An AI platform that reads enterprise contracts, extracts the obligations that matter, and surfaces risk before it becomes a missed renewal or a breach.",
-          "what": "An AI platform that reads enterprise contracts, extracts the obligations that matter, and surfaces risk before it becomes a missed renewal or a breach.",
-          "features": [
-            [
-              "Obligation extraction",
-              "Pulls the clauses and commitments that actually matter."
-            ],
-            [
-              "Risk surfacing",
-              "Flags exposure before a renewal or breach slips."
-            ],
-            [
-              "Grounded answers",
-              "Every output anchored to the source contract."
-            ]
-          ],
-          "role": "Product Manager",
-          "year": "2023–2024",
-          "stage2": "Case study",
-          "stack": [
-            "AI",
-            "Enterprise",
-            "Legal"
-          ],
-          "url": "./apps/contract-intelligence/"
-        },
-        {
           "id": "synthesis",
           "name": "Synthesis — Strategic Framework Engine",
           "stage": "Working app",
@@ -942,40 +908,6 @@
             "Design"
           ],
           "url": "https://example.com/field"
-        },
-        {
-          "id": "loan-origination-system",
-          "name": "Loan Origination System",
-          "stage": "Case study",
-          "tags": [
-            "Fintech",
-            "Lending"
-          ],
-          "tagline": "A modern, configurable LOS that compresses application-to-disbursal from days to minutes — without losing the controls a risk team depends on.",
-          "what": "A modern, configurable LOS that compresses application-to-disbursal from days to minutes — without losing the controls a risk team depends on.",
-          "features": [
-            [
-              "Configurable LOS",
-              "Application-to-disbursal in minutes, not days."
-            ],
-            [
-              "Risk controls kept",
-              "Speed without losing the guardrails."
-            ],
-            [
-              "Modern flows",
-              "Journeys a risk team can still trust."
-            ]
-          ],
-          "role": "Product Manager",
-          "year": "2022–2023",
-          "stage2": "Case study",
-          "stack": [
-            "Fintech",
-            "Lending",
-            "Case study"
-          ],
-          "url": "./apps/loan-origination-system/"
         }
       ]
     }

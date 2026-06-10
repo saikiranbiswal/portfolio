@@ -68,7 +68,7 @@
     {
       "id": "synthesis",
       "name": "Synthesis — Strategic Framework Engine",
-      "description": "An offline strategic-framework builder: import data, configure the analysis, and export to PDF, Markdown, CSV, or JSON — entirely in-browser.",
+      "description": "An offline decision-brief engine that turns raw inputs into strategic frameworks, implications, and a 30-60-90 action plan with multi-format export.",
       "tags": [
         "Strategy",
         "Tools",
@@ -85,7 +85,7 @@
     {
       "id": "excel-transformer",
       "name": "Excel Transformer",
-      "description": "A client-side spreadsheet tool to drop, rename, filter, and re-export Excel/CSV files — no data leaves the page.",
+      "description": "A client-side spreadsheet workflow to profile, filter, rename, and export clean data with reusable transformation recipes and audit-ready workbooks.",
       "tags": [
         "Tools",
         "Data",
@@ -102,7 +102,7 @@
     {
       "id": "excel-merger",
       "name": "Excel Merger",
-      "description": "An in-browser tool to merge multiple Excel/CSV files — column strategies, header normalization, and gap-fill — fully offline.",
+      "description": "An in-browser merge workspace with schema analysis, smart gap-fill, source lineage, synthetic data, and audit-ready workbook generation.",
       "tags": [
         "Tools",
         "Data",

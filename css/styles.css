@@ -251,7 +251,7 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
 /* Work list */
 .work-list { border-top: 1px solid var(--line); }
 .work-row {
-  display: grid; grid-template-columns: 54px 1fr auto auto; align-items: center; gap: 24px;
+  display: grid; grid-template-columns: 54px minmax(0, 1fr) 328px 42px; align-items: center; gap: 24px;
   padding: clamp(22px, 3vw, 34px) 8px; border-bottom: 1px solid var(--line);
   position: relative; transition: padding-left .3s ease;
 }
@@ -266,13 +266,23 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
 .work-row .titles { display: flex; flex-direction: column; min-width: 0; }
 .work-row .titles .t { font-family: var(--serif); font-size: clamp(22px, 2.7vw, 33px); letter-spacing: -0.015em; line-height: 1.15; }
 .work-row .titles .d { color: var(--muted); font-size: 15px; margin-top: 6px; line-height: 1.5; }
-.work-row .meta { display: flex; align-items: center; justify-content: flex-end; gap: 22px; }
-.work-row .cat { font-family: var(--mono); font-size: 11.5px; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
+.work-row .meta { display: grid; grid-template-columns: 204px 100px; align-items: center; gap: 20px; }
+.work-row .meta .shot {
+  width: 204px; height: 122px; object-fit: cover; object-position: top center;
+  border: 1px solid var(--line); border-radius: 4px; background: var(--paper-2);
+}
+.work-row .cat { font-family: var(--mono); font-size: 11.5px; line-height: 1.55; color: var(--muted); letter-spacing: 0.05em; text-transform: uppercase; }
 .work-row .go {
   width: 42px; height: 42px; border-radius: 50%; border: 1px solid var(--line); flex: none;
   display: grid; place-items: center; transition: background .25s, color .25s, border-color .25s, transform .25s;
 }
 .work-row:hover .go { background: var(--ink); color: var(--paper); border-color: var(--ink); transform: translate(2px,-2px); }
+@media (max-width: 1040px) and (min-width: 721px) {
+  .work-row { grid-template-columns: 44px minmax(0, 1fr) 190px 42px; gap: 18px; }
+  .work-row .meta { grid-template-columns: 190px; }
+  .work-row .meta .shot { width: 190px; height: 114px; }
+  .work-row .meta .cat { display: none; }
+}
 @media (max-width: 720px) {
   /* Stack into a tidy card: index + title + arrow on the first row, the
      screenshot as a full-width banner below. No more detached thumbnail. */
@@ -287,7 +297,7 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
   .work-row .idx { grid-area: idx; align-self: start; padding-top: 8px; }
   .work-row .titles { grid-area: titles; }
   .work-row .go { grid-area: go; align-self: start; }
-  .work-row .meta { grid-area: meta; gap: 0; }
+  .work-row .meta { grid-area: meta; grid-template-columns: minmax(0, 1fr); gap: 0; }
   .work-row .meta .cat { display: none; }
   .work-row .meta .shot { width: 100%; height: 150px; border-radius: 6px; }
 }

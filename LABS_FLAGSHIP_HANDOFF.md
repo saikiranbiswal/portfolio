@@ -1,6 +1,43 @@
 # Next-Session Handoff: Labs Flagship Case Studies
 
-Last updated: June 10, 2026
+Last updated: June 11, 2026 (session 7)
+
+## ⭐⭐ SESSION 7 — Published everything + rich flagship cards (DONE, pushed & LIVE)
+
+Everything from sessions 5 + 6 + 7 is now **pushed to `main` and live** on
+https://saikiranbiswal.github.io/portfolio/labs.html. Two things happened:
+
+1. **Published the backlog.** The session-5+6 commit `f5b5d2b` (gamified case study +
+   flagship restructure + PRD pdf) was pushed (`00f9692..f5b5d2b`). It was committed
+   but never pushed.
+
+2. **Rebuilt the flagship cards on the Labs index** (commit `74675c6`). Sai's ask:
+   "restructure this page and add those case studies to this page and organize it."
+   He couldn't tell what had changed because his browser was showing a **stale cached
+   `js/labs-app.js`** (flagships flattened into the 01/02 numbered list) while the live
+   server already had the new flagship-strip code.
+   - **⚠️ CACHE GOTCHA:** python `http.server` + the browser heuristic-cache `js/*.js`
+     and `css/*.css` even after a push. Sai must **hard-refresh (Cmd+Shift+R)** to see
+     JS/CSS changes. In the preview tool, programmatic navigation reloads stale JS too —
+     re-render with `fetch('js/labs-app.js?x='+Date.now(),{cache:'no-store'}).then(t=>eval(t))`
+     or inject a `?v=` cache-busted `<link>`/`<script>`.
+   - **What Sai chose** (via AskUserQuestion): *rich featured cards that still click
+     through* + *built-in HTML mini-mockups* (no screenshot uploads).
+   - **Implemented** in `js/labs-app.js` — rewrote `flagCardHTML`, added `flagMock(labId)`
+     (live in-card product mini-UI) and `artOf(p,kind)` helper — and `css/labs.css`
+     (`.flag-mock`, shared `.fm-*` mini-UI classes, `.flag-ba` From→To, `.flag-goal`).
+     Each flagship card now shows: a live mini-mockup (AI Collections = command center
+     with 3 KPI tiles + ranked queue + dark AI next-best-action bar; LOS = Apply→KYC→
+     Decision→Offer stepper + status rows + dark TAT bar — **shared `.fm-*` classes so
+     both read as one product family**), kicker "Case study · Working prototype", name,
+     tagline, From/To problem→outcome (from artifact `beforeafter`), "What it moves" =
+     `metrics.business`, and artifact chips. Theme-safe (clay/noir/slate tokens).
+   - **Verified** in preview: 2 cards, mocks/KPIs/steps/From-To/goal all render, zero
+     console errors. (Screenshot only captures cleanly after hiding elements above the
+     strip — the preview screenshot tool captures scroll≈0 regardless of programmatic
+     scroll.)
+   - **`js/labs-data.js` was NOT regenerated** — it's the data seed, not the renderer.
+     Only `js/labs-app.js` + `css/labs.css` changed this session.
 
 ## ⭐ SESSION 6 — Gamified interactive case study (NEW, built + browser-verified)
 
@@ -37,29 +74,36 @@ progress spine, instead of the static scrolling SPA version.
   paths draw, screen switcher / before-after toggle / driver-hover / flow-play /
   pipeline-pulse all work, zero console errors. Responsive: stacks <880px.
 
-**STATUS:** committed to `main` June 11, 2026 (commit subject "Labs: gamified AI
-Collections Cloud case study + flagship restructure") — NOT pushed yet.
-Files in that commit: `case-studies/collections-cloud.html`,
-`case-studies/ai-collections-cloud-prd.pdf`, `js/labs-app.js`, `css/labs.css`,
-`js/labs-data.js`, `labs.json`, `LABS_FLAGSHIP_HANDOFF.md`. To publish to the live
-site, `git push` (Sai must confirm — publishing is outward-facing).
+**STATUS (end of session 7):** EVERYTHING IS PUSHED & LIVE. Local `main` == `origin/main`
+(latest commit `74675c6` "Labs: rich flagship case-study cards…"). Working tree clean.
+The session-5/6 commit `f5b5d2b` and the session-7 rich-cards commit `74675c6` are both
+on GitHub Pages. Sai should hard-refresh (Cmd+Shift+R) to see the rich cards.
 
 **RESUME NEXT SESSION — START HERE (in priority order):**
-1. ⬜ **Background consistency (Sai's feedback, June 11).** Sai: "the background should
-   be consistent across screens — everything else is fine, it looks good." Make the
-   backgrounds consistent. Best guess at scope = the **5 prototype mock-up screens**
-   inside the device frame on Stage 6 (some are white-card-on-canvas, the AI-panel one
-   is mostly a navy card → they read as different "products"); also sanity-check the
-   per-stage section backgrounds (navy hero vs `--canvas` body) read as one system.
-   **Confirm with Sai exactly which screens he means before changing.** Files:
-   `case-studies/collections-cloud.html` — `.screen` / `.scr` / `.mk-*` styles and the
-   `buildMocks()` markup.
-2. ⬜ **Clone the experience to LOS** → `case-studies/lending-os.html` (same 7-stage
-   pattern, pull lab `los` / product `lending-os` from `labs.json`), add `los` to the
-   `EXPERIENCE` map in `js/labs-app.js`, and attach the LOS PRD the same way if one
-   exists.
-3. ⬜ Optional: drop real product screenshots into the Stage-6 mock-ups; `git push` to
-   publish (Sai confirms).
+1. ⬜ **Background consistency on `collections-cloud.html` (Sai's feedback, scope = BOTH).**
+   Sai confirmed scope = **Both**: (a) the **5 Stage-6 prototype mock-up screens** in the
+   device frame read as different "products" — screens 1 & 4 carry a big navy `.mk-ai`
+   panel while 2/3/5 are light white-card-on-canvas; AND (b) the **per-stage section
+   backgrounds** (navy hero → `--canvas` body → dark accent cards) should read as one
+   system top to bottom. **Sai deferred the AI-accent design call to Claude:** keep the
+   navy AI panel as the deliberate "AI = navy" signature (matches the live app + the rest
+   of the page's navy accent cards), but contain/normalize it so each screen reads as the
+   same light workspace with the AI panel as a consistent accent. Files:
+   `case-studies/collections-cloud.html` — `.screen` / `.scr` / `.mk-*` / `.mk-ai` styles +
+   `buildMocks()`. This was deprioritized when Sai redirected to the Labs-page restructure;
+   it's the first thing to finish.
+2. ⬜ **Clone the gamified experience to LOS** → `case-studies/lending-os.html` (same
+   7-stage pattern, pull lab `los` / product `lending-os` from `labs.json`), add `los` to
+   the `EXPERIENCE` map in `js/labs-app.js`. (Right now the LOS flagship card opens the
+   in-SPA product view, not a bespoke interactive page like AI Collections.) Attach the
+   LOS PRD the same way if one exists.
+3. ⬜ Optional polish on the rich flagship cards (`flagMock()` in `js/labs-app.js`,
+   `.fm-*` in `css/labs.css`): tune the mini-mockup content, or swap to real screenshots
+   later. QA both cards at 375px (the `.flag-strip` stacks to 1-col <820px — confirm the
+   mocks don't overflow).
+4. ⬜ Older backlog still open (see `portfolio-cms-state.md` memory): delete orphaned
+   `apps/contract-intelligence/` + `apps/loan-origination-system/`; MOBILE_ROADMAP
+   Phase 1/2; Labs identity duplication (glyph shows "a", reads owner from labs.json meta).
 
 ---
 

@@ -1,6 +1,135 @@
 # Next-Session Handoff: Labs Flagship Case Studies
 
-Last updated: June 11, 2026 (session 7)
+Last updated: June 12, 2026 (session 8)
+
+---
+
+## ⭐⭐⭐ SESSION 8 — "The Product Memo" design revamp — M1–M6 DONE, pushed & LIVE
+
+**Commits (all on `main`, pushed):**
+```
+8a5ee79  Case-study bridge + consistency sweep
+e8158a6  Site chrome: unified footer + head hygiene + design foundations
+4f03b65  Work: two flagship case-study cards + LOS naming + Pune location
+```
+
+### What was built this session (the delta)
+
+**Design language: "The Product Memo"** — editorial clay (Work/Labs/About/Contact) + navy
+"Cloud" (case studies/apps) — unified under one type system.
+
+#### Typography & tokens (`css/styles.css`)
+- `Hanken Grotesk` replaced by **`Inter`** site-wide (`--sans` var).
+- Type-scale CSS variables added: `--t-display`, `--t-h2`, `--t-h3`, `--t-lead`, `--t-body`,
+  `--t-mono`, `--ease`, `--stagger`.
+- `body::before` paper grain at 2.5% opacity (SVG noise, `position:fixed`, `pointer-events:none`,
+  `z-index:1`). Nav sits at `z-index:10` (above grain).
+- `::selection` → clay background on paper pages.
+- New classes: `.figcap` (tick + mono cap), `.cta-band` (dark pre-footer strip), `.colophon`.
+- View-transition CSS: `@view-transition { navigation: auto; }`.
+- `prefers-reduced-motion`: kills all transitions + animation.
+- Footer grid: `1.5fr 1fr 1fr 1fr` (4 columns, stacks at 760px).
+
+#### Work page (`products.html`, `js/site.js`)
+- Favicon link, `<meta description>`, OG tags, cache-busted `?v=9` refs.
+- Hero stat strip: `2 / 7 / 7` (case studies · products · years) with count-up JS animation
+  (IntersectionObserver, runs once, 900ms eased). `.count-num[data-target]` pattern.
+- Colophon line: "SET IN NEWSREADER & INTER · BUILT BY HAND · NO TEMPLATES".
+- CTA dark band before footer: "Building something *hard?*" + clay "Get in touch →" button.
+- Footer: 4-column (Navigate · Case Studies · Elsewhere + brand tagline).
+- `site.js`: copyright year auto (`new Date().getFullYear()`).
+
+#### Labs page (`labs.html`, `js/labs-app.js`, `labs.json`, `js/labs-data.js`)
+- `labs.json` + `labs-data.js`: `statYears` "10+" → **"7"** (regenerated seed).
+- `labs.json` + `labs-data.js`: product name "Enterprise Lending Cloud" → "LOS — Loan Origination
+  System" in Architecture Lab (non-flagship product, line ~968).
+- `labs.html`: favicon, meta/OG, cache-busted `?v=9`.
+- `labs-app.js`: nav Work link `index.html` → `products.html`; full 4-col footer (auto year +
+  Case Studies column); craft divider ("The craft behind the flagships — six labs, every layer.")
+  inserted between flagship strip and discipline list; CTA band before footer.
+
+#### About page (`about.html`, `js/about.js`)
+- Favicon, meta/OG, cache-busted refs.
+- "Proof, not promises" section added before CTA band: two flagship cards (Collections + LOS)
+  using existing `.flagship` / `.flagship.flip` / `.flag-stack` CSS — each links to its case study.
+- CTA dark band replaces the old dark `<section class="band">` CTA.
+- Footer: full 4-col with auto year.
+
+#### Contact page (`contact.html`, `js/contact.js`)
+- Favicon, meta/OG, cache-busted refs.
+- "Or start with the work" row added below the link grid: ghost buttons
+  `FIG. 01 · AI Collections Cloud →` and `FIG. 02 · LOS — Loan Origination →`.
+- Footer: full 4-col with auto year.
+
+#### Case studies (both `case-studies/*.html`)
+- Topbar: `← Labs` → **`← Portfolio`** (href `../products.html`).
+- Favicon `../assets/favicon.svg`, `<meta description>`, OG tags.
+- `body::before` grain overlay at **2% opacity** (navy pages — slightly lighter than editorial 2.5%).
+- `.figcap` CSS added (blue `#2f6fed` tick instead of clay, matches navy language).
+- **FIG. 06 figcap** rendered below the device frame in JS (stage 6 prototype section):
+  - Collections: `FIG. 06 — AI COLLECTIONS CLOUD · WORKING PROTOTYPE`
+  - LOS: `FIG. 06 — LOS — LOAN ORIGINATION SYSTEM · WORKING PROTOTYPE`
+
+#### Global
+- `assets/favicon.svg` — clay SK monogram on paper background (SVG, 32×32, r=8 rounded rect).
+- All JS footers (labs/about/contact): inline `style` overrides removed; CSS grid handles
+  both 4-col desktop and 1-col mobile without specificity conflict.
+
+---
+
+### What the design direction planned but was NOT built this session
+
+These are the remaining "inspired tier" items from the plan. Pick them up as M2 in the next session:
+
+| Item | File(s) | Notes |
+|------|---------|-------|
+| **Hero line-by-line reveal** | `products.html` + small `reveal.js` ext or inline `<script>` | Wrap each h1 line in `<span class="line"><span>…</span></span>`; inner spans `translateY(110%)→0`, staggered 70ms. Must be authored line breaks, not text-measured splits. |
+| **Work index rows: dotted leaders** | `js/site.js` `workRow()` + `css/styles.css` | `.work-row .titles .t` gets `flex:1; display:flex; align-items:baseline; gap:0` with a dotted `border-bottom:1px dotted var(--line)` leader between name and meta column. Hover: name shifts 6px right, dots turn clay. |
+| **Flagship card `.figcap`** on Work + About | `js/site.js` `flagshipHTML()`, `js/about.js` proof section | Add `<p class="figcap">FIG. 01 — …</p>` and `FIG. 02 — …` below each flagship `.ph` image block. Sequential numbering per page. |
+| **About: portrait plate tilt** | `css/styles.css` `.portrait` | `transform: rotate(-.5deg)` + `hover: rotate(0)` (400ms). Hairline frame + 8px paper mat. |
+| **About: ledger timeline** | `css/styles.css` `.timeline`/`.tl-row` | Vertical 1px rule left, mono year ticks offset left. Currently a clean grid — refine spacing/rule only, no data changes. |
+| **Contact: email display hero** | `js/contact.js` `render()` | `h1` becomes the email address in Newsreader italic at display size with clay underline draw-in on hover; click = `navigator.clipboard.writeText()` + show mono toast "COPIED — NOW WRITE THE HARD PROBLEM". |
+| **Labs hero stat count-up** | `js/labs-app.js` `statHTML()` | Add `data-target` on the stat number spans; inject the same 15-line IntersectionObserver count-up script used on `products.html`. |
+| **Nav + footer link hover underline draw** | `css/styles.css` | `.nav-links a` already has `::after` underline — verify `.footer-col a` also gets the draw-in (currently only color transition). |
+
+---
+
+### Current working-tree state
+
+Clean. Local `main` == `origin/main`. Latest commit `8a5ee79`.
+
+### QA status (verified this session)
+
+| Check | Status |
+|-------|--------|
+| Zero console errors — all 4 editorial pages | ✅ |
+| Zero console errors — both case studies | ✅ |
+| No horizontal scroll at 375px — products, labs | ✅ |
+| Stat strip 2/7/7 renders + count-up wired | ✅ |
+| Labs stats 6/27/7 (years fixed) | ✅ |
+| Flagship cards link to case studies | ✅ |
+| CTA band on Work + Labs + About | ✅ |
+| Case study topbar "← Portfolio" | ✅ |
+| FIG. 06 figcap in both case studies | ✅ |
+| Favicon visible in browser tab | ✅ |
+| Footer 4-col + Case Studies column | ✅ |
+| Footer mobile stacks (760px) | ✅ |
+
+---
+
+### Resume prompt for next session
+
+```
+Continue the portfolio design revamp in /Users/saikiranbiswal/Downloads/portfolio.
+Read LABS_FLAGSHIP_HANDOFF.md first (Session 8 section at the top).
+The revamp M1–M6 are DONE and live. Pick up the remaining "inspired tier" items
+listed in the "NOT built" table — these are the M2 delta.
+Start the server: python3 -m http.server 8000
+Verify current state before touching anything.
+Build and QA one item at a time; commit after each group that passes QA.
+```
+
+---
 
 ## ⭐⭐ SESSION 7 — Published everything + rich flagship cards (DONE, pushed & LIVE)
 

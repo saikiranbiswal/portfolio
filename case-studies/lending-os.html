@@ -4,14 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101c36">
-<title>AI Collections Cloud — Interactive Case Study</title>
+<title>LOS — Loan Origination System — Interactive Case Study</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* =========================================================
-   AI Collections Cloud — Interactive Case Study
+   LOS — Loan Origination System — Interactive Case Study
    "Cloud" enterprise design language (navy + blue), Inter.
+   Same family as collections-cloud.html — shared classes on purpose.
    Data-driven: content loaded from ../labs.json (LABS_SEED fallback).
    ========================================================= */
 :root{
@@ -377,6 +378,19 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .mk-donut{width:90px;height:90px;border-radius:50%;background:conic-gradient(var(--red) 0 62%,var(--canvas-2) 62% 100%);
   display:grid;place-items:center;margin:0 auto}
 .mk-donut .hole{width:62px;height:62px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;font-size:16px}
+/* application-state stepper — the LOS signature element */
+.mk-steps{display:flex;align-items:flex-start;gap:4px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px 10px;box-shadow:var(--shadow-sm)}
+.mk-step{flex:1;text-align:center;font-size:9px;font-weight:650;color:var(--muted);letter-spacing:.02em}
+.mk-step .pt{width:19px;height:19px;border-radius:50%;margin:0 auto 5px;display:grid;place-items:center;font-size:9.5px;font-weight:800;
+  background:var(--canvas-2);color:var(--faint);border:1.5px solid var(--line)}
+.mk-step.done .pt{background:var(--green);border-color:var(--green);color:#fff}
+.mk-step.now .pt{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 0 4px rgba(47,111,237,.15)}
+.mk-step.now{color:var(--ink)}
+.mk-field .k{font-size:9.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
+.mk-field .in{height:24px;border:1px solid var(--line);border-radius:7px;background:var(--canvas);position:relative;overflow:hidden}
+.mk-field .in span{position:absolute;inset:6px auto 6px 8px;width:55%;border-radius:3px;background:var(--canvas-2)}
+.mk-field .in.focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,237,.12)}
+.scr>.mk-card{flex:0 0 auto}
 /* proto side controls */
 .proto-side h3{font-size:20px;font-weight:750;letter-spacing:-.02em;margin-bottom:8px}
 .proto-side p{font-size:14px;color:var(--ink-soft);margin-bottom:18px}
@@ -434,11 +448,11 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 <header class="topbar">
   <a class="back" href="../labs.html">← Labs</a>
   <div class="brand">
-    <span class="mark">C</span>
-    <span>AI Collections Cloud<small>Interactive case study</small></span>
+    <span class="mark">L</span>
+    <span>LOS — Loan Origination<small>Interactive case study</small></span>
   </div>
   <div class="counter"><b id="exploredN">0</b>/<span id="totalN">7</span> stages explored</div>
-  <a class="live-btn" href="../apps/collections-cloud/index.html"><span class="dot"></span>Open live prototype</a>
+  <a class="live-btn" href="../apps/lending-cloud/index.html"><span class="dot"></span>Open live prototype</a>
 </header>
 
 <nav class="rail" id="rail" aria-label="Case study stages"><div class="rail-line"><span id="railFill"></span></div></nav>
@@ -458,14 +472,14 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     "Data":"data","Founder":"founder"
   };
   var AV = ["#2f6fed","#7557d3","#16835b","#b76509","#0f8a9c"];
-  var PRD_PDF = "ai-collections-cloud-prd.pdf"; // cleaned PRD deck (same dir)
+  var PRD_PDF = null; // no PRD deck for LOS yet — PRD CTAs are hidden
 
   // ---------- data load (hybrid: labs.json source of truth) ----------
   function findProduct(data){
     if(!data||!data.labs) return null;
     for(var i=0;i<data.labs.length;i++){
       var lab=data.labs[i];
-      if(lab.id==="ai-collections"&&lab.products&&lab.products.length) return {lab:lab,p:lab.products[0]};
+      if(lab.id==="los"&&lab.products&&lab.products.length) return {lab:lab,p:lab.products[0]};
     }
     return null;
   }
@@ -545,7 +559,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     H.push('<section class="stage hero" id="s0" data-stage="0"><div class="wrap"><div class="hero-grid">'+
       '<div class="reveal">'+
         '<span class="eyebrow">Flagship case study · '+esc((p.tags||[]).join(" · "))+'</span>'+
-        '<h1>'+esc(p.name).replace("AI ","AI <em>")+(/AI /.test(p.name)?'</em>':'')+'</h1>'+
+        '<h1>LOS — <em>Loan Origination</em> System</h1>'+
         '<p class="lede">'+esc(p.tagline)+'</p>'+
         (p.why?'<div class="why">'+esc(p.why)+'</div>':'')+
         '<div class="hero-meta">'+
@@ -556,16 +570,16 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
         '<div class="hero-actions">'+
           '<a class="hero-cta" href="#s1">Walk the build<span class="arrow">'+
             '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></span></a>'+
-          '<a class="hero-cta ghost" href="'+PRD_PDF+'" target="_blank" rel="noopener">'+ic("doc")+'Read the full PRD<span class="ext">PDF · 11 slides</span></a>'+
+          '<a class="hero-cta ghost" href="../apps/lending-cloud/index.html">'+ic("flow")+'Open the live prototype<span class="ext">HTML · clickable</span></a>'+
         '</div>'+
       '</div>'+
       '<div class="chaos reveal" style="--r:rotate(0)">'+
-        '<div class="tile t1"><h5><span class="ic" style="background:#2455a6;color:#cfe0ff">ERP</span>ERP screens</h5><p>Aging buried across tabs</p></div>'+
-        '<div class="tile t2"><h5><span class="ic" style="background:#1f7a55;color:#c8f0dd">XLS</span>Spreadsheets</h5><p>Manual prioritization</p></div>'+
-        '<div class="tile t3"><h5><span class="ic" style="background:#9a5410;color:#ffe3bd">@</span>Email threads</h5><p>Promises lost in inbox</p></div>'+
-        '<div class="tile t4"><h5><span class="ic" style="background:#6244ba;color:#e3dbff">☎</span>Call notes</h5><p>Context never reused</p></div>'+
-        '<div class="tile t5"><h5><span class="ic" style="background:#a8333f;color:#ffd4d8">!</span>Dispute logs</h5><p>Silent payment blockers</p></div>'+
-        '<div class="collector"><div><span>THE COLLECTOR</span><b>Who do I<br>chase next?</b></div></div>'+
+        '<div class="tile t1"><h5><span class="ic" style="background:#2455a6;color:#cfe0ff">≡</span>Long forms</h5><p>Same data typed twice</p></div>'+
+        '<div class="tile t2"><h5><span class="ic" style="background:#1f7a55;color:#c8f0dd">⇪</span>Doc uploads</h5><p>Re-sent, lost, re-sent</p></div>'+
+        '<div class="tile t3"><h5><span class="ic" style="background:#9a5410;color:#ffe3bd">ID</span>Manual KYC</h5><p>Retries with no reason</p></div>'+
+        '<div class="tile t4"><h5><span class="ic" style="background:#6244ba;color:#e3dbff">⧗</span>Credit queue</h5><p>Decisions disappear</p></div>'+
+        '<div class="tile t5"><h5><span class="ic" style="background:#a8333f;color:#ffd4d8">?</span>Status calls</h5><p>"Any update on my loan?"</p></div>'+
+        '<div class="collector"><div><span>THE BORROWER</span><b>Where is<br>my loan?</b></div></div>'+
       '</div>'+
     '</div></div></section>');
 
@@ -588,25 +602,21 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
             prdNon.map(function(n){return '<div class="scope-item"><span class="tick">✕</span><b>'+esc(n)+'</b></div>';}).join("")+
           '</div>'+
         '</div>'+
-        '<a class="prd-doc" href="'+PRD_PDF+'" target="_blank" rel="noopener">'+
-          '<span class="prd-doc-ic">'+ic("doc")+'</span>'+
-          '<span class="prd-doc-txt"><b>Read the full PRD deck</b><span>The complete product brief — operating model, market, pain points, roles, metrics, MVP scope, workflows &amp; promise tracking.</span></span>'+
-          '<span class="prd-doc-meta">PDF · 11 slides <span class="go">↗</span></span>'+
-        '</a>'+
       '</div>'+
     '</div></section>');
 
     // ===== STAGE 2 — USER FLOW =====
     var fsteps=flow.steps||[];
     var flowDetail=[
-      "Single sign-on into the collections workspace — no tab-hopping.",
-      "The queue is already ranked by risk × balance × recoverability.",
-      "One account, full context — aging, history, disputes, promises.",
-      "The copilot reads the trail and writes a plain-language summary.",
-      "It names the single highest-leverage move, with the reason codes.",
-      "Outreach is drafted; the collector edits, sends, and logs in one place.",
-      "A promise-to-pay or dispute is created and tracked automatically.",
-      "Every action rolls up into the manager's live impact dashboard."
+      "One click in — no branch visit, and progress is saved from the first field.",
+      "Product-fit rules surface the right loan and rate up front.",
+      "Dynamic fields skip what's irrelevant and never ask for the same data twice.",
+      "Upload once — validation flags issues immediately, not days later.",
+      "KYC runs as a visible state, with a reason attached to every retry.",
+      "A soft decline routes to a next-best offer instead of a dead end.",
+      "The analyst opens a complete file — no document chasing.",
+      "A clear state transition the borrower sees the moment it happens.",
+      "Approved offers hand off to disbursement with nothing re-keyed."
     ];
     var fnodes="";
     fsteps.forEach(function(s,i){
@@ -616,9 +626,9 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       if(i<fsteps.length-1) fnodes+='<div class="flow-arrow" data-arr="'+i+'">'+arrow()+'</div>';
     });
     H.push('<section class="stage" id="s2" data-stage="2"><div class="wrap">'+
-      head("02",T,"The happy path · User flow","One clean line from <em>logged in</em> to <em>logged outcome</em>.",
-        "Click any step to open it — or press play and watch a collector move through the whole flow.",flow.tags,
-        brief("The happy path",[[String(fsteps.length),"steps, end to end",true],["1","place to act"],["0","tab-hops"]]))+
+      head("02",T,"The happy path · User flow","One clean line from <em>application</em> to <em>approval</em>.",
+        "Click any step to open it — or press play and watch a borrower move through the whole journey.",flow.tags,
+        brief("The happy path",[[String(fsteps.length),"steps, end to end",true],["1","visible status"],["0","blind waits"]]))+
       '<div class="reveal">'+
         '<div class="flow-toolbar"><button class="flow-play" id="flowPlay"><span class="tri"></span>Play the walkthrough</button>'+
         '<span class="flow-hint">Tip: tap a step to expand its detail.</span></div>'+
@@ -647,8 +657,8 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 
     // ===== STAGE 4 — ARCHITECTURE / WORKFLOW =====
     var wsteps=wf.steps||[];
-    var wIcons=["doc","gauge","list","brain","bolt","money","chart"];
-    var wPhase=["Ingest","Score","Rank","Decide","Act","Resolve","Learn"];
+    var wIcons=["user","doc","open","shield","check","gauge","flag","money","send"];
+    var wPhase=["Lead","Apply","Docs","KYC","Verified","Review","Decision","Offer","Disburse"];
     var pHtml="";
     wsteps.forEach(function(s,i){
       pHtml+='<div class="pipe-stage" data-p="'+i+'"><div class="box"><span class="ic">'+ic(wIcons[i%wIcons.length])+'</span>'+
@@ -656,37 +666,37 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       if(i<wsteps.length-1) pHtml+='<div class="pipe-conn" data-pc="'+i+'">'+arrow()+'</div>';
     });
     H.push('<section class="stage" id="s4" data-stage="4"><div class="wrap">'+
-      head("04",T,"How it runs · Architecture","Data in, <em>decision</em> out, and a loop that keeps learning.",
-        "Watch a single invoice travel the pipeline — then feed its outcome back to re-rank the queue.",wf.tags,
-        brief("The system",[[String(wsteps.length),"pipeline phases",true],["1","feedback loop"],["∞","re-ranks from results"]]))+
+      head("04",T,"How it runs · State machine","Every application is in <em>exactly one state</em> — never in limbo.",
+        "Watch a single application travel the state machine — each transition is visible to the borrower and the bank.",wf.tags,
+        brief("The system",[[String(wsteps.length),"explicit states",true],["1","shared workflow"],["0","limbo states"]]))+
       '<div class="reveal">'+
-        '<div class="pipe-toolbar"><button class="pipe-pulse-btn" id="pulseBtn">'+ic("bolt")+'Run the pipeline</button></div>'+
+        '<div class="pipe-toolbar"><button class="pipe-pulse-btn" id="pulseBtn">'+ic("bolt")+'Run an application through</button></div>'+
         '<div class="pipe" id="pipe">'+pHtml+'</div>'+
-        '<div class="pipe-loop"><span class="ar">'+ic("loop")+'</span><div>Outcomes from collector actions flow back into <b>risk scoring &amp; prioritization</b> — the queue re-ranks itself from real results.</div></div>'+
+        '<div class="pipe-loop"><span class="ar">'+ic("loop")+'</span><div>Drop-off and KYC-retry signals flow back into the <b>form and document steps</b> — the journey gets shorter from real outcomes.</div></div>'+
       '</div>'+
     '</div></section>');
 
     // ===== STAGE 5 — BEFORE / AFTER =====
     H.push('<section class="stage alt" id="s5" data-stage="5"><div class="wrap">'+
-      head("05",T,"The shift · Before / After","From <em>stitching context</em> to <em>just acting</em>.",
-        "Same collector, same accounts — the difference is where the judgment work happens.",ba.tags,
-        brief("The shift",[["6","tools before",false],["1","workspace after",true],["1","next best action"]]))+
+      head("05",T,"The shift · Before / After","From <em>waiting blindly</em> to <em>watching it move</em>.",
+        "Same borrower, same bank — the difference is that state and the next step are always explicit.",ba.tags,
+        brief("The shift",[["6","loose ends before"],["1","shared workflow",true],["1","next step, always"]]))+
       '<div class="reveal">'+
         '<div class="ba-toggle" id="baToggle"><button class="before-on on" data-ba="before">Before</button><button class="after-on" data-ba="after">After</button></div>'+
         '<div class="ba-stage">'+
           '<div class="ba-panel show" data-panel="before"><div class="ba-grid">'+
-            '<div class="ba-copy before"><h3><span class="pill">Before</span>Decision fatigue</h3><p>'+esc(ba.before)+'</p></div>'+
+            '<div class="ba-copy before"><h3><span class="pill">Before</span>The status black hole</h3><p>'+esc(ba.before)+'</p></div>'+
             '<div class="ba-viz before"><div class="ba-scatter">'+
-              '<div class="frag f1"><span class="x"></span>ERP aging</div><div class="frag f2"><span class="x"></span>Spreadsheet</div>'+
-              '<div class="frag f3"><span class="x"></span>Email thread</div><div class="frag f4"><span class="x"></span>Call notes</div>'+
-              '<div class="frag f5"><span class="x"></span>Dispute log</div><div class="frag f6"><span class="x"></span>Payment portal</div>'+
+              '<div class="frag f1"><span class="x"></span>Branch visit</div><div class="frag f2"><span class="x"></span>Email attachments</div>'+
+              '<div class="frag f3"><span class="x"></span>KYC desk</div><div class="frag f4"><span class="x"></span>Phone follow-ups</div>'+
+              '<div class="frag f5"><span class="x"></span>Credit queue</div><div class="frag f6"><span class="x"></span>Paper file</div>'+
             '</div></div>'+
           '</div></div>'+
           '<div class="ba-panel" data-panel="after"><div class="ba-grid">'+
-            '<div class="ba-copy after"><h3><span class="pill">After</span>One workspace, one move</h3><p>'+esc(ba.after)+'</p></div>'+
+            '<div class="ba-copy after"><h3><span class="pill">After</span>Status, always visible</h3><p>'+esc(ba.after)+'</p></div>'+
             '<div class="ba-viz after"><div class="ba-unified">'+
-              '<div class="uleft"><span class="ubadge">CONTEXT</span><div class="urow w90"></div><div class="urow w70"></div><div class="urow w50"></div><div class="uact"></div></div>'+
-              '<div class="uright"><span class="ubadge">NEXT BEST ACTION</span><div class="urow w70"></div><div class="urow w90"></div><div class="uact" style="background:var(--green)"></div></div>'+
+              '<div class="uleft"><span class="ubadge">MY APPLICATION</span><div class="urow w90"></div><div class="urow w70"></div><div class="urow w50"></div><div class="uact"></div></div>'+
+              '<div class="uright"><span class="ubadge">NEXT STEP</span><div class="urow w70"></div><div class="urow w90"></div><div class="uact" style="background:var(--green)"></div></div>'+
             '</div></div>'+
           '</div></div>'+
         '</div>'+
@@ -700,16 +710,16 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     var screens=sItems.map(function(it,i){return '<div class="scr '+(i===0?"show":"")+'" data-screen="'+i+'"><div class="scr-cap">'+esc(it.name)+'</div>'+mocks[i]+'</div>';}).join("");
     H.push('<section class="stage" id="s6" data-stage="6"><div class="wrap">'+
       head("06",T,"See it work · Prototype","Five screens, <em>built in HTML</em> — then open the real thing.",
-        "Click through the workspace, then launch the live, clickable prototype.",scr.tags,
+        "Click through the journey, then launch the live, clickable prototype.",scr.tags,
         brief("Proof of build",[[String(sItems.length),"screens to walk",true],["1","live prototype"],["0","mock screenshots"]]))+
       '<div class="proto-wrap reveal">'+
         '<div class="device"><div class="chrome"><div class="dots"><i></i><i></i><i></i></div>'+
-          '<div class="url">collections.cloud / workspace</div></div>'+
+          '<div class="url">lending.cloud / application</div></div>'+
           '<div class="screen" id="screenStage">'+screens+'</div></div>'+
         '<div class="proto-side">'+
-          '<h3>Walk the workspace</h3><p>Everything a collector needs to decide and act — in one place, no tab-hopping.</p>'+
+          '<h3>Walk the journey</h3><p>Both sides of the desk — the borrower\'s guided path and the bank\'s shared workflow.</p>'+
           '<div class="proto-nav" id="protoNav">'+navBtns+'</div>'+
-          '<a class="proto-live" href="../apps/collections-cloud/index.html"><span class="dot"></span>Open the live prototype</a>'+
+          '<a class="proto-live" href="../apps/lending-cloud/index.html"><span class="dot"></span>Open the live prototype</a>'+
         '</div>'+
       '</div>'+
       // closing — hypothesis + next
@@ -722,10 +732,10 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     // ===== FOOTER — cross-sell the other flagship =====
     H.push('<footer class="foot"><div class="wrap">'+
       '<div class="next"><span class="eyebrow">Next case study</span>'+
-      '<h3>LOS — <em>Loan Origination</em> System</h3>'+
-      '<p>A guided, state-based loan-origination platform — from application to approval with fewer handoffs.</p></div>'+
+      '<h3>AI Collections <em>Cloud</em></h3>'+
+      '<p>An AI-native collections workspace that prioritizes accounts, predicts risk, and recommends the next best action.</p></div>'+
       '<div style="display:flex;gap:12px;flex-wrap:wrap">'+
-        '<a class="back-all" href="lending-os.html">Open the case study →</a>'+
+        '<a class="back-all" href="collections-cloud.html">Open the case study →</a>'+
         '<a class="back-all" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.28)" href="../labs.html">← All labs</a>'+
       '</div>'+
     '</div></footer>');
@@ -747,58 +757,66 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 
   // ---------- screen mock-ups ----------
   // Every screen shares ONE skeleton: light workspace cards on the canvas,
-  // and a single navy AI bar pinned to the bottom — the product's signature.
+  // and a single navy state bar pinned to the bottom — current state + next step,
+  // the LOS signature (same family as the Collections AI bar).
   function buildMocks(items){
-    function aibar(tag,line,sub,act){
+    function statebar(tag,line,sub,act){
       return '<div class="mk-aibar"><span class="tag">'+tag+'</span>'+
         '<span class="tx">'+line+'<small>'+sub+'</small></span><span class="act">'+act+'</span></div>';
     }
+    function steps(now){
+      var names=["Apply","Docs","KYC","Decision","Offer"];
+      return '<div class="mk-steps">'+names.map(function(n,i){
+        var cls=i<now?"done":i===now?"now":"";
+        return '<div class="mk-step '+cls+'"><span class="pt">'+(i<now?"✓":i+1)+'</span>'+n+'</div>';
+      }).join("")+'</div>';
+    }
     var byName={
-      "Collections command center":
-        '<div class="mk-row"><div class="mk-card"><div class="k">Expected recovery</div><div class="v green">$4.82M</div></div>'+
-        '<div class="mk-card"><div class="k">Promise kept</div><div class="v blue">78.6%</div></div>'+
-        '<div class="mk-card"><div class="k">At-risk today</div><div class="v amber">128</div></div></div>'+
-        '<div class="mk-list">'+
-        liQ("#2f6fed","NA","Northwind Apparel","$84.2K · 41d",'hi','High')+
-        liQ("#7557d3","BV","Brightvale Foods","$52.0K · 29d",'hi','High')+'</div>'+
-        aibar("AI","Move 43 digital-first accounts to pre-due strategy","Estimated $184K protected this month","Review"),
-      "Prioritized account queue":
-        '<div class="mk-h">My work queue · ranked</div><div class="mk-list">'+
-        liQ("#2f6fed","NA","Northwind Apparel","$84.2K · 41d",'hi','High')+
-        liQ("#7557d3","BV","Brightvale Foods","$52.0K · 29d",'hi','High')+
-        liQ("#16835b","MT","Meridian Tools","$31.4K · 18d",'md','Med')+
-        liQ("#b76509","CP","Cedar & Pine","$12.8K · 9d",'lo','Low')+'</div>'+
-        aibar("AI","Why this order","Ranked by risk × balance × recoverability","See logic"),
-      "Account risk detail":
-        '<div class="mk-row"><div class="mk-card" style="flex:0 0 130px;text-align:center"><div class="k" style="text-align:left">Risk score</div>'+
-        '<div class="mk-donut"><div class="hole" style="color:var(--red)">82</div></div></div>'+
-        '<div class="mk-card"><div class="k">Reason codes</div>'+
-        '<div style="margin-top:8px">'+chip("Broken promise ×2")+chip("Aging 41d")+chip("Open dispute")+chip("Slowing payments")+'</div>'+
-        '<div class="k" style="margin-top:12px">Balance trend</div><div class="mk-bar"><span style="width:78%;background:var(--red)"></span></div></div></div>'+
-        aibar("AI","Score explained","Broken promises ×2 drive 34 pts of this score","Trace"),
-      "AI recommendation panel":
-        '<div class="mk-ai"><span class="tag">AI · Next best action</span><b>Call now — offer a 2-installment plan</b>'+
-        '<p>History shows this contact responds to phone + structured terms. Talking points and a follow-up email are drafted.</p>'+
-        '<span class="act">Start call · log outcome</span></div>'+
-        '<div class="mk-row" style="margin-top:auto;padding-top:10px;margin-bottom:0"><div class="mk-card"><div class="k">Confidence</div><div class="v blue">High</div></div>'+
-        '<div class="mk-card"><div class="k">Predicted lift</div><div class="v green">+22%</div></div>'+
-        '<div class="mk-card"><div class="k">Drafted email</div><div class="mk-bar" style="margin-top:9px"><span style="width:92%"></span></div>'+
-        '<div class="mk-bar"><span style="width:64%"></span></div></div></div>',
-      "Dispute intelligence view":
-        '<div class="mk-h">Disputes · grouped by root cause</div><div class="mk-list">'+
-        liD("Pricing mismatch","14 accounts · $212K",'hi')+
-        liD("Missing PO reference","9 accounts · $88K",'md')+
-        liD("Damaged shipment","5 accounts · $40K",'md')+
-        liD("Duplicate invoice","3 accounts · $11K",'lo')+'</div>'+
-        aibar("AI","Root cause found","Pricing mismatch drives 57% of disputed dollars","Playbook")
+      "Loan product selection":
+        '<div class="mk-row"><div class="mk-card"><div class="k">Personal loan</div><div class="v blue">11.5%</div>'+
+          '<div style="font-size:9.5px;color:var(--muted);margin-top:3px">Up to $40K · 5 yrs</div></div>'+
+        '<div class="mk-card" style="border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,237,.1)"><div class="k">Auto loan</div><div class="v green">9.2%</div>'+
+          '<div style="font-size:9.5px;color:var(--muted);margin-top:3px">Up to $80K · 7 yrs</div></div>'+
+        '<div class="mk-card"><div class="k">Home loan</div><div class="v purple">8.4%</div>'+
+          '<div style="font-size:9.5px;color:var(--muted);margin-top:3px">Up to $400K · 25 yrs</div></div></div>'+
+        '<div class="mk-card"><div class="k">Eligibility · soft check</div>'+
+        '<div style="margin-top:8px">'+chipG("Income verified source")+chipG("No credit-score hit")+chipG("Rate shown up front")+'</div></div>'+
+        statebar("STATE","Choosing a product","Soft eligibility runs before you type a single form field","Select"),
+      "Smart application form":
+        '<div class="mk-h">Application · step 2 of 5 <span style="font-weight:500;color:var(--muted);font-size:11px">· saved 12s ago</span></div>'+
+        '<div class="mk-row"><div class="mk-card mk-field"><div class="k">Full name</div><div class="in"><span style="width:70%"></span></div></div>'+
+        '<div class="mk-card mk-field"><div class="k">Monthly income</div><div class="in focus"><span style="width:45%"></span></div></div></div>'+
+        '<div class="mk-row"><div class="mk-card mk-field"><div class="k">Employer</div><div class="in"><span style="width:60%"></span></div></div>'+
+        '<div class="mk-card mk-field"><div class="k">PAN <span style="text-transform:none;color:var(--green)">· pre-filled from KYC</span></div><div class="in"><span style="width:40%;background:var(--green-soft)"></span></div></div></div>'+
+        statebar("STATE","Progress saved — resume anytime","Income details next · about 4 minutes left","Continue"),
+      "Document upload / KYC":
+        '<div class="mk-h">KYC · documents</div><div class="mk-list">'+
+        liDoc("ID","PAN card","Uploaded · auto-validated",'lo','Verified')+
+        liDoc("BS","Bank statement","Checking — usually under a minute",'md','Checking')+
+        liDoc("AP","Address proof","Not uploaded yet",'hi','Missing')+'</div>'+
+        statebar("STATE","1 document missing — upload to continue","Validation runs instantly, with the reason shown on any retry","Upload"),
+      "Application status tracker":
+        steps(3)+
+        '<div class="mk-card" style="margin-top:10px"><div class="k">Current state</div>'+
+        '<div style="font-size:13px;font-weight:650;margin-top:4px">Credit review in progress</div>'+
+        '<div style="font-size:10.5px;color:var(--muted);margin-top:3px">A credit analyst has your complete file · typical turnaround 4 hours</div>'+
+        '<div class="mk-bar"><span style="width:68%"></span></div></div>'+
+        statebar("STATE","Decision expected today","You’ll be notified the moment the state changes","Track"),
+      "Credit analyst review queue":
+        '<div class="mk-h">Review queue · complete files only</div><div class="mk-list">'+
+        liQ("#2f6fed","AS","A. Sharma — Personal","$18.0K · file complete",'lo','Clear')+
+        liQ("#7557d3","RI","R. Iyer — Auto","$42.5K · co-applicant",'md','Refer')+
+        liQ("#b76509","MK","M. Khan — Home","$240K · income variance",'hi','Flags')+
+        liQ("#16835b","DP","D. Patel — Personal","$12.0K · repeat borrower",'lo','Clear')+'</div>'+
+        statebar("STATE","3 referred cases need a second look","Every file arrives complete — no document chasing","Open")
     };
-    function chip(t){return '<span class="mk-chip"><span style="width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block"></span>'+t+'</span>';}
+    function chipG(t){return '<span class="mk-chip"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>'+t+'</span>';}
     function liQ(c,av,name,meta,rk,rl){return '<div class="mk-li"><span class="av" style="background:'+c+'">'+av+'</span><div><b>'+name+'</b><div style="color:var(--muted);font-size:10px">'+meta+'</div></div><span class="risk '+rk+'">'+rl+'</span></div>';}
-    function liD(name,meta,rk){return '<div class="mk-li"><span class="av" style="background:var(--purple)">D</span><div><b>'+name+'</b><div style="color:var(--muted);font-size:10px">'+meta+'</div></div><span class="risk '+rk+'">'+(rk==='hi'?'P1':rk==='md'?'P2':'P3')+'</span></div>';}
+    function liDoc(av,name,meta,rk,rl){return '<div class="mk-li"><span class="av" style="background:var(--teal)">'+av+'</span><div><b>'+name+'</b><div style="color:var(--muted);font-size:10px">'+meta+'</div></div><span class="risk '+rk+'">'+rl+'</span></div>';}
     return items.map(function(it){
       return byName[it.name] || ('<div class="mk-h">'+it.name+'</div><div class="mk-row"><div class="mk-card"><div class="k">Screen</div><div class="v blue">'+it.name+'</div></div></div><div class="mk-list">'+
         '<div class="mk-li"><span class="av" style="background:var(--blue)">·</span><b>Representative layout</b></div></div>'+
-        aibar("AI","Next best action","Drafted and ready to review","Open"));
+        statebar("STATE","Current state · next step","Always explicit, never in limbo","Open"));
     });
   }
 

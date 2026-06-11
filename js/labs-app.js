@@ -158,7 +158,8 @@
      When present, the flagship card opens this standalone experience instead
      of the in-SPA product view (hybrid: data still lives in labs.json). */
   var EXPERIENCE = {
-    "ai-collections": "case-studies/collections-cloud.html"
+    "ai-collections": "case-studies/collections-cloud.html",
+    "los": "case-studies/lending-os.html"
   };
 
   function artOf(p, kind) {

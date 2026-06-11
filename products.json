@@ -6,7 +6,7 @@
     "email": "saikiranbiswal14@gmail.com",
     "linkedin": "https://www.linkedin.com/in/sai-kiran-biswal",
     "linkedinLabel": "/in/sai-kiran-biswal",
-    "location": "Hyderabad / Bengaluru · Remote",
+    "location": "Pune / Bengaluru · Remote",
     "resume": "assets/resume.pdf",
     "status": "Open to lead PM roles",
     "showRoleOnCards": false
@@ -27,13 +27,14 @@
       "stage": "Flagship",
       "screenshot": "assets/screenshots/collections-cloud-mq7ch4i4.png",
       "path": "./apps/collections-cloud/",
+      "caseStudy": "case-studies/collections-cloud.html",
       "displayMode": "page",
       "featured": true
     },
     {
       "id": "lending-cloud",
-      "name": "Enterprise Lending Cloud",
-      "description": "A unified LOS + LMS + collections + analytics engine — workflow state machines, EMI math, and deterministic demo data, all client-side.",
+      "name": "LOS — Loan Origination System",
+      "description": "A guided, state-based loan-origination platform — from application to approval with fewer handoffs, over workflow state machines, EMI math, and deterministic demo data.",
       "tags": [
         "Fintech",
         "Lending",
@@ -41,12 +42,13 @@
         "Platform"
       ],
       "role": "Product Manager",
-      "year": "2024",
-      "stage": "Working app",
+      "year": "2024–2025",
+      "stage": "Flagship",
       "screenshot": "assets/screenshots/lending-cloud-mq78bpbv.png",
       "path": "./apps/lending-cloud/",
+      "caseStudy": "case-studies/lending-os.html",
       "displayMode": "modal",
-      "featured": false
+      "featured": true
     },
     {
       "id": "dashboard-studio",

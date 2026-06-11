@@ -73,23 +73,36 @@
       '</a>';
   }
 
-  function flagshipHTML(p) {
-    return '' +
-      '<div class="sec-head reveal">' +
-        '<p class="eyebrow">Flagship case study</p>' +
-        '<span class="count">' + esc(p.year || "") + '</span>' +
-      '</div>' +
-      '<a href="#" class="flagship reveal" data-launch="' + esc(p.id) + '" data-mode="' + esc(p.displayMode || "page") + '">' +
+  function flagshipHTML(p, flip) {
+    // Flagships with a caseStudy link straight to the interactive case study;
+    // the live app stays one click away inside it.
+    const open = p.caseStudy
+      ? '<a href="' + esc(p.caseStudy) + '" class="flagship reveal' + (flip ? ' flip' : '') + '">'
+      : '<a href="#" class="flagship reveal' + (flip ? ' flip' : '') + '" data-launch="' + esc(p.id) + '" data-mode="' + esc(p.displayMode || "page") + '">';
+    return open +
         '<div>' +
           '<div class="tag-row">' +
             (p.tags || []).slice(0, 3).map(t => '<span class="pill">' + esc(t) + '</span>').join("") +
+            '<span class="pill pill-int">▸ Interactive</span>' +
           '</div>' +
           '<h3 class="display">' + esc(p.name) + '</h3>' +
           '<p class="body-text">' + esc(p.description) + '</p>' +
-          '<div style="margin-top:26px;" class="btn">View the full story <span class="arrow">→</span></div>' +
+          '<div style="margin-top:26px;" class="btn">' +
+            (p.caseStudy ? 'Walk the case study' : 'View the full story') +
+            ' <span class="arrow">→</span></div>' +
         '</div>' +
         '<div class="ph">' + heroShot(p) + '</div>' +
       '</a>';
+  }
+  function flagshipSection(featured) {
+    return '' +
+      '<div class="sec-head reveal">' +
+        '<p class="eyebrow">Flagship case studies</p>' +
+        '<span class="count">' + featured.length + ' products, problem → prototype</span>' +
+      '</div>' +
+      '<div class="flag-stack">' +
+        featured.map((p, i) => flagshipHTML(p, i % 2 === 1)).join("") +
+      '</div>';
   }
 
   // ---- Modal ----
@@ -145,17 +158,18 @@
     (data.projects || []).forEach(p => { byId[p.id] = p; });
 
     const showRole = !!(data.meta && data.meta.showRoleOnCards);
-    const featured = (data.projects || []).find(p => p.featured) || (data.projects || [])[0];
-    const rest = (data.projects || []).filter(p => p !== featured);
+    let featured = (data.projects || []).filter(p => p.featured);
+    if (!featured.length && (data.projects || []).length) featured = [data.projects[0]];
+    const rest = (data.projects || []).filter(p => featured.indexOf(p) === -1);
 
     const fsec = document.getElementById("flagship-section");
-    if (fsec && featured) fsec.innerHTML = flagshipHTML(featured);
+    if (fsec && featured.length) fsec.innerHTML = flagshipSection(featured);
 
     const list = document.getElementById("work-list");
     if (list) list.innerHTML = rest.map((p, i) => workRow(p, i, showRole)).join("");
 
     const cnt = document.getElementById("work-count");
-    if (cnt) cnt.textContent = (data.projects || []).length + " projects across lending, banking & AI";
+    if (cnt) cnt.textContent = rest.length + " more working products across lending, banking & AI";
 
     wireModal(byId);
     if (window.__reveal) window.__reveal();

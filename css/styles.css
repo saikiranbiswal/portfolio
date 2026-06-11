@@ -235,7 +235,15 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
 .flagship .tag-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
 .flagship h3 { margin: 6px 0 14px; }
 .flagship .ph { aspect-ratio: 16/10; width: 100%; }
-@media (max-width: 860px) { .flagship { grid-template-columns: 1fr; } }
+.flag-stack { display: grid; gap: clamp(20px, 3vw, 32px); }
+.flagship.flip > div:first-child { order: 2; }
+.flagship.flip > .ph { order: 1; }
+.pill.pill-int { color: var(--clay); border-color: currentColor; }
+@media (max-width: 860px) {
+  .flagship { grid-template-columns: 1fr; }
+  .flagship.flip > div:first-child { order: 0; }
+  .flagship.flip > .ph { order: 1; }
+}
 
 .pill {
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;

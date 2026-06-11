@@ -28,6 +28,7 @@
   --shadow-sm:0 4px 14px rgba(24,39,75,.06);
   --shadow:0 14px 35px rgba(24,39,75,.09);
   --shadow-lg:0 26px 60px rgba(16,28,54,.16);
+  --navy-grad:linear-gradient(120deg,#16284b,#26407a);
   --serif:'Newsreader',Georgia,serif;
   --sans:'Inter',ui-sans-serif,system-ui,-apple-system,sans-serif;
   --mono:'IBM Plex Mono',ui-monospace,monospace;
@@ -84,14 +85,31 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 
 /* ---------- Layout ---------- */
 .wrap{max-width:var(--maxw);margin:0 auto;padding-inline:clamp(18px,5vw,40px)}
-.stage{padding-block:clamp(64px,9vw,120px);position:relative}
+.stage{padding-block:clamp(52px,7vw,88px);position:relative}
 .stage+.stage{border-top:1px solid var(--line)}
+.stage.alt{background:var(--surface)}
 .eyebrow{font-family:var(--mono);font-size:11.5px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--blue)}
 .stage-num{font-family:var(--mono);font-size:12px;color:var(--faint);letter-spacing:.1em}
-.stage-head{max-width:62ch;margin-bottom:clamp(32px,5vw,54px)}
+.stage-head{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:clamp(24px,4vw,64px);align-items:end;margin-bottom:clamp(26px,4vw,42px)}
+.stage-head .sh-copy{max-width:62ch}
 .stage-head h2{font-size:clamp(28px,4.2vw,46px);line-height:1.08;letter-spacing:-.03em;margin:14px 0 14px;font-weight:800}
 .stage-head h2 em{font-style:normal;color:var(--blue)}
 .stage-head p{font-size:clamp(16px,1.7vw,18.5px);color:var(--ink-soft);max-width:58ch;line-height:1.6}
+/* stage brief — data-driven stat card that fills the right of every stage header */
+.stage-brief{display:flex;flex-direction:column;min-width:215px;background:#fff;border:1px solid var(--line);
+  border-radius:14px;padding:16px 19px;box-shadow:var(--shadow-sm)}
+.stage-brief .cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
+.stage-brief .row{display:flex;align-items:baseline;gap:10px;padding:7px 0;border-bottom:1px dashed var(--line)}
+.stage-brief .row:last-child{border-bottom:0;padding-bottom:0}
+.stage-brief .row b{font-size:21px;font-weight:800;letter-spacing:-.03em;color:var(--ink);min-width:34px;font-variant-numeric:tabular-nums}
+.stage-brief .row b.hl{color:var(--blue)}
+.stage-brief .row span{font-size:11.5px;color:var(--muted);font-weight:600;letter-spacing:.02em}
+@media(max-width:880px){
+  .stage-head{grid-template-columns:1fr;align-items:start}
+  .stage-brief{flex-direction:row;flex-wrap:wrap;gap:4px 22px;min-width:0;align-self:start}
+  .stage-brief .cap{width:100%}
+  .stage-brief .row{border-bottom:0;padding:2px 0}
+}
 .tagchips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .tagchip{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--ink-soft);background:#fff;border:1px solid var(--line);
   padding:5px 11px;border-radius:20px;transition:.18s var(--ease)}
@@ -154,7 +172,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 
 /* ---------- STAGE 1 · PRD ---------- */
 .prd-goal{display:flex;align-items:center;gap:16px;padding:20px 22px;border-radius:14px;
-  background:linear-gradient(110deg,#16284b,#23396b);color:#eaf1ff;box-shadow:var(--shadow);margin-bottom:26px}
+  background:var(--navy-grad);color:#eaf1ff;box-shadow:var(--shadow);margin-bottom:26px}
 .prd-goal .badge{font-family:var(--mono);font-size:10px;letter-spacing:.14em;padding:5px 9px;border-radius:7px;
   background:rgba(255,255,255,.12);color:#bcd0f5;text-transform:uppercase;flex:0 0 auto}
 .prd-goal b{font-size:clamp(16px,2.1vw,21px);font-weight:650;letter-spacing:-.01em}
@@ -183,7 +201,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .prd-out .scope-item b{text-decoration:line-through;text-decoration-color:var(--faint);font-weight:550}
 @media(max-width:820px){.prd-cols{grid-template-columns:1fr}}
 .prd-doc{display:flex;align-items:center;gap:18px;margin-top:18px;padding:18px 22px;border-radius:14px;
-  background:linear-gradient(110deg,#16284b,#23396b);color:#eaf1ff;box-shadow:var(--shadow);transition:.2s var(--ease)}
+  background:var(--navy-grad);color:#eaf1ff;box-shadow:var(--shadow);transition:.2s var(--ease)}
 .prd-doc:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
 .prd-doc-ic{flex:0 0 auto;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;
   background:rgba(255,255,255,.12);color:#cfe0ff}
@@ -205,7 +223,8 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .flow-play:hover{background:var(--navy-2)}
 .flow-play .tri{width:0;height:0;border-left:9px solid #5ef0b0;border-top:6px solid transparent;border-bottom:6px solid transparent}
 .flow-hint{font-size:12.5px;color:var(--muted)}
-.flow-track{display:flex;gap:0;overflow-x:auto;padding:8px 4px 20px;scroll-snap-type:x proximity}
+.flow-track{display:flex;gap:0;overflow-x:auto;padding:8px 4px 20px;scroll-snap-type:x proximity;
+  -webkit-mask-image:linear-gradient(90deg,#000 94%,transparent);mask-image:linear-gradient(90deg,#000 94%,transparent)}
 .flow-node{flex:0 0 auto;width:180px;scroll-snap-align:center;position:relative}
 .flow-node .card{position:relative;padding:15px 14px;border-radius:13px;background:#fff;border:1px solid var(--line);
   box-shadow:var(--shadow-sm);transition:.25s var(--ease);cursor:pointer;min-height:108px}
@@ -234,7 +253,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .node{padding:13px 15px;border-radius:12px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-sm);
   transition:.2s var(--ease);position:relative}
 .node.dim{opacity:.4}
-.node-root{background:linear-gradient(135deg,#16284b,#274278);color:#fff;border:0;box-shadow:var(--shadow)}
+.node-root{background:var(--navy-grad);color:#fff;border:0;box-shadow:var(--shadow)}
 .node-root span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:#9fb6e6;text-transform:uppercase}
 .node-root b{display:block;font-size:clamp(18px,2.4vw,24px);font-weight:700;margin-top:4px;letter-spacing:-.02em}
 .node-driver{cursor:pointer}
@@ -252,7 +271,8 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .pipe-pulse-btn{display:inline-flex;align-items:center;gap:8px;font-size:12.5px;font-weight:650;color:var(--blue);
   padding:8px 14px;border-radius:9px;border:1px solid var(--blue-line);background:var(--blue-soft);transition:.2s var(--ease)}
 .pipe-pulse-btn:hover{background:#fff;box-shadow:var(--shadow-sm)}
-.pipe{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:6px 2px 24px;position:relative}
+.pipe{display:flex;align-items:stretch;gap:0;overflow-x:auto;padding:6px 2px 24px;position:relative;
+  -webkit-mask-image:linear-gradient(90deg,#000 94%,transparent);mask-image:linear-gradient(90deg,#000 94%,transparent)}
 .pipe-stage{flex:0 0 auto;width:158px;position:relative}
 .pipe-stage .box{height:100%;padding:16px 14px;border-radius:13px;background:#fff;border:1px solid var(--line);
   box-shadow:var(--shadow-sm);transition:.25s var(--ease);position:relative;overflow:hidden}
@@ -317,8 +337,8 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .device .chrome .url{margin-left:8px;font-family:var(--mono);font-size:11px;color:#8ea3cc;background:rgba(255,255,255,.06);
   padding:5px 12px;border-radius:7px;flex:1}
 .device .screen{position:relative;height:clamp(300px,42vw,440px);background:var(--canvas);overflow:hidden}
-.scr{position:absolute;inset:0;padding:18px;display:none;animation:scrIn .4s var(--ease)}
-.scr.show{display:block}
+.scr{position:absolute;inset:0;padding:18px;display:none;flex-direction:column;animation:scrIn .4s var(--ease)}
+.scr.show{display:flex}
 @keyframes scrIn{from{opacity:0;transform:scale(.99) translateY(8px)}to{opacity:1;transform:none}}
 .scr .scr-cap{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--blue);text-transform:uppercase;margin-bottom:12px}
 /* mini-mock primitives */
@@ -338,11 +358,19 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .mk-li .risk.lo{background:var(--green-soft);color:var(--green)}
 .mk-bar{height:8px;border-radius:5px;background:var(--canvas-2);overflow:hidden;margin-top:6px}
 .mk-bar span{display:block;height:100%;background:var(--blue)}
-.mk-ai{background:linear-gradient(135deg,#16284b,#28427a);color:#dce7fb;border-radius:11px;padding:14px}
+.mk-ai{background:var(--navy-grad);color:#dce7fb;border-radius:11px;padding:14px}
 .mk-ai .tag{font-family:var(--mono);font-size:9px;letter-spacing:.12em;color:#8fb0ee;text-transform:uppercase}
 .mk-ai b{display:block;color:#fff;font-size:13px;margin:6px 0 7px;font-weight:650}
 .mk-ai p{font-size:11px;color:#aebfde;line-height:1.5}
 .mk-ai .act{margin-top:10px;display:inline-block;background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:7px 12px;border-radius:8px}
+/* compact AI next-best-action bar — the one navy accent every screen shares */
+.mk-aibar{margin-top:auto;display:flex;align-items:center;gap:11px;background:var(--navy-grad);color:#dce7fb;
+  border-radius:10px;padding:10px 13px;box-shadow:var(--shadow-sm)}
+.mk-aibar .tag{flex:0 0 auto;font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;color:#8fb0ee;text-transform:uppercase;
+  background:rgba(255,255,255,.09);padding:4px 7px;border-radius:6px}
+.mk-aibar .tx{flex:1;min-width:0;font-size:11px;color:#fff;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mk-aibar .tx small{display:block;font-size:9.5px;color:#aebfde;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mk-aibar .act{flex:0 0 auto;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:6px 10px;border-radius:7px}
 .mk-chip{display:inline-flex;align-items:center;gap:6px;font-size:10.5px;font-weight:650;padding:5px 10px;border-radius:20px;
   background:#fff;border:1px solid var(--line);margin:0 6px 6px 0}
 .mk-h{font-size:13px;font-weight:750;margin-bottom:10px;letter-spacing:-.01em}
@@ -457,11 +485,19 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
                 : '<span class="tagchip">'+esc(t)+'</span>';
     }).join("")+'</div>';
   }
-  function head(num,total,eyebrow,title,sub,tagArr){
+  function head(num,total,eyebrow,title,sub,tagArr,brief){
     return '<div class="stage-head reveal">'+
+      '<div class="sh-copy">'+
       '<div style="display:flex;gap:14px;align-items:baseline"><span class="stage-num">'+num+' / '+total+'</span>'+
       '<span class="eyebrow">'+esc(eyebrow)+'</span></div>'+
-      '<h2>'+title+'</h2>'+(sub?'<p>'+esc(sub)+'</p>':'')+(tagArr?tags(tagArr):'')+'</div>';
+      '<h2>'+title+'</h2>'+(sub?'<p>'+esc(sub)+'</p>':'')+(tagArr?tags(tagArr):'')+'</div>'+
+      (brief||'')+'</div>';
+  }
+  // stage brief — small data-driven stat card, fills the right of the stage header
+  function brief(cap,rows){
+    return '<aside class="stage-brief"><span class="cap">'+esc(cap)+'</span>'+
+      rows.map(function(r){return '<span class="row"><b'+(r[2]?' class="hl"':'')+'>'+esc(r[0])+'</b><span>'+esc(r[1])+'</span></span>';}).join("")+
+    '</aside>';
   }
 
   // ---------- SVG icon set ----------
@@ -535,9 +571,10 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 
     // ===== STAGE 1 — PRD =====
     var prdUsers=prd.users||p.users||[], prdMvp=prd.mvp||p.mvp||[], prdNon=prd.nongoals||[];
-    H.push('<section class="stage" id="s1" data-stage="1"><div class="wrap">'+
+    H.push('<section class="stage alt" id="s1" data-stage="1"><div class="wrap">'+
       head("01",T,"Define the bet · PRD","Decide <em>exactly</em> what to build — and what not to.",
-        "One goal, the people it serves, the smallest slice that proves it, and the lines we deliberately won't cross.",prd.tags)+
+        "One goal, the people it serves, the smallest slice that proves it, and the lines we deliberately won't cross.",prd.tags,
+        brief("The bet, sized",[["1","goal",true],[String(prdUsers.length),"primary users"],[String(prdMvp.length),"in scope — MVP"],[String(prdNon.length),"deliberate no's"]]))+
       '<div class="reveal">'+
         '<div class="prd-goal"><span class="badge">Goal</span><b>'+esc(prd.goal||p.tagline)+'</b></div>'+
         '<div class="prd-cols">'+
@@ -580,7 +617,8 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     });
     H.push('<section class="stage" id="s2" data-stage="2"><div class="wrap">'+
       head("02",T,"The happy path · User flow","One clean line from <em>logged in</em> to <em>logged outcome</em>.",
-        "Click any step to open it — or press play and watch a collector move through the whole flow.",flow.tags)+
+        "Click any step to open it — or press play and watch a collector move through the whole flow.",flow.tags,
+        brief("The happy path",[[String(fsteps.length),"steps, end to end",true],["1","place to act"],["0","tab-hops"]]))+
       '<div class="reveal">'+
         '<div class="flow-toolbar"><button class="flow-play" id="flowPlay"><span class="tri"></span>Play the walkthrough</button>'+
         '<span class="flow-hint">Tip: tap a step to expand its detail.</span></div>'+
@@ -592,9 +630,10 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     var drivers=met.drivers||[], pmetrics=met.product||[];
     var dHtml=drivers.map(function(d,i){return '<div class="node node-driver" data-d="'+i+'"><b><span class="d-dot"></span>'+esc(d)+'</b></div>';}).join("");
     var mHtml=pmetrics.map(function(m,i){return '<div class="node node-metric" data-m="'+i+'"><span>Instrumented</span>'+esc(m)+'</div>';}).join("");
-    H.push('<section class="stage" id="s3" data-stage="3"><div class="wrap">'+
+    H.push('<section class="stage alt" id="s3" data-stage="3"><div class="wrap">'+
       head("03",T,"How we'll know · Metrics tree","Tie one <em>business outcome</em> to the things we can actually move.",
-        "Hover a driver to trace it from the outcome down to the product metric that proves it.",met.tags)+
+        "Hover a driver to trace it from the outcome down to the product metric that proves it.",met.tags,
+        brief("The scoreboard",[["1","north-star outcome",true],[String(drivers.length),"value drivers"],[String(pmetrics.length),"product metrics"]]))+
       '<div class="tree reveal">'+
         '<svg class="tree-svg" id="treeSvg" preserveAspectRatio="none"></svg>'+
         '<div class="tree-grid" id="treeGrid">'+
@@ -618,7 +657,8 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     });
     H.push('<section class="stage" id="s4" data-stage="4"><div class="wrap">'+
       head("04",T,"How it runs · Architecture","Data in, <em>decision</em> out, and a loop that keeps learning.",
-        "Watch a single invoice travel the pipeline — then feed its outcome back to re-rank the queue.",wf.tags)+
+        "Watch a single invoice travel the pipeline — then feed its outcome back to re-rank the queue.",wf.tags,
+        brief("The system",[[String(wsteps.length),"pipeline phases",true],["1","feedback loop"],["∞","re-ranks from results"]]))+
       '<div class="reveal">'+
         '<div class="pipe-toolbar"><button class="pipe-pulse-btn" id="pulseBtn">'+ic("bolt")+'Run the pipeline</button></div>'+
         '<div class="pipe" id="pipe">'+pHtml+'</div>'+
@@ -627,9 +667,10 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     '</div></section>');
 
     // ===== STAGE 5 — BEFORE / AFTER =====
-    H.push('<section class="stage" id="s5" data-stage="5"><div class="wrap">'+
+    H.push('<section class="stage alt" id="s5" data-stage="5"><div class="wrap">'+
       head("05",T,"The shift · Before / After","From <em>stitching context</em> to <em>just acting</em>.",
-        "Same collector, same accounts — the difference is where the judgment work happens.",ba.tags)+
+        "Same collector, same accounts — the difference is where the judgment work happens.",ba.tags,
+        brief("The shift",[["6","tools before",false],["1","workspace after",true],["1","next best action"]]))+
       '<div class="reveal">'+
         '<div class="ba-toggle" id="baToggle"><button class="before-on on" data-ba="before">Before</button><button class="after-on" data-ba="after">After</button></div>'+
         '<div class="ba-stage">'+
@@ -659,7 +700,8 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     var screens=sItems.map(function(it,i){return '<div class="scr '+(i===0?"show":"")+'" data-screen="'+i+'"><div class="scr-cap">'+esc(it.name)+'</div>'+mocks[i]+'</div>';}).join("");
     H.push('<section class="stage" id="s6" data-stage="6"><div class="wrap">'+
       head("06",T,"See it work · Prototype","Five screens, <em>built in HTML</em> — then open the real thing.",
-        "Click through the workspace, then launch the live, clickable prototype.",scr.tags)+
+        "Click through the workspace, then launch the live, clickable prototype.",scr.tags,
+        brief("Proof of build",[[String(sItems.length),"screens to walk",true],["1","live prototype"],["0","mock screenshots"]]))+
       '<div class="proto-wrap reveal">'+
         '<div class="device"><div class="chrome"><div class="dots"><i></i><i></i><i></i></div>'+
           '<div class="url">collections.cloud / workspace</div></div>'+
@@ -692,46 +734,60 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     wire(STAGES);
   }
 
-  // ---------- screen mock-ups (HTML, recognizable, generic fallback) ----------
+  // ---------- screen mock-ups ----------
+  // Every screen shares ONE skeleton: light workspace cards on the canvas,
+  // and a single navy AI bar pinned to the bottom — the product's signature.
   function buildMocks(items){
+    function aibar(tag,line,sub,act){
+      return '<div class="mk-aibar"><span class="tag">'+tag+'</span>'+
+        '<span class="tx">'+line+'<small>'+sub+'</small></span><span class="act">'+act+'</span></div>';
+    }
     var byName={
       "Collections command center":
         '<div class="mk-row"><div class="mk-card"><div class="k">Expected recovery</div><div class="v green">$4.82M</div></div>'+
         '<div class="mk-card"><div class="k">Promise kept</div><div class="v blue">78.6%</div></div>'+
         '<div class="mk-card"><div class="k">At-risk today</div><div class="v amber">128</div></div></div>'+
-        '<div class="mk-ai"><span class="tag">AI · Recovery opportunity</span><b>Move 43 digital-first accounts to pre-due strategy</b>'+
-        '<p>Estimated $184K protected this month.</p><span class="act">Review recommendation</span></div>',
+        '<div class="mk-list">'+
+        liQ("#2f6fed","NA","Northwind Apparel","$84.2K · 41d",'hi','High')+
+        liQ("#7557d3","BV","Brightvale Foods","$52.0K · 29d",'hi','High')+'</div>'+
+        aibar("AI","Move 43 digital-first accounts to pre-due strategy","Estimated $184K protected this month","Review"),
       "Prioritized account queue":
         '<div class="mk-h">My work queue · ranked</div><div class="mk-list">'+
         liQ("#2f6fed","NA","Northwind Apparel","$84.2K · 41d",'hi','High')+
         liQ("#7557d3","BV","Brightvale Foods","$52.0K · 29d",'hi','High')+
         liQ("#16835b","MT","Meridian Tools","$31.4K · 18d",'md','Med')+
-        liQ("#b76509","CP","Cedar & Pine","$12.8K · 9d",'lo','Low')+'</div>',
+        liQ("#b76509","CP","Cedar & Pine","$12.8K · 9d",'lo','Low')+'</div>'+
+        aibar("AI","Why this order","Ranked by risk × balance × recoverability","See logic"),
       "Account risk detail":
         '<div class="mk-row"><div class="mk-card" style="flex:0 0 130px;text-align:center"><div class="k" style="text-align:left">Risk score</div>'+
         '<div class="mk-donut"><div class="hole" style="color:var(--red)">82</div></div></div>'+
         '<div class="mk-card"><div class="k">Reason codes</div>'+
         '<div style="margin-top:8px">'+chip("Broken promise ×2")+chip("Aging 41d")+chip("Open dispute")+chip("Slowing payments")+'</div>'+
-        '<div class="k" style="margin-top:12px">Balance trend</div><div class="mk-bar"><span style="width:78%;background:var(--red)"></span></div></div></div>',
+        '<div class="k" style="margin-top:12px">Balance trend</div><div class="mk-bar"><span style="width:78%;background:var(--red)"></span></div></div></div>'+
+        aibar("AI","Score explained","Broken promises ×2 drive 34 pts of this score","Trace"),
       "AI recommendation panel":
-        '<div class="mk-ai"><span class="tag">Next best action</span><b>Call now — offer a 2-installment plan</b>'+
-        '<p>History shows this contact responds to phone + structured terms. Drafted talking points and a follow-up email are ready.</p>'+
+        '<div class="mk-ai"><span class="tag">AI · Next best action</span><b>Call now — offer a 2-installment plan</b>'+
+        '<p>History shows this contact responds to phone + structured terms. Talking points and a follow-up email are drafted.</p>'+
         '<span class="act">Start call · log outcome</span></div>'+
-        '<div class="mk-row" style="margin-top:10px"><div class="mk-card"><div class="k">Confidence</div><div class="v blue">High</div></div>'+
-        '<div class="mk-card"><div class="k">Predicted lift</div><div class="v green">+22%</div></div></div>',
+        '<div class="mk-row" style="margin-top:auto;padding-top:10px;margin-bottom:0"><div class="mk-card"><div class="k">Confidence</div><div class="v blue">High</div></div>'+
+        '<div class="mk-card"><div class="k">Predicted lift</div><div class="v green">+22%</div></div>'+
+        '<div class="mk-card"><div class="k">Drafted email</div><div class="mk-bar" style="margin-top:9px"><span style="width:92%"></span></div>'+
+        '<div class="mk-bar"><span style="width:64%"></span></div></div></div>',
       "Dispute intelligence view":
         '<div class="mk-h">Disputes · grouped by root cause</div><div class="mk-list">'+
         liD("Pricing mismatch","14 accounts · $212K",'hi')+
         liD("Missing PO reference","9 accounts · $88K",'md')+
         liD("Damaged shipment","5 accounts · $40K",'md')+
-        liD("Duplicate invoice","3 accounts · $11K",'lo')+'</div>'
+        liD("Duplicate invoice","3 accounts · $11K",'lo')+'</div>'+
+        aibar("AI","Root cause found","Pricing mismatch drives 57% of disputed dollars","Playbook")
     };
     function chip(t){return '<span class="mk-chip"><span style="width:6px;height:6px;border-radius:50%;background:var(--red);display:inline-block"></span>'+t+'</span>';}
     function liQ(c,av,name,meta,rk,rl){return '<div class="mk-li"><span class="av" style="background:'+c+'">'+av+'</span><div><b>'+name+'</b><div style="color:var(--muted);font-size:10px">'+meta+'</div></div><span class="risk '+rk+'">'+rl+'</span></div>';}
     function liD(name,meta,rk){return '<div class="mk-li"><span class="av" style="background:var(--purple)">D</span><div><b>'+name+'</b><div style="color:var(--muted);font-size:10px">'+meta+'</div></div><span class="risk '+rk+'">'+(rk==='hi'?'P1':rk==='md'?'P2':'P3')+'</span></div>';}
     return items.map(function(it){
       return byName[it.name] || ('<div class="mk-h">'+it.name+'</div><div class="mk-row"><div class="mk-card"><div class="k">Screen</div><div class="v blue">'+it.name+'</div></div></div><div class="mk-list">'+
-        '<div class="mk-li"><span class="av" style="background:var(--blue)">·</span><b>Representative layout</b></div></div>');
+        '<div class="mk-li"><span class="av" style="background:var(--blue)">·</span><b>Representative layout</b></div></div>'+
+        aibar("AI","Next best action","Drafted and ready to review","Open"));
     });
   }
 

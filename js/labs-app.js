@@ -99,19 +99,40 @@
      LEVEL 1 — Labs index
      ===================================================== */
   function renderIndex() {
-    var rows = model.labs.map(function (lab, i) {
-      return '<div class="lab-row" data-nav="lab" data-lab="' + lab.id + '">' +
-        '<span class="idx">' + pad(i) + '</span>' +
-        '<span class="lab-main">' +
-          ed("span", "labs." + i + ".name", "lab-name") +
-          ed("span", "labs." + i + ".desc", "lab-desc", ' style="display:block"') +
-        '</span>' +
-        '<span class="lab-side">' +
-          '<span class="count-chip">' + lab.products.length + ' products</span>' +
-          '<span class="go">→</span>' +
-        '</span>' +
-      '</div>';
-    }).join("");
+    /* Flagship labs (a single deep case-study product each) get a featured
+       strip; the rest render as the classic discipline list below. */
+    var flags = '', rows = '';
+    model.labs.forEach(function (lab, i) {
+      if (lab.flagship && lab.products[0]) {
+        flags += flagCardHTML(lab, i);
+      } else {
+        rows += '<div class="lab-row" data-nav="lab" data-lab="' + lab.id + '">' +
+          '<span class="idx">' + pad(i) + '</span>' +
+          '<span class="lab-main">' +
+            ed("span", "labs." + i + ".name", "lab-name") +
+            ed("span", "labs." + i + ".desc", "lab-desc", ' style="display:block"') +
+          '</span>' +
+          '<span class="lab-side">' +
+            '<span class="count-chip">' + lab.products.length + ' products</span>' +
+            '<span class="go">→</span>' +
+          '</span>' +
+        '</div>';
+      }
+    });
+
+    var flagSection = flags ? (
+      '<div class="wrap"><div class="flag-head">' +
+        '<p class="eyebrow">Flagship case studies <span class="dot">·</span> problem → prototype</p>' +
+        '<span class="flag-sub">Two products, taken end to end — PRD, journey, metrics, architecture, tradeoffs, and a working prototype.</span>' +
+      '</div><div class="flag-strip stagger">' + flags + '</div></div>'
+    ) : '';
+
+    var listHead = rows ? (
+      '<div class="wrap"><div class="flag-head" style="margin-top:8px">' +
+        '<p class="eyebrow">Six discipline labs <span class="dot">·</span> how each layer gets built</p>' +
+        '<span class="flag-sub">The system behind the case studies — from the founder bet to the data model, architecture, AI, and product.</span>' +
+      '</div></div>'
+    ) : '';
 
     return '<div class="view">' + navHTML("labs") +
       '<header class="labs-hero wrap">' +
@@ -126,9 +147,46 @@
           '</div>' +
         '</div>' +
       '</header>' +
+      flagSection +
+      listHead +
       '<div class="wrap"><div class="labs-list stagger">' + rows + '</div></div>' +
       footerHTML() +
     '</div>';
+  }
+
+  /* Flagships with a bespoke, gamified interactive case-study page.
+     When present, the flagship card opens this standalone experience instead
+     of the in-SPA product view (hybrid: data still lives in labs.json). */
+  var EXPERIENCE = {
+    "ai-collections": "case-studies/collections-cloud.html"
+  };
+
+  /* Featured flagship card — links straight to its single case-study product,
+     skipping the one-card lab grid. */
+  function flagCardHTML(lab, i) {
+    var p = lab.products[0];
+    var base = "labs." + i + ".products.0";
+    var exp = EXPERIENCE[lab.id];
+    var arts = (p.artifacts || []).map(function (a) {
+      return '<span class="flag-chip">' + esc(a.label) + '</span>';
+    }).join("");
+    var inner =
+      '<div class="ph flag-shot">' + phShot(p.image, p.name.toLowerCase() + ' — preview') +
+        (exp ? '<span class="flag-interactive">Interactive</span>' : '') + '</div>' +
+      '<div class="flag-body">' +
+        '<div class="flag-kicker">Case study · ' + esc(p.stage || "") + '</div>' +
+        ed("div", "labs." + i + ".name", "flag-name") +
+        ed("div", base + ".tagline", "flag-tag") +
+        (arts ? '<div class="flag-chips">' + arts + '</div>' : '') +
+        '<div class="flag-foot"><span class="flag-cta">' +
+          (exp ? 'Open the interactive case study' : 'Open the case study') +
+        '</span><span class="go">→</span></div>' +
+      '</div>';
+    if (exp) {
+      return '<a class="flag-card" href="' + exp + '" data-explore>' + inner + '</a>';
+    }
+    return '<div class="flag-card" data-nav="product" data-lab="' + lab.id + '" data-prod="' + p.id + '">' +
+      inner + '</div>';
   }
   function statHTML(nk, lk) {
     return '<div class="stat" style="min-width:64px">' +
@@ -206,14 +264,24 @@
       '</li>';
     }).join("");
 
-    var nextIdx = (j + 1) % lab.products.length;
-    var nextP = lab.products[nextIdx];
+    /* "Next" — within the lab normally; for a flagship single-product lab,
+       point at the other flagship case study (cross-sell), else the lab. */
+    var nextLab = lab, nextP = lab.products[(j + 1) % lab.products.length];
+    if (lab.flagship && lab.products.length === 1) {
+      for (var fi = 0; fi < model.labs.length; fi++) {
+        var ol = model.labs[fi];
+        if (ol.flagship && ol.id !== lab.id && ol.products[0]) { nextLab = ol; nextP = ol.products[0]; break; }
+      }
+    }
+
+    /* Flagship case studies skip the one-card lab grid — back to the index. */
+    var back = lab.flagship
+      ? '<button class="back-link" data-nav="index">← All labs</button>'
+      : '<button class="back-link" data-nav="lab" data-lab="' + lab.id + '">← ' + esc(lab.name) + '</button>';
 
     return '<div class="view">' + navHTML("labs") +
       '<div class="prod wrap">' +
-        '<div class="subhead" style="padding-bottom:0">' +
-          '<button class="back-link" data-nav="lab" data-lab="' + lab.id + '">← ' + esc(lab.name) + '</button>' +
-        '</div>' +
+        '<div class="subhead" style="padding-bottom:0">' + back + '</div>' +
 
         '<div class="prod-head">' +
           '<div>' +
@@ -253,8 +321,10 @@
           '</aside>' +
         '</div>' +
 
-        '<div class="prod-next" data-nav="product" data-lab="' + lab.id + '" data-prod="' + nextP.id + '">' +
-          '<div><div class="pn-k">Next in ' + esc(lab.name) + '</div>' +
+        caseStudyHTML(p, base) +
+
+        '<div class="prod-next" data-nav="product" data-lab="' + nextLab.id + '" data-prod="' + nextP.id + '">' +
+          '<div><div class="pn-k">' + (nextLab === lab ? 'Next in ' + esc(lab.name) : 'Next case study') + '</div>' +
           '<div class="pn-t">' + esc(nextP.name) + '</div></div>' +
           '<span class="go">→</span>' +
         '</div>' +
@@ -262,6 +332,126 @@
       footerHTML() +
     '</div>';
   }
+
+  /* =====================================================
+     CASE STUDY — Why / Users / MVP / Artifacts / Testing / Next
+     Rendered only when the product carries this richer content.
+     ===================================================== */
+  function caseStudyHTML(p, base) {
+    var blocks = "";
+
+    if (p.why) {
+      blocks += csSection("Why it matters", "01",
+        '<p class="cs-lead">' + esc(p.why) + '</p>');
+    }
+
+    var twoCol = "";
+    if (p.users && p.users.length) {
+      twoCol += '<div class="cs-col"><div class="cs-col-h">Target users</div><ul class="cs-bullets">' +
+        p.users.map(function (u) { return '<li>' + esc(u) + '</li>'; }).join("") + '</ul></div>';
+    }
+    if (p.mvp && p.mvp.length) {
+      twoCol += '<div class="cs-col"><div class="cs-col-h">MVP scope</div><ul class="cs-bullets check">' +
+        p.mvp.map(function (m) { return '<li>' + esc(m) + '</li>'; }).join("") + '</ul></div>';
+    }
+    if (twoCol) blocks += csSection("Who & what ships", "02", '<div class="cs-twocol">' + twoCol + '</div>');
+
+    if (p.artifacts && p.artifacts.length) {
+      var arts = p.artifacts.map(artifactHTML).join("");
+      blocks += csSection("Product artifacts", "03",
+        '<p class="cs-sub">The work behind the product — each artifact tagged with the discipline lab it draws on.</p>' +
+        '<div class="artifacts">' + arts + '</div>');
+    }
+
+    var close = "";
+    if (p.testing) close += '<div class="cs-col"><div class="cs-col-h">What I\'m testing</div><p class="cs-p">' + esc(p.testing) + '</p></div>';
+    if (p.next) close += '<div class="cs-col"><div class="cs-col-h">What I\'d build next</div><p class="cs-p">' + esc(p.next) + '</p></div>';
+    if (close) blocks += csSection("Hypothesis & next", "04", '<div class="cs-twocol">' + close + '</div>');
+
+    return blocks ? '<div class="case-study">' + blocks + '</div>' : "";
+  }
+
+  function csSection(title, no, inner) {
+    return '<section class="cs-section">' +
+      '<div class="cs-head"><span class="cs-no">' + no + '</span><h2 class="cs-title">' + esc(title) + '</h2></div>' +
+      '<div class="cs-content">' + inner + '</div>' +
+    '</section>';
+  }
+
+  /* Discipline labels → the lab they link back to. */
+  var DISCIPLINE_LAB = {
+    founder: "founder", analytics: "analytics", ai: "ai",
+    architecture: "architecture", data: "data", product: "product"
+  };
+  function disciplineTags(tags) {
+    if (!tags || !tags.length) return "";
+    return '<div class="art-tags">' + tags.map(function (t) {
+      var id = DISCIPLINE_LAB[String(t).toLowerCase()];
+      if (id) return '<span class="pill disc" data-nav="lab" data-lab="' + id + '" title="See the ' + esc(t) + ' lab">' + esc(t) + ' lab ↗</span>';
+      return '<span class="pill">' + esc(t) + '</span>';
+    }).join("") + '</div>';
+  }
+
+  /* One artifact card, rendered by kind. */
+  function artifactHTML(a) {
+    var body = "";
+    switch (a.kind) {
+      case "prd":
+        body = '<div class="art-prd">' +
+          (a.goal ? '<div class="prd-goal"><span class="k">Goal</span><span class="v">' + esc(a.goal) + '</span></div>' : '') +
+          '<div class="prd-grid">' +
+            prdCol("Users", a.users) +
+            prdCol("MVP", a.mvp) +
+            prdCol("Non-goals", a.nongoals, true) +
+          '</div>' +
+        '</div>';
+        break;
+      case "flow":
+        body = '<ol class="flow-steps">' + (a.steps || []).map(function (s, k) {
+          return '<li><span class="fs-n">' + pad(k) + '</span><span class="fs-t">' + esc(s) + '</span></li>';
+        }).join("") + '</ol>';
+        break;
+      case "metrics":
+        body = '<div class="metric-tree">' +
+          '<div class="mt-business"><span class="mt-k">Business metric</span><span class="mt-v">' + esc(a.business) + '</span></div>' +
+          '<div class="mt-branch">' +
+            '<div class="mt-group"><div class="mt-gh">Drivers</div>' + (a.drivers || []).map(function (x) { return '<div class="mt-node driver">' + esc(x) + '</div>'; }).join("") + '</div>' +
+            '<div class="mt-group"><div class="mt-gh">Product metrics</div>' + (a.product || []).map(function (x) { return '<div class="mt-node metric">' + esc(x) + '</div>'; }).join("") + '</div>' +
+          '</div>' +
+        '</div>';
+        break;
+      case "workflow":
+        body = '<div class="pipeline">' + (a.steps || []).map(function (s, k) {
+          return '<span class="pl-step">' + esc(s) + '</span>' +
+            (k < a.steps.length - 1 ? '<span class="pl-arrow">→</span>' : '');
+        }).join("") + '</div>';
+        break;
+      case "beforeafter":
+        body = '<div class="ba-grid">' +
+          '<div class="ba-col before"><div class="ba-k">Before</div><p>' + esc(a.before) + '</p></div>' +
+          '<div class="ba-col after"><div class="ba-k">After</div><p>' + esc(a.after) + '</p></div>' +
+        '</div>';
+        break;
+      case "screens":
+        body = '<div class="screens-grid">' + (a.items || []).map(function (s, k) {
+          var inner = s.img ? '<img src="' + esc(s.img) + '" alt="' + esc(s.name) + '">' : '<span class="scr-n">' + pad(k) + '</span>';
+          return '<div class="screen"><div class="ph scr-ph">' + inner + '</div><div class="scr-name">' + esc(s.name) + '</div></div>';
+        }).join("") + '</div>';
+        break;
+      default:
+        body = '';
+    }
+    return '<article class="artifact art-' + esc(a.kind) + '">' +
+      '<div class="art-head"><span class="art-label">' + esc(a.label) + '</span>' + disciplineTags(a.tags) + '</div>' +
+      body +
+    '</article>';
+  }
+  function prdCol(h, items, danger) {
+    if (!items || !items.length) return "";
+    return '<div class="prd-col' + (danger ? ' danger' : '') + '"><div class="prd-h">' + esc(h) + '</div><ul>' +
+      items.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join("") + '</ul></div>';
+  }
+
   function specRow(k, path) {
     return '<div class="spec-row"><div class="k">' + esc(k) + '</div>' + ed("div", path, "v") + '</div>';
   }

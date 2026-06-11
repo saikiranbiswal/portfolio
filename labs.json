@@ -3,9 +3,9 @@
     "owner": "Sai Kiran Biswal",
     "role": "Enterprise · AI Product",
     "glyph": "SK",
-    "eyebrow": "Product Portfolio · Built as a system of labs",
-    "title": "Six labs. One product mind across the whole stack.",
-    "intro": "Each lab is a discipline I work in end-to-end — from the founder's first bet to the data model, the architecture, the AI, and the product people actually use. Step into any lab to explore what it ships.",
+    "eyebrow": "Product Portfolio · Two flagship case studies, then six labs",
+    "title": "Two products, end to end. Six labs of how I work.",
+    "intro": "Start with the two flagship case studies — each one taken from a painful workflow all the way to a working prototype, with the PRD, journey, metrics, and architecture in between. Then step into any of the six discipline labs to see how each layer gets built.",
     "statLabs": "6",
     "statLabsLabel": "Labs",
     "statProducts": "27",
@@ -14,6 +14,381 @@
     "statYearsLabel": "Years"
   },
   "labs": [
+    {
+      "id": "ai-collections",
+      "name": "AI Collections Cloud",
+      "flagship": true,
+      "desc": "An AI-native collections workspace — prioritize accounts, predict risk, recommend the next best action, and drive down DSO.",
+      "blurb": "A complete PM case study, end to end. AI Collections Cloud turns fragmented AR data into next-best-action workflows — built from the painful workflow through the PRD, the journey, the metrics, the architecture, the tradeoffs, and a working prototype.",
+      "products": [
+        {
+          "id": "collections-cloud",
+          "name": "AI Collections Cloud",
+          "stage": "Working prototype",
+          "tags": [
+            "AI",
+            "Fintech",
+            "Collections"
+          ],
+          "tagline": "An AI-powered collections workspace that prioritizes accounts, predicts risk, recommends the next best action, and drives down DSO.",
+          "what": "Collections teams burn their day on decisions, not collecting. Who to call first, what to say, which account is about to slip, which dispute is silently blocking a payment, and what should happen next — every one of those is a judgment call made across a fragmented stack of ERP screens, spreadsheets, email threads, and call notes.\n\nThe bet: turn that fragmented AR data into next-best-action workflows. AI Collections Cloud reads the full account picture, scores risk with reasons, and tells the collector exactly what to do next — then drafts the email and logs the outcome.",
+          "why": "Every extra day an invoice sits unpaid is working capital frozen. Slow, inconsistent collector decisions inflate DSO and let recoverable money age into bad debt. For the collector, the pain is decision fatigue — too many accounts, too little context, and no clear signal on where the next hour should go.",
+          "users": [
+            "Collections analyst",
+            "AR manager",
+            "Dispute analyst",
+            "Finance ops leader"
+          ],
+          "mvp": [
+            "Risk scoring",
+            "Account summary",
+            "Next-best-action",
+            "Email draft",
+            "Command-center dashboard"
+          ],
+          "features": [
+            [
+              "Account risk score",
+              "Predicts delayed-payment risk per account and shows the reason codes behind every score."
+            ],
+            [
+              "Next best action",
+              "Recommends the single highest-leverage move — call, email, escalate, dispute follow-up, or promise-to-pay reminder."
+            ],
+            [
+              "AI collector copilot",
+              "Summarizes account history, drafts the outreach email, and suggests a negotiation tone."
+            ],
+            [
+              "Dispute intelligence",
+              "Detects root cause, groups similar disputes, and routes each to the right team."
+            ],
+            [
+              "Collections command center",
+              "Tracks DSO, aging, collector productivity, and recovery rate in one live view."
+            ]
+          ],
+          "testing": "That a ranked queue plus an explicit next-best-action — not another dashboard — is what actually shortens collector decision time and lifts recovery rate.",
+          "next": "Close the loop: let the copilot auto-log call outcomes, learn which recommendations convert to payment, and re-rank the queue from real results.",
+          "role": "Product Lead",
+          "year": "2025",
+          "stage2": "Prototype · In testing",
+          "stack": [
+            "AI",
+            "Fintech",
+            "Collections"
+          ],
+          "url": "./apps/collections-cloud/",
+          "artifacts": [
+            {
+              "kind": "prd",
+              "label": "PRD",
+              "tags": [
+                "Product",
+                "Founder"
+              ],
+              "goal": "Reduce collector decision time and improve recovery rate.",
+              "users": [
+                "Collections analyst",
+                "AR manager",
+                "Dispute analyst",
+                "Finance ops leader"
+              ],
+              "mvp": [
+                "Risk scoring",
+                "Account summary",
+                "Next-best-action",
+                "Email draft",
+                "Dashboard"
+              ],
+              "nongoals": [
+                "Full ERP replacement",
+                "Autonomous payment negotiation",
+                "Custom workflows for every client"
+              ]
+            },
+            {
+              "kind": "flow",
+              "label": "User Flow",
+              "tags": [
+                "Product"
+              ],
+              "steps": [
+                "Collector logs in",
+                "Sees the prioritized account list",
+                "Opens a risky account",
+                "AI summarizes the history",
+                "AI recommends the next action",
+                "Collector sends email / logs the call",
+                "Promise-to-pay or dispute is created",
+                "Manager sees the impact dashboard"
+              ]
+            },
+            {
+              "kind": "metrics",
+              "label": "Metrics Tree",
+              "tags": [
+                "Analytics"
+              ],
+              "business": "Reduce DSO",
+              "drivers": [
+                "Faster collector action",
+                "Better prioritization",
+                "Fewer unresolved disputes",
+                "Higher promise-to-pay conversion"
+              ],
+              "product": [
+                "% of accounts where the AI recommendation was used",
+                "Time to first action",
+                "Email acceptance rate",
+                "Dispute resolution time",
+                "Recovery rate"
+              ]
+            },
+            {
+              "kind": "workflow",
+              "label": "Workflow Diagram",
+              "tags": [
+                "Architecture"
+              ],
+              "steps": [
+                "Invoice aging",
+                "Risk scoring",
+                "Account prioritization",
+                "AI recommendation",
+                "Collector action",
+                "Payment / dispute / escalation",
+                "Dashboard feedback loop"
+              ]
+            },
+            {
+              "kind": "beforeafter",
+              "label": "Before / After",
+              "tags": [
+                "Product",
+                "Data"
+              ],
+              "before": "Collectors manually stitch together ERP screens, email threads, call notes, and dispute logs to decide who to chase and how.",
+              "after": "AI surfaces risk, history, the recommended action, and the draft outreach in one workspace — the collector just acts."
+            },
+            {
+              "kind": "screens",
+              "label": "Prototype / Screens",
+              "tags": [
+                "Product",
+                "AI"
+              ],
+              "items": [
+                {
+                  "name": "Collections command center"
+                },
+                {
+                  "name": "Prioritized account queue"
+                },
+                {
+                  "name": "Account risk detail"
+                },
+                {
+                  "name": "AI recommendation panel"
+                },
+                {
+                  "name": "Dispute intelligence view"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "los",
+      "name": "LOS — Loan Origination System",
+      "flagship": true,
+      "desc": "A guided, state-based loan-origination platform — lift completion, speed up KYC and decisioning, and shorten approval turnaround.",
+      "blurb": "A complete PM case study, end to end. LOS moves a borrower from application to approval with fewer handoffs — built from the painful workflow through the PRD, the journey, the metrics, the state machine, the tradeoffs, and a working prototype.",
+      "products": [
+        {
+          "id": "lending-os",
+          "name": "LOS — Loan Origination System",
+          "stage": "Working prototype",
+          "tags": [
+            "Fintech",
+            "Lending",
+            "SaaS"
+          ],
+          "tagline": "A digital loan-origination platform that lifts application completion, speeds up KYC and credit decisioning, and shortens approval turnaround.",
+          "what": "Loan journeys are slow for the same reasons everywhere: long forms, the same documents uploaded twice, manual KYC, no visibility into status, and credit decisions that disappear into a queue.\n\nThe bet: a guided, state-based LOS that moves a borrower from application to approval with fewer handoffs. Every applicant always knows their current state and the single next step; every bank team works from one shared workflow instead of chasing paper.",
+          "why": "Drop-off is the silent killer of loan volume — borrowers abandon long, opaque journeys, and approved-but-slow applications lose to faster competitors. Internally, manual KYC and document chasing eat the team's capacity and stretch approval TAT.",
+          "users": [
+            "Borrower",
+            "Loan officer",
+            "Credit analyst",
+            "Operations team"
+          ],
+          "mvp": [
+            "Application form",
+            "Document upload",
+            "KYC state",
+            "Credit decision state",
+            "Application tracker"
+          ],
+          "features": [
+            [
+              "Smart application form",
+              "Dynamic fields that save progress and cut repeated data entry."
+            ],
+            [
+              "KYC / document upload",
+              "Upload, validate, and retry — with missing documents always shown."
+            ],
+            [
+              "Eligibility engine",
+              "Basic product-fit rules with a soft decline and a next-best offer."
+            ],
+            [
+              "Credit decision workflow",
+              "Clear state transitions — pending, approved, referred, rejected."
+            ],
+            [
+              "Application tracker",
+              "The borrower always sees the current status and the next step."
+            ]
+          ],
+          "testing": "That making state and the next step explicit at every stage is what reduces drop-off and shortens approval TAT — more than any single faster step.",
+          "next": "Layer in lightweight decisioning assists — document auto-extraction and rule-based pre-checks — to cut KYC retries and analyst back-and-forth.",
+          "role": "Product Lead",
+          "year": "2025",
+          "stage2": "Prototype · In testing",
+          "stack": [
+            "Fintech",
+            "Lending",
+            "SaaS"
+          ],
+          "url": "./apps/lending-cloud/",
+          "artifacts": [
+            {
+              "kind": "prd",
+              "label": "PRD",
+              "tags": [
+                "Product",
+                "Founder"
+              ],
+              "goal": "Increase completed loan applications and reduce approval turnaround time.",
+              "users": [
+                "Borrower",
+                "Loan officer",
+                "Credit analyst",
+                "Operations team"
+              ],
+              "mvp": [
+                "Application form",
+                "Document upload",
+                "KYC state",
+                "Credit decision state",
+                "Application tracker"
+              ],
+              "nongoals": [
+                "Full core-banking replacement",
+                "Complex AI underwriting",
+                "Multi-country compliance engine"
+              ]
+            },
+            {
+              "kind": "flow",
+              "label": "User Flow",
+              "tags": [
+                "Product"
+              ],
+              "steps": [
+                "User starts the application",
+                "Selects a loan product",
+                "Fills the smart form",
+                "Uploads documents",
+                "KYC check starts",
+                "Eligibility check runs",
+                "Credit analyst reviews",
+                "Approved / referred / rejected",
+                "Disbursement handoff begins"
+              ]
+            },
+            {
+              "kind": "metrics",
+              "label": "Metrics Tree",
+              "tags": [
+                "Analytics"
+              ],
+              "business": "Increase approved loan volume",
+              "drivers": [
+                "Higher application completion",
+                "Faster KYC",
+                "Faster credit decision",
+                "Lower drop-off"
+              ],
+              "product": [
+                "Application completion rate",
+                "Time to submit",
+                "KYC retry rate",
+                "Approval TAT",
+                "Drop-off by step"
+              ]
+            },
+            {
+              "kind": "workflow",
+              "label": "Workflow Diagram",
+              "tags": [
+                "Architecture"
+              ],
+              "steps": [
+                "Lead created",
+                "Application started",
+                "Docs submitted",
+                "KYC pending",
+                "KYC passed",
+                "Credit review",
+                "Approved / rejected / referred",
+                "Offer accepted",
+                "Disbursement"
+              ]
+            },
+            {
+              "kind": "beforeafter",
+              "label": "Before / After",
+              "tags": [
+                "Product",
+                "Data"
+              ],
+              "before": "The borrower submits forms and waits blindly while bank teams chase documents and KYC by hand.",
+              "after": "The borrower sees status, missing items, and the next step; bank teams work one shared workflow end to end."
+            },
+            {
+              "kind": "screens",
+              "label": "Prototype / Screens",
+              "tags": [
+                "Product",
+                "Architecture"
+              ],
+              "items": [
+                {
+                  "name": "Loan product selection"
+                },
+                {
+                  "name": "Smart application form"
+                },
+                {
+                  "name": "Document upload / KYC"
+                },
+                {
+                  "name": "Application status tracker"
+                },
+                {
+                  "name": "Credit analyst review queue"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
     {
       "id": "founder",
       "name": "Founder Lab",

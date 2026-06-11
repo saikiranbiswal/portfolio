@@ -972,7 +972,7 @@ window.LABS_SEED = {
         },
         {
           "id": "lending-cloud",
-          "name": "Enterprise Lending Cloud",
+          "name": "LOS — Loan Origination System",
           "stage": "Working app",
           "tags": [
             "Fintech",

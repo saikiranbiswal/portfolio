@@ -4,7 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101c36">
-<title>LOS — Loan Origination System — Interactive Case Study</title>
+<title>LOS — Loan Origination System — Interactive Case Study · Sai Kiran Biswal</title>
+<meta name="description" content="End-to-end PM case study: LOS — Loan Origination System — from fragmented origination workflow to guided, state-based platform with deterministic demo data.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LOS — Loan Origination System — Interactive Case Study">
+<meta property="og:description" content="Guided loan origination, state machines, EMI math. Built end to end by Sai Kiran Biswal.">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
@@ -39,6 +44,11 @@
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
 body{font-family:var(--sans);background:var(--canvas);color:var(--ink);font-size:15px;line-height:1.6}
+body::before{content:"";position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.02;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");}
+.figcap{font:500 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
+  display:flex;gap:10px;align-items:center;margin-top:12px;}
+.figcap::before{content:"";width:22px;height:1px;background:#2f6fed;flex:none;}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 ::selection{background:var(--blue);color:#fff}
@@ -715,7 +725,9 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       '<div class="proto-wrap reveal">'+
         '<div class="device"><div class="chrome"><div class="dots"><i></i><i></i><i></i></div>'+
           '<div class="url">lending.cloud / application</div></div>'+
-          '<div class="screen" id="screenStage">'+screens+'</div></div>'+
+          '<div class="screen" id="screenStage">'+screens+'</div>'+
+          '<p class="figcap">FIG. 06 — LOS — LOAN ORIGINATION SYSTEM · WORKING PROTOTYPE</p>'+
+          '</div>'+
         '<div class="proto-side">'+
           '<h3>Walk the journey</h3><p>Both sides of the desk — the borrower\'s guided path and the bank\'s shared workflow.</p>'+
           '<div class="proto-nav" id="protoNav">'+navBtns+'</div>'+

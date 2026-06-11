@@ -161,22 +161,82 @@
     "ai-collections": "case-studies/collections-cloud.html"
   };
 
-  /* Featured flagship card — links straight to its single case-study product,
-     skipping the one-card lab grid. */
+  function artOf(p, kind) {
+    var list = p.artifacts || [];
+    for (var k = 0; k < list.length; k++) if (list[k].kind === kind) return list[k];
+    return null;
+  }
+
+  /* Built-in HTML mini-mockup of the product UI, rendered live inside the
+     flagship card (no screenshot needed). Shared .fm-* classes keep both
+     flagships reading as one product family. */
+  function flagMock(labId) {
+    var bar = function (name) {
+      return '<div class="fm-bar"><i></i><i></i><i></i><span>' + esc(name) + '</span></div>';
+    };
+    if (labId === "ai-collections") {
+      return '<div class="fm">' + bar("collections cloud") +
+        '<div class="fm-body">' +
+          '<div class="fm-kpis">' +
+            '<div class="fm-kpi"><b>$4.8M</b><span>Recovery</span></div>' +
+            '<div class="fm-kpi"><b>78%</b><span>Promise kept</span></div>' +
+            '<div class="fm-kpi"><b>128</b><span>At-risk</span></div>' +
+          '</div>' +
+          '<div class="fm-rows">' +
+            '<div class="fm-li"><span class="fm-av">NA</span><span class="fm-nm">Northwind Apparel</span><span class="fm-risk hi">High</span></div>' +
+            '<div class="fm-li"><span class="fm-av">BV</span><span class="fm-nm">Brightvale Foods</span><span class="fm-risk md">Med</span></div>' +
+          '</div>' +
+          '<div class="fm-ai"><span class="fm-ai-tag">AI</span>Next best action · call + 2-installment plan</div>' +
+        '</div></div>';
+    }
+    if (labId === "los") {
+      return '<div class="fm">' + bar("lending cloud") +
+        '<div class="fm-body">' +
+          '<div class="fm-steps">' +
+            '<span class="fm-step done">Apply</span><span class="fm-step done">KYC</span>' +
+            '<span class="fm-step on">Decision</span><span class="fm-step">Offer</span>' +
+          '</div>' +
+          '<div class="fm-rows">' +
+            '<div class="fm-li"><span class="fm-dot ok"></span><span class="fm-nm">KYC verified</span><span class="fm-meta">2.1s</span></div>' +
+            '<div class="fm-li"><span class="fm-dot wait"></span><span class="fm-nm">Income docs</span><span class="fm-meta">1 pending</span></div>' +
+          '</div>' +
+          '<div class="fm-ai"><span class="fm-ai-tag">TAT</span>Approval turnaround · 4h 12m</div>' +
+        '</div></div>';
+    }
+    return '';
+  }
+
+  /* Featured flagship card — a self-contained case study at a glance
+     (live mini-mockup, problem→outcome, what it moves, artifacts), linking
+     into the full case-study experience. */
   function flagCardHTML(lab, i) {
     var p = lab.products[0];
     var base = "labs." + i + ".products.0";
     var exp = EXPERIENCE[lab.id];
+    var ba = artOf(p, "beforeafter");
+    var m = artOf(p, "metrics");
     var arts = (p.artifacts || []).map(function (a) {
       return '<span class="flag-chip">' + esc(a.label) + '</span>';
     }).join("");
+    var baHTML = ba ? (
+      '<div class="flag-ba">' +
+        '<div class="flag-ba-row from"><span class="flag-ba-k">From</span><p>' + esc(ba.before) + '</p></div>' +
+        '<div class="flag-ba-row to"><span class="flag-ba-k">To</span><p>' + esc(ba.after) + '</p></div>' +
+      '</div>'
+    ) : '';
+    var goalHTML = (m && m.business) ? (
+      '<div class="flag-goal"><span class="flag-goal-k">What it moves</span>' +
+        '<span class="flag-goal-v">' + esc(m.business) + '</span></div>'
+    ) : '';
     var inner =
-      '<div class="ph flag-shot">' + phShot(p.image, p.name.toLowerCase() + ' — preview') +
+      '<div class="flag-mock">' + flagMock(lab.id) +
         (exp ? '<span class="flag-interactive">Interactive</span>' : '') + '</div>' +
       '<div class="flag-body">' +
         '<div class="flag-kicker">Case study · ' + esc(p.stage || "") + '</div>' +
         ed("div", "labs." + i + ".name", "flag-name") +
         ed("div", base + ".tagline", "flag-tag") +
+        baHTML +
+        goalHTML +
         (arts ? '<div class="flag-chips">' + arts + '</div>' : '') +
         '<div class="flag-foot"><span class="flag-cta">' +
           (exp ? 'Open the interactive case study' : 'Open the case study') +

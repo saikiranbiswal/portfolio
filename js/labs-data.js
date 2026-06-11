@@ -17,7 +17,7 @@ window.LABS_SEED = {
     "statLabsLabel": "Labs",
     "statProducts": "27",
     "statProductsLabel": "Products",
-    "statYears": "10+",
+    "statYears": "7",
     "statYearsLabel": "Years"
   },
   "labs": [

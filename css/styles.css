@@ -1,9 +1,9 @@
 /* =========================================================
-   Portfolio — Editorial "Operator" design system
-   Newsreader (display serif) · Hanken Grotesk (UI/body) · IBM Plex Mono (labels)
+   Portfolio — "The Product Memo" design system
+   Newsreader (display serif) · Inter (UI/body) · IBM Plex Mono (labels)
    ========================================================= */
 
-@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Hanken+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root {
   --paper:      #f3efe7;
@@ -15,20 +15,35 @@
   --faint:      #a59c8d;
   --line:       #d8d0c1;
   --line-soft:  #e4ddd0;
-  --clay:       oklch(0.56 0.13 47);   /* warm terracotta accent */
+  --clay:       oklch(0.56 0.13 47);
   --clay-deep:  oklch(0.47 0.12 45);
-  --ink-blue:   oklch(0.46 0.08 250);  /* secondary, used sparingly */
+  --ink-blue:   oklch(0.46 0.08 250);
   --dark:       #16120d;
   --dark-paper: #211b14;
 
   --serif: 'Newsreader', Georgia, serif;
-  --sans:  'Hanken Grotesk', system-ui, sans-serif;
+  --sans:  'Inter', system-ui, sans-serif;
   --mono:  'IBM Plex Mono', ui-monospace, monospace;
 
   --maxw: 1240px;
   --gutter: clamp(20px, 5vw, 64px);
   --radius: 3px;
+
+  /* Type scale */
+  --t-display: clamp(44px, 7.2vw, 92px);
+  --t-h2:      clamp(30px, 4.2vw, 52px);
+  --t-h3:      clamp(21px, 2.4vw, 28px);
+  --t-lead:    clamp(17px, 1.9vw, 21px);
+  --t-body:    15.5px;
+  --t-mono:    11.5px;
+
+  /* Motion */
+  --ease: cubic-bezier(.2,.7,.2,1);
+  --stagger: 70ms;
 }
+
+/* View transition (progressive enhancement) */
+@view-transition { navigation: auto; }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -38,13 +53,55 @@ body {
   font-family: var(--sans);
   background: var(--paper);
   color: var(--ink);
-  font-size: 17px;
-  line-height: 1.6;
+  font-size: var(--t-body);
+  line-height: 1.65;
   font-weight: 400;
 }
 
+/* Paper grain overlay — editorial pages only */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::selection { background: var(--clay); color: var(--paper); }
+
 a { color: inherit; text-decoration: none; }
 img { max-width: 100%; display: block; }
+
+/* Figure caption — used on every image/mockup/card */
+.figcap {
+  font: 500 10.5px/1 var(--mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+.figcap::before {
+  content: '';
+  width: 22px; height: 1px;
+  background: var(--clay);
+  flex: none;
+  transition: width .3s var(--ease);
+}
+
+/* CTA band — shared pre-footer strip */
+.cta-band {
+  background: var(--dark);
+  color: #e7ddcd;
+  text-align: center;
+}
+.cta-band .eyebrow { color: #9a9082; }
+.cta-band .display { color: #f3efe7; }
+.cta-band .display em { color: var(--clay); }
+.cta-band p { color: #b4aa99; max-width: 48ch; margin: 14px auto 0; font-size: 16px; line-height: 1.6; }
+
+/* Count-up number (animated stats) */
+.count-num { font-variant-numeric: tabular-nums; display: inline-block; }
 
 /* ---------- Layout ---------- */
 .wrap { max-width: var(--maxw); margin: 0 auto; padding-inline: var(--gutter); }
@@ -89,7 +146,7 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
 
 /* ---------- Top nav ---------- */
 .nav {
-  position: sticky; top: 0; z-index: 100;
+  position: sticky; top: 0; z-index: 10;
   background: color-mix(in srgb, var(--paper) 86%, transparent);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid var(--line-soft);
@@ -178,7 +235,7 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
 .footer { background: var(--dark); color: #cdc4b4; padding-block: clamp(56px, 8vw, 96px); }
 .footer a { color: #cdc4b4; }
 .footer-grid {
-  display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px;
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px;
   align-items: start;
 }
 .footer .big {
@@ -201,12 +258,22 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
 @media (max-width: 760px) { .footer-grid { grid-template-columns: 1fr; gap: 36px; } }
 
 /* ---------- Reveal on scroll ---------- */
-.reveal { animation: rise .8s cubic-bezier(.22,.61,.36,1) both; }
+.reveal { animation: rise .7s var(--ease) both; }
 @keyframes rise { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) {
-  .reveal { animation: none; }
+  .reveal, body::before { animation: none; }
   html { scroll-behavior: auto; }
   .nav-status .pulse { animation: none; }
+  * { transition-duration: 0ms !important; }
+}
+
+/* Colophon line — hero bottom edge designer's wink */
+.colophon {
+  font: 400 10px/1 var(--mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-top: 28px;
 }
 
 /* =========================================================

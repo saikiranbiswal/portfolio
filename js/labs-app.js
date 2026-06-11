@@ -80,7 +80,7 @@
         '<span class="role">' + esc(model.meta.role) + '</span></span>' +
       '</a>' +
       '<div class="nav-links">' +
-        '<a href="index.html">Work</a>' +
+        '<a href="products.html">Work</a>' +
         '<a href="#/" class="' + (active === "labs" ? "active" : "") + '">Labs</a>' +
         '<a href="about.html">About</a>' +
         '<a href="contact.html">Contact</a>' +
@@ -89,9 +89,22 @@
     '</div></nav>';
   }
   function footerHTML() {
+    var year = new Date().getFullYear();
     return '<footer class="footer"><div class="wrap">' +
-      '<p class="big">Built from <em>problem</em> to <em>platform</em> — one lab at a time.</p>' +
-      '<span class="fbase">© 2026 ' + esc(model.meta.owner) + ' · Product Portfolio</span>' +
+      '<div class="footer-grid">' +
+        '<div><p class="big">Built from <em>problem</em> to <em>platform</em> — one lab at a time.</p></div>' +
+        '<div class="footer-col"><h4>Navigate</h4>' +
+          '<a href="products.html">Work</a><a href="labs.html">Labs</a>' +
+          '<a href="about.html">About</a><a href="contact.html">Contact</a></div>' +
+        '<div class="footer-col"><h4>Case Studies</h4>' +
+          '<a href="case-studies/collections-cloud.html">AI Collections Cloud</a>' +
+          '<a href="case-studies/lending-os.html">LOS — Loan Origination</a></div>' +
+        '<div class="footer-col"><h4>Elsewhere</h4>' +
+          '<a href="' + esc(model.meta.linkedin || '#') + '" target="_blank" rel="noopener">LinkedIn</a>' +
+          '<a href="mailto:' + esc(model.meta.email || '') + '">Email</a>' +
+          '<a href="' + esc(model.meta.resume || 'assets/resume.pdf') + '" target="_blank" rel="noopener">Résumé (PDF)</a></div>' +
+      '</div>' +
+      '<div class="footer-base"><span>© ' + year + ' ' + esc(model.meta.owner) + ' — Product Portfolio</span><span>Designed &amp; built end-to-end</span></div>' +
     '</div></footer>';
   }
 
@@ -128,11 +141,22 @@
     ) : '';
 
     var listHead = rows ? (
-      '<div class="wrap"><div class="flag-head" style="margin-top:8px">' +
-        '<p class="eyebrow">Six discipline labs <span class="dot">·</span> how each layer gets built</p>' +
-        '<span class="flag-sub">The system behind the case studies — from the founder bet to the data model, architecture, AI, and product.</span>' +
-      '</div></div>'
+      '<div class="wrap">' +
+        '<hr class="divider" style="margin-block:clamp(32px,5vw,56px) 0;">' +
+        '<div class="flag-head" style="margin-top:clamp(24px,4vw,42px)">' +
+          '<p class="eyebrow">Six discipline labs <span class="dot">·</span> how each layer gets built</p>' +
+          '<span class="flag-sub">The craft behind the flagships — six labs, every layer.</span>' +
+        '</div></div>'
     ) : '';
+
+    var ctaBand = '<section class="cta-band section">' +
+      '<div class="wrap cta">' +
+        '<p class="eyebrow">Let\'s talk</p>' +
+        '<h2 class="display" style="margin:18px auto 16px;max-width:18ch;">Building something <em>hard?</em></h2>' +
+        '<p style="color:#b4aa99;max-width:48ch;margin:0 auto;">I\'d like to hear about it.</p>' +
+        '<a href="contact.html" class="btn" style="margin-top:28px;background:var(--clay-deep);border-color:var(--clay-deep);">Get in touch <span class="arrow">→</span></a>' +
+      '</div>' +
+    '</section>';
 
     return '<div class="view">' + navHTML("labs") +
       '<header class="labs-hero wrap">' +
@@ -150,6 +174,7 @@
       flagSection +
       listHead +
       '<div class="wrap"><div class="labs-list stagger">' + rows + '</div></div>' +
+      ctaBand +
       footerHTML() +
     '</div>';
   }

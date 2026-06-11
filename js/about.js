@@ -54,18 +54,22 @@
   }
 
   function footerHTML(meta) {
+    var year = new Date().getFullYear();
     return '<footer class="footer"><div class="wrap">' +
       '<div class="footer-grid">' +
         '<div><p class="big">Building products from <em>problem</em> to <em>platform.</em></p></div>' +
         '<div class="footer-col"><h4>Navigate</h4>' +
           '<a href="products.html">Work</a><a href="labs.html">Labs</a>' +
           '<a href="about.html">About</a><a href="contact.html">Contact</a></div>' +
+        '<div class="footer-col"><h4>Case Studies</h4>' +
+          '<a href="case-studies/collections-cloud.html">AI Collections Cloud</a>' +
+          '<a href="case-studies/lending-os.html">LOS — Loan Origination</a></div>' +
         '<div class="footer-col"><h4>Elsewhere</h4>' +
           '<a href="' + esc(meta.linkedin || "#") + '" target="_blank" rel="noopener">LinkedIn</a>' +
           '<a href="mailto:' + esc(meta.email || "") + '">Email</a>' +
           '<a href="' + esc(meta.resume || "assets/resume.pdf") + '" target="_blank" rel="noopener">Résumé (PDF)</a></div>' +
       '</div>' +
-      '<div class="footer-base"><span>© 2026 ' + esc(meta.owner) + ' — Product Portfolio</span><span>Designed &amp; built end-to-end</span></div>' +
+      '<div class="footer-base"><span>© ' + year + ' ' + esc(meta.owner) + ' — Product Portfolio</span><span>Designed &amp; built end-to-end</span></div>' +
     '</div></footer>';
   }
 
@@ -120,11 +124,39 @@
         '<div class="sec-head reveal"><p class="eyebrow">' + esc(d.skillsEyebrow) + '</p><span class="count">' + esc(d.skillsCount) + '</span></div>' +
         '<div class="skill-cols reveal">' + sk + '</div>' +
       '</section>' +
-      '<section class="band"><div class="section wrap cta">' +
-        '<p class="eyebrow reveal">' + esc(d.cta.eyebrow) + '</p>' +
-        '<h2 class="display reveal">' + rich(d.cta.heading) + '</h2>' +
-        '<a href="contact.html" class="btn reveal" style="background:var(--clay-deep);border-color:var(--clay-deep);">' + esc(d.cta.btn) + ' <span class="arrow">→</span></a>' +
-      '</div></section>' +
+      '<section class="section wrap">' +
+        '<div class="sec-head reveal">' +
+          '<p class="eyebrow">Proof, not promises</p>' +
+          '<span class="count">Two products, taken end to end</span>' +
+        '</div>' +
+        '<div class="flag-stack reveal">' +
+          '<a href="case-studies/collections-cloud.html" class="flagship">' +
+            '<div>' +
+              '<div class="tag-row"><span class="pill">AI</span><span class="pill">Fintech</span><span class="pill">Collections</span><span class="pill pill-int">▸ Interactive</span></div>' +
+              '<h3 class="display" style="font-size:clamp(22px,2.8vw,34px);">AI Collections Cloud</h3>' +
+              '<p class="body-text" style="margin-top:10px;">An AI-native recovery platform — collector copilot, risk scoring, next-best-action, and a working prototype.</p>' +
+              '<div style="margin-top:20px;" class="btn">Walk the case study <span class="arrow">→</span></div>' +
+            '</div>' +
+            '<div class="ph" style="aspect-ratio:16/10;"></div>' +
+          '</a>' +
+          '<a href="case-studies/lending-os.html" class="flagship flip">' +
+            '<div>' +
+              '<div class="tag-row"><span class="pill">Fintech</span><span class="pill">Lending</span><span class="pill">Platform</span><span class="pill pill-int">▸ Interactive</span></div>' +
+              '<h3 class="display" style="font-size:clamp(22px,2.8vw,34px);">LOS — Loan Origination System</h3>' +
+              '<p class="body-text" style="margin-top:10px;">Guided, state-based loan origination — from application to approval with fewer handoffs and deterministic demo data.</p>' +
+              '<div style="margin-top:20px;" class="btn">Walk the case study <span class="arrow">→</span></div>' +
+            '</div>' +
+            '<div class="ph" style="aspect-ratio:16/10;"></div>' +
+          '</a>' +
+        '</div>' +
+      '</section>' +
+      '<section class="cta-band section">' +
+        '<div class="wrap cta reveal">' +
+          '<p class="eyebrow">' + esc(d.cta.eyebrow) + '</p>' +
+          '<h2 class="display" style="margin:18px auto 16px;max-width:18ch;">' + rich(d.cta.heading) + '</h2>' +
+          '<a href="contact.html" class="btn" style="margin-top:28px;background:var(--clay-deep);border-color:var(--clay-deep);">' + esc(d.cta.btn) + ' <span class="arrow">→</span></a>' +
+        '</div>' +
+      '</section>' +
       footerHTML(meta);
   }
 

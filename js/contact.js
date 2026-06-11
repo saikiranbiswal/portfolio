@@ -43,18 +43,22 @@
   }
 
   function footerHTML(meta) {
+    var year = new Date().getFullYear();
     return '<footer class="footer"><div class="wrap">' +
       '<div class="footer-grid">' +
         '<div><p class="big">Building products from <em>problem</em> to <em>platform.</em></p></div>' +
         '<div class="footer-col"><h4>Navigate</h4>' +
           '<a href="products.html">Work</a><a href="labs.html">Labs</a>' +
           '<a href="about.html">About</a><a href="contact.html">Contact</a></div>' +
+        '<div class="footer-col"><h4>Case Studies</h4>' +
+          '<a href="case-studies/collections-cloud.html">AI Collections Cloud</a>' +
+          '<a href="case-studies/lending-os.html">LOS — Loan Origination</a></div>' +
         '<div class="footer-col"><h4>Elsewhere</h4>' +
           '<a href="' + esc(meta.linkedin || "#") + '" target="_blank" rel="noopener">LinkedIn</a>' +
           '<a href="mailto:' + esc(meta.email || "") + '">Email</a>' +
           '<a href="' + esc(meta.resume || "assets/resume.pdf") + '" target="_blank" rel="noopener">Résumé (PDF)</a></div>' +
       '</div>' +
-      '<div class="footer-base"><span>© 2026 ' + esc(meta.owner) + ' — Product Portfolio</span><span>Designed &amp; built end-to-end</span></div>' +
+      '<div class="footer-base"><span>© ' + year + ' ' + esc(meta.owner) + ' — Product Portfolio</span><span>Designed &amp; built end-to-end</span></div>' +
     '</div></footer>';
   }
 
@@ -75,6 +79,14 @@
       '</a>';
     }).join("");
 
+    var caseStudyRow = '<div class="reveal" style="margin-top:clamp(48px,7vw,80px);padding-top:clamp(28px,4vw,42px);border-top:1px solid var(--line);">' +
+      '<p class="eyebrow" style="margin-bottom:14px;">Or start with the work</p>' +
+      '<div style="display:flex;gap:16px;flex-wrap:wrap;">' +
+        '<a href="case-studies/collections-cloud.html" class="btn btn-ghost">FIG. 01 · AI Collections Cloud <span class="arrow">→</span></a>' +
+        '<a href="case-studies/lending-os.html" class="btn btn-ghost">FIG. 02 · LOS — Loan Origination <span class="arrow">→</span></a>' +
+      '</div>' +
+    '</div>';
+
     return navHTML(meta) +
       '<main class="wrap section">' +
         '<div class="contact-hero">' +
@@ -86,6 +98,7 @@
           '</div>' +
           '<div class="reveal"><div class="contact-links">' + links + '</div></div>' +
         '</div>' +
+        caseStudyRow +
       '</main>' +
       footerHTML(meta);
   }

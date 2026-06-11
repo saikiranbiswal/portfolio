@@ -33,7 +33,7 @@
     set("wm-role", meta.role);
     set("wm-glyph", meta.glyph || "SK");
     set("wm-status", meta.status);
-    set("f-copy", "© 2026 " + meta.owner + " — Product Portfolio");
+    set("f-copy", "© " + new Date().getFullYear() + " " + meta.owner + " — Product Portfolio");
     const li = document.getElementById("f-linkedin"); if (li) li.href = meta.linkedin || "#";
     const em = document.getElementById("f-email"); if (em) em.href = "mailto:" + (meta.email || "");
     const rz = document.getElementById("f-resume"); if (rz) rz.href = meta.resume || "assets/resume.pdf";

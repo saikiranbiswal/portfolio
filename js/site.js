@@ -11,7 +11,18 @@
   // products.json that you paste over the file; this fallback is only a safety net.
   window.__PRODUCTS_FALLBACK__ = null;
 
+  function isPreview() { return new URLSearchParams(location.search).get("preview") === "1"; }
+  function injectPreviewBanner() {
+    if (!isPreview()) return;
+    var b = document.createElement("div");
+    b.setAttribute("style","position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;color:#fff;padding:10px 20px;font-size:13px;display:flex;justify-content:space-between;align-items:center;z-index:9999;font-family:monospace;letter-spacing:.04em;");
+    b.innerHTML = '<span>📋 PREVIEW — unpublished draft</span><a href="' + location.pathname + '" style="color:#a8d8a8;text-decoration:underline;">Exit preview</a>';
+    document.body.appendChild(b);
+  }
   async function loadProducts() {
+    if (isPreview()) {
+      try { var d = localStorage.getItem("cms_preview_products"); if (d) return JSON.parse(d); } catch(e) {}
+    }
     try {
       const res = await fetch("products.json", { cache: "no-store" });
       if (res.ok) return await res.json();
@@ -175,5 +186,6 @@
 
     wireModal(byId);
     if (window.__reveal) window.__reveal();
+    injectPreviewBanner();
   };
 })();

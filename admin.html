@@ -82,6 +82,17 @@
   .di-check { display:flex; align-items:center; gap:5px; font-size:13px; color:var(--muted);
     white-space:nowrap; flex:0 0 auto; cursor:pointer; }
   .di-check input { accent-color:var(--clay); cursor:pointer; }
+  #pubDlg { display:none; position:fixed; inset:0; z-index:200; background:rgba(0,0,0,.5);
+    overflow:auto; padding:40px 20px; }
+  .pdlg-card { max-width:640px; margin:0 auto; background:var(--paper); border-radius:10px;
+    padding:24px; box-shadow:0 8px 32px rgba(0,0,0,.25); }
+  .pdlg-card h2 { margin:0 0 16px; font-size:20px; }
+  .diff-file { padding:10px 12px; border:1px solid var(--line-soft); border-radius:6px;
+    margin-bottom:8px; font-size:13px; }
+  .diff-file.unchanged { opacity:.45; }
+  .diff-file-hd { font-weight:600; margin-bottom:4px; }
+  .diff-changes { font-family:var(--mono); font-size:11px; padding-left:16px; margin:6px 0 0;
+    line-height:1.7; color:var(--ink-soft); }
   .files-list { margin-top:10px; border:1px solid var(--line-soft); border-radius:6px; overflow:hidden; }
   .file-row { display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--line-soft); }
   .file-row:last-child { border-bottom:0; }
@@ -93,6 +104,18 @@
 </style>
 </head>
 <body>
+
+<!-- ===================== PUBLISH DIALOG ===================== -->
+<div id="pubDlg">
+  <div class="pdlg-card">
+    <h2>Publish to GitHub</h2>
+    <div id="pubDlgBody" style="min-height:80px;"></div>
+    <div style="display:flex;gap:10px;margin-top:20px;">
+      <button class="admin-btn" id="pubDlgConfirm" style="display:none;">↑ Publish now</button>
+      <button class="admin-btn ghost" id="pubDlgCancel">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <!-- ===================== LOGIN ===================== -->
 <div class="admin-gate" id="gate" style="display:none;">
@@ -121,6 +144,7 @@
     </div>
     <div class="admin-actions">
       <button class="admin-btn" id="publishAllBtn">↑ Publish to GitHub</button>
+      <button class="admin-btn ghost" id="previewBtn">👁 Preview</button>
       <button class="admin-btn ghost" id="ghSettingsBtn">⚙ GitHub</button>
       <button class="admin-btn ghost" id="exportAllBtn">⤓ Export all</button>
       <button class="admin-btn ghost" id="reloadBtn">⟳ Reload</button>
@@ -881,6 +905,90 @@
       publishOne(names[i]).then(function (r) { results.push(r); next(i + 1); });
     })(0);
   }
+  var TAB_PREVIEW = { site:"products.html", work:"products.html", labs:"labs.html", about:"about.html", contact:"contact.html", config:"products.html", structure:"products.html", files:"products.html" };
+
+  function computeDiff(live, draft, path, depth) {
+    depth = depth || 0;
+    var changes = [];
+    var liveT = live === null ? "null" : typeof live;
+    var draftT = draft === null ? "null" : typeof draft;
+    if (liveT !== draftT) { changes.push({ p: path, from: liveT, to: draftT }); return changes; }
+    if (Array.isArray(live)) {
+      if (live.length !== (draft || []).length) changes.push({ p: path, from: live.length + " items", to: (draft || []).length + " items" });
+      return changes;
+    }
+    if (liveT === "object" && live !== null) {
+      if (depth >= 2) {
+        if (JSON.stringify(live) !== JSON.stringify(draft || {})) changes.push({ p: path, from: "(object)", to: "(changed)" });
+        return changes;
+      }
+      var keys = Object.keys(Object.assign({}, live, draft));
+      keys.forEach(function (k) {
+        var sub = computeDiff(live[k], (draft || {})[k], path ? path + "." + k : k, depth + 1);
+        sub.forEach(function (c) { changes.push(c); });
+      });
+      return changes;
+    }
+    if (live !== draft) changes.push({ p: path, from: String(live).slice(0, 60), to: String(draft).slice(0, 60) });
+    return changes;
+  }
+
+  function writePreview() {
+    var names = ["products", "labs", "about", "contact", "site"];
+    names.forEach(function (n) {
+      var m = models[n];
+      if (m) localStorage.setItem("cms_preview_" + (n === "products" ? "products" : n), JSON.stringify(m));
+    });
+  }
+
+  function showPublishDialog() {
+    var c = requireToken(); if (!c) return;
+    var dlg = document.getElementById("pubDlg");
+    var body = document.getElementById("pubDlgBody");
+    var confirmBtn = document.getElementById("pubDlgConfirm");
+    dlg.style.display = "block";
+    body.innerHTML = '<div class="gh-status busy" style="margin:0;">Comparing drafts with live files…</div>';
+    confirmBtn.style.display = "none";
+    var names = ["products", "labs", "about", "contact", "site"];
+    var pending = names.length, results = [];
+    names.forEach(function (name) {
+      var file = FILES[name];
+      ghGetFile(file).then(function (gf) {
+        var live = null;
+        try { live = JSON.parse(atob(gf.content.replace(/\s/g,""))); } catch(e) {}
+        var draft = models[name] || {};
+        var diff = computeDiff(live || {}, draft, "", 0);
+        results.push({ name: name, file: file, diff: diff, sha: gf.sha });
+      }).catch(function () {
+        results.push({ name: name, file: file, diff: [{ p: "—", from: "(not found)", to: "(will create)" }], sha: null });
+      }).finally(function () {
+        pending--;
+        if (pending > 0) return;
+        var html = "";
+        results.sort(function (a, b) { return names.indexOf(a.name) - names.indexOf(b.name); });
+        results.forEach(function (r) {
+          var changed = r.diff.length > 0;
+          html += '<div class="diff-file' + (changed ? "" : " unchanged") + '">';
+          html += '<div class="diff-file-hd">' + esc(r.file) + (changed ? ' <span style="color:var(--clay);font-weight:400;font-size:12px;">' + r.diff.length + ' change(s)</span>' : ' <span style="color:var(--muted);font-weight:400;font-size:12px;">unchanged</span>') + '</div>';
+          if (changed) {
+            html += '<div class="diff-changes">';
+            r.diff.slice(0, 8).forEach(function (ch) {
+              html += '<div><span style="color:#9b2226;">− ' + esc(ch.p || "root") + ': ' + esc(ch.from) + '</span><br>' +
+                '<span style="color:#1c6b3c;">+ ' + esc(ch.to) + '</span></div>';
+            });
+            if (r.diff.length > 8) html += '<div style="color:var(--muted);">… and ' + (r.diff.length - 8) + ' more</div>';
+            html += '</div>';
+          }
+          html += '</div>';
+        });
+        var anyChange = results.some(function (r) { return r.diff.length > 0; });
+        if (!anyChange) html += '<p style="font-size:13px;color:var(--muted);margin-top:8px;">All files are already up to date. Nothing to publish.</p>';
+        body.innerHTML = html;
+        if (anyChange) confirmBtn.style.display = "inline-block";
+      });
+    });
+  }
+
   function ghFill() { var c = gh(); document.getElementById("ghOwner").value = c.owner; document.getElementById("ghRepo").value = c.repo; document.getElementById("ghBranch").value = c.branch; document.getElementById("ghToken").value = c.token; }
   function ghSaveSettings() {
     var cfg = { owner: document.getElementById("ghOwner").value.trim() || "saikiranbiswal", repo: document.getElementById("ghRepo").value.trim() || "portfolio", branch: document.getElementById("ghBranch").value.trim() || "main", token: document.getElementById("ghToken").value.trim() };
@@ -1072,7 +1180,13 @@
     }
   };
   document.getElementById("exportAllBtn").onclick = exportAll;
-  document.getElementById("publishAllBtn").onclick = publishAll;
+  document.getElementById("publishAllBtn").onclick = showPublishDialog;
+  document.getElementById("previewBtn").onclick = function () { writePreview(); window.open(TAB_PREVIEW[currentTab] + "?preview=1", "_blank"); };
+  document.getElementById("pubDlgConfirm").onclick = function () {
+    document.getElementById("pubDlg").style.display = "none";
+    publishAll();
+  };
+  document.getElementById("pubDlgCancel").onclick = function () { document.getElementById("pubDlg").style.display = "none"; };
   document.getElementById("ghSettingsBtn").onclick = function () { var p = document.getElementById("ghPanel"); p.style.display = (p.style.display === "none" ? "block" : "none"); };
   document.getElementById("ghSaveBtn").onclick = ghSaveSettings;
   document.getElementById("ghClearBtn").onclick = function () { var c = ghCfg(); delete c.token; localStorage.setItem(GH_KEY, JSON.stringify(c)); document.getElementById("ghToken").value = ""; ghStatus("Token forgotten from this browser.", "ok"); };

@@ -51,23 +51,6 @@
       "featured": true
     },
     {
-      "id": "dashboard-studio",
-      "name": "Dashboard Studio",
-      "description": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
-      "tags": [
-        "Data",
-        "Visualization",
-        "Tools"
-      ],
-      "role": "Product Manager",
-      "year": "2025",
-      "stage": "Working app",
-      "screenshot": "assets/screenshots/dashboard-studio-mq78n3sv.png",
-      "path": "./apps/dashboard-studio/",
-      "displayMode": "modal",
-      "featured": false
-    },
-    {
       "id": "synthesis",
       "name": "Synthesis — Strategic Framework Engine",
       "description": "An offline decision-brief engine that turns raw inputs into strategic frameworks, implications, and a 30-60-90 action plan with multi-format export.",
@@ -81,6 +64,40 @@
       "stage": "Working app",
       "screenshot": "assets/screenshots/synthesis-mq78ih0i.png",
       "path": "./apps/synthesis/",
+      "displayMode": "modal",
+      "featured": false
+    },
+    {
+      "id": "neuralpath",
+      "name": "NeuralPath — AI Concepts Game",
+      "description": "A gamified AI-learning app — concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
+      "tags": [
+        "AI",
+        "Education",
+        "Interactive"
+      ],
+      "role": "Product Manager",
+      "year": "2025",
+      "stage": "Working app",
+      "screenshot": "assets/screenshots/neuralpath-mq78l565.png",
+      "path": "./apps/neuralpath/",
+      "displayMode": "modal",
+      "featured": false
+    },
+    {
+      "id": "dashboard-studio",
+      "name": "Dashboard Studio",
+      "description": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
+      "tags": [
+        "Data",
+        "Visualization",
+        "Tools"
+      ],
+      "role": "Product Manager",
+      "year": "2025",
+      "stage": "Working app",
+      "screenshot": "assets/screenshots/dashboard-studio-mq78n3sv.png",
+      "path": "./apps/dashboard-studio/",
       "displayMode": "modal",
       "featured": false
     },
@@ -115,23 +132,6 @@
       "stage": "Working app",
       "screenshot": "assets/screenshots/excel-merger-mq78kkbw.png",
       "path": "./apps/excel-merger/",
-      "displayMode": "modal",
-      "featured": false
-    },
-    {
-      "id": "neuralpath",
-      "name": "NeuralPath — AI Concepts Game",
-      "description": "A gamified AI-learning app — concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
-      "tags": [
-        "AI",
-        "Education",
-        "Interactive"
-      ],
-      "role": "Product Manager",
-      "year": "2025",
-      "stage": "Working app",
-      "screenshot": "assets/screenshots/neuralpath-mq78l565.png",
-      "path": "./apps/neuralpath/",
       "displayMode": "modal",
       "featured": false
     }

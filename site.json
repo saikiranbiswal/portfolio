@@ -1,67 +1,93 @@
 {
+  "cta": {
+    "body": "I'd like to hear about it.",
+    "btnHref": "contact.html",
+    "eyebrow": "Let's talk",
+    "heading": "Building something <em>hard?</em>",
+    "btnLabel": "Get in touch"
+  },
   "nav": [
     {
-      "label": "Work",
-      "href": "products.html"
+      "href": "products.html",
+      "label": "Work"
     },
     {
-      "label": "Labs",
-      "href": "labs.html"
+      "href": "labs.html",
+      "label": "Labs"
     },
     {
-      "label": "About",
-      "href": "about.html"
+      "href": "about.html",
+      "label": "About"
     },
     {
-      "label": "Contact",
-      "href": "contact.html"
+      "href": "contact.html",
+      "label": "Contact"
+    }
+  ],
+  "pages": [
+    {
+      "id": "products",
+      "file": "products.html",
+      "title": "Work",
+      "visible": true
+    },
+    {
+      "id": "labs",
+      "file": "labs.html",
+      "title": "Labs",
+      "visible": true
+    },
+    {
+      "id": "about",
+      "file": "about.html",
+      "title": "About",
+      "visible": true
+    },
+    {
+      "id": "contact",
+      "file": "contact.html",
+      "title": "Contact",
+      "visible": true
     }
   ],
   "footer": {
     "brand": "Building products from <em>problem</em> to <em>platform.</em>",
     "columns": [
       {
-        "heading": "Navigate",
         "links": [
           {
-            "label": "Work",
-            "href": "products.html"
+            "href": "products.html",
+            "label": "Work"
           },
           {
-            "label": "Labs",
-            "href": "labs.html"
+            "href": "labs.html",
+            "label": "Labs"
           },
           {
-            "label": "About",
-            "href": "about.html"
+            "href": "about.html",
+            "label": "About"
           },
           {
-            "label": "Contact",
-            "href": "contact.html"
+            "href": "contact.html",
+            "label": "Contact"
           }
-        ]
+        ],
+        "heading": "Navigate"
       },
       {
-        "heading": "Case Studies",
         "links": [
           {
-            "label": "AI Collections Cloud",
-            "href": "case-studies/collections-cloud.html"
+            "href": "case-studies/collections-cloud.html",
+            "label": "AI Collections Cloud"
           },
           {
-            "label": "LOS - Loan Origination System",
-            "href": "case-studies/lending-os.html"
+            "href": "case-studies/lending-os.html",
+            "label": "LOS - Loan Origination System"
           }
-        ]
+        ],
+        "heading": "Case Studies"
       }
     ]
-  },
-  "cta": {
-    "eyebrow": "Let's talk",
-    "heading": "Building something <em>hard?</em>",
-    "body": "I'd like to hear about it.",
-    "btnLabel": "Get in touch",
-    "btnHref": "contact.html"
   },
   "colophon": "Set in Newsreader & Inter · Built by hand · No templates"
 }

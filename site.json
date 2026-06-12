@@ -1,9 +1,21 @@
 {
   "nav": [
-    { "label": "Work",    "href": "products.html" },
-    { "label": "Labs",    "href": "labs.html" },
-    { "label": "About",   "href": "about.html" },
-    { "label": "Contact", "href": "contact.html" }
+    {
+      "label": "Work",
+      "href": "products.html"
+    },
+    {
+      "label": "Labs",
+      "href": "labs.html"
+    },
+    {
+      "label": "About",
+      "href": "about.html"
+    },
+    {
+      "label": "Contact",
+      "href": "contact.html"
+    }
   ],
   "footer": {
     "brand": "Building products from <em>problem</em> to <em>platform.</em>",
@@ -11,17 +23,35 @@
       {
         "heading": "Navigate",
         "links": [
-          { "label": "Work",    "href": "products.html" },
-          { "label": "Labs",    "href": "labs.html" },
-          { "label": "About",   "href": "about.html" },
-          { "label": "Contact", "href": "contact.html" }
+          {
+            "label": "Work",
+            "href": "products.html"
+          },
+          {
+            "label": "Labs",
+            "href": "labs.html"
+          },
+          {
+            "label": "About",
+            "href": "about.html"
+          },
+          {
+            "label": "Contact",
+            "href": "contact.html"
+          }
         ]
       },
       {
         "heading": "Case Studies",
         "links": [
-          { "label": "AI Collections Cloud",   "href": "case-studies/collections-cloud.html" },
-          { "label": "LOS — Loan Origination", "href": "case-studies/lending-os.html" }
+          {
+            "label": "AI Collections Cloud",
+            "href": "case-studies/collections-cloud.html"
+          },
+          {
+            "label": "LOS — Loan Origination",
+            "href": "case-studies/lending-os.html"
+          }
         ]
       }
     ]

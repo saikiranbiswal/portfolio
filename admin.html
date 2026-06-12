@@ -793,6 +793,27 @@
   function showLogin() { document.getElementById("gate").style.display = "block"; document.getElementById("dash").style.display = "none"; }
   function migrateModels() {
     if (!models.site.pages) { models.site.pages = defModel("site").pages; saveDraft("site"); }
+    // Drafts saved before meta.hero existed lack it — backfill from the live
+    // products.json so the Work-hero fields aren't blank (publishing blanks
+    // would wipe the live hero copy).
+    if (models.products && models.products.meta && !models.products.meta.hero) {
+      fetch(FILES.products + "?t=" + Date.now(), { cache: "no-store" })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (live) {
+          if (!models.products.meta.hero) {
+            models.products.meta.hero = (live && live.meta && live.meta.hero) || {
+              eyebrow: "Product Manager · Enterprise SaaS · Fintech · AI",
+              heading: "I build enterprise\nproducts that <em>think</em>\n— from problem to platform.",
+              lead: "Working products, platforms, and case studies — built end-to-end, from discovery through architecture, AI, and go-to-market.",
+              stats: [{ n: 2, l: "Flagship case studies" }, { n: 7, l: "Working products" }, { n: 7, l: "Years in fintech" }],
+              workCountSuffix: "more working products across lending, banking & AI",
+              colophon: "Set in Newsreader & Inter · Built by hand · No templates"
+            };
+            saveDraft("products");
+            if (currentTab === "site") renderTab("site");
+          }
+        });
+    }
   }
   function showDash() {
     migrateModels();

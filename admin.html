@@ -348,10 +348,16 @@
     else inner = '<input ' + common + ' value="' + esc(arrVal(v, opts)) + '">';
     return '<div class="field"><label>' + label + '</label>' + inner + '</div>';
   }
-  function ctlBtns(model, arrPath, idx, len) {
-    return '<button class="admin-btn ghost" data-act="up" data-model="' + model + '" data-path="' + arrPath + '" data-i="' + idx + '"' + (idx === 0 ? ' disabled' : '') + '>▲</button>' +
-           '<button class="admin-btn ghost" data-act="down" data-model="' + model + '" data-path="' + arrPath + '" data-i="' + idx + '"' + (idx === len - 1 ? ' disabled' : '') + '>▼</button>' +
-           '<button class="admin-btn danger" data-act="del" data-model="' + model + '" data-path="' + arrPath + '" data-i="' + idx + '">Delete</button>';
+  function ctlBtns(model, arrPath, idx, len, opts) {
+    opts = opts || {};
+    var sp = opts.statePrefix != null ? ' data-state-prefix="' + esc(opts.statePrefix) + '"' : '';
+    var hidePart = opts.statePrefix != null
+      ? '<button class="admin-btn ghost" data-act="hide" data-model="' + model + '" data-path="' + arrPath + '" data-i="' + idx + '"' + sp + '>' + (opts.hidden ? 'Show' : 'Hide') + '</button>'
+      : '';
+    return hidePart +
+      '<button class="admin-btn ghost" data-act="up" data-model="' + model + '" data-path="' + arrPath + '" data-i="' + idx + '"' + sp + (idx === 0 ? ' disabled' : '') + '>▲</button>' +
+      '<button class="admin-btn ghost" data-act="down" data-model="' + model + '" data-path="' + arrPath + '" data-i="' + idx + '"' + sp + (idx === len - 1 ? ' disabled' : '') + '>▼</button>' +
+      '<button class="admin-btn danger" data-act="del" data-model="' + model + '" data-path="' + arrPath + '" data-i="' + idx + '"' + sp + '>Delete</button>';
   }
   function repeatItem(model, arrPath, idx, len, inner) {
     return '<div class="repeat-item">' + inner + '<div class="repeat-foot">' + ctlBtns(model, arrPath, idx, len) + '</div></div>';
@@ -500,13 +506,13 @@
     var arr = getPath(models[model], listDef.path) || [], sum = listDef.summary, h = '';
     arr.forEach(function (item, i) {
       var open = openState[listDef.statePrefix + i], itemBase = listDef.path + '.' + i;
-      var head = '<div class="proj-card"><div class="proj-main">' +
-        '<div class="pn">' + esc(item[sum.nameField] || '') + (item[sum.featuredField] ? ' ★' : '') + '</div>' +
+      var head = '<div class="proj-card" style="' + (item.hidden ? 'opacity:.5;' : '') + '"><div class="proj-main">' +
+        '<div class="pn">' + esc(item[sum.nameField] || '') + (item[sum.featuredField] ? ' ★' : '') + (item.hidden ? ' <span style="font-family:var(--mono);font-size:10px;color:var(--muted);letter-spacing:.05em;">[hidden]</span>' : '') + '</div>' +
         '<div class="pd">' + esc(item[sum.descField] || '') + '</div>' +
         '<div class="proj-meta-row">' + esc(([].concat(item[sum.metaFields[0]] || [])).join(" · ")) + ' · ' + esc(item[sum.metaFields[1]] || '') + '</div>' +
         '</div><div class="proj-ctl">' +
           '<button class="admin-btn ghost" data-act="toggle" data-key="' + listDef.statePrefix + i + '">' + (open ? "Close" : "Edit") + '</button>' +
-          ctlBtns(model, listDef.path, i, arr.length) +
+          ctlBtns(model, listDef.path, i, arr.length, { statePrefix: listDef.statePrefix, hidden: !!item.hidden }) +
         '</div></div>';
       h += head + (open ? '<div class="edit-form">' + feFields(model, itemBase, listDef.item || []) + '</div>' : '');
     });
@@ -524,7 +530,7 @@
       var bar = '<div class="prod-mini-bar"><span class="pmn">' + esc(p.name || "Product " + (j + 1)) + '</span>' +
         '<span class="row-btns">' +
           '<button class="admin-btn ghost" data-act="toggle" data-key="labprod:' + labIdx + ':' + j + '">' + (open ? "Close" : "Edit") + '</button>' +
-          ctlBtns(model, absArrPath, j, prods.length) +
+          ctlBtns(model, absArrPath, j, prods.length, { statePrefix: "labprod:" + labIdx + ":" }) +
         '</span></div>';
       if (!open) { h += '<div class="prod-mini">' + bar + '</div>'; return; }
       h += '<div class="prod-mini">' + bar +
@@ -542,7 +548,7 @@
       var bar = '<div class="lab-bar">' +
         '<span class="lt" data-act="toggle" data-key="lab:' + i + '" style="cursor:pointer;flex:1 1 auto;">' + esc(lab.name || "Lab " + (i + 1)) + '</span>' +
         '<span class="lc">' + (lab.products || []).length + ' products</span>' +
-        '<span class="row-btns">' + ctlBtns(model, labListDef.path, i, labs.length) + '</span></div>';
+        '<span class="row-btns">' + ctlBtns(model, labListDef.path, i, labs.length, { statePrefix: "lab:" }) + '</span></div>';
       if (!open) { h += '<div class="lab-block">' + bar + '</div>'; return; }
       h += '<div class="lab-block">' + bar +
         '<div class="lab-body">' + feFields(model, labListDef.path + '.' + i, labListDef.item || []) + '</div>' +
@@ -1117,9 +1123,23 @@
         arr.push(TEMPLATES[el.getAttribute("data-tmpl")]()); saveDraft(model); renderTab(currentTab); return;
       }
       var i = +el.getAttribute("data-i");
-      if (act === "del") { if (confirm("Delete this item? (saved to Supabase, not visible until you Publish)")) { arr.splice(i, 1); openState = {}; saveDraft(model); renderTab(currentTab); } return; }
-      if (act === "up" && i > 0) { var a = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = a; openState = {}; saveDraft(model); renderTab(currentTab); return; }
-      if (act === "down" && i < arr.length - 1) { var d = arr[i + 1]; arr[i + 1] = arr[i]; arr[i] = d; openState = {}; saveDraft(model); renderTab(currentTab); return; }
+      var sp = el.getAttribute("data-state-prefix");
+      function swapState(a, b) { var t = openState[a]; openState[a] = openState[b]; openState[b] = t; }
+      function shiftStateDown(prefix, from, len) {
+        delete openState[prefix + from];
+        for (var k = from; k < len; k++) { openState[prefix + k] = openState[prefix + (k + 1)]; delete openState[prefix + (k + 1)]; }
+      }
+      if (act === "hide") { arr[i].hidden = !arr[i].hidden; saveDraft(model); renderTab(currentTab); return; }
+      if (act === "del") {
+        if (confirm("Delete this item? (saved to Supabase, not visible until you Publish)")) {
+          arr.splice(i, 1);
+          if (sp != null) shiftStateDown(sp, i, arr.length + 1); else openState = {};
+          saveDraft(model); renderTab(currentTab);
+        }
+        return;
+      }
+      if (act === "up" && i > 0) { var tmp1 = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = tmp1; if (sp != null) swapState(sp + (i - 1), sp + i); else openState = {}; saveDraft(model); renderTab(currentTab); return; }
+      if (act === "down" && i < arr.length - 1) { var tmp2 = arr[i + 1]; arr[i + 1] = arr[i]; arr[i] = tmp2; if (sp != null) swapState(sp + i, sp + (i + 1)); else openState = {}; saveDraft(model); renderTab(currentTab); return; }
     });
     panel.addEventListener("change", function (e) {
       if (e.target.getAttribute("data-act") === "toggle-page") {

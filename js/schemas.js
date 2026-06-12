@@ -46,7 +46,8 @@ window.SCHEMAS = {
         { image: true, label: "Screenshot", path: "screenshot", dir: "assets/screenshots",
           nameFrom: "id",
           where: "Shows as the <strong>thumbnail</strong> beside this project in the Work list. If this project is the <strong>Featured</strong> one (star), the same image also fills the big <strong>flagship hero</strong> at the top of the Work page." },
-        { label: "App path", path: "path" }
+        { label: "App path (e.g. ./apps/my-app/)", path: "path" },
+        { label: "Case study URL (leave blank to use modal/page view)", path: "caseStudy" }
       ]
     }
   },

@@ -171,9 +171,9 @@
     (data.projects || []).forEach(p => { byId[p.id] = p; });
 
     const showRole = !!(data.meta && data.meta.showRoleOnCards);
-    let featured = (data.projects || []).filter(p => p.featured);
-    if (!featured.length && (data.projects || []).length) featured = [data.projects[0]];
-    const rest = (data.projects || []).filter(p => featured.indexOf(p) === -1);
+    let featured = (data.projects || []).filter(p => p.featured && !p.hidden);
+    if (!featured.length) featured = (data.projects || []).filter(p => !p.hidden).slice(0, 1);
+    const rest = (data.projects || []).filter(p => !p.hidden && featured.indexOf(p) === -1);
 
     const fsec = document.getElementById("flagship-section");
     if (fsec && featured.length) fsec.innerHTML = flagshipSection(featured);

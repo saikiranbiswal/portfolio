@@ -1,5 +1,26 @@
 {
   "meta": {
+    "hero": {
+      "lead": "Working products, platforms, and case studies — built end-to-end, from discovery through architecture, AI, and go-to-market.",
+      "stats": [
+        {
+          "l": "Case studies",
+          "n": 2
+        },
+        {
+          "l": "Working products",
+          "n": 7
+        },
+        {
+          "l": "Years in fintech & Enterprise SaaS",
+          "n": 7
+        }
+      ],
+      "eyebrow": "Product Manager · Enterprise SaaS · Fintech · AI",
+      "heading": "I build enterprise\nproducts that <em>think</em>\n— from problem to platform.",
+      "colophon": "Set in Newsreader & Inter · Built by hand · No templates",
+      "workCountSuffix": "more working products across lending, banking & AI"
+    },
     "role": "Enterprise · AI Product",
     "email": "saikiranbiswal14@gmail.com",
     "glyph": "SK",
@@ -9,28 +30,7 @@
     "linkedin": "https://www.linkedin.com/in/sai-kiran-biswal",
     "location": "Pune / Bengaluru · Remote",
     "linkedinLabel": "/in/sai-kiran-biswal",
-    "showRoleOnCards": false,
-    "hero": {
-      "eyebrow": "Product Manager · Enterprise SaaS · Fintech · AI",
-      "heading": "I build enterprise\nproducts that <em>think</em>\n— from problem to platform.",
-      "lead": "Working products, platforms, and case studies — built end-to-end, from discovery through architecture, AI, and go-to-market.",
-      "stats": [
-        {
-          "n": 2,
-          "l": "Case studies"
-        },
-        {
-          "n": 7,
-          "l": "Working products"
-        },
-        {
-          "n": 7,
-          "l": "Years in fintech & Enterprise SaaS"
-        }
-      ],
-      "workCountSuffix": "more working products across lending, banking & AI",
-      "colophon": "Set in Newsreader & Inter · Built by hand · No templates"
-    }
+    "showRoleOnCards": false
   },
   "projects": [
     {

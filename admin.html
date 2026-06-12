@@ -70,6 +70,18 @@
   .sb-note a { color: var(--clay-deep); text-decoration: none; }
   .sb-note a:hover { text-decoration: underline; }
   @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+  .drag-item { display:flex; align-items:center; gap:10px; padding:10px 14px;
+    border:1px solid var(--line-soft); border-radius:6px; margin-bottom:8px;
+    background:var(--paper); user-select:none; }
+  .drag-item.dg-src { opacity:.45; }
+  .drag-item.dg-over { border-color:var(--clay); background:color-mix(in srgb,var(--clay) 8%,transparent); }
+  .drag-hdl { cursor:grab; color:var(--muted); font-size:18px; flex:0 0 auto; }
+  .di-body { flex:1 1 auto; min-width:0; }
+  .di-label { font-weight:600; font-size:14px; display:block; }
+  .di-meta { font-family:var(--mono); font-size:11px; color:var(--muted); display:block; }
+  .di-check { display:flex; align-items:center; gap:5px; font-size:13px; color:var(--muted);
+    white-space:nowrap; flex:0 0 auto; cursor:pointer; }
+  .di-check input { accent-color:var(--clay); cursor:pointer; }
 </style>
 </head>
 <body>
@@ -179,7 +191,7 @@
   function getSession() { return sb().auth.getSession(); }
 
   /* ---- MODELS ---- */
-  var models = {}, openState = {}, currentTab = "site";
+  var models = {}, openState = {}, currentTab = "site", _dg = null;
 
   function defModel(name) {
     if (name === "products") return { meta: { owner: "Sai Kiran Biswal", role: "Enterprise · AI Product", glyph: "SK", showRoleOnCards: false }, projects: [] };
@@ -205,7 +217,13 @@
         ]
       },
       cta: { eyebrow: "Let's talk", heading: "Building something <em>hard?</em>", body: "I'd like to hear about it.", btnLabel: "Get in touch", btnHref: "contact.html" },
-      colophon: "Set in Newsreader & Inter · Built by hand · No templates"
+      colophon: "Set in Newsreader & Inter · Built by hand · No templates",
+      pages: [
+        { id: "products", title: "Work",    file: "products.html", visible: true },
+        { id: "labs",     title: "Labs",    file: "labs.html",     visible: true },
+        { id: "about",    title: "About",   file: "about.html",    visible: true },
+        { id: "contact",  title: "Contact", file: "contact.html",  visible: true }
+      ]
     };
     return {};
   }
@@ -510,7 +528,8 @@
     skill: function () { return { h: "Column", items: ["Item"] }; },
     link:     function () { return { k: "Label", v: "Value", type: "none", href: "#", external: false }; },
     navitem:  function () { return { label: "New page", href: "new.html" }; },
-    footlink: function () { return { label: "Link", href: "#", external: false }; }
+    footlink: function () { return { label: "Link", href: "#", external: false }; },
+    page:     function () { return { id: "new-page", title: "New Page", file: "new-page.html", visible: true }; }
   };
 
   /* =====================================================
@@ -543,9 +562,73 @@
      ===================================================== */
   function renderConfig() { return feRender("config"); }
 
+  /* =====================================================
+     TAB: Structure — nav manager + pages inventory
+     ===================================================== */
+  function renderDragItem(model, dgPath, i, labelHtml, metaHtml, extra) {
+    return '<div class="drag-item" draggable="true" data-model="' + model + '" data-dg-path="' + dgPath + '" data-dg-i="' + i + '">' +
+      '<span class="drag-hdl" title="Drag to reorder">⠿</span>' +
+      '<div class="di-body"><span class="di-label">' + labelHtml + '</span>' +
+        (metaHtml ? '<span class="di-meta">' + metaHtml + '</span>' : '') +
+      '</div>' +
+      (extra || '') +
+      '<button class="admin-btn danger" data-act="del" data-model="' + model + '" data-path="' + dgPath + '" data-i="' + i + '">✕</button>' +
+    '</div>';
+  }
+
+  function renderStructure() {
+    var site = models.site, nav = site.nav || [], pages = site.pages || [];
+
+    /* ── Nav section ── */
+    var navHtml = nav.map(function(item, i) {
+      return renderDragItem("site", "nav", i, esc(item.label), esc(item.href));
+    }).join('');
+    navHtml += '<div class="inline-actions" style="margin-top:8px;">' +
+      '<button class="admin-btn ghost" data-act="add" data-model="site" data-path="nav" data-tmpl="navitem">+ Add nav item</button>' +
+    '</div>';
+
+    /* ── Pages section ── */
+    var pagesHtml = pages.length ? pages.map(function(page, i) {
+      var vis = page.visible !== false;
+      var check = '<label class="di-check"><input type="checkbox" data-act="toggle-page" data-i="' + i + '"' + (vis ? ' checked' : '') + '> <span>' + (vis ? 'visible' : 'hidden') + '</span></label>';
+      return renderDragItem("site", "pages", i, esc(page.title), esc(page.file), check);
+    }).join('') : '<p class="subhint">No pages defined — click <em>+ New page</em> to add one.</p>';
+
+    /* ── Add page inline form ── */
+    var addForm = '';
+    if (openState["addpage"] && site._newpage) {
+      addForm = '<div class="edit-form" style="margin-top:10px;">' +
+        '<div class="grid2">' +
+          F("Page title", "site", "_newpage.title") +
+          F("File path (e.g. about.html)", "site", "_newpage.file") +
+        '</div>' +
+        '<div class="inline-actions">' +
+          '<button class="admin-btn" data-act="confirm-add-page">Add page</button>' +
+          '<button class="admin-btn ghost" data-act="cancel-add-page">Cancel</button>' +
+        '</div>' +
+      '</div>';
+    }
+
+    return '<div class="inline-actions">' + saveBtn("site") + '</div>' +
+
+      '<div class="section-block"><h3>Navigation</h3>' +
+        '<p class="subhint">Drag to reorder · applies to all pages on publish</p>' +
+        navHtml +
+      '</div>' +
+
+      '<div class="section-block"><h3>Pages</h3>' +
+        '<p class="subhint">Inventory of all site pages · toggle visibility · drag to reorder</p>' +
+        pagesHtml +
+        '<div class="inline-actions" style="margin-top:10px;">' +
+          '<button class="admin-btn ghost" data-act="open-add-page">+ New page</button>' +
+        '</div>' +
+        addForm +
+      '</div>';
+  }
+
   /* ---- TABS + RENDER ---- */
-  var TABS = [["site","Site"],["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["config","Config"]];
-  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact, config: renderConfig };
+  var TABS = [["site","Site"],["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["config","Config"],["structure","Structure"]];
+  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact, config: renderConfig, structure: renderStructure };
   function renderTabs() {
     document.getElementById("tabs").innerHTML = TABS.map(function (t) {
       return '<button class="tab-btn' + (currentTab === t[0] ? " active" : "") + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
@@ -555,7 +638,14 @@
 
   /* ---- SCREEN MANAGEMENT ---- */
   function showLogin() { document.getElementById("gate").style.display = "block"; document.getElementById("dash").style.display = "none"; }
-  function showDash() { document.getElementById("gate").style.display = "none"; document.getElementById("dash").style.display = "block"; ghFill(); renderTabs(); renderTab(currentTab); }
+  function migrateModels() {
+    if (!models.site.pages) { models.site.pages = defModel("site").pages; saveDraft("site"); }
+  }
+  function showDash() {
+    migrateModels();
+    document.getElementById("gate").style.display = "none"; document.getElementById("dash").style.display = "block";
+    ghFill(); renderTabs(); renderTab(currentTab);
+  }
 
   /* ---- GITHUB PUBLISH (same as v1) ---- */
   function ghCfg() { try { return JSON.parse(localStorage.getItem(GH_KEY)) || {}; } catch(e) { return {}; } }
@@ -666,18 +756,59 @@
     panel.addEventListener("input", handleEdit);
     panel.addEventListener("change", handleEdit);
     panel.addEventListener("change", function (e) { if (e.target.hasAttribute("data-imgfile")) uploadImage(e.target); });
-    panel.addEventListener("dragover", function (e) { var d = e.target.closest(".img-drop"); if (!d) return; e.preventDefault(); d.classList.add("drag"); });
+    /* ── image DnD ── */
+    panel.addEventListener("dragover", function (e) {
+      var d = e.target.closest(".img-drop"); if (d) { e.preventDefault(); d.classList.add("drag"); return; }
+      var item = e.target.closest("[data-dg-i]"); if (item && _dg) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }
+    });
     panel.addEventListener("dragleave", function (e) { var d = e.target.closest(".img-drop"); if (d) d.classList.remove("drag"); });
     panel.addEventListener("drop", function (e) {
-      var d = e.target.closest(".img-drop"); if (!d) return; e.preventDefault(); d.classList.remove("drag");
-      var inp = d.querySelector("[data-imgfile]"), files = e.dataTransfer && e.dataTransfer.files;
-      if (inp && files && files.length) uploadImage(inp, files[0]);
+      /* image drop */
+      var d = e.target.closest(".img-drop");
+      if (d) { e.preventDefault(); d.classList.remove("drag"); var inp = d.querySelector("[data-imgfile]"), files = e.dataTransfer && e.dataTransfer.files; if (inp && files && files.length) uploadImage(inp, files[0]); return; }
+      /* list item drop */
+      var item = e.target.closest("[data-dg-i]");
+      if (item && _dg) { e.preventDefault(); _dg.toIdx = +item.getAttribute("data-dg-i"); }
+    });
+    /* ── drag-sort for nav / pages lists ── */
+    panel.addEventListener("dragstart", function (e) {
+      var item = e.target.closest("[data-dg-i]"); if (!item) return;
+      _dg = { model: item.dataset.model, path: item.dataset.dgPath, fromIdx: +item.dataset.dgI, toIdx: +item.dataset.dgI };
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", item.dataset.dgI);
+      setTimeout(function () { item.classList.add("dg-src"); }, 0);
+    });
+    panel.addEventListener("dragenter", function (e) {
+      var item = e.target.closest("[data-dg-i]"); if (!item || !_dg) return;
+      panel.querySelectorAll(".dg-over").forEach(function (el) { el.classList.remove("dg-over"); });
+      if (+item.getAttribute("data-dg-i") !== _dg.fromIdx) item.classList.add("dg-over");
+    });
+    panel.addEventListener("dragend", function () {
+      panel.querySelectorAll(".dg-src, .dg-over").forEach(function (el) { el.classList.remove("dg-src", "dg-over"); });
+      if (_dg && _dg.fromIdx !== _dg.toIdx) {
+        var arr = getPath(models[_dg.model], _dg.path);
+        var moved = arr.splice(_dg.fromIdx, 1)[0];
+        arr.splice(_dg.toIdx, 0, moved);
+        saveDraft(_dg.model);
+        renderTab(currentTab);
+      }
+      _dg = null;
     });
     panel.addEventListener("click", function (e) {
       var el = e.target.closest("[data-act]"); if (!el) return;
       var act = el.getAttribute("data-act");
       if (act === "toggle") { var key = el.getAttribute("data-key"); openState[key] = !openState[key]; renderTab(currentTab); return; }
       if (act === "save") { publishCurrent(el.getAttribute("data-model")); return; }
+      if (act === "open-add-page") { models.site._newpage = { title: "", file: "" }; openState["addpage"] = true; renderTab(currentTab); return; }
+      if (act === "cancel-add-page") { delete models.site._newpage; openState["addpage"] = false; renderTab(currentTab); return; }
+      if (act === "confirm-add-page") {
+        var np = models.site._newpage || {}, title = (np.title || "").trim();
+        if (!title) { alert("Enter a page title."); return; }
+        var file = (np.file || (slug(title) + ".html")).trim();
+        models.site.pages = models.site.pages || [];
+        models.site.pages.push({ id: slug(title), title: title, file: file, visible: true });
+        delete models.site._newpage; openState["addpage"] = false; saveDraft("site"); renderTab(currentTab); return;
+      }
       var model = el.getAttribute("data-model"), path = el.getAttribute("data-path"), arr = getPath(models[model], path);
       if (act === "add") {
         if (!Array.isArray(arr)) { setPath(models[model], path, []); arr = getPath(models[model], path); }
@@ -687,6 +818,12 @@
       if (act === "del") { if (confirm("Delete this item? (saved to Supabase, not visible until you Publish)")) { arr.splice(i, 1); openState = {}; saveDraft(model); renderTab(currentTab); } return; }
       if (act === "up" && i > 0) { var a = arr[i - 1]; arr[i - 1] = arr[i]; arr[i] = a; openState = {}; saveDraft(model); renderTab(currentTab); return; }
       if (act === "down" && i < arr.length - 1) { var d = arr[i + 1]; arr[i + 1] = arr[i]; arr[i] = d; openState = {}; saveDraft(model); renderTab(currentTab); return; }
+    });
+    panel.addEventListener("change", function (e) {
+      if (e.target.getAttribute("data-act") === "toggle-page") {
+        var i = +e.target.getAttribute("data-i"), pages = models.site.pages || [];
+        if (pages[i]) { pages[i].visible = e.target.checked; saveDraft("site"); renderTab(currentTab); }
+      }
     });
   }
 

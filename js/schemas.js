@@ -7,6 +7,8 @@ window.SCHEMAS = {
     model: "products",
     sections: [
     {
+      type: "collapsible",
+      stateKey: "workhero",
       title: "Work page hero",
       fields: [
         { label: "Eyebrow tags (separate with ·)", path: "meta.hero.eyebrow" },

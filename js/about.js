@@ -73,7 +73,8 @@
     '</div></footer>';
   }
 
-  function render(meta, d) {
+  function render(meta, d, featured) {
+    featured = featured || [];
     var paras = (d.hero.paras || []).map(function (p, i) {
       return '<p class="body-text" style="margin-top:' + (i === 0 ? 20 : 16) + 'px;">' + esc(p) + '</p>';
     }).join("");
@@ -138,7 +139,7 @@
               '<div style="margin-top:20px;" class="btn">Walk the case study <span class="arrow">→</span></div>' +
             '</div>' +
             '<div class="flag-img-col">' +
-              '<div class="ph" style="aspect-ratio:16/10;"></div>' +
+              '<div class="ph" style="aspect-ratio:16/10;">' + phShot((featured[0] || {}).screenshot, 'AI Collections Cloud — product hero') + '</div>' +
               '<p class="figcap" style="margin-top:10px;">FIG. 01 — AI COLLECTIONS CLOUD · FLAGSHIP CASE STUDY</p>' +
             '</div>' +
           '</a>' +
@@ -150,7 +151,7 @@
               '<div style="margin-top:20px;" class="btn">Walk the case study <span class="arrow">→</span></div>' +
             '</div>' +
             '<div class="flag-img-col">' +
-              '<div class="ph" style="aspect-ratio:16/10;"></div>' +
+              '<div class="ph" style="aspect-ratio:16/10;">' + phShot((featured[1] || {}).screenshot, 'LOS — Loan Origination System — product hero') + '</div>' +
               '<p class="figcap" style="margin-top:10px;">FIG. 02 — LOS — LOAN ORIGINATION SYSTEM · FLAGSHIP CASE STUDY</p>' +
             '</div>' +
           '</a>' +
@@ -173,7 +174,8 @@
     var root = document.getElementById("page");
     if (!d) { root.innerHTML = '<p class="body-text" style="padding:80px 24px;">Could not load about.json. Run a local server (see README).</p>'; return; }
     document.title = "About — " + (meta.owner || "");
-    root.innerHTML = render(meta, d);
+    var featured = (prod && prod.projects || []).filter(function(p) { return p.featured; });
+    root.innerHTML = render(meta, d, featured);
     window.dispatchEvent(new Event("scroll")); // trigger reveal.js on injected content
   })();
 })();

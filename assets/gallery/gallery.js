@@ -10,14 +10,14 @@ import * as THREE from 'three';
 const gsap = window.gsap;
 
 /* ---------- Tunables ---------- */
-const RADIUS = 20;              // sphere radius (cards sit here, facing inward)
-const REPEATS = 10;             // each project tiled N times around the sphere
-const CARD_W = 4.4, CARD_H = 3.0;
+const RADIUS = 17.5;            // closer sphere keeps screenshots visually present
+const REPEATS = 6;              // enough coverage without making repetition obvious
+const CARD_W = 6.35, CARD_H = 4.35;
 const SENSITIVITY = 0.0035;     // rad per px of drag
 const LERP = 0.075;             // per-frame damping factor (the lenis feel)
 const VELOCITY_DECAY = 0.95;    // inertia decay per frame after release
 const PITCH_LIMIT = 0.8;        // rad — never flip over the poles (and never face the empty cap)
-const LAT_BAND = (50 * Math.PI) / 180; // cards stay within ±50° latitude
+const LAT_BAND = (56 * Math.PI) / 180; // broader coverage reduces empty polar areas
 const IDLE_DELAY = 4000;        // ms before auto-drift kicks in
 const IDLE_DRIFT = 0.0004;      // rad/frame yaw drift when idle
 const CLICK_SLOP = 6;           // px — more movement than this means it was a drag
@@ -55,8 +55,9 @@ const raycaster = new THREE.Raycaster();
 const pointerNDC = new THREE.Vector2(2, 2); // offscreen until first move
 
 /* ---------- Rotation state ---------- */
-let targetYaw = 0, targetPitch = 0;
-let currentYaw = 0, currentPitch = 0;
+// Start on a deliberately dense, varied view rather than an arbitrary seam.
+let targetYaw = -2.49, targetPitch = -0.3;
+let currentYaw = targetYaw, currentPitch = targetPitch;
 let velYaw = 0, velPitch = 0;
 let dragging = false;
 let lastX = 0, lastY = 0;
@@ -69,6 +70,12 @@ let detailTl = null;
 let hoveredMesh = null;
 const cards = [];
 const blurProxy = { v: 0 };
+let randomState = 0x5a17c9e3;
+
+function random() {
+  randomState = (randomState * 1664525 + 1013904223) >>> 0;
+  return randomState / 4294967296;
+}
 
 function dismissIntro() {
   if (introDismissed || !galleryIntro) return;
@@ -136,46 +143,69 @@ function buildCards(projects, textures) {
   const golden = Math.PI * (3 - Math.sqrt(5));
   const sinBand = Math.sin(LAT_BAND);
   const geo = new THREE.PlaneGeometry(CARD_W, CARD_H);
-
-  // shuffle each repeat cycle so the same project never tiles in a row
-  const order = [];
-  for (let r = 0; r < REPEATS; r++) {
-    const cycle = projects.map((_, idx) => idx);
-    for (let j = cycle.length - 1; j > 0; j--) {
-      const k = Math.floor(Math.random() * (j + 1));
-      [cycle[j], cycle[k]] = [cycle[k], cycle[j]];
-    }
-    order.push(...cycle);
-  }
+  const placements = [];
 
   for (let i = 0; i < total; i++) {
-    const project = projects[order[i]];
     // even distribution in sin(latitude) across the band, plus jitter
     const t = (i + 0.5) / total;
-    const lat = Math.asin(sinBand * (2 * t - 1)) + (Math.random() - 0.5) * 0.07;
-    const lon = i * golden + (Math.random() - 0.5) * 0.1;
+    const lat = Math.asin(sinBand * (2 * t - 1)) + (random() - 0.5) * 0.055;
+    const lon = i * golden + (random() - 0.5) * 0.08;
+    const depth = RADIUS + (random() - 0.5) * 1.7;
+    const scale = 0.9 + random() * 0.24;
+    const direction = new THREE.Vector3(
+      Math.cos(lat) * Math.sin(lon),
+      Math.sin(lat),
+      Math.cos(lat) * Math.cos(lon)
+    );
+    placements.push({ direction, depth, scale, tilt: (random() - 0.5) * 0.08 });
+  }
 
+  // Assign repeats by spatial distance, not sequence position. This keeps
+  // the same project from appearing twice in one wide desktop view.
+  const remaining = projects.map(() => REPEATS);
+  const assignedDirections = projects.map(() => []);
+  const assignment = placements.map((placement) => {
+    let best = -1;
+    let bestScore = Infinity;
+    for (let p = 0; p < projects.length; p++) {
+      if (!remaining[p]) continue;
+      const nearestRepeat = assignedDirections[p].reduce(
+        (maxDot, direction) => Math.max(maxDot, placement.direction.dot(direction)),
+        -1
+      );
+      const score = nearestRepeat + random() * 0.0001;
+      if (score < bestScore) {
+        best = p;
+        bestScore = score;
+      }
+    }
+    remaining[best]--;
+    assignedDirections[best].push(placement.direction);
+    return best;
+  });
+
+  placements.forEach((placement, i) => {
+    const projectIndex = assignment[i];
+    const project = projects[projectIndex];
     const mat = new THREE.MeshBasicMaterial({
-      map: textures[order[i]],
+      map: textures[projectIndex],
       transparent: true,
       color: new THREE.Color(DIM, DIM, DIM),
     });
     const mesh = new THREE.Mesh(geo, mat);
-    mesh.position.set(
-      RADIUS * Math.cos(lat) * Math.sin(lon),
-      RADIUS * Math.sin(lat),
-      RADIUS * Math.cos(lat) * Math.cos(lon)
-    );
+    mesh.position.copy(placement.direction).multiplyScalar(placement.depth);
     mesh.lookAt(0, 0, 0);
-    mesh.rotateZ((Math.random() - 0.5) * 0.105); // ±3° organic tilt
+    mesh.rotateZ(placement.tilt);
+    mesh.scale.setScalar(placement.scale);
     mesh.userData = {
       project,
       basePos: mesh.position.clone(),
       baseQuat: mesh.quaternion.clone(),
+      baseScale: placement.scale,
     };
     scene.add(mesh);
     cards.push(mesh);
-  }
+  });
 }
 
 /* ---------- Pointer: drag + inertia + click discrimination ---------- */
@@ -230,14 +260,16 @@ canvas.addEventListener('pointercancel', endDrag);
 function setHover(mesh) {
   if (hoveredMesh === mesh) return;
   if (hoveredMesh) {
-    gsap.to(hoveredMesh.scale, { x: 1, y: 1, z: 1, duration: 0.4, ease: 'power2.out' });
+    const base = hoveredMesh.userData.baseScale;
+    gsap.to(hoveredMesh.scale, { x: base, y: base, z: base, duration: 0.4, ease: 'power2.out' });
     gsap.to(hoveredMesh.material.color, { r: DIM, g: DIM, b: DIM, duration: 0.4, ease: 'power2.out' });
   }
   hoveredMesh = mesh;
   canvas.classList.toggle('card-hover', !!mesh);
   if (mesh) {
     dismissIntro();
-    gsap.to(mesh.scale, { x: 1.06, y: 1.06, z: 1.06, duration: 0.4, ease: 'power2.out' });
+    const hoverScale = mesh.userData.baseScale * 1.06;
+    gsap.to(mesh.scale, { x: hoverScale, y: hoverScale, z: hoverScale, duration: 0.4, ease: 'power2.out' });
     gsap.to(mesh.material.color, { r: 1, g: 1, b: 1, duration: 0.4, ease: 'power2.out' });
     const p = mesh.userData.project;
     hoverCategory.textContent = (p.tags || []).slice(0, 3).join(' · ');

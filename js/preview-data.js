@@ -1,18 +1,12 @@
-/* Shared Supabase-first preview loader for public pages. */
+/* Draft preview loader for public pages.
+   With ?preview=1, pages read CMS drafts from localStorage (written by
+   admin.html "Preview") instead of the published content/*.json files.
+   Preview is same-browser only — there is no external draft store. */
 window.PreviewData = (function () {
   "use strict";
 
-  var URL = "https://qasgswyjmnzhggqwuvqc.supabase.co";
-  var KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYXNlIiwicmVmIjoicWFzZ3N3eWptbnpoZ2dxd3V2bnFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDM1NjksImV4cCI6MjA5NjgxOTU2OX0.ImQkV19aEHNhizZr1TQjPNiBZQymIfxQ5_2NGoc8FdQ";
-  var client = null;
-
   function isPreview() {
     return new URLSearchParams(location.search).get("preview") === "1";
-  }
-
-  function supabaseClient() {
-    if (!client && window.supabase) client = window.supabase.createClient(URL, KEY);
-    return client;
   }
 
   function localDraft(name) {
@@ -26,17 +20,8 @@ window.PreviewData = (function () {
 
   async function load(name, livePath) {
     if (isPreview()) {
-      try {
-        var sb = supabaseClient();
-        if (sb) {
-          var result = await sb.from("cms_content").select("data").eq("id", name).maybeSingle();
-          if (!result.error && result.data && result.data.data) return result.data.data;
-        }
-      } catch (error) {
-        console.warn("[preview] Supabase draft unavailable:", error.message);
-      }
-      var fallback = localDraft(name);
-      if (fallback) return fallback;
+      var draft = localDraft(name);
+      if (draft) return draft;
     }
     try {
       var response = await fetch(livePath, { cache: "no-store" });

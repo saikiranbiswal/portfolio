@@ -19,7 +19,7 @@ content:
   - name: products
     label: "Work — Projects"
     type: file
-    path: products.json
+    path: content/products.json
     fields:
       - name: meta
         label: Site identity
@@ -61,7 +61,7 @@ content:
   - name: about
     label: "About page"
     type: file
-    path: about.json
+    path: content/about.json
     fields:
       - name: hero
         label: Hero
@@ -113,7 +113,7 @@ content:
   - name: contact
     label: "Contact page"
     type: file
-    path: contact.json
+    path: content/contact.json
     fields:
       - name: hero
         label: Hero

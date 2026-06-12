@@ -277,8 +277,8 @@
   }
 
   Promise.all([
-    fetch("products.json").then(function (r) { return r.json(); }),
-    fetch("labs.json").then(function (r) { return r.json(); }).catch(function () { return null; })
+    fetch("content/products.json").then(function (r) { return r.json(); }),
+    fetch("content/labs.json").then(function (r) { return r.json(); }).catch(function () { return null; })
   ]).then(function (res) {
     var data = res[0], labs = res[1];
     var projects = (data && data.projects) || [];

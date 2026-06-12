@@ -31,7 +31,7 @@
   }
 
   async function loadJSON(path) {
-    if (window.PreviewData) return window.PreviewData.load(path.replace(".json", ""), path);
+    if (window.PreviewData) return window.PreviewData.load(path.split("/").pop().replace(".json", ""), path);
     try { var r = await fetch(path, { cache: "no-store" }); if (r.ok) return await r.json(); }
     catch (e) {}
     return null;
@@ -132,9 +132,9 @@
 
   (async function () {
     if (window.SCFG && SCFG.ready) await SCFG.ready;
-    var prod = await loadJSON("products.json");
+    var prod = await loadJSON("content/products.json");
     var meta = (prod && prod.meta) || META_FALLBACK;
-    var d = await loadJSON("about.json");
+    var d = await loadJSON("content/about.json");
     var root = document.getElementById("page");
     if (!d) { root.innerHTML = '<p class="body-text" style="padding:80px 24px;">Could not load about.json. Run a local server (see README).</p>'; return; }
     document.title = "About — " + (meta.owner || "");

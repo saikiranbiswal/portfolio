@@ -1,0 +1,25 @@
+{
+  "$id": "page-section",
+  "title": "Page section (stored envelope)",
+  "description": "Contract for every entry in content/pages.json → sections[]. Lane 2 sections set blockType; lane 3 sections set layout+preset; lane 4 sections set renderer.",
+  "envelope": {
+    "required": ["id", "lane", "page", "fields"],
+    "laneValues": [2, 3, 4],
+    "pageValues": ["work", "labs", "about", "contact"]
+  },
+  "blockTypes": [
+    { "id": "hero-band",     "label": "Hero band",          "requiredFields": ["title"] },
+    { "id": "metric-strip",  "label": "Metric strip",       "requiredFields": ["metrics"] },
+    { "id": "timeline",      "label": "Timeline",           "requiredFields": ["title", "cards"] },
+    { "id": "card-grid",     "label": "Card grid",          "requiredFields": ["title", "cards"] },
+    { "id": "artifact-card", "label": "Artifact card",      "requiredFields": ["title", "body", "link"] },
+    { "id": "case-study-section", "label": "Case study section", "requiredFields": ["title", "body"] },
+    { "id": "feature-grid",  "label": "Feature grid",       "requiredFields": ["title", "cards"] }
+  ],
+  "fields": [
+    { "id": "blockType", "label": "Block type", "type": "select", "optionsFrom": "blockTypes", "required": true },
+    { "id": "title", "label": "Title", "type": "text", "required": true },
+    { "id": "body", "label": "Body", "type": "textarea" },
+    { "id": "page", "label": "Page placement", "type": "select", "options": ["work", "labs", "about", "contact"], "required": true }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "$id": "custom-renderer",
+  "title": "Custom renderer block (lane 4)",
+  "description": "Section whose content is editable in admin but whose markup comes from a coded renderer registered in window.CMS_RENDERERS (js/sections.js). Stored in content/pages.json with lane: 4.",
+  "renderers": ["spherical-gallery", "interactive-canvas", "embedded-app", "advanced-animation", "custom-visualization"],
+  "fields": [
+    { "id": "title",    "label": "Title", "type": "text", "required": true },
+    { "id": "body",     "label": "Body", "type": "textarea", "required": true },
+    { "id": "renderer", "label": "Renderer name", "type": "select", "required": true,
+      "options": ["spherical-gallery", "interactive-canvas", "embedded-app", "advanced-animation", "custom-visualization"] },
+    { "id": "fallback", "label": "Fallback mode", "type": "select", "required": true,
+      "options": ["static-image", "simple-card", "text-summary", "hide"] },
+    { "id": "page",     "label": "Page placement", "type": "select", "required": true,
+      "options": ["work", "labs", "about", "contact"] },
+    { "id": "note",     "label": "Developer note", "type": "textarea" }
+  ],
+  "optionalFields": [
+    { "id": "image", "label": "Fallback image", "type": "image" },
+    { "id": "link",  "label": "Link", "type": "link" }
+  ]
+}

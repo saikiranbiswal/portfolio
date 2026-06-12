@@ -379,7 +379,7 @@ addEventListener('resize', () => {
 
 /* ---------- Boot ---------- */
 async function init() {
-  const res = await fetch('products.json');
+  const res = await fetch('content/products.json');
   const data = await res.json();
   const projects = data.projects || [];
   const textures = await Promise.all(projects.map(makeCardTexture));

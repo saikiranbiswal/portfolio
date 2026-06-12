@@ -1,0 +1,16 @@
+{
+  "$id": "project",
+  "title": "Work project (content/products.json → projects[])",
+  "fields": [
+    { "id": "id",          "label": "Slug", "type": "text", "required": true },
+    { "id": "name",        "label": "Name", "type": "text", "required": true },
+    { "id": "description", "label": "Description", "type": "textarea", "required": true },
+    { "id": "tags",        "label": "Tags", "type": "string[]" },
+    { "id": "year",        "label": "Year", "type": "text" },
+    { "id": "stage",       "label": "Stage", "type": "text" },
+    { "id": "screenshot",  "label": "Screenshot", "type": "image" },
+    { "id": "path",        "label": "App path", "type": "internal-link" },
+    { "id": "displayMode", "label": "Display mode", "type": "select", "options": ["modal", "page", "link"], "required": true },
+    { "id": "featured",    "label": "Featured", "type": "bool" }
+  ]
+}

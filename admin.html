@@ -125,20 +125,42 @@
   </div>
 </div>
 
-<!-- ===================== LOGIN ===================== -->
+<!-- ===================== VAULT GATE ===================== -->
 <div class="admin-gate" id="gate" style="display:none;">
   <div class="gate-card">
     <h1>Portfolio CMS</h1>
-    <p>Sign in to manage the portfolio.</p>
-    <div class="field">
-      <label for="loginEmail">Email</label>
-      <input type="email" id="loginEmail" autocomplete="email" placeholder="you@example.com">
+
+    <!-- first run: create the encrypted vault -->
+    <div id="gateSetup" style="display:none;">
+      <p>First-time setup: your GitHub token is encrypted with a passphrase
+      (AES-256, PBKDF2) and stored only in this browser. Without the
+      passphrase the token cannot be recovered — by you or anyone else.</p>
+      <div class="field">
+        <label for="vtToken">GitHub fine-grained token (Contents: R/W on this repo)</label>
+        <input type="password" id="vtToken" autocomplete="off" placeholder="github_pat_…">
+      </div>
+      <div class="field">
+        <label for="vtPass1">Choose a passphrase</label>
+        <input type="password" id="vtPass1" autocomplete="new-password" placeholder="••••••••••••">
+      </div>
+      <div class="field">
+        <label for="vtPass2">Repeat passphrase</label>
+        <input type="password" id="vtPass2" autocomplete="new-password" placeholder="••••••••••••">
+      </div>
+      <button class="admin-btn" id="vtCreateBtn">Create vault &amp; open CMS</button>
     </div>
-    <div class="field">
-      <label for="pw">Password</label>
-      <input type="password" id="pw" autocomplete="current-password" placeholder="••••••••">
+
+    <!-- normal: unlock -->
+    <div id="gateUnlock" style="display:none;">
+      <p>Enter your passphrase to unlock the CMS on this browser.</p>
+      <div class="field">
+        <label for="vtPass">Passphrase</label>
+        <input type="password" id="vtPass" autocomplete="current-password" placeholder="••••••••••••">
+      </div>
+      <button class="admin-btn" id="vtUnlockBtn">Unlock</button>
+      <button class="admin-btn ghost" id="vtResetBtn" style="margin-top:8px;">Forget token &amp; reset vault</button>
     </div>
-    <button class="admin-btn" id="loginBtn">Sign in</button>
+
     <div class="gate-err" id="gateErr"></div>
   </div>
 </div>
@@ -148,7 +170,7 @@
   <div class="admin-top">
     <div>
       <h1>Portfolio CMS <span style="font-family:var(--mono);font-size:11px;color:var(--muted);font-weight:400;letter-spacing:.08em;">v2</span></h1>
-      <div class="sub">Edit → auto-saves to Supabase → Publish to GitHub → live in ~1 min</div>
+      <div class="sub">Edit → drafts saved in this browser → Publish to GitHub → live in ~1 min</div>
     </div>
     <div class="admin-actions">
       <button class="sync-pill" id="syncPill">Synced</button>
@@ -157,16 +179,15 @@
       <button class="admin-btn ghost" id="ghSettingsBtn">⚙ GitHub</button>
       <button class="admin-btn ghost" id="exportAllBtn">⤓ Export all</button>
       <button class="admin-btn ghost" id="reloadBtn">⟳ Reload</button>
-      <button class="admin-btn ghost" id="logoutBtn">Sign out</button>
+      <button class="admin-btn ghost" id="logoutBtn">🔒 Lock</button>
     </div>
   </div>
 
   <div class="save-note">
-    Edits auto-save to <strong>Supabase</strong> as you type — accessible from any device or browser. Hit each
-    page's <strong>↑ Save &amp; publish</strong> to push just that file to GitHub, or <strong>↑ Publish to GitHub</strong>
-    to push all changed files at once — the live site rebuilds in ~1 min. Images upload directly to
-    <strong>Supabase Storage</strong> (no repo bloat). First time? Click <strong>⚙ GitHub</strong> and paste a
-    fine-grained token (<em>Contents: Read &amp; write</em> on this repo).
+    Edits auto-save as <strong>drafts in this browser</strong> as you type. Hit each page's
+    <strong>↑ Save &amp; publish</strong> or the global <strong>↑ Publish to GitHub</strong> to commit the
+    JSON content files — the live site rebuilds in ~1 min. Images are committed straight to the repo.
+    Your GitHub token stays <strong>encrypted with your passphrase</strong> (🔒 Lock to require it again).
   </div>
 
   <div class="gh-panel" id="ghPanel" style="display:none;">
@@ -176,11 +197,11 @@
     </div>
     <div class="grid2">
       <div class="field"><label>Branch</label><input id="ghBranch" placeholder="main"></div>
-      <div class="field"><label>Fine-grained token (Contents: R/W)</label><input id="ghToken" type="password" placeholder="github_pat_…" autocomplete="off"></div>
+      <div class="field"><label>Token</label><input value="🔒 encrypted in vault — unlock at sign-in" disabled></div>
     </div>
     <div class="inline-actions">
       <button class="admin-btn" id="ghSaveBtn">Save &amp; test connection</button>
-      <button class="admin-btn ghost" id="ghClearBtn">Forget token</button>
+      <button class="admin-btn ghost" id="ghClearBtn">Reset vault (forget token)</button>
       <a class="admin-btn ghost" href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">Create a token ↗</a>
     </div>
   </div>
@@ -191,7 +212,6 @@
   <div id="panel"></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 window.__adminFail = function (error) {
   var el = document.getElementById("adminError");
@@ -205,16 +225,19 @@ window.addEventListener("error", function (event) {
 }, true);
 </script>
 <script src="js/schemas.js"></script>
+<script src="js/sections.js"></script>
+<script src="admin/validators.js"></script>
 <script>
 /* =========================================================
-   Portfolio CMS v2 — Supabase-backed admin.
+   Portfolio CMS v3 — GitHub-native, no backend.
    Architecture:
-     Auth       → Supabase Auth (email + password)
-     Drafts     → Supabase postgres (cms_content table, JSONB)
-     Images     → Supabase Storage (portfolio-assets bucket)
-     Publishing → GitHub Contents API (same as v1)
-   The public site still reads from GitHub Pages JSON files.
-   Supabase is the edit/storage layer; GitHub is the deploy layer.
+     Auth       → passphrase vault (WebCrypto PBKDF2 + AES-GCM);
+                  the GitHub token is stored encrypted in localStorage
+                  and decrypted into memory only while unlocked.
+     Drafts     → localStorage (this browser)
+     Images     → committed to the repo via GitHub Contents API
+     Publishing → GitHub Contents API
+   GitHub JSON under content/ is the single source of truth.
    ========================================================= */
 (function () {
   "use strict";
@@ -224,38 +247,73 @@ window.addEventListener("error", function (event) {
   }
 
   /* ---- CONFIG ---- */
-  var SUPABASE_URL  = 'https://qasgswyjmnzhggqwuvqc.supabase.co';
-  var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhc2dzd3lqbW56aGdncXd1dnFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDM1NjksImV4cCI6MjA5NjgxOTU2OX0.ImQkV19aEHNhizZr1TQjPNiBZQymIfxQ5_2NGoc8FdQ';
   var GH_KEY = "portfolio.cms.gh.v1";
-  var BUCKET = "portfolio-assets";
   var FILES = {
-    products: "products.json",
-    labs:     "labs.json",
-    about:    "about.json",
-    contact:  "contact.json",
-    site:     "site.json"
+    products:    "content/products.json",
+    labs:        "content/labs.json",
+    about:       "content/about.json",
+    contact:     "content/contact.json",
+    site:        "content/site.json",
+    pages:       "content/pages.json",
+    caseStudies: "content/case-studies.json",
+    artifacts:   "content/artifacts.json"
   };
+  var MODEL_NAMES = Object.keys(FILES);
 
-  var _sb = null;
-  function sb() {
-    if (!_sb) _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-    return _sb;
+  /* ---- AUTH: passphrase vault (PBKDF2 → AES-GCM) ---- */
+  var VAULT_KEY = "portfolio.cms.vault.v1";
+  var IDLE_LOCK_MS = 30 * 60 * 1000;
+  var _tok = null, _lastAct = Date.now();
+
+  function bufToB64(buf) { var u = new Uint8Array(buf), s = ""; for (var i = 0; i < u.length; i++) s += String.fromCharCode(u[i]); return btoa(s); }
+  function b64ToBuf(b) { var bin = atob(b), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return u; }
+  function deriveKey(pass, salt) {
+    return crypto.subtle.importKey("raw", new TextEncoder().encode(pass), "PBKDF2", false, ["deriveKey"])
+      .then(function (mat) {
+        return crypto.subtle.deriveKey({ name: "PBKDF2", salt: salt, iterations: 310000, hash: "SHA-256" },
+          mat, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+      });
   }
+  function vaultExists() { return !!localStorage.getItem(VAULT_KEY); }
+  function vaultCreate(pass, token) {
+    var salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+    return deriveKey(pass, salt).then(function (key) {
+      return crypto.subtle.encrypt({ name: "AES-GCM", iv: iv }, key, new TextEncoder().encode(token));
+    }).then(function (ct) {
+      localStorage.setItem(VAULT_KEY, JSON.stringify({ salt: bufToB64(salt), iv: bufToB64(iv), ct: bufToB64(ct) }));
+      _tok = token;
+    });
+  }
+  function vaultUnlock(pass) {
+    var v = JSON.parse(localStorage.getItem(VAULT_KEY) || "null");
+    if (!v) return Promise.reject(new Error("No vault on this browser yet."));
+    return deriveKey(pass, b64ToBuf(v.salt)).then(function (key) {
+      return crypto.subtle.decrypt({ name: "AES-GCM", iv: b64ToBuf(v.iv) }, key, b64ToBuf(v.ct));
+    }).then(function (pt) { _tok = new TextDecoder().decode(pt); return _tok; });
+  }
+  function vaultLock() { _tok = null; }
+  function vaultDestroy() { localStorage.removeItem(VAULT_KEY); _tok = null; }
 
-  /* ---- AUTH ---- */
-  function login(email, pw) { return sb().auth.signInWithPassword({ email: email, password: pw }); }
-  function logout() { return sb().auth.signOut(); }
-  function getSession() { return sb().auth.getSession(); }
+  /* idle auto-lock */
+  ["input", "click", "keydown"].forEach(function (ev) {
+    document.addEventListener(ev, function () { _lastAct = Date.now(); }, true);
+  });
+  setInterval(function () {
+    if (_tok && Date.now() - _lastAct > IDLE_LOCK_MS) { vaultLock(); location.reload(); }
+  }, 60000);
 
   /* ---- MODELS ---- */
   var models = {}, liveModels = {}, openState = {}, currentTab = "work", _dg = null;
-  var FILE_DIRS = ["assets/screenshots", "assets/labs", "assets/about", "apps", "case-studies"];
+  var FILE_DIRS = ["content", "assets/screenshots", "assets/labs", "assets/about", "assets/sections", "apps", "case-studies"];
   var _files = {};   // dir → null | "loading" | { files: [], error: null|string }
   var _orphans = null;  // null = not scanned; Set of orphan paths after scan
 
   function defModel(name) {
     if (name === "products") return { meta: { owner: "Sai Kiran Biswal", role: "Enterprise · AI Product", glyph: "SK", showRoleOnCards: false }, projects: [] };
     if (name === "labs")     return { meta: {}, labs: [] };
+    if (name === "pages")       return { sections: [] };
+    if (name === "caseStudies") return { caseStudies: [] };
+    if (name === "artifacts")   return { artifacts: [] };
     if (name === "about")    return { hero: { eyebrow: "", heading: "", lead: "", paras: [] }, timeline: [], principles: [], skills: [], cta: {} };
     if (name === "contact")  return { hero: { eyebrow: "", heading: "", body: "" }, links: [] };
     if (name === "site")     return {
@@ -299,14 +357,16 @@ window.addEventListener("error", function (event) {
       .then(function (r) { return r.ok ? r.json() : defModel(name); })
       .catch(function () { return defModel(name); });
   }
+  var DRAFT_PREFIX = "cms.draft.";
   function loadDraft(name) {
-    return sb().from("cms_content").select("data").eq("id", name).maybeSingle()
-      .then(function (res) { return (!res.error && res.data && res.data.data) ? res.data.data : null; })
-      .catch(function () { return null; });
+    try {
+      var v = localStorage.getItem(DRAFT_PREFIX + name);
+      return Promise.resolve(v ? JSON.parse(v) : null);
+    } catch (e) { return Promise.resolve(null); }
   }
 
   function loadAll() {
-    return Promise.all(["products", "labs", "about", "contact", "site"].map(function (n) {
+    return Promise.all(MODEL_NAMES.map(function (n) {
       return Promise.all([loadLive(n), loadDraft(n)]).then(function (pair) {
         liveModels[n] = pair[0];
         models[n] = pair[1] || deepClone(pair[0]);
@@ -314,15 +374,35 @@ window.addEventListener("error", function (event) {
     })).then(migrateModels).then(updateSyncPill);
   }
 
-  /* Save draft: upsert to Supabase */
+  /* Save draft: localStorage (this browser only) */
   function saveDraft(name) {
     updateSyncPill();
-    return sb().from("cms_content")
-      .upsert({ id: name, data: models[name], updated_at: new Date().toISOString() }, { onConflict: "id" })
-      .then(function (res) { if (res.error) console.warn("Draft save failed:", res.error.message); });
+    try { localStorage.setItem(DRAFT_PREFIX + name, JSON.stringify(models[name])); }
+    catch (e) { console.warn("Draft save failed:", e.message); }
+    return Promise.resolve();
   }
 
-  /* ---- IMAGE UPLOAD → Supabase Storage ---- */
+  /* ---- IMAGE UPLOAD → committed to the repo via GitHub API ---- */
+  function ghUploadBinary(file, dir, nameHint) {
+    var ext = ((file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "")) || "png";
+    var fname = dir.replace(/\/+$/, "") + "/" + slug(nameHint || "img") + "-" + Date.now().toString(36) + "." + ext;
+    return new Promise(function (resolve, reject) {
+      var rd = new FileReader();
+      rd.onerror = function () { reject(new Error("Could not read the file.")); };
+      rd.onload = function () {
+        var b64data = String(rd.result).split(",")[1];
+        ghApi("/contents/" + encodeURIComponent(fname), {
+          method: "PUT",
+          body: JSON.stringify({ message: "CMS: upload " + fname, content: b64data, branch: gh().branch })
+        }).then(function (r) { return r.json().then(function (j) {
+          if (!r.ok) throw new Error(ghErrMsg(r.status, j.message));
+          resolve(fname);
+        }); }).catch(reject);
+      };
+      rd.readAsDataURL(file);
+    });
+  }
+
   function uploadImage(input, fileOverride) {
     var field = input.closest(".img-field"), st = field ? field.querySelector(".img-up-status") : null;
     function show(kind, html) { if (st) { st.className = "img-up-status " + kind; st.innerHTML = html; } }
@@ -330,35 +410,28 @@ window.addEventListener("error", function (event) {
     var file = fileOverride || (input.files && input.files[0]);
     if (!file) return;
     if (!/^image\//.test(file.type)) { show("err", "That isn't an image file."); return; }
-    if (file.size > 10 * 1024 * 1024) { show("err", "Image is over 10 MB — please compress it first."); return; }
+    if (file.size > 5 * 1024 * 1024) { show("err", "Image is over 5 MB — please compress it first (repo-friendly)."); return; }
+    if (!requireToken()) { show("err", "Unlock the vault first — image uploads commit to GitHub."); return; }
 
     var model = input.getAttribute("data-model"), path = input.getAttribute("data-path"),
-        dir = (input.getAttribute("data-dir") || "assets/uploads").replace(/\/+$/, ""),
-        nameHint = input.getAttribute("data-name") || "img",
-        ext = ((file.name.split(".").pop() || "png").toLowerCase().replace(/[^a-z0-9]/g, "")) || "png",
-        fname = dir + "/" + slug(nameHint) + "-" + Date.now().toString(36) + "." + ext;
+        dir = input.getAttribute("data-dir") || "assets/uploads",
+        nameHint = input.getAttribute("data-name") || "img";
 
-    show("busy", "Uploading " + esc(file.name) + " to Supabase Storage…");
-
-    sb().storage.from(BUCKET).upload(fname, file, { cacheControl: "3600", upsert: true })
-      .then(function (res) {
-        if (res.error) throw res.error;
-        var urlRes = sb().storage.from(BUCKET).getPublicUrl(fname);
-        var publicUrl = urlRes.data.publicUrl;
-        setPath(models[model], path, publicUrl);
+    show("busy", "Committing " + esc(file.name) + " to the repo…");
+    ghUploadBinary(file, dir, nameHint)
+      .then(function (fname) {
+        setPath(models[model], path, fname);
         saveDraft(model);
         var prev = field.querySelector(".img-prev"), pin = field.querySelector(".img-path input");
         if (prev) {
           try { prev.innerHTML = '<img alt="">'; prev.firstChild.src = URL.createObjectURL(file); }
-          catch(e) { prev.innerHTML = '<img src="' + esc(publicUrl) + '" alt="">'; }
+          catch(e) { prev.innerHTML = '<img src="' + esc(fname) + '" alt="">'; }
         }
-        if (pin) pin.value = publicUrl;
-        show("ok", "✓ Uploaded to Storage. Hit <strong>↑ Save &amp; publish</strong> to show it live.");
+        if (pin) pin.value = fname;
+        show("ok", "✓ Committed to the repo. Hit <strong>↑ Save &amp; publish</strong> to reference it live.");
         if (input.value !== undefined) input.value = "";
       })
-      .catch(function (e) {
-        show("err", "✗ " + esc(e.message || "Upload failed — check the Supabase Storage bucket exists."));
-      });
+      .catch(function (e) { show("err", "✗ " + esc(e.message || "Upload failed.")); });
   }
 
   /* ---- HELPERS ---- */
@@ -421,7 +494,7 @@ window.addEventListener("error", function (event) {
         '<label class="img-drop">' +
           '<span class="big">⬆</span>' +
           '<span>Drop an image here, or click to choose</span>' +
-          '<span class="sub">PNG · JPG · WebP · max 10 MB → Supabase Storage</span>' +
+          '<span class="sub">PNG · JPG · WebP · max 5 MB → committed to repo</span>' +
           '<input type="file" accept="image/*" hidden data-imgfile data-model="' + model + '" data-path="' + path + '" data-dir="' + esc(dir) + '" data-name="' + esc(nameHint) + '">' +
         '</label>' +
       '</div>' +
@@ -614,7 +687,9 @@ window.addEventListener("error", function (event) {
     link:     function () { return { k: "Label", v: "Value", type: "none", href: "#", external: false }; },
     navitem:  function () { return { label: "New page", href: "new.html" }; },
     footlink: function () { return { label: "Link", href: "#", external: false }; },
-    page:     function () { return { id: "new-page", title: "New Page", file: "new-page.html", visible: true }; }
+    page:     function () { return { id: "new-page", title: "New Page", file: "new-page.html", visible: true }; },
+    caseStudy: function () { var id = slug("case-study-" + Date.now()).slice(0, 40); return { id: id, title: "New case study", summary: "", file: "case-studies/" + id + ".html", renderer: "static-html", visible: true }; },
+    artifact:  function () { var id = slug("artifact-" + Date.now()).slice(0, 40); return { id: id, title: "New artifact", kind: "doc", body: "", link: "", image: "", visible: true }; }
   };
 
   /* =====================================================
@@ -736,10 +811,8 @@ window.addEventListener("error", function (event) {
   }
 
   function runOrphanScan() {
-    var sbBase = SUPABASE_URL + "/storage/v1/object/public/" + BUCKET + "/";
     function norm(url) {
       if (!url) return null;
-      if (url.startsWith(sbBase)) return url.slice(sbBase.length);
       if (url.startsWith("http")) return null;
       return url.replace(/^\.\//, "").replace(/\/$/, "");
     }
@@ -822,9 +895,290 @@ window.addEventListener("error", function (event) {
     return html;
   }
 
+  /* =====================================================
+     TAB: Sections — 4-lane section builder
+     Lane 1 → pointer to the content tabs (no-code edits)
+     Lane 2 → reusable block        Lane 3 → Flexible Section
+     Lane 4 → custom renderer block
+     Drafted sections live in models.pages.sections and are
+     rendered by js/sections.js — the SAME renderer the public
+     pages use, so the live preview is exact.
+     ===================================================== */
+  var SEC_LANES = {
+    1: { name: "No-code content edit", hint: "Text, image, link, metric, CTA, tag, visibility, ordering — on existing content." },
+    2: { name: "Reusable block", hint: "A pattern that repeats across pages: hero, metric strip, timeline, card grid…" },
+    3: { name: "Flexible Section", hint: "A one-off section — layout variant, visual preset, placement, optional fields." },
+    4: { name: "Custom renderer", hint: "3D / interactive / embedded. Content editable here, markup coded in js/sections.js." }
+  };
+  var SEC_OPT_DEFAULTS = {
+    eyebrow: "", image: "", evidence: "",
+    metrics: [{ value: "", label: "" }],
+    quote: { text: "", attribution: "" },
+    cta: { label: "", href: "" },
+    link: { label: "", href: "" },
+    cards: [{ title: "", body: "" }]
+  };
+  var SEC_OPTS_BY_LANE = {
+    2: ["eyebrow", "image", "metrics", "quote", "cta", "evidence", "link", "cards"],
+    3: ["eyebrow", "image", "metrics", "quote", "cta", "evidence", "link", "cards"],
+    4: ["image", "link"]
+  };
+  var secUI = { lane: 3, editIdx: null, draft: null };
+
+  function secSchemas() { return (window.CMSValidators && CMSValidators.schemas()) || {}; }
+  function secSchemaOpts(schema, fieldId, fallback) {
+    var sc = secSchemas()[schema];
+    var fd = sc && (sc.fields || []).filter(function (f) { return f.id === fieldId; })[0];
+    return (fd && fd.options) || fallback;
+  }
+  function secBlockTypes() {
+    var sc = secSchemas()["page-section"];
+    return (sc && sc.blockTypes) || [{ id: "case-study-section", label: "Case study section" }];
+  }
+
+  function newSectionDraft(lane) {
+    var d = { id: "section-" + Date.now().toString(36), lane: lane, page: "work", visible: true, fields: { title: "", body: "" } };
+    if (lane === 2) d.blockType = "case-study-section";
+    if (lane === 3) { d.layout = "stacked"; d.preset = "calm-editorial"; }
+    if (lane === 4) { d.renderer = "spherical-gallery"; d.fallback = "simple-card"; d.fields.note = ""; }
+    return d;
+  }
+
+  /* form field bound to secUI.draft via data-sp (section path) */
+  function sf(label, sp, val, opts) {
+    opts = opts || {};
+    var inner;
+    if (opts.select) inner = '<select data-sp="' + sp + '">' + opts.select.map(function (o) {
+      var v = o.value !== undefined ? o.value : o, l = o.label !== undefined ? o.label : o;
+      return '<option value="' + esc(v) + '"' + (String(val) === String(v) ? ' selected' : '') + '>' + esc(l) + '</option>';
+    }).join('') + '</select>';
+    else if (opts.area) inner = '<textarea data-sp="' + sp + '">' + esc(val == null ? "" : val) + '</textarea>';
+    else inner = '<input data-sp="' + sp + '" value="' + esc(val == null ? "" : val) + '">';
+    return '<div class="field"><label>' + label + '</label>' + inner + '</div>';
+  }
+
+  function secOptGroup(key, d) {
+    var f = d.fields;
+    var head = '<div class="section-title" style="margin-top:14px;"><strong>' + key.charAt(0).toUpperCase() + key.slice(1) + '</strong>' +
+      '<button class="admin-btn danger" data-act="sec-rmopt" data-opt="' + key + '" style="padding:4px 9px;">✕ remove</button></div>';
+    if (key === "metrics" || key === "cards") {
+      var rows = (f[key] || []).map(function (row, i) {
+        var a = key === "metrics" ? ["value", "Value"] : ["title", "Card title"];
+        var b = key === "metrics" ? ["label", "Label"] : ["body", "Card body"];
+        return '<div class="grid2" style="align-items:end;">' +
+          sf(a[1], "fields." + key + "." + i + "." + a[0], row[a[0]]) +
+          '<div style="display:flex;gap:8px;align-items:end;">' +
+            '<div style="flex:1;">' + sf(b[1], "fields." + key + "." + i + "." + b[0], row[b[0]], key === "cards" ? { area: true } : {}) + '</div>' +
+            '<button class="admin-btn danger" data-act="sec-rmrow" data-opt="' + key + '" data-i="' + i + '" style="margin-bottom:2px;">✕</button>' +
+          '</div></div>';
+      }).join('');
+      return head + rows + '<button class="admin-btn ghost" data-act="sec-addrow" data-opt="' + key + '">+ Add ' + (key === "metrics" ? "metric" : "card") + '</button>';
+    }
+    if (key === "quote") return head + sf("Quote text", "fields.quote.text", (f.quote || {}).text, { area: true }) + sf("Attribution", "fields.quote.attribution", (f.quote || {}).attribution);
+    if (key === "cta")   return head + '<div class="grid2">' + sf("CTA label", "fields.cta.label", (f.cta || {}).label) + sf("CTA href", "fields.cta.href", (f.cta || {}).href) + '</div>';
+    if (key === "link")  return head + '<div class="grid2">' + sf("Link label", "fields.link.label", (f.link || {}).label) + sf("Link href", "fields.link.href", (f.link || {}).href) + '</div>';
+    if (key === "image") return head + sf("Image path / URL", "fields.image", f.image) +
+      '<label class="admin-btn ghost" style="display:inline-block;cursor:pointer;">⬆ Upload image (commits to repo)<input type="file" accept="image/*" hidden data-sec-img></label>';
+    if (key === "evidence") return head + sf("Evidence", "fields.evidence", f.evidence, { area: true });
+    return head + sf(key, "fields." + key, f[key]);
+  }
+
+  function secChecksHtml(checks) {
+    if (!checks.length) return '<p class="subhint">No checks yet — hit Validate.</p>';
+    return checks.map(function (c) {
+      var cls = c.pass ? "ok" : (c.level === "warn" ? "warn" : "bad");
+      var txt = c.pass ? "PASS" : (c.level === "warn" ? "WARN" : "FAIL");
+      return '<div class="check"><span>' + esc(c.label) + (c.detail && !c.pass ? ' <span style="color:var(--muted);">— ' + esc(c.detail) + '</span>' : '') + '</span>' +
+        '<span class="pill ' + cls + '">' + txt + '</span></div>';
+    }).join('');
+  }
+
+  function secRunChecks() {
+    if (!secUI.draft || !window.CMSValidators) return [];
+    return CMSValidators.validateSection(secUI.draft);
+  }
+
+  function secLiveUpdate() {
+    var d = secUI.draft;
+    if (!d) return;
+    var pv = document.getElementById("secPreview");
+    if (pv) pv.innerHTML = window.CMSSections ? CMSSections.render(d) : "";
+    var jb = document.getElementById("secJson");
+    if (jb) jb.textContent = "Generated JSON (stored in content/pages.json — you never edit this by hand):\n\n" + JSON.stringify(d, null, 2);
+    var ck = document.getElementById("secChecks");
+    if (ck) ck.innerHTML = secChecksHtml(secRunChecks());
+  }
+
+  function renderSections() {
+    var sections = (models.pages && models.pages.sections) || [];
+    var html = '<div class="inline-actions">' + draftBtn("pages") + previewBtn() + saveBtn("pages") + '</div>';
+
+    /* lane picker */
+    html += '<div class="section-block"><h3>1 · Choose a lane</h3><div class="grid2">';
+    [1, 2, 3, 4].forEach(function (l) {
+      var active = secUI.lane === l;
+      html += '<button class="admin-btn ' + (active ? '' : 'ghost') + '" data-act="lane-pick" data-lane="' + l + '" style="text-align:left;display:block;width:100%;margin-bottom:8px;' + (active ? 'border-color:var(--clay);' : '') + '">' +
+        '<strong>Lane ' + l + ' — ' + SEC_LANES[l].name + '</strong><br>' +
+        '<span style="font-size:12px;color:var(--muted);font-weight:400;">' + SEC_LANES[l].hint + '</span></button>';
+    });
+    html += '</div></div>';
+
+    /* lane 1 → pointer to content tabs */
+    if (secUI.lane === 1) {
+      html += '<div class="section-block"><h3>Lane 1 · No-code content edit</h3>' +
+        '<p class="subhint">Simple edits happen directly on the content, not as new sections. Jump to the right tab:</p>' +
+        '<div class="inline-actions">' +
+        [["work", "Work projects"], ["labs", "Labs"], ["about", "About"], ["contact", "Contact"], ["site", "Site identity / nav / footer"]].map(function (t) {
+          return '<button class="admin-btn ghost" data-act="goto-tab" data-tab="' + t[0] + '">' + t[1] + ' →</button>';
+        }).join('') + '</div></div>';
+    } else if (!secUI.draft) {
+      html += '<div class="section-block"><h3>2 · ' + SEC_LANES[secUI.lane].name + '</h3>' +
+        '<button class="admin-btn" data-act="sec-new">+ New ' + SEC_LANES[secUI.lane].name.toLowerCase() + '</button></div>';
+    }
+
+    /* editor */
+    if (secUI.draft && secUI.lane !== 1) {
+      var d = secUI.draft, f = d.fields || {};
+      html += '<div class="section-block"><h3>2 · Configure <span class="pill" style="margin-left:8px;">Lane ' + d.lane + ' · ' + SEC_LANES[d.lane].name + '</span></h3>';
+
+      if (d.lane === 2) html += sf("Block type", "blockType", d.blockType, { select: secBlockTypes().map(function (b) { return { value: b.id, label: b.label }; }) });
+      if (d.lane === 3) html += '<div class="grid2">' +
+        sf("Layout variant", "layout", d.layout, { select: secSchemaOpts("flexible-section", "layout", ["split", "stacked", "metric-led", "card-grid", "full-bleed"]) }) +
+        sf("Visual preset", "preset", d.preset, { select: secSchemaOpts("flexible-section", "preset", ["calm-editorial", "case-study", "dark-hero", "minimal-proof", "boardroom"]) }) + '</div>';
+      if (d.lane === 4) html += '<div class="grid2">' +
+        sf("Renderer name", "renderer", d.renderer, { select: secSchemaOpts("custom-renderer", "renderer", ["spherical-gallery", "interactive-canvas", "embedded-app", "advanced-animation", "custom-visualization"]) }) +
+        sf("Fallback mode", "fallback", d.fallback, { select: secSchemaOpts("custom-renderer", "fallback", ["static-image", "simple-card", "text-summary", "hide"]) }) + '</div>';
+
+      html += '<div class="grid2">' +
+        sf("Page placement", "page", d.page, { select: secSchemaOpts("flexible-section", "page", ["work", "labs", "about", "contact"]) }) +
+        sf("Visible", "visible", String(d.visible !== false), { select: [{ value: "true", label: "Visible" }, { value: "false", label: "Hidden" }] }) + '</div>';
+      html += sf("Title", "fields.title", f.title);
+      html += sf("Body", "fields.body", f.body, { area: true });
+      if (d.lane === 4) html += sf("Developer note (for the renderer's coder)", "fields.note", f.note, { area: true });
+
+      /* optional fields present + add buttons */
+      var avail = SEC_OPTS_BY_LANE[d.lane] || [];
+      avail.forEach(function (k) { if (f[k] !== undefined) html += secOptGroup(k, d); });
+      var addable = avail.filter(function (k) { return f[k] === undefined; });
+      if (addable.length) {
+        html += '<div class="field"><label>Add optional fields</label><div class="inline-actions">' +
+          addable.map(function (k) { return '<button class="admin-btn ghost" data-act="sec-addopt" data-opt="' + k + '">+ ' + k.charAt(0).toUpperCase() + k.slice(1) + '</button>'; }).join('') +
+        '</div></div>';
+      }
+
+      html += '<div class="inline-actions" style="margin-top:16px;">' +
+        '<button class="admin-btn" data-act="sec-save">' + (secUI.editIdx == null ? "Add section to page" : "Update section") + '</button>' +
+        '<button class="admin-btn ghost" data-act="sec-validate">Validate (incl. images &amp; links)</button>' +
+        '<button class="admin-btn ghost" data-act="sec-cancel">Cancel</button></div>';
+      html += '</div>';
+
+      /* live preview — exact renderer the public pages use */
+      html += '<div class="section-block"><h3>3 · Live preview</h3>' +
+        '<p class="subhint">Rendered by js/sections.js — identical to what visitors will see (shown at 66%).</p>' +
+        '<div id="secPreview" style="zoom:.66;border:1px dashed var(--line);border-radius:8px;overflow:hidden;background:var(--paper);"></div></div>';
+
+      /* validation + generated JSON */
+      html += '<div class="grid2" style="align-items:start;">' +
+        '<div class="section-block"><h3>4 · Validation</h3><div class="validation" id="secChecks"></div></div>' +
+        '<div class="section-block"><h3>5 · Hidden JSON</h3><pre id="secJson" style="font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--muted);white-space:pre-wrap;word-break:break-word;max-height:340px;overflow:auto;margin:0;"></pre></div></div>';
+    }
+
+    /* existing sections list */
+    html += '<div class="section-block"><h3>Sections on your pages (' + sections.length + ')</h3>';
+    if (!sections.length) html += '<p class="subhint">None yet. Pick a lane above and add one.</p>';
+    sections.forEach(function (s, i) {
+      var fT = (s.fields && s.fields.title) || "(untitled)";
+      var kind = s.lane === 2 ? ("block · " + (s.blockType || "?")) : s.lane === 4 ? ("renderer · " + (s.renderer || "?")) : ("flexible · " + (s.layout || "?") + " / " + (s.preset || "?"));
+      html += '<div class="prod-mini"><div class="prod-mini-bar">' +
+        '<span class="pmn" style="' + (s.visible === false ? 'opacity:.5;' : '') + '">' + esc(fT) +
+          ' <span class="pill" style="margin-left:6px;">L' + s.lane + '</span>' +
+          ' <span class="lc" style="margin-left:6px;">' + esc(kind) + ' → ' + esc(s.page) + (s.visible === false ? ' · hidden' : '') + '</span></span>' +
+        '<span class="row-btns">' +
+          '<button class="admin-btn ghost" data-act="sec-edit" data-i="' + i + '">Edit</button>' +
+          '<button class="admin-btn ghost" data-act="sec-vis" data-i="' + i + '">' + (s.visible === false ? "Show" : "Hide") + '</button>' +
+          '<button class="admin-btn ghost" data-act="sec-up" data-i="' + i + '"' + (i === 0 ? ' disabled' : '') + '>▲</button>' +
+          '<button class="admin-btn ghost" data-act="sec-down" data-i="' + i + '"' + (i === sections.length - 1 ? ' disabled' : '') + '>▼</button>' +
+          '<button class="admin-btn danger" data-act="sec-del" data-i="' + i + '">Delete</button>' +
+        '</span></div></div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function onSecInput(el) {
+    if (!secUI.draft) return;
+    var sp = el.getAttribute("data-sp");
+    var v = el.value;
+    if (sp === "lane") v = +v;
+    if (sp === "visible") v = v === "true";
+    setPath(secUI.draft, sp, v);
+    secLiveUpdate();
+  }
+
+  function uploadSectionImage(input) {
+    var file = input.files && input.files[0];
+    if (!file || !secUI.draft) return;
+    if (!requireToken()) return;
+    ghStatus("Committing " + esc(file.name) + " to assets/sections/…", "busy");
+    ghUploadBinary(file, "assets/sections", secUI.draft.id)
+      .then(function (fname) {
+        secUI.draft.fields.image = fname;
+        ghStatus("✓ Image committed: " + esc(fname), "ok");
+        renderTab("sections"); secLiveUpdate();
+      })
+      .catch(function (e) { ghStatus("✗ " + esc(e.message), "err"); });
+  }
+
+  function handleSectionAct(act, el) {
+    var sections = models.pages.sections = models.pages.sections || [];
+    var i = +el.getAttribute("data-i");
+    if (act === "lane-pick") { secUI.lane = +el.getAttribute("data-lane"); secUI.draft = null; secUI.editIdx = null; renderTab("sections"); return true; }
+    if (act === "goto-tab") { currentTab = el.getAttribute("data-tab"); openState = {}; renderTabs(); renderTab(currentTab); return true; }
+    if (act === "sec-new") { secUI.draft = newSectionDraft(secUI.lane); secUI.editIdx = null; renderTab("sections"); secLiveUpdate(); return true; }
+    if (act === "sec-edit") { secUI.draft = deepClone(sections[i]); secUI.editIdx = i; secUI.lane = secUI.draft.lane; renderTab("sections"); secLiveUpdate(); return true; }
+    if (act === "sec-cancel") { secUI.draft = null; secUI.editIdx = null; renderTab("sections"); return true; }
+    if (act === "sec-del") { if (confirm("Delete this section draft? (Not live until you Publish.)")) { sections.splice(i, 1); saveDraft("pages"); renderTab("sections"); } return true; }
+    if (act === "sec-vis") { sections[i].visible = sections[i].visible === false; saveDraft("pages"); renderTab("sections"); return true; }
+    if (act === "sec-up" && i > 0) { var a = sections[i - 1]; sections[i - 1] = sections[i]; sections[i] = a; saveDraft("pages"); renderTab("sections"); return true; }
+    if (act === "sec-down" && i < sections.length - 1) { var b = sections[i + 1]; sections[i + 1] = sections[i]; sections[i] = b; saveDraft("pages"); renderTab("sections"); return true; }
+    if (act === "sec-addopt") { secUI.draft.fields[el.getAttribute("data-opt")] = deepClone(SEC_OPT_DEFAULTS[el.getAttribute("data-opt")]); renderTab("sections"); secLiveUpdate(); return true; }
+    if (act === "sec-rmopt") { delete secUI.draft.fields[el.getAttribute("data-opt")]; renderTab("sections"); secLiveUpdate(); return true; }
+    if (act === "sec-addrow") { var k1 = el.getAttribute("data-opt"); secUI.draft.fields[k1].push(deepClone(SEC_OPT_DEFAULTS[k1][0])); renderTab("sections"); secLiveUpdate(); return true; }
+    if (act === "sec-rmrow") { var k2 = el.getAttribute("data-opt"); secUI.draft.fields[k2].splice(i, 1); renderTab("sections"); secLiveUpdate(); return true; }
+    if (act === "sec-validate") {
+      var sync = secRunChecks();
+      var ckEl = document.getElementById("secChecks");
+      if (ckEl) ckEl.innerHTML = secChecksHtml(sync) + '<p class="subhint">Checking images &amp; internal links…</p>';
+      CMSValidators.validateSectionAsync(secUI.draft).then(function (asyncChecks) {
+        if (ckEl) ckEl.innerHTML = secChecksHtml(sync.concat(asyncChecks));
+      });
+      return true;
+    }
+    if (act === "sec-save") {
+      var checks = secRunChecks();
+      var errs = checks.filter(function (c) { return !c.pass && c.level === "error"; });
+      if (errs.length) {
+        var ckEl2 = document.getElementById("secChecks");
+        if (ckEl2) ckEl2.innerHTML = secChecksHtml(checks);
+        alert("Fix " + errs.length + " validation error(s) before saving:\n\n" + errs.map(function (c) { return "• " + c.label; }).join("\n"));
+        return true;
+      }
+      if (secUI.editIdx == null) sections.push(secUI.draft);
+      else sections[secUI.editIdx] = secUI.draft;
+      saveDraft("pages");
+      secUI.draft = null; secUI.editIdx = null;
+      renderTab("sections");
+      ghStatus("Section saved to drafts. Use <strong>Preview</strong> to see it on the page, then <strong>↑ Save &amp; publish</strong>.", "ok");
+      return true;
+    }
+    return false;
+  }
+
   /* ---- TABS + RENDER ---- */
-  var TABS = [["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["site","Site"],["structure","Structure"],["files","Files"]];
-  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact, structure: renderStructure, files: renderFiles };
+  var TABS = [["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["sections","Sections"],["caseStudies","Case studies"],["artifacts","Artifacts"],["site","Site"],["structure","Structure"],["files","Files"]];
+  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact,
+    sections: renderSections, caseStudies: function () { return feRender("caseStudies"); }, artifacts: function () { return feRender("artifacts"); },
+    structure: renderStructure, files: renderFiles };
   function renderTabs() {
     document.getElementById("tabs").innerHTML = TABS.map(function (t) {
       return '<button class="tab-btn' + (currentTab === t[0] ? " active" : "") + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
@@ -906,11 +1260,14 @@ window.addEventListener("error", function (event) {
   function showDash() {
     document.getElementById("gate").style.display = "none"; document.getElementById("dash").style.display = "block";
     ghFill(); renderTabs(); renderTab(currentTab);
+    if (window.CMSValidators) CMSValidators.ready.then(function () {
+      if (currentTab === "sections") renderTab("sections");
+    });
   }
 
   /* ---- GITHUB PUBLISH (same as v1) ---- */
   function ghCfg() { try { return JSON.parse(localStorage.getItem(GH_KEY)) || {}; } catch(e) { return {}; } }
-  function gh() { var c = ghCfg(); return { owner: c.owner || "saikiranbiswal", repo: c.repo || "portfolio", branch: c.branch || "main", token: c.token || "" }; }
+  function gh() { var c = ghCfg(); return { owner: c.owner || "saikiranbiswal", repo: c.repo || "portfolio", branch: c.branch || "main", token: _tok || "" }; }
   function b64(s) { return btoa(unescape(encodeURIComponent(s))); }
   function unb64(b) { return decodeURIComponent(escape(atob(b.replace(/\n/g, "")))); }
   function ghStatus(msg, kind) { var el = document.getElementById("ghStatus"); el.style.display = "block"; el.className = "gh-status" + (kind ? " " + kind : ""); el.innerHTML = msg; }
@@ -993,7 +1350,7 @@ window.addEventListener("error", function (event) {
   }
   function requireToken() {
     var c = gh();
-    if (!c.token) { ghStatus("No token yet — click <strong>⚙ GitHub</strong> and paste a fine-grained token first.", "err"); document.getElementById("ghPanel").style.display = "block"; return null; }
+    if (!c.token) { ghStatus("Vault is locked — reload the page and unlock with your passphrase.", "err"); return null; }
     return c;
   }
   function siteLink(c) { return '<a href="https://' + esc(c.owner) + '.github.io/' + esc(c.repo) + '/" target="_blank" rel="noopener">view site ↗</a>'; }
@@ -1010,7 +1367,7 @@ window.addEventListener("error", function (event) {
   function publishAll() {
     var c = requireToken(); if (!c) return;
     ghStatus("Publishing to " + esc(c.owner) + "/" + esc(c.repo) + " (" + esc(c.branch) + ")…", "busy");
-    var names = ["products", "labs", "about", "contact", "site"], results = [];
+    var names = MODEL_NAMES.slice(), results = [];
     (function next(i) {
       if (i >= names.length) {
         var any = results.some(function (r) { return r.status === "error"; });
@@ -1024,7 +1381,9 @@ window.addEventListener("error", function (event) {
       publishOne(names[i]).then(function (r) { results.push(r); next(i + 1); });
     })(0);
   }
-  var TAB_PREVIEW = { site:"index.html", work:"index.html", labs:"labs.html", about:"about.html", contact:"contact.html", structure:"index.html", files:"index.html" };
+  var TAB_PREVIEW = { site:"index.html", work:"products.html", labs:"labs.html", about:"about.html", contact:"contact.html",
+    sections:"products.html", caseStudies:"products.html", artifacts:"products.html", structure:"index.html", files:"index.html" };
+  var PAGE_FILES = { work:"products.html", labs:"labs.html", about:"about.html", contact:"contact.html" };
 
   function computeDiff(live, draft, path) {
     var changes = [];
@@ -1096,18 +1455,20 @@ window.addEventListener("error", function (event) {
   }
 
   function writePreview() {
-    var names = ["products", "labs", "about", "contact", "site"];
-    names.forEach(function (n) {
+    MODEL_NAMES.forEach(function (n) {
       var m = models[n];
-      if (m) localStorage.setItem("cms_preview_" + (n === "products" ? "products" : n), JSON.stringify(m));
+      if (m) localStorage.setItem("cms_preview_" + n, JSON.stringify(m));
     });
   }
   function previewCurrent() {
-    var names = currentTab === "site" ? ["products", "site"] :
-      (currentTab === "work" ? ["products"] : (FILES[currentTab] ? [currentTab] : ["products", "site"]));
-    Promise.all(names.map(saveDraft)).then(function () {
+    Promise.all(MODEL_NAMES.map(saveDraft)).then(function () {
       writePreview();
-      window.open(TAB_PREVIEW[currentTab] + "?preview=1", "_blank");
+      var target = TAB_PREVIEW[currentTab] || "index.html";
+      if (currentTab === "sections") {
+        var pg = secUI.draft ? secUI.draft.page : ((models.pages.sections || [])[0] || {}).page;
+        if (pg && PAGE_FILES[pg]) target = PAGE_FILES[pg];
+      }
+      window.open(target + "?preview=1", "_blank");
     });
   }
 
@@ -1119,7 +1480,7 @@ window.addEventListener("error", function (event) {
     dlg.style.display = "block";
     body.innerHTML = '<div class="gh-status busy" style="margin:0;">Comparing drafts with live files…</div>';
     confirmBtn.style.display = "none";
-    var names = ["products", "labs", "about", "contact", "site"];
+    var names = MODEL_NAMES.slice();
     var pending = names.length, results = [];
     names.forEach(function (name) {
       var file = FILES[name];
@@ -1136,6 +1497,25 @@ window.addEventListener("error", function (event) {
         if (pending > 0) return;
         var html = "";
         results.sort(function (a, b) { return names.indexOf(a.name) - names.indexOf(b.name); });
+
+        /* validation gate — invalid content blocks publish */
+        var vres = window.CMSValidators ? CMSValidators.validateAll(models) : { blocked: false, errors: [], warnings: [] };
+        if (vres.blocked) {
+          html += '<div class="empty-warning" style="border-color:#c0392b;background:#fdeeee;color:#7f1d1d;">' +
+            '<strong>⛔ Publish blocked — ' + vres.errors.length + ' validation error(s):</strong>';
+          vres.errors.slice(0, 12).forEach(function (c) {
+            html += '<div>• ' + esc(c.label) + (c.detail ? ' (' + esc(c.detail) + ')' : '') + '</div>';
+          });
+          if (vres.errors.length > 12) html += '<div>… and ' + (vres.errors.length - 12) + ' more</div>';
+          html += '<div style="margin-top:6px;">Fix these in the admin, then publish again.</div></div>';
+        } else if (vres.warnings.length) {
+          html += '<div class="empty-warning"><strong>⚠ ' + vres.warnings.length + ' validation warning(s)</strong> (publish still allowed):';
+          vres.warnings.slice(0, 6).forEach(function (c) { html += '<div>• ' + esc(c.label) + '</div>'; });
+          html += '</div>';
+        } else if (window.CMSValidators) {
+          html += '<div class="gh-status ok" style="margin:0 0 12px;">✓ Validation passed — publish allowed.</div>';
+        }
+
         var blanks = [];
         results.forEach(function (r) {
           r.diff.forEach(function (change) {
@@ -1169,16 +1549,16 @@ window.addEventListener("error", function (event) {
         var anyChange = results.some(function (r) { return r.diff.length > 0; });
         if (!anyChange) html += '<p style="font-size:13px;color:var(--muted);margin-top:8px;">All files are already up to date. Nothing to publish.</p>';
         body.innerHTML = html;
-        if (anyChange) confirmBtn.style.display = "inline-block";
+        if (anyChange && !vres.blocked) confirmBtn.style.display = "inline-block";
       });
     });
   }
 
-  function ghFill() { var c = gh(); document.getElementById("ghOwner").value = c.owner; document.getElementById("ghRepo").value = c.repo; document.getElementById("ghBranch").value = c.branch; document.getElementById("ghToken").value = c.token; }
+  function ghFill() { var c = gh(); document.getElementById("ghOwner").value = c.owner; document.getElementById("ghRepo").value = c.repo; document.getElementById("ghBranch").value = c.branch; }
   function ghSaveSettings() {
-    var cfg = { owner: document.getElementById("ghOwner").value.trim() || "saikiranbiswal", repo: document.getElementById("ghRepo").value.trim() || "portfolio", branch: document.getElementById("ghBranch").value.trim() || "main", token: document.getElementById("ghToken").value.trim() };
+    var cfg = { owner: document.getElementById("ghOwner").value.trim() || "saikiranbiswal", repo: document.getElementById("ghRepo").value.trim() || "portfolio", branch: document.getElementById("ghBranch").value.trim() || "main" };
     localStorage.setItem(GH_KEY, JSON.stringify(cfg));
-    if (!cfg.token) { ghStatus("Settings saved, but no token entered — paste one to publish.", "err"); return; }
+    if (!_tok) { ghStatus("Settings saved. Vault is locked — reload and unlock to test the connection.", "err"); return; }
     ghStatus("Testing connection…", "busy");
     ghApi("").then(function (r) { return r.json().then(function (j) {
       if (!r.ok) throw new Error(j.message || ("HTTP " + r.status));
@@ -1203,7 +1583,8 @@ window.addEventListener("error", function (event) {
   }
   function handleEdit(e) {
     var el = e.target;
-    if (el.hasAttribute("data-imgfile")) return;
+    if (el.hasAttribute("data-imgfile") || el.hasAttribute("data-sec-img")) return;
+    if (el.hasAttribute("data-sp")) { onSecInput(el); return; }
     if (el.hasAttribute("data-movelab")) { onMoveLab(el); return; }
     var model = el.getAttribute("data-model"), path = el.getAttribute("data-path");
     if (!model || !path) return;
@@ -1218,6 +1599,7 @@ window.addEventListener("error", function (event) {
     panel.addEventListener("input", handleEdit);
     panel.addEventListener("change", handleEdit);
     panel.addEventListener("change", function (e) { if (e.target.hasAttribute("data-imgfile")) uploadImage(e.target); });
+    panel.addEventListener("change", function (e) { if (e.target.hasAttribute("data-sec-img")) uploadSectionImage(e.target); });
     /* ── image DnD ── */
     panel.addEventListener("dragover", function (e) {
       var d = e.target.closest(".img-drop"); if (d) { e.preventDefault(); d.classList.add("drag"); return; }
@@ -1259,6 +1641,7 @@ window.addEventListener("error", function (event) {
     panel.addEventListener("click", function (e) {
       var el = e.target.closest("[data-act]"); if (!el) return;
       var act = el.getAttribute("data-act");
+      if (/^(sec-|lane-pick|goto-tab)/.test(act) && handleSectionAct(act, el)) return;
       if (act === "toggle") { var key = el.getAttribute("data-key"); openState[key] = !openState[key]; renderTab(currentTab); return; }
       if (act === "save") { showPublishDialog(); return; }
       if (act === "save-draft") { saveDraft(el.getAttribute("data-model")); return; }
@@ -1312,7 +1695,7 @@ window.addEventListener("error", function (event) {
       }
       if (act === "hide") { arr[i].hidden = !arr[i].hidden; saveDraft(model); renderTab(currentTab); return; }
       if (act === "del") {
-        if (confirm("Delete this item? (saved to Supabase, not visible until you Publish)")) {
+        if (confirm("Delete this item? (draft only — not live until you Publish)")) {
           arr.splice(i, 1);
           if (sp != null) shiftStateDown(sp, i, arr.length + 1); else openState = {};
           saveDraft(model); renderTab(currentTab);
@@ -1332,51 +1715,73 @@ window.addEventListener("error", function (event) {
 
   /* ---- EXPORT ---- */
   function exportAll() {
-    ["products", "labs", "about", "contact"].forEach(function (n, k) {
+    MODEL_NAMES.forEach(function (n, k) {
       setTimeout(function () {
         var blob = new Blob([modelText(n)], { type: "application/json" });
         var url = URL.createObjectURL(blob), a = document.createElement("a");
-        a.href = url; a.download = FILES[n]; document.body.appendChild(a); a.click(); a.remove();
+        a.href = url; a.download = FILES[n].split("/").pop(); document.body.appendChild(a); a.click(); a.remove();
         setTimeout(function () { URL.revokeObjectURL(url); }, 800);
       }, k * 450);
     });
   }
 
   /* ---- BOOT ---- */
+  function gateErr(msg) { document.getElementById("gateErr").textContent = msg || ""; }
   function boot() {
-    getSession().then(function (res) {
-      if (res.data && res.data.session) {
-        return loadAll().then(showDash);
-      } else {
-        showLogin();
+    if (!window.crypto || !crypto.subtle) {
+      window.__adminFail("WebCrypto unavailable — open the admin over https or localhost.");
+      return;
+    }
+    document.getElementById("gateSetup").style.display = vaultExists() ? "none" : "block";
+    document.getElementById("gateUnlock").style.display = vaultExists() ? "block" : "none";
+    if (!vaultExists()) {
+      /* migrate: prefill from the old plaintext token if one exists */
+      var legacy = ghCfg();
+      if (legacy.token) {
+        document.getElementById("vtToken").value = legacy.token;
+        gateErr("Found your previously saved token — choose a passphrase to encrypt it.");
       }
-    }).catch(function () { showLogin(); });
+    }
+    showLogin();
   }
 
   /* ---- EVENT WIRING ---- */
 
-  // Login screen
-  document.getElementById("loginBtn").onclick = function () {
-    var email = document.getElementById("loginEmail").value.trim();
-    var pw = document.getElementById("pw").value;
-    var err = document.getElementById("gateErr");
-    err.textContent = "";
-    if (!email || !pw) { err.textContent = "Enter your email and password."; return; }
-    err.textContent = "Signing in…";
-    login(email, pw).then(function (res) {
-      if (res.error) throw res.error;
-      err.textContent = "";
+  // Vault gate
+  document.getElementById("vtCreateBtn").onclick = function () {
+    var t = document.getElementById("vtToken").value.trim();
+    var p1 = document.getElementById("vtPass1").value, p2 = document.getElementById("vtPass2").value;
+    if (!t) { gateErr("Paste your GitHub fine-grained token."); return; }
+    if (p1.length < 8) { gateErr("Use a passphrase of at least 8 characters."); return; }
+    if (p1 !== p2) { gateErr("Passphrases don't match."); return; }
+    gateErr("Encrypting…");
+    vaultCreate(p1, t).then(function () {
+      var c = ghCfg(); delete c.token;                    /* remove legacy plaintext token */
+      localStorage.setItem(GH_KEY, JSON.stringify(c));
+      gateErr("");
       return loadAll();
-    }).then(showDash).catch(function (e) {
-      err.textContent = e.message || "Sign-in failed.";
-    });
+    }).then(showDash).catch(function (e) { gateErr(e.message || "Could not create the vault."); });
   };
-  document.getElementById("loginEmail").addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("pw").focus(); });
-  document.getElementById("pw").addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("loginBtn").click(); });
+  document.getElementById("vtUnlockBtn").onclick = function () {
+    var p = document.getElementById("vtPass").value;
+    if (!p) { gateErr("Enter your passphrase."); return; }
+    gateErr("Unlocking…");
+    vaultUnlock(p).then(function () {
+      gateErr("");
+      return loadAll();
+    }).then(showDash).catch(function () { gateErr("Wrong passphrase — the token could not be decrypted."); });
+  };
+  document.getElementById("vtPass").addEventListener("keydown", function (e) { if (e.key === "Enter") document.getElementById("vtUnlockBtn").click(); });
+  document.getElementById("vtResetBtn").onclick = function () {
+    if (confirm("Forget the encrypted token on this browser? You'll need to paste a new GitHub token to publish again. Drafts are kept.")) {
+      vaultDestroy(); location.reload();
+    }
+  };
+
   // Dashboard
-  document.getElementById("logoutBtn").onclick = function () { logout().then(function () { location.reload(); }); };
+  document.getElementById("logoutBtn").onclick = function () { vaultLock(); location.reload(); };
   document.getElementById("reloadBtn").onclick = function () {
-    if (confirm("Reload all content from Supabase? Any unsaved in-memory changes will be replaced.")) {
+    if (confirm("Reload content from the live site + local drafts? Any unsaved in-memory changes will be replaced.")) {
       loadAll().then(function () { openState = {}; renderTab(currentTab); });
     }
   };
@@ -1391,7 +1796,9 @@ window.addEventListener("error", function (event) {
   document.getElementById("pubDlgCancel").onclick = function () { document.getElementById("pubDlg").style.display = "none"; };
   document.getElementById("ghSettingsBtn").onclick = function () { var p = document.getElementById("ghPanel"); p.style.display = (p.style.display === "none" ? "block" : "none"); };
   document.getElementById("ghSaveBtn").onclick = ghSaveSettings;
-  document.getElementById("ghClearBtn").onclick = function () { var c = ghCfg(); delete c.token; localStorage.setItem(GH_KEY, JSON.stringify(c)); document.getElementById("ghToken").value = ""; ghStatus("Token forgotten from this browser.", "ok"); };
+  document.getElementById("ghClearBtn").onclick = function () {
+    if (confirm("Reset the vault? The encrypted token is deleted from this browser; drafts are kept.")) { vaultDestroy(); location.reload(); }
+  };
   document.getElementById("tabs").addEventListener("click", function (e) {
     var b = e.target.closest("[data-tab]"); if (!b) return;
     currentTab = b.getAttribute("data-tab"); openState = {}; renderTabs(); renderTab(currentTab);

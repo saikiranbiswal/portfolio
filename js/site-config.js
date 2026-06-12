@@ -61,8 +61,8 @@ window.SCFG = (function () {
     return "";
   }());
   var ready = (window.PreviewData
-    ? window.PreviewData.load("site", base + "site.json")
-    : fetch(base + "site.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }))
+    ? window.PreviewData.load("site", base + "content/site.json")
+    : fetch(base + "content/site.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }))
     .then(function (d) { if (d) _data = d; return _data; })
     .catch(function () { return _data; });
 

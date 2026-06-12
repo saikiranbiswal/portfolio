@@ -618,8 +618,8 @@
   }
   function boot() {
     var load = window.PreviewData
-      ? window.PreviewData.load("labs", "labs.json")
-      : fetch("labs.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; });
+      ? window.PreviewData.load("labs", "content/labs.json")
+      : fetch("content/labs.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; });
     Promise.all([load, (window.SCFG && SCFG.ready) ? SCFG.ready : Promise.resolve()])
       .then(function (values) { return values[0]; })
       .then(function (j) { if (j && j.labs) { model = j; } else { applyFallback(); } })

@@ -183,6 +183,62 @@ window.SCHEMAS = {
     }
   },
 
+  /* ── Case studies (content/case-studies.json) ─────────────────────── */
+  caseStudies: {
+    model: "caseStudies",
+    sections: [],
+    listNote: "Case study inventory — title, summary, and the page each one links to. Footer links to these are managed in Site → Footer.",
+    list: {
+      path: "caseStudies",
+      template: "caseStudy",
+      addLabel: "+ Add case study",
+      statePrefix: "cs:",
+      summary: { nameField: "title", featuredField: "featured", descField: "summary", metaFields: ["file", "renderer"] },
+      item: [
+        { label: "Title", path: "title" },
+        { label: "Summary", path: "summary", area: true },
+        { row: [
+          { label: "Page file (e.g. case-studies/foo.html)", path: "file" },
+          { label: "Renderer", path: "renderer", select: ["static-html", "sections"] }
+        ]},
+        { row: [
+          { label: "Slug", path: "id" },
+          { label: "Visible", path: "visible",
+            select: [{ value: "false", label: "No" }, { value: "true", label: "Yes" }], type: "bool" }
+        ]}
+      ]
+    }
+  },
+
+  /* ── Artifacts (content/artifacts.json) ───────────────────────────── */
+  artifacts: {
+    model: "artifacts",
+    sections: [],
+    listNote: "Reusable artifacts — PRDs, journey maps, metric docs — referenced from sections and case studies.",
+    list: {
+      path: "artifacts",
+      template: "artifact",
+      addLabel: "+ Add artifact",
+      statePrefix: "art:",
+      summary: { nameField: "title", featuredField: "featured", descField: "body", metaFields: ["kind", "link"] },
+      item: [
+        { label: "Title", path: "title" },
+        { row: [
+          { label: "Kind", path: "kind", select: ["prd", "journey-map", "metrics", "architecture", "deck", "doc", "other"] },
+          { label: "Slug", path: "id" }
+        ]},
+        { label: "Description", path: "body", area: true },
+        { label: "Link (file path or URL)", path: "link" },
+        { image: true, label: "Thumbnail", path: "image", dir: "assets/sections", nameFrom: "id",
+          where: "Shown as the artifact's <strong>thumbnail</strong> wherever this artifact is referenced." },
+        { row: [
+          { label: "Visible", path: "visible",
+            select: [{ value: "false", label: "No" }, { value: "true", label: "Yes" }], type: "bool" }
+        ]}
+      ]
+    }
+  },
+
   /* ── Config (site.json — global nav, footer, CTA) ────────────────── */
   config: {
     model: "site",

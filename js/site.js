@@ -12,9 +12,9 @@
   window.__PRODUCTS_FALLBACK__ = null;
 
   async function loadProducts() {
-    if (window.PreviewData) return window.PreviewData.load("products", "products.json");
+    if (window.PreviewData) return window.PreviewData.load("products", "content/products.json");
     try {
-      const res = await fetch("products.json", { cache: "no-store" });
+      const res = await fetch("content/products.json", { cache: "no-store" });
       if (res.ok) return await res.json();
     } catch (e) { /* file:// or offline */ }
     if (window.__PRODUCTS_FALLBACK__) return window.__PRODUCTS_FALLBACK__;

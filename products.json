@@ -1,139 +1,139 @@
 {
   "meta": {
-    "owner": "Sai Kiran Biswal",
     "role": "Enterprise · AI Product",
-    "glyph": "SK",
     "email": "saikiranbiswal14@gmail.com",
-    "linkedin": "https://www.linkedin.com/in/sai-kiran-biswal",
-    "linkedinLabel": "/in/sai-kiran-biswal",
-    "location": "Pune / Bengaluru · Remote",
+    "glyph": "SK",
+    "owner": "Sai Kiran Biswal",
     "resume": "assets/resume.pdf",
     "status": "Open to lead PM roles",
+    "linkedin": "https://www.linkedin.com/in/sai-kiran-biswal",
+    "location": "Pune / Bengaluru · Remote",
+    "linkedinLabel": "/in/sai-kiran-biswal",
     "showRoleOnCards": false
   },
   "projects": [
     {
       "id": "collections-cloud",
       "name": "AI Collections Cloud",
-      "description": "An AI-native recovery platform for lenders — collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.",
+      "path": "./apps/collections-cloud/",
+      "role": "Product Manager",
       "tags": [
         "AI",
         "Fintech",
         "Collections",
         "Flagship"
       ],
-      "role": "Product Manager",
       "year": "2024–2025",
       "stage": "Flagship",
-      "screenshot": "assets/screenshots/collections-cloud-mq7ch4i4.png",
-      "path": "./apps/collections-cloud/",
+      "featured": true,
       "caseStudy": "case-studies/collections-cloud.html",
-      "displayMode": "page",
-      "featured": true
+      "screenshot": "assets/screenshots/collections-cloud-mq7ch4i4.png",
+      "description": "An AI-native recovery platform for lenders — collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.",
+      "displayMode": "page"
     },
     {
       "id": "lending-cloud",
       "name": "LOS — Loan Origination System",
-      "description": "A guided, state-based loan-origination platform — from application to approval with fewer handoffs, over workflow state machines, EMI math, and deterministic demo data.",
+      "path": "./apps/lending-cloud/",
+      "role": "Product Manager",
       "tags": [
         "Fintech",
         "Lending",
         "SaaS",
         "Platform"
       ],
-      "role": "Product Manager",
       "year": "2024–2025",
       "stage": "Flagship",
-      "screenshot": "assets/screenshots/lending-cloud-mq78bpbv.png",
-      "path": "./apps/lending-cloud/",
+      "featured": true,
       "caseStudy": "case-studies/lending-os.html",
-      "displayMode": "modal",
-      "featured": true
+      "screenshot": "assets/screenshots/lending-cloud-mq78bpbv.png",
+      "description": "A guided, state-based loan-origination platform — from application to approval with fewer handoffs, over workflow state machines, EMI math, and deterministic demo data.",
+      "displayMode": "modal"
     },
     {
       "id": "synthesis",
       "name": "Synthesis — Strategic Framework Engine",
-      "description": "An offline decision-brief engine that turns raw inputs into strategic frameworks, implications, and a 30-60-90 action plan with multi-format export.",
+      "path": "./apps/synthesis/",
+      "role": "Product Manager",
       "tags": [
         "Strategy",
         "Tools",
         "AI"
       ],
-      "role": "Product Manager",
       "year": "2025",
       "stage": "Working app",
+      "featured": false,
       "screenshot": "assets/screenshots/synthesis-mq78ih0i.png",
-      "path": "./apps/synthesis/",
-      "displayMode": "modal",
-      "featured": false
+      "description": "An offline decision-brief engine that turns raw inputs into strategic frameworks, implications, and a 30-60-90 action plan with multi-format export.",
+      "displayMode": "modal"
     },
     {
       "id": "neuralpath",
       "name": "NeuralPath — AI Concepts Game",
-      "description": "A gamified AI-learning app — concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
+      "path": "./apps/neuralpath/",
+      "role": "Product Manager",
       "tags": [
         "AI",
         "Education",
         "Interactive"
       ],
-      "role": "Product Manager",
       "year": "2025",
       "stage": "Working app",
+      "featured": false,
       "screenshot": "assets/screenshots/neuralpath-mq78l565.png",
-      "path": "./apps/neuralpath/",
-      "displayMode": "modal",
-      "featured": false
+      "description": "A gamified AI-learning app — concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
+      "displayMode": "modal"
     },
     {
       "id": "dashboard-studio",
       "name": "Dashboard Studio",
-      "description": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
+      "path": "./apps/dashboard-studio/",
+      "role": "Product Manager",
       "tags": [
         "Data",
         "Visualization",
         "Tools"
       ],
-      "role": "Product Manager",
       "year": "2025",
       "stage": "Working app",
+      "featured": false,
       "screenshot": "assets/screenshots/dashboard-studio-mq78n3sv.png",
-      "path": "./apps/dashboard-studio/",
-      "displayMode": "modal",
-      "featured": false
+      "description": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
+      "displayMode": "modal"
     },
     {
       "id": "excel-transformer",
       "name": "Excel Transformer",
-      "description": "A client-side spreadsheet workflow to profile, filter, rename, and export clean data with reusable transformation recipes and audit-ready workbooks.",
+      "path": "./apps/excel-transformer/",
+      "role": "Product Manager",
       "tags": [
         "Tools",
         "Data",
         "Productivity"
       ],
-      "role": "Product Manager",
       "year": "2025",
       "stage": "Working app",
+      "featured": false,
       "screenshot": "assets/screenshots/excel-transformer-mq78js49.png",
-      "path": "./apps/excel-transformer/",
-      "displayMode": "modal",
-      "featured": false
+      "description": "A client-side spreadsheet workflow to profile, filter, rename, and export clean data with reusable transformation recipes and audit-ready workbooks.",
+      "displayMode": "modal"
     },
     {
       "id": "excel-merger",
       "name": "Excel Merger",
-      "description": "An in-browser merge workspace with schema analysis, smart gap-fill, source lineage, synthetic data, and audit-ready workbook generation.",
+      "path": "./apps/excel-merger/",
+      "role": "Product Manager",
       "tags": [
         "Tools",
         "Data",
         "Productivity"
       ],
-      "role": "Product Manager",
       "year": "2025",
       "stage": "Working app",
+      "featured": false,
       "screenshot": "assets/screenshots/excel-merger-mq78kkbw.png",
-      "path": "./apps/excel-merger/",
-      "displayMode": "modal",
-      "featured": false
+      "description": "An in-browser merge workspace with schema analysis, smart gap-fill, source lineage, synthetic data, and audit-ready workbook generation.",
+      "displayMode": "modal"
     }
   ]
 }

@@ -1,0 +1,171 @@
+/* ============================================================
+   Spherical gallery — chrome over the WebGL canvas
+   Reuses clay design tokens from css/styles.css
+   ============================================================ */
+
+html, body.gallery-page {
+  height: 100%;
+  overflow: hidden;
+}
+
+body.gallery-page {
+  background: var(--dark);
+  color: #cdc4b4;
+  overscroll-behavior: none;
+}
+
+/* ---------- Canvas ---------- */
+#gl {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  cursor: grab;
+  touch-action: none;
+  transition: none;
+}
+#gl.dragging { cursor: grabbing; }
+#gl.card-hover { cursor: pointer; }
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center,
+    transparent 52%,
+    color-mix(in srgb, var(--dark) 55%, transparent) 82%,
+    color-mix(in srgb, var(--dark) 92%, transparent) 100%);
+  z-index: 1;
+}
+
+/* ---------- Nav (dark variant of the site nav) ---------- */
+.gallery-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 10;
+  background: color-mix(in srgb, var(--dark) 72%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(243, 239, 231, 0.08);
+}
+.gallery-nav .wordmark .glyph { background: var(--paper); color: var(--ink); }
+.gallery-nav .wordmark .name { color: var(--paper); }
+.gallery-nav .wordmark .role { color: var(--faint); }
+.gallery-nav .nav-links a { color: #b8ad99; }
+.gallery-nav .nav-links a:hover,
+.gallery-nav .nav-links a.active { color: var(--paper); }
+.gallery-nav .nav-status { color: var(--faint); }
+
+/* ---------- Hover title (bottom-left) ---------- */
+.hover-title {
+  position: fixed;
+  left: var(--gutter);
+  bottom: clamp(28px, 5vh, 56px);
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+}
+.hover-title .eyebrow { color: var(--clay); margin-bottom: 8px; }
+.hover-title h2 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(26px, 3.4vw, 44px);
+  letter-spacing: -0.015em;
+  color: var(--paper);
+  line-height: 1.05;
+  max-width: 14em;
+}
+
+/* ---------- Drag hint ---------- */
+.drag-hint {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(24px, 4.5vh, 44px);
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+  font-family: var(--mono);
+  font-size: var(--t-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+}
+.drag-hint span {
+  display: inline-block;
+  padding: 9px 18px;
+  border: 1px solid rgba(243, 239, 231, 0.14);
+  border-radius: 100px;
+  background: color-mix(in srgb, var(--dark) 55%, transparent);
+  backdrop-filter: blur(6px);
+}
+
+/* ---------- Loader ---------- */
+.gallery-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  background: var(--dark);
+  transition: opacity 0.6s var(--ease);
+}
+.gallery-loader .mono-meta { color: var(--faint); letter-spacing: 0.14em; text-transform: uppercase; }
+.gallery-loader.done { opacity: 0; pointer-events: none; }
+
+/* ---------- Detail overlay (stub) ---------- */
+.detail {
+  position: fixed;
+  inset: 0;
+  z-index: 15;
+  display: grid;
+  align-items: center;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+.detail.open { pointer-events: auto; }
+.detail-inner {
+  max-width: 720px;
+  margin-inline: auto;
+  padding: 0 var(--gutter);
+}
+.detail-back {
+  appearance: none;
+  background: transparent;
+  border: 1px solid rgba(243, 239, 231, 0.22);
+  border-radius: 100px;
+  color: #cdc4b4;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  padding: 10px 18px;
+  cursor: pointer;
+  margin-bottom: clamp(28px, 5vh, 52px);
+  transition: border-color 0.25s ease, color 0.25s ease;
+}
+.detail-back:hover { border-color: var(--paper); color: var(--paper); }
+.detail .eyebrow { color: var(--clay); margin-bottom: 14px; }
+.detail-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(34px, 5vw, 64px);
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  color: var(--paper);
+  margin-bottom: 16px;
+}
+.detail-role { color: var(--faint); margin-bottom: 22px; }
+.detail-body {
+  font-size: var(--t-lead);
+  line-height: 1.6;
+  color: #cdc4b4;
+  max-width: 56ch;
+  margin-bottom: 34px;
+}
+.detail-cta { text-decoration: none; }
+.detail-cta.hidden { display: none; }
+
+@media (max-width: 720px) {
+  .hover-title h2 { font-size: 24px; }
+  .detail-title { font-size: 32px; }
+}

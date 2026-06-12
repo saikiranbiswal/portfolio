@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gallery — Sai Kiran Biswal · Enterprise AI Product Manager</title>
+<meta name="description" content="An explorable 3D gallery of working products and case studies built by Sai Kiran Biswal — drag to look around, click a card to dive in.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Gallery — Sai Kiran Biswal · Enterprise AI Product">
+<meta property="og:description" content="Drag to explore. Working products and flagship case studies, tiled across the inside of a sphere.">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="stylesheet" href="css/styles.css?v=11">
+<link rel="stylesheet" href="assets/gallery/gallery.css?v=1">
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+</head>
+<body class="gallery-page">
+
+<canvas id="gl" aria-label="3D project gallery — drag to look around"></canvas>
+<div class="vignette" aria-hidden="true"></div>
+
+<nav class="nav gallery-nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="products.html">
+      <span class="glyph">SK</span>
+      <span><span class="name">Sai Kiran Biswal</span><br>
+      <span class="role">Enterprise · AI Product</span></span>
+    </a>
+    <div class="nav-links">
+      <a href="products.html">Work</a>
+      <a href="labs.html">Labs</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+      <span class="nav-status"><span class="pulse"></span> <span>Open to lead PM roles</span></span>
+    </div>
+  </div>
+</nav>
+
+<div class="hover-title" id="hoverTitle" aria-live="polite">
+  <p class="eyebrow" id="hoverCategory"></p>
+  <h2 id="hoverName"></h2>
+</div>
+
+<div class="drag-hint" id="dragHint"><span>drag to explore</span></div>
+
+<div class="gallery-loader" id="loader"><span class="mono-meta">loading gallery…</span></div>
+
+<section class="detail" id="detail" aria-hidden="true">
+  <div class="detail-inner">
+    <button class="detail-back" id="detailBack">← Back to gallery</button>
+    <p class="eyebrow" id="detailCategory"></p>
+    <h1 class="detail-title" id="detailTitle"></h1>
+    <p class="detail-role mono-meta" id="detailMeta"></p>
+    <p class="detail-body" id="detailBody"></p>
+    <a class="btn detail-cta" id="detailLink" href="#">Open project <span class="arrow">→</span></a>
+  </div>
+</section>
+
+<script type="module" src="assets/gallery/gallery.js?v=1"></script>
+</body>
+</html>

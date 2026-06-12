@@ -5,7 +5,7 @@
 > a major architectural decision is locked, or a new product pillar is added.
 > For the current delta (what was done last, what's next), read CLAUDE_HANDOFF.md first.
 
-Last updated: 2026-06-12 (Admin v2 planning session + Supabase connection added)
+Last updated: 2026-06-12 (Supabase Auth live + confirmed working)
 
 ---
 
@@ -283,11 +283,13 @@ Draft preview on public pages + publish change summary.
 - `ADMIN_GUIDE.md`
 - Full smoke test at desktop + 375px
 
-### Supabase layer (parallel, ~1 session, can be inserted after Phase B)
-- Auth: replace plaintext password with Supabase email/password auth
-- Drafts: persist to `portfolio_drafts` table (cross-device sync)
-- Future: multi-user workspace, analytics
-- See `js/supabase-client.js` for connection setup
+### Supabase layer — DONE (auth live, drafts ready to wire)
+- ✅ Auth: Supabase email/password replaces plaintext password — confirmed working
+- ✅ `js/supabase-client.js`: `SB.*` API surface live in browser (`isReady: true`)
+- ✅ `supabase/schema.sql`: `cms_content` table + `portfolio-assets` bucket created
+- ✅ Admin login: email + password form, `SB.signIn()` first, legacy fallback removed next
+- Next: wire `SB.saveDraft` / `SB.loadDraft` into admin's draft persistence (replaces localStorage)
+- Future: multi-user workspace, analytics via `portfolio_events` table
 
 ### Total: ~8.5 sessions (7.5 core + 1 Supabase)
 
@@ -296,12 +298,12 @@ Draft preview on public pages + publish change summary.
 ## 8. Supabase Integration Plan
 
 ### What it replaces/augments
-| Current | With Supabase |
-|---|---|
-| Plaintext password in source | Supabase Auth (email + password) |
-| localStorage drafts | `portfolio_drafts` table (cross-device) |
-| No analytics | Future: `portfolio_events` table |
-| Single-user only | Future: multi-user workspaces |
+| Current | With Supabase | Status |
+|---|---|---|
+| Plaintext password in source | Supabase Auth (email + password) | ✅ Live |
+| localStorage drafts | `cms_content` table (`draft_*` rows) | ⬜ Next |
+| No analytics | Future: `portfolio_events` table | ⬜ Future |
+| Single-user only | Future: multi-user workspaces | ⬜ Future |
 
 ### Tables to create in Supabase
 

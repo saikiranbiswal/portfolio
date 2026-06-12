@@ -17,6 +17,8 @@ window.SCFG = (function () {
     ],
     footer: {
       brand: "Building products from <em>problem</em> to <em>platform.</em>",
+      copyright: "© {year} Sai Kiran Biswal — Product Portfolio",
+      credit: "Designed & built end-to-end",
       columns: [
         {
           heading: "Navigate",
@@ -48,21 +50,19 @@ window.SCFG = (function () {
 
   var _data = SEED;
 
-  /* Background fetch — updates _data so next render call uses fresh data */
-  (function () {
-    var base = (function () {
-      var s = document.currentScript;
-      if (s && s.src) {
-        var u = new URL(s.src);
-        return u.pathname.replace(/js\/site-config\.js.*$/, "");
-      }
-      return "";
-    }());
-    fetch(base + "site.json", { cache: "no-store" })
-      .then(function (r) { return r.ok ? r.json() : _data; })
-      .then(function (d) { _data = d; })
-      .catch(function () {});
+  var base = (function () {
+    var s = document.currentScript;
+    if (s && s.src) {
+      var u = new URL(s.src);
+      return u.pathname.replace(/js\/site-config\.js.*$/, "");
+    }
+    return "";
   }());
+  var ready = (window.PreviewData
+    ? window.PreviewData.load("site", base + "site.json")
+    : fetch(base + "site.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }))
+    .then(function (d) { if (d) _data = d; return _data; })
+    .catch(function () { return _data; });
 
   /* ---- Helpers ---- */
   function esc(s) {
@@ -126,8 +126,8 @@ window.SCFG = (function () {
         elsewhere +
       '</div>' +
       '<div class="footer-base">' +
-        '<span>© ' + year + ' ' + esc(meta.owner || "") + ' — Product Portfolio</span>' +
-        '<span>Designed &amp; built end-to-end</span>' +
+        '<span>' + esc((f.copyright || ("© {year} " + (meta.owner || "") + " — Product Portfolio")).replace("{year}", year)) + '</span>' +
+        '<span>' + esc(f.credit || "Designed & built end-to-end") + '</span>' +
       '</div>' +
     '</div></footer>';
   }
@@ -150,6 +150,7 @@ window.SCFG = (function () {
 
   return {
     get data() { return _data; },
+    ready: ready,
     nav:    nav,
     footer: footer,
     ctaBand: ctaBand

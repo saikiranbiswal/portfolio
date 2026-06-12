@@ -93,6 +93,13 @@
   .diff-file-hd { font-weight:600; margin-bottom:4px; }
   .diff-changes { font-family:var(--mono); font-size:11px; padding-left:16px; margin:6px 0 0;
     line-height:1.7; color:var(--ink-soft); }
+  .admin-error { display:none; position:sticky; top:0; z-index:300; padding:12px 18px; color:#7f1d1d;
+    background:#fee2e2; border-bottom:1px solid #fca5a5; font-family:var(--mono); font-size:12px; line-height:1.5; }
+  .sync-pill { border:1px solid var(--line); border-radius:999px; padding:7px 12px; font-family:var(--mono);
+    font-size:11px; letter-spacing:.04em; background:var(--paper-2); color:var(--muted); cursor:pointer; }
+  .sync-pill.draft { color:#92400e; border-color:#f59e0b; background:#fffbeb; }
+  .empty-warning { border:1px solid #f59e0b; background:#fffbeb; color:#78350f; border-radius:6px;
+    padding:12px 14px; margin-bottom:14px; font-size:12px; line-height:1.7; }
   .files-list { margin-top:10px; border:1px solid var(--line-soft); border-radius:6px; overflow:hidden; }
   .file-row { display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--line-soft); }
   .file-row:last-child { border-bottom:0; }
@@ -104,6 +111,7 @@
 </style>
 </head>
 <body>
+<div class="admin-error" id="adminError"></div>
 
 <!-- ===================== PUBLISH DIALOG ===================== -->
 <div id="pubDlg">
@@ -143,6 +151,7 @@
       <div class="sub">Edit → auto-saves to Supabase → Publish to GitHub → live in ~1 min</div>
     </div>
     <div class="admin-actions">
+      <button class="sync-pill" id="syncPill">Synced</button>
       <button class="admin-btn" id="publishAllBtn">↑ Publish to GitHub</button>
       <button class="admin-btn ghost" id="previewBtn">👁 Preview</button>
       <button class="admin-btn ghost" id="ghSettingsBtn">⚙ GitHub</button>
@@ -183,6 +192,18 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script>
+window.__adminFail = function (error) {
+  var el = document.getElementById("adminError");
+  if (!el) return;
+  var message = error && error.message ? error.message : String(error || "Unknown error");
+  el.textContent = "⚠ Admin failed to load: " + message + ". Please check the console and reload.";
+  el.style.display = "block";
+};
+window.addEventListener("error", function (event) {
+  if (event && event.filename && /schemas\.js/.test(event.filename)) window.__adminFail(event.error || event.message);
+}, true);
+</script>
 <script src="js/schemas.js"></script>
 <script>
 /* =========================================================
@@ -197,6 +218,10 @@
    ========================================================= */
 (function () {
   "use strict";
+  if (!window.SCHEMAS) {
+    window.__adminFail("schemas.js did not load");
+    return;
+  }
 
   /* ---- CONFIG ---- */
   var SUPABASE_URL  = 'https://qasgswyjmnzhggqwuvqc.supabase.co';
@@ -223,7 +248,7 @@
   function getSession() { return sb().auth.getSession(); }
 
   /* ---- MODELS ---- */
-  var models = {}, openState = {}, currentTab = "site", _dg = null;
+  var models = {}, liveModels = {}, openState = {}, currentTab = "work", _dg = null;
   var FILE_DIRS = ["assets/screenshots", "assets/labs", "assets/about", "apps", "case-studies"];
   var _files = {};   // dir → null | "loading" | { files: [], error: null|string }
   var _orphans = null;  // null = not scanned; Set of orphan paths after scan
@@ -240,6 +265,8 @@
       ],
       footer: {
         brand: "Building products from <em>problem</em> to <em>platform.</em>",
+        copyright: "© {year} Sai Kiran Biswal — Product Portfolio",
+        credit: "Designed & built end-to-end",
         columns: [
           { heading: "Navigate", links: [
             { label: "Work", href: "products.html" }, { label: "Labs", href: "labs.html" },
@@ -263,27 +290,31 @@
     return {};
   }
 
-  /* Load: Supabase first, fallback to live JSON file, fallback to empty default */
-  function loadOne(name) {
-    return sb().from("cms_content").select("data").eq("id", name).maybeSingle()
-      .then(function (res) {
-        if (!res.error && res.data && res.data.data) return res.data.data;
-        return fetch(FILES[name] + "?t=" + Date.now(), { cache: "no-store" })
-          .then(function (r) { return r.ok ? r.json() : defModel(name); })
-          .catch(function () { return defModel(name); });
-      })
+  function deepClone(value) { return JSON.parse(JSON.stringify(value)); }
+  function loadLive(name) {
+    return fetch(FILES[name] + "?t=" + Date.now(), { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.json() : defModel(name); })
       .catch(function () { return defModel(name); });
+  }
+  function loadDraft(name) {
+    return sb().from("cms_content").select("data").eq("id", name).maybeSingle()
+      .then(function (res) { return (!res.error && res.data && res.data.data) ? res.data.data : null; })
+      .catch(function () { return null; });
   }
 
   function loadAll() {
     return Promise.all(["products", "labs", "about", "contact", "site"].map(function (n) {
-      return loadOne(n).then(function (m) { models[n] = m; });
-    }));
+      return Promise.all([loadLive(n), loadDraft(n)]).then(function (pair) {
+        liveModels[n] = pair[0];
+        models[n] = pair[1] || deepClone(pair[0]);
+      });
+    })).then(migrateModels).then(updateSyncPill);
   }
 
-  /* Save draft: upsert to Supabase — fire and forget, no blocking */
+  /* Save draft: upsert to Supabase */
   function saveDraft(name) {
-    sb().from("cms_content")
+    updateSyncPill();
+    return sb().from("cms_content")
       .upsert({ id: name, data: models[name], updated_at: new Date().toISOString() }, { onConflict: "id" })
       .then(function (res) { if (res.error) console.warn("Draft save failed:", res.error.message); });
   }
@@ -331,7 +362,14 @@
   function esc(s) { return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
   function slug(s) { return String(s).toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,""); }
   function getPath(root, p) { var parts = p.split("."), cur = root; for (var i = 0; i < parts.length; i++) { if (cur == null) return undefined; cur = cur[parts[i]]; } return cur; }
-  function setPath(root, p, val) { var parts = p.split("."), cur = root; for (var i = 0; i < parts.length - 1; i++) cur = cur[parts[i]]; cur[parts[parts.length - 1]] = val; }
+  function setPath(root, p, val) {
+    var parts = p.split("."), cur = root;
+    for (var i = 0; i < parts.length - 1; i++) {
+      if (cur[parts[i]] == null) cur[parts[i]] = /^\d+$/.test(parts[i + 1]) ? [] : {};
+      cur = cur[parts[i]];
+    }
+    cur[parts[parts.length - 1]] = val;
+  }
 
   /* ---- FIELD BUILDERS ---- */
   function arrVal(v, opts) { if (opts.type === "csv") return (v || []).join(", "); if (opts.type === "lines") return (v || []).join("\n"); return v == null ? "" : v; }
@@ -363,6 +401,8 @@
     return '<div class="repeat-item">' + inner + '<div class="repeat-foot">' + ctlBtns(model, arrPath, idx, len) + '</div></div>';
   }
   function saveBtn(model) { return '<button class="admin-btn" data-act="save" data-model="' + model + '">↑ Save &amp; publish</button>'; }
+  function draftBtn(model) { return '<button class="admin-btn ghost" data-act="save-draft" data-model="' + model + '">Save Draft</button>'; }
+  function previewBtn() { return '<button class="admin-btn ghost" data-act="preview">Preview</button>'; }
   function imgField(label, model, path, opts) {
     opts = opts || {};
     var v = getPath(models[model], path) || "";
@@ -396,10 +436,10 @@
     var topList = s.labsList || s.list;
     var html = '<div class="inline-actions">';
     if (topList) html += '<button class="admin-btn" data-act="add" data-model="' + model + '" data-path="' + topList.path + '" data-tmpl="' + esc(topList.template) + '">' + esc(topList.addLabel) + '</button>';
-    html += saveBtn(model) + '</div>';
+    html += draftBtn(model) + previewBtn() + saveBtn(model) + '</div>';
     (s.sections || []).forEach(function (sec) { html += feSection(model, sec); });
     if (s.list) {
-      html += '<div class="subhint">' + ((getPath(models[model], s.list.path) || []).length) + ' ' + s.list.path + '</div>';
+      html += '<div class="subhint">' + (s.listNote || (((getPath(models[model], s.list.path) || []).length) + ' ' + s.list.path)) + '</div>';
       html += feList(model, s.list);
     } else if (s.labsList) {
       html += feLabList(model, s.labsList);
@@ -415,7 +455,7 @@
         '<span class="lc">' + (open ? '▲' : '▼') + '</span>' +
       '</div>';
       if (!open) return bar + '</div>';
-      return bar + '<div class="lab-body">' + feFields(model, '', sec.fields || []) + '</div></div>';
+      return bar + '<div class="lab-body">' + (sec.note ? '<p class="subhint">' + sec.note + '</p>' : '') + feFields(model, '', sec.fields || []) + '</div></div>';
     }
     var h = '<div class="section-block"><h3>' + sec.title + '</h3>';
     if (sec.note) h += '<p class="subhint">' + sec.note + '</p>';
@@ -577,7 +617,7 @@
   /* =====================================================
      TAB: Site identity — schema-driven
      ===================================================== */
-  function renderSite() { return feRender("site"); }
+  function renderSite() { return feRender("site") + feRender("config"); }
 
   /* =====================================================
      TAB: Work — schema-driven
@@ -780,43 +820,87 @@
   }
 
   /* ---- TABS + RENDER ---- */
-  var TABS = [["site","Site"],["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["config","Config"],["structure","Structure"],["files","Files"]];
-  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact, config: renderConfig, structure: renderStructure, files: renderFiles };
+  var TABS = [["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["site","Site"],["structure","Structure"],["files","Files"]];
+  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact, structure: renderStructure, files: renderFiles };
   function renderTabs() {
     document.getElementById("tabs").innerHTML = TABS.map(function (t) {
       return '<button class="tab-btn' + (currentTab === t[0] ? " active" : "") + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
     }).join("");
   }
-  function renderTab(t) { document.getElementById("panel").innerHTML = RENDER[t](); }
+  function renderTab(t) {
+    try {
+      if (!RENDER[t]) throw new Error("No renderer registered for " + t);
+      document.getElementById("panel").innerHTML = RENDER[t]();
+    } catch (error) {
+      console.error(error);
+      window.__adminFail(error);
+      document.getElementById("panel").innerHTML = '<div class="gh-status err">This tab could not be rendered. Please check the console and reload.</div>';
+    }
+  }
 
   /* ---- SCREEN MANAGEMENT ---- */
   function showLogin() { document.getElementById("gate").style.display = "block"; document.getElementById("dash").style.display = "none"; }
-  function migrateModels() {
-    if (!models.site.pages) { models.site.pages = defModel("site").pages; saveDraft("site"); }
-    // Drafts saved before meta.hero existed lack it — backfill from the live
-    // products.json so the Work-hero fields aren't blank (publishing blanks
-    // would wipe the live hero copy).
-    if (models.products && models.products.meta && !models.products.meta.hero) {
-      fetch(FILES.products + "?t=" + Date.now(), { cache: "no-store" })
-        .then(function (r) { return r.ok ? r.json() : null; })
-        .then(function (live) {
-          if (!models.products.meta.hero) {
-            models.products.meta.hero = (live && live.meta && live.meta.hero) || {
-              eyebrow: "Product Manager · Enterprise SaaS · Fintech · AI",
-              heading: "I build enterprise\nproducts that <em>think</em>\n— from problem to platform.",
-              lead: "Working products, platforms, and case studies — built end-to-end, from discovery through architecture, AI, and go-to-market.",
-              stats: [{ n: 2, l: "Flagship case studies" }, { n: 7, l: "Working products" }, { n: 7, l: "Years in fintech" }],
-              workCountSuffix: "more working products across lending, banking & AI",
-              colophon: "Set in Newsreader & Inter · Built by hand · No templates"
-            };
-            saveDraft("products");
-            if (currentTab === "site") renderTab("site");
-          }
-        });
+  function schemaPatternsForModel(modelName) {
+    var out = [];
+    function addFields(fields, base) {
+      (fields || []).forEach(function (field) {
+        if (field.row) { addFields(field.row, base); return; }
+        if (!field.path) return;
+        var path = base ? base + "." + field.path : field.path;
+        out.push(path);
+        if (field.item) addFields(field.item, path + ".*");
+      });
     }
+    Object.keys(window.SCHEMAS).forEach(function (key) {
+      var schema = window.SCHEMAS[key];
+      if (schema.model !== modelName) return;
+      (schema.sections || []).forEach(function (section) { addFields(section.fields, ""); });
+      var list = schema.list || schema.labsList;
+      if (list) {
+        out.push(list.path);
+        addFields(list.item, list.path + ".*");
+      }
+    });
+    return Array.from(new Set(out));
+  }
+  function expandPattern(root, pattern) {
+    var found = [];
+    function walk(cur, parts, built) {
+      if (!parts.length) { found.push(built.join(".")); return; }
+      var part = parts[0];
+      if (part === "*") {
+        if (!Array.isArray(cur)) return;
+        cur.forEach(function (item, i) { walk(item, parts.slice(1), built.concat(String(i))); });
+        return;
+      }
+      if (cur == null || !Object.prototype.hasOwnProperty.call(cur, part)) return;
+      walk(cur[part], parts.slice(1), built.concat(part));
+    }
+    walk(root, pattern.split("."), []);
+    return found;
+  }
+  function migrateModels() {
+    var saves = [];
+    Object.keys(FILES).forEach(function (name) {
+      var changed = false, live = liveModels[name] || {}, draft = models[name] || {};
+      schemaPatternsForModel(name).forEach(function (pattern) {
+        expandPattern(live, pattern).forEach(function (path) {
+          if (getPath(draft, path) !== undefined) return;
+          setPath(draft, path, deepClone(getPath(live, path)));
+          console.log("[migrate] backfilled: " + path + " from live");
+          changed = true;
+        });
+      });
+      if (name === "site" && !draft.pages) {
+        draft.pages = (live.pages || defModel("site").pages);
+        changed = true;
+      }
+      models[name] = draft;
+      if (changed) saves.push(saveDraft(name));
+    });
+    return Promise.all(saves);
   }
   function showDash() {
-    migrateModels();
     document.getElementById("gate").style.display = "none"; document.getElementById("dash").style.display = "block";
     ghFill(); renderTabs(); renderTab(currentTab);
   }
@@ -898,7 +982,10 @@
     var file = FILES[name], text = modelText(name);
     return ghGetFile(file).then(function (cur) {
       if (cur.content != null && cur.content === text) return { file: file, status: "unchanged" };
-      return ghPutFile(file, text, cur.sha, "CMS: update " + file).then(function () { return { file: file, status: cur.sha ? "updated" : "created" }; });
+      return ghPutFile(file, text, cur.sha, "CMS: update " + file).then(function () {
+        liveModels[name] = deepClone(models[name]);
+        return { file: file, status: cur.sha ? "updated" : "created" };
+      });
     }).then(null, function (e) { return { file: file, status: "error", error: e.message }; });
   }
   function requireToken() {
@@ -928,37 +1015,81 @@
         var lines = results.map(function (r) { return r.file + ": " + (r.status === "error" ? ("✗ " + esc(r.error)) : "✓ " + r.status); });
         var foot = any ? "Some files failed — see above." : changed ? ("Published " + changed + " file(s). Live in ~1 min → " + siteLink(c)) : "Nothing changed — everything already up to date.";
         ghStatus(lines.join("<br>") + "<br><br>" + foot, any ? "err" : "ok");
+        updateSyncPill();
         return;
       }
       publishOne(names[i]).then(function (r) { results.push(r); next(i + 1); });
     })(0);
   }
-  var TAB_PREVIEW = { site:"products.html", work:"products.html", labs:"labs.html", about:"about.html", contact:"contact.html", config:"products.html", structure:"products.html", files:"products.html" };
+  var TAB_PREVIEW = { site:"index.html", work:"index.html", labs:"labs.html", about:"about.html", contact:"contact.html", structure:"index.html", files:"index.html" };
 
-  function computeDiff(live, draft, path, depth) {
-    depth = depth || 0;
+  function computeDiff(live, draft, path) {
     var changes = [];
-    var liveT = live === null ? "null" : typeof live;
-    var draftT = draft === null ? "null" : typeof draft;
-    if (liveT !== draftT) { changes.push({ p: path, from: liveT, to: draftT }); return changes; }
-    if (Array.isArray(live)) {
-      if (live.length !== (draft || []).length) changes.push({ p: path, from: live.length + " items", to: (draft || []).length + " items" });
+    var liveT = Array.isArray(live) ? "array" : (live === null ? "null" : typeof live);
+    var draftT = Array.isArray(draft) ? "array" : (draft === null ? "null" : typeof draft);
+    if (liveT !== draftT) {
+      if ((liveT === "object" || liveT === "array") && isEmpty(draft)) {
+        collectLeaves(live, path).forEach(function (leaf) { changes.push({ p: leaf.p, from: leaf.v, to: draft }); });
+      } else if ((draftT === "object" || draftT === "array") && isEmpty(live)) {
+        collectLeaves(draft, path).forEach(function (leaf) { changes.push({ p: leaf.p, from: live, to: leaf.v }); });
+      } else changes.push({ p: path, from: live, to: draft });
+      return changes;
+    }
+    if (liveT === "array") {
+      var max = Math.max(live.length, draft.length);
+      for (var i = 0; i < max; i++) {
+        computeDiff(live[i], draft[i], path + "[" + i + "]").forEach(function (c) { changes.push(c); });
+      }
       return changes;
     }
     if (liveT === "object" && live !== null) {
-      if (depth >= 2) {
-        if (JSON.stringify(live) !== JSON.stringify(draft || {})) changes.push({ p: path, from: "(object)", to: "(changed)" });
-        return changes;
-      }
       var keys = Object.keys(Object.assign({}, live, draft));
       keys.forEach(function (k) {
-        var sub = computeDiff(live[k], (draft || {})[k], path ? path + "." + k : k, depth + 1);
+        var sub = computeDiff(live[k], (draft || {})[k], path ? path + "." + k : k);
         sub.forEach(function (c) { changes.push(c); });
       });
       return changes;
     }
-    if (live !== draft) changes.push({ p: path, from: String(live).slice(0, 60), to: String(draft).slice(0, 60) });
+    if (live !== draft) changes.push({ p: path, from: live, to: draft });
     return changes;
+  }
+  function displayValue(value) {
+    if (value === undefined) return "(missing)";
+    if (value === null) return "null";
+    if (typeof value === "object") return JSON.stringify(value).slice(0, 60);
+    return String(value).slice(0, 60);
+  }
+  function isEmpty(value) {
+    return value == null || value === "" || (Array.isArray(value) && value.length === 0);
+  }
+  function collectLeaves(value, path) {
+    var leaves = [];
+    if (Array.isArray(value)) {
+      value.forEach(function (item, i) {
+        collectLeaves(item, path + "[" + i + "]").forEach(function (leaf) { leaves.push(leaf); });
+      });
+    } else if (value && typeof value === "object") {
+      Object.keys(value).forEach(function (key) {
+        collectLeaves(value[key], path ? path + "." + key : key).forEach(function (leaf) { leaves.push(leaf); });
+      });
+    } else leaves.push({ p: path, v: value });
+    return leaves;
+  }
+  function allDiffs() {
+    var changes = [];
+    Object.keys(FILES).forEach(function (name) {
+      computeDiff(liveModels[name] || {}, models[name] || {}, "").forEach(function (change) {
+        changes.push(Object.assign({ name: name }, change));
+      });
+    });
+    return changes;
+  }
+  function updateSyncPill() {
+    var pill = document.getElementById("syncPill");
+    if (!pill) return;
+    var count = allDiffs().length;
+    pill.textContent = count ? ("Draft · " + count + " changes") : "Synced";
+    pill.className = "sync-pill" + (count ? " draft" : "");
   }
 
   function writePreview() {
@@ -966,6 +1097,14 @@
     names.forEach(function (n) {
       var m = models[n];
       if (m) localStorage.setItem("cms_preview_" + (n === "products" ? "products" : n), JSON.stringify(m));
+    });
+  }
+  function previewCurrent() {
+    var names = currentTab === "site" ? ["products", "site"] :
+      (currentTab === "work" ? ["products"] : (FILES[currentTab] ? [currentTab] : ["products", "site"]));
+    Promise.all(names.map(saveDraft)).then(function () {
+      writePreview();
+      window.open(TAB_PREVIEW[currentTab] + "?preview=1", "_blank");
     });
   }
 
@@ -983,9 +1122,9 @@
       var file = FILES[name];
       ghGetFile(file).then(function (gf) {
         var live = null;
-        try { live = JSON.parse(atob(gf.content.replace(/\s/g,""))); } catch(e) {}
+        try { live = JSON.parse(gf.content); } catch(e) {}
         var draft = models[name] || {};
-        var diff = computeDiff(live || {}, draft, "", 0);
+        var diff = computeDiff(live || {}, draft, "");
         results.push({ name: name, file: file, diff: diff, sha: gf.sha });
       }).catch(function () {
         results.push({ name: name, file: file, diff: [{ p: "—", from: "(not found)", to: "(will create)" }], sha: null });
@@ -994,6 +1133,21 @@
         if (pending > 0) return;
         var html = "";
         results.sort(function (a, b) { return names.indexOf(a.name) - names.indexOf(b.name); });
+        var blanks = [];
+        results.forEach(function (r) {
+          r.diff.forEach(function (change) {
+            if (!isEmpty(change.from) && isEmpty(change.to)) blanks.push({ file: r.file, p: change.p, from: change.from });
+          });
+        });
+        if (blanks.length) {
+          confirmBtn.textContent = "Publish anyway";
+          html += '<div class="empty-warning"><strong>⚠ Warning: ' + blanks.length + ' fields are going from non-empty → empty:</strong>';
+          blanks.slice(0, 12).forEach(function (item) {
+            html += '<div>• ' + esc(item.p || item.file) + ' (was: "' + esc(displayValue(item.from)) + '")</div>';
+          });
+          if (blanks.length > 12) html += '<div>… and ' + (blanks.length - 12) + ' more</div>';
+          html += '<div style="margin-top:6px;">Are you sure you want to publish? These will be blanked on your live site.</div></div>';
+        } else confirmBtn.textContent = "↑ Publish now";
         results.forEach(function (r) {
           var changed = r.diff.length > 0;
           html += '<div class="diff-file' + (changed ? "" : " unchanged") + '">';
@@ -1001,8 +1155,8 @@
           if (changed) {
             html += '<div class="diff-changes">';
             r.diff.slice(0, 8).forEach(function (ch) {
-              html += '<div><span style="color:#9b2226;">− ' + esc(ch.p || "root") + ': ' + esc(ch.from) + '</span><br>' +
-                '<span style="color:#1c6b3c;">+ ' + esc(ch.to) + '</span></div>';
+              html += '<div><span style="color:#9b2226;">− ' + esc(ch.p || "root") + ': ' + esc(displayValue(ch.from)) + '</span><br>' +
+                '<span style="color:#1c6b3c;">+ ' + esc(displayValue(ch.to)) + '</span></div>';
             });
             if (r.diff.length > 8) html += '<div style="color:var(--muted);">… and ' + (r.diff.length - 8) + ' more</div>';
             html += '</div>';
@@ -1103,7 +1257,9 @@
       var el = e.target.closest("[data-act]"); if (!el) return;
       var act = el.getAttribute("data-act");
       if (act === "toggle") { var key = el.getAttribute("data-key"); openState[key] = !openState[key]; renderTab(currentTab); return; }
-      if (act === "save") { publishCurrent(el.getAttribute("data-model")); return; }
+      if (act === "save") { showPublishDialog(); return; }
+      if (act === "save-draft") { saveDraft(el.getAttribute("data-model")); return; }
+      if (act === "preview") { previewCurrent(); return; }
       if (act === "load-dir") { loadDir(el.getAttribute("data-dir")); return; }
       if (act === "reload-files") { FILE_DIRS.forEach(function (d) { if (_files[d]) loadDir(d); }); return; }
       if (act === "scan-orphans") { runOrphanScan(); return; }
@@ -1223,7 +1379,8 @@
   };
   document.getElementById("exportAllBtn").onclick = exportAll;
   document.getElementById("publishAllBtn").onclick = showPublishDialog;
-  document.getElementById("previewBtn").onclick = function () { writePreview(); window.open(TAB_PREVIEW[currentTab] + "?preview=1", "_blank"); };
+  document.getElementById("previewBtn").onclick = previewCurrent;
+  document.getElementById("syncPill").onclick = showPublishDialog;
   document.getElementById("pubDlgConfirm").onclick = function () {
     document.getElementById("pubDlg").style.display = "none";
     publishAll();

@@ -7,9 +7,23 @@ window.SCHEMAS = {
     model: "products",
     sections: [
     {
+      title: "Name + role",
+      note: "NAV WORDMARK — shown in the header across every public page.",
+      fields: [
+        { row: [{ label: "Owner name", path: "meta.owner" }, { label: "Role / title", path: "meta.role" }] },
+        { row: [{ label: "Email", path: "meta.email" }, { label: "Résumé path", path: "meta.resume" }] }
+      ]
+    }]
+  },
+
+  /* ── Work (products.json → projects[]) ────────────────────────────── */
+  work: {
+    model: "products",
+    sections: [{
       type: "collapsible",
       stateKey: "workhero",
       title: "Work page hero",
+      note: "The big headline and stats at the top of your Work page.",
       fields: [
         { label: "Eyebrow tags (separate with ·)", path: "meta.hero.eyebrow" },
         { label: "Heading (one line per line — <em>…</em> allowed)", path: "meta.hero.heading", area: true },
@@ -19,26 +33,12 @@ window.SCHEMAS = {
         { label: "Work count suffix (e.g. more working products across...)", path: "meta.hero.workCountSuffix" },
         { label: "Colophon line", path: "meta.hero.colophon" }
       ]
-    },
-    {
-      title: "Site identity",
-      fields: [
-        { row: [{ label: "Owner name", path: "meta.owner" }, { label: "Role / title", path: "meta.role" }] },
-        { row: [{ label: "Glyph (nav badge)", path: "meta.glyph" }, { label: "Status", path: "meta.status" }] },
-        { row: [{ label: "Email", path: "meta.email" }, { label: "LinkedIn URL", path: "meta.linkedin" }] },
-        { html: '<p class="subhint">To edit your visible location, use the <strong>Contact</strong> tab → Contact links → Location.</p>' },
-        { row: [
-          { label: "Résumé path", path: "meta.resume" },
-          { label: "Show role on Work cards", path: "meta.showRoleOnCards",
-            select: [{ value: "false", label: "No" }, { value: "true", label: "Yes" }], type: "bool" }
-        ]}
-      ]
-    }]
-  },
-
-  /* ── Work (products.json → projects[]) ────────────────────────────── */
-  work: {
-    model: "products",
+    }, {
+      title: "Flagship",
+      note: "The large featured card just below the hero. Mark one or more projects as Featured in the list below.",
+      fields: []
+    }],
+    listNote: "Selected work → The numbered list of project rows. Featured projects also become the large flagship cards below the hero.",
     list: {
       path: "projects",
       template: "project",
@@ -183,7 +183,7 @@ window.SCHEMAS = {
     }
   },
 
-  /* ── Config (site.json — nav, footer, CTA, colophon) ─────────────── */
+  /* ── Config (site.json — global nav, footer, CTA) ────────────────── */
   config: {
     model: "site",
     sections: [
@@ -195,15 +195,13 @@ window.SCHEMAS = {
         ]},
       { title: "Footer", fields: [
         { label: "Brand tagline (HTML — &lt;em&gt; allowed)", path: "footer.brand", area: true },
-        { type: "footer-columns" }
+        { type: "footer-columns" },
+        { row: [{ label: "Copyright line", path: "footer.copyright" }, { label: "Credit line", path: "footer.credit" }] }
       ]},
       { title: "CTA band", fields: [
         { row: [{ label: "Eyebrow", path: "cta.eyebrow" }, { label: "Body", path: "cta.body" }] },
         { label: "Heading (HTML — &lt;em&gt; allowed)", path: "cta.heading" },
         { row: [{ label: "Button label", path: "cta.btnLabel" }, { label: "Button href", path: "cta.btnHref" }] }
-      ]},
-      { title: "Colophon", fields: [
-        { label: "Colophon line (bottom of Work page)", path: "colophon" }
       ]}
     ]
   }

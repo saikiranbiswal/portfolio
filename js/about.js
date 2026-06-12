@@ -30,25 +30,12 @@
       'onerror="this.outerHTML=\'<span class=&quot;ph-label&quot;>' + esc(label) + '</span>\'">';
   }
 
-  function isPreview() { return new URLSearchParams(location.search).get("preview") === "1"; }
   async function loadJSON(path) {
-    if (isPreview()) {
-      var key = "cms_preview_" + path.replace(".json", "");
-      try { var d = localStorage.getItem(key); if (d) return JSON.parse(d); } catch(e) {}
-    }
+    if (window.PreviewData) return window.PreviewData.load(path.replace(".json", ""), path);
     try { var r = await fetch(path, { cache: "no-store" }); if (r.ok) return await r.json(); }
     catch (e) {}
     return null;
   }
-  function injectPreviewBanner() {
-    if (!isPreview()) return;
-    var b = document.createElement("div");
-    b.setAttribute("style","position:fixed;bottom:0;left:0;right:0;background:#1a1a2e;color:#fff;padding:10px 20px;font-size:13px;display:flex;justify-content:space-between;align-items:center;z-index:9999;font-family:monospace;letter-spacing:.04em;");
-    b.innerHTML = '<span>📋 PREVIEW — unpublished draft</span><a href="' + location.pathname + '" style="color:#a8d8a8;text-decoration:underline;">Exit preview</a>';
-    document.body.appendChild(b);
-  }
-
-
   function render(meta, d, featured) {
     featured = featured || [];
     var paras = (d.hero.paras || []).map(function (p, i) {
@@ -144,6 +131,7 @@
   }
 
   (async function () {
+    if (window.SCFG && SCFG.ready) await SCFG.ready;
     var prod = await loadJSON("products.json");
     var meta = (prod && prod.meta) || META_FALLBACK;
     var d = await loadJSON("about.json");
@@ -152,7 +140,7 @@
     document.title = "About — " + (meta.owner || "");
     var featured = (prod && prod.projects || []).filter(function(p) { return p.featured; });
     root.innerHTML = render(meta, d, featured);
-    injectPreviewBanner();
+    if (window.PreviewData) PreviewData.banner();
     window.dispatchEvent(new Event("scroll")); // trigger reveal.js on injected content
   })();
 })();

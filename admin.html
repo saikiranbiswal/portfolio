@@ -162,7 +162,8 @@
     products: "products.json",
     labs:     "labs.json",
     about:    "about.json",
-    contact:  "contact.json"
+    contact:  "contact.json",
+    site:     "site.json"
   };
 
   var _sb = null;
@@ -184,6 +185,27 @@
     if (name === "labs")     return { meta: {}, labs: [] };
     if (name === "about")    return { hero: { eyebrow: "", heading: "", lead: "", paras: [] }, timeline: [], principles: [], skills: [], cta: {} };
     if (name === "contact")  return { hero: { eyebrow: "", heading: "", body: "" }, links: [] };
+    if (name === "site")     return {
+      nav: [
+        { label: "Work", href: "products.html" }, { label: "Labs", href: "labs.html" },
+        { label: "About", href: "about.html" }, { label: "Contact", href: "contact.html" }
+      ],
+      footer: {
+        brand: "Building products from <em>problem</em> to <em>platform.</em>",
+        columns: [
+          { heading: "Navigate", links: [
+            { label: "Work", href: "products.html" }, { label: "Labs", href: "labs.html" },
+            { label: "About", href: "about.html" }, { label: "Contact", href: "contact.html" }
+          ]},
+          { heading: "Case Studies", links: [
+            { label: "AI Collections Cloud", href: "case-studies/collections-cloud.html" },
+            { label: "LOS — Loan Origination", href: "case-studies/lending-os.html" }
+          ]}
+        ]
+      },
+      cta: { eyebrow: "Let's talk", heading: "Building something <em>hard?</em>", body: "I'd like to hear about it.", btnLabel: "Get in touch", btnHref: "contact.html" },
+      colophon: "Set in Newsreader & Inter · Built by hand · No templates"
+    };
     return {};
   }
 
@@ -200,7 +222,7 @@
   }
 
   function loadAll() {
-    return Promise.all(["products", "labs", "about", "contact"].map(function (n) {
+    return Promise.all(["products", "labs", "about", "contact", "site"].map(function (n) {
       return loadOne(n).then(function (m) { models[n] = m; });
     }));
   }
@@ -316,7 +338,9 @@
     timeline: function () { return { yr: "Year", h4: "Role", org: "Organization", p: "What you did." }; },
     principle: function () { return { n: "00", h4: "Principle", p: "Describe it." }; },
     skill: function () { return { h: "Column", items: ["Item"] }; },
-    link: function () { return { k: "Label", v: "Value", type: "none", href: "#", external: false }; }
+    link:     function () { return { k: "Label", v: "Value", type: "none", href: "#", external: false }; },
+    navitem:  function () { return { label: "New page", href: "new.html" }; },
+    footlink: function () { return { label: "Link", href: "#", external: false }; }
   };
 
   /* =====================================================
@@ -527,9 +551,59 @@
     return H;
   }
 
+  /* =====================================================
+     TAB: Config (site.json — nav, footer, CTA, colophon)
+     ===================================================== */
+  function renderConfig() {
+    var b = "site", s = models.site, nav = s.nav || [], ft = s.footer || {}, cols = ft.columns || [], cta = s.cta || {};
+    var H = '<div class="inline-actions">' + saveBtn("site") + '</div>';
+
+    H += '<div class="section-block"><h3>Nav items</h3>' +
+      '<p class="subhint">ORDER &amp; LABELS — changes appear instantly on all pages after publish.</p>' +
+      nav.map(function (n, k) {
+        return repeatItem("site", "nav", k, nav.length,
+          '<div class="grid2">' + F("Label", b, "nav." + k + ".label") + F("Href", b, "nav." + k + ".href") + '</div>');
+      }).join("") +
+      '<button class="admin-btn" data-act="add" data-model="site" data-path="nav" data-tmpl="navitem">+ Add nav item</button>' +
+    '</div>';
+
+    H += '<div class="section-block"><h3>Footer</h3>' +
+      F("Brand tagline (HTML — &lt;em&gt; allowed)", b, "footer.brand", { area: true }) +
+      '<div class="subhint">FOOTER COLUMNS</div>' +
+      cols.map(function (col, ci) {
+        var links = (col.links || []).map(function (l, li) {
+          return repeatItem("site", "footer.columns." + ci + ".links", li, (col.links || []).length,
+            '<div class="grid2">' +
+              F("Label", b, "footer.columns." + ci + ".links." + li + ".label") +
+              F("Href",  b, "footer.columns." + ci + ".links." + li + ".href") +
+            '</div>' +
+            F("Open in new tab", b, "footer.columns." + ci + ".links." + li + ".external",
+              { select: [{ value: "false", label: "No" }, { value: "true", label: "Yes" }], type: "bool" }));
+        }).join("");
+        return '<div class="section-block" style="background:var(--paper);margin-bottom:10px;">' +
+          F("Column heading", b, "footer.columns." + ci + ".heading") +
+          links +
+          '<button class="admin-btn ghost" data-act="add" data-model="site" data-path="footer.columns.' + ci + '.links" data-tmpl="footlink">+ Add link</button>' +
+        '</div>';
+      }).join("") +
+    '</div>';
+
+    H += '<div class="section-block"><h3>CTA band</h3>' +
+      '<div class="grid2">' + F("Eyebrow", b, "cta.eyebrow") + F("Body", b, "cta.body") + '</div>' +
+      F("Heading (HTML — &lt;em&gt; allowed)", b, "cta.heading") +
+      '<div class="grid2">' + F("Button label", b, "cta.btnLabel") + F("Button href", b, "cta.btnHref") + '</div>' +
+    '</div>';
+
+    H += '<div class="section-block"><h3>Colophon</h3>' +
+      F("Colophon line (bottom of Work page)", b, "colophon") +
+    '</div>';
+
+    return H;
+  }
+
   /* ---- TABS + RENDER ---- */
-  var TABS = [["site","Site"],["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"]];
-  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact };
+  var TABS = [["site","Site"],["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["config","Config"]];
+  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact, config: renderConfig };
   function renderTabs() {
     document.getElementById("tabs").innerHTML = TABS.map(function (t) {
       return '<button class="tab-btn' + (currentTab === t[0] ? " active" : "") + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
@@ -593,7 +667,7 @@
   function publishAll() {
     var c = requireToken(); if (!c) return;
     ghStatus("Publishing to " + esc(c.owner) + "/" + esc(c.repo) + " (" + esc(c.branch) + ")…", "busy");
-    var names = ["products", "labs", "about", "contact"], results = [];
+    var names = ["products", "labs", "about", "contact", "site"], results = [];
     (function next(i) {
       if (i >= names.length) {
         var any = results.some(function (r) { return r.status === "error"; });

@@ -28,15 +28,14 @@
   function pad(n) { return String(n).padStart(2, "0"); }
 
   function hydrateChrome(meta) {
-    const set = (id, txt) => { const el = document.getElementById(id); if (el) el.textContent = txt; };
-    set("wm-name", meta.owner);
-    set("wm-role", meta.role);
-    set("wm-glyph", meta.glyph || "SK");
-    set("wm-status", meta.status);
-    set("f-copy", "© " + new Date().getFullYear() + " " + meta.owner + " — Product Portfolio");
-    const li = document.getElementById("f-linkedin"); if (li) li.href = meta.linkedin || "#";
-    const em = document.getElementById("f-email"); if (em) em.href = "mailto:" + (meta.email || "");
-    const rz = document.getElementById("f-resume"); if (rz) rz.href = meta.resume || "assets/resume.pdf";
+    /* Replace static nav / cta-band / footer with SCFG-rendered versions
+       so products.html is driven by site.json just like the SPAs. */
+    const nav = document.querySelector("nav.nav");
+    if (nav) nav.outerHTML = SCFG.nav("Work", "products.html", meta);
+    const cta = document.querySelector("section.cta-band");
+    if (cta) cta.outerHTML = SCFG.ctaBand();
+    const ft = document.querySelector("footer.footer");
+    if (ft) ft.outerHTML = SCFG.footer(meta);
   }
 
   function cardShot(p) {

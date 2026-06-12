@@ -1,0 +1,37 @@
+{
+  "nav": [
+    { "label": "Work",    "href": "products.html" },
+    { "label": "Labs",    "href": "labs.html" },
+    { "label": "About",   "href": "about.html" },
+    { "label": "Contact", "href": "contact.html" }
+  ],
+  "footer": {
+    "brand": "Building products from <em>problem</em> to <em>platform.</em>",
+    "columns": [
+      {
+        "heading": "Navigate",
+        "links": [
+          { "label": "Work",    "href": "products.html" },
+          { "label": "Labs",    "href": "labs.html" },
+          { "label": "About",   "href": "about.html" },
+          { "label": "Contact", "href": "contact.html" }
+        ]
+      },
+      {
+        "heading": "Case Studies",
+        "links": [
+          { "label": "AI Collections Cloud",   "href": "case-studies/collections-cloud.html" },
+          { "label": "LOS — Loan Origination", "href": "case-studies/lending-os.html" }
+        ]
+      }
+    ]
+  },
+  "cta": {
+    "eyebrow": "Let's talk",
+    "heading": "Building something <em>hard?</em>",
+    "body": "I'd like to hear about it.",
+    "btnLabel": "Get in touch",
+    "btnHref": "contact.html"
+  },
+  "colophon": "Set in Newsreader & Inter · Built by hand · No templates"
+}

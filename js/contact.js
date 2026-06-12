@@ -25,42 +25,6 @@
     return null;
   }
 
-  function navHTML(meta) {
-    return '<nav class="nav"><div class="nav-inner">' +
-      '<a class="wordmark" href="products.html">' +
-        '<span class="glyph">' + esc(meta.glyph || "SK") + '</span>' +
-        '<span><span class="name">' + esc(meta.owner) + '</span><br>' +
-        '<span class="role">' + esc(meta.role) + '</span></span>' +
-      '</a>' +
-      '<div class="nav-links">' +
-        '<a href="products.html">Work</a>' +
-        '<a href="labs.html">Labs</a>' +
-        '<a href="about.html">About</a>' +
-        '<a href="contact.html" class="active">Contact</a>' +
-        '<span class="nav-status"><span class="pulse"></span> ' + esc(meta.status) + '</span>' +
-      '</div>' +
-    '</div></nav>';
-  }
-
-  function footerHTML(meta) {
-    var year = new Date().getFullYear();
-    return '<footer class="footer"><div class="wrap">' +
-      '<div class="footer-grid">' +
-        '<div><p class="big">Building products from <em>problem</em> to <em>platform.</em></p></div>' +
-        '<div class="footer-col"><h4>Navigate</h4>' +
-          '<a href="products.html">Work</a><a href="labs.html">Labs</a>' +
-          '<a href="about.html">About</a><a href="contact.html">Contact</a></div>' +
-        '<div class="footer-col"><h4>Case Studies</h4>' +
-          '<a href="case-studies/collections-cloud.html">AI Collections Cloud</a>' +
-          '<a href="case-studies/lending-os.html">LOS — Loan Origination</a></div>' +
-        '<div class="footer-col"><h4>Elsewhere</h4>' +
-          '<a href="' + esc(meta.linkedin || "#") + '" target="_blank" rel="noopener">LinkedIn</a>' +
-          '<a href="mailto:' + esc(meta.email || "") + '">Email</a>' +
-          '<a href="' + esc(meta.resume || "assets/resume.pdf") + '" target="_blank" rel="noopener">Résumé (PDF)</a></div>' +
-      '</div>' +
-      '<div class="footer-base"><span>© ' + year + ' ' + esc(meta.owner) + ' — Product Portfolio</span><span>Designed &amp; built end-to-end</span></div>' +
-    '</div></footer>';
-  }
 
   // Resolve a contact link into href + external flag, honoring shared meta.
   function linkAttrs(l, meta) {
@@ -87,7 +51,7 @@
       '</div>' +
     '</div>';
 
-    return navHTML(meta) +
+    return SCFG.nav('Contact', 'products.html', meta) +
       '<main class="wrap section">' +
         '<div class="contact-hero">' +
           '<div class="reveal">' +
@@ -103,7 +67,7 @@
         '</div>' +
         caseStudyRow +
       '</main>' +
-      footerHTML(meta);
+      SCFG.footer(meta);
   }
 
   (async function () {

@@ -71,42 +71,8 @@
   /* =====================================================
      NAV + FOOTER (shared chrome)
      ===================================================== */
-  function navHTML(active) {
-    return '' +
-    '<nav class="nav"><div class="nav-inner">' +
-      '<a class="wordmark" href="#/">' +
-        '<span class="glyph">' + esc(model.meta.glyph || "SK") + '</span>' +
-        '<span><span class="name">' + esc(model.meta.owner) + '</span><br>' +
-        '<span class="role">' + esc(model.meta.role) + '</span></span>' +
-      '</a>' +
-      '<div class="nav-links">' +
-        '<a href="products.html">Work</a>' +
-        '<a href="#/" class="' + (active === "labs" ? "active" : "") + '">Labs</a>' +
-        '<a href="about.html">About</a>' +
-        '<a href="contact.html">Contact</a>' +
-        '<span class="nav-status"><span class="pulse"></span> Open to lead PM roles</span>' +
-      '</div>' +
-    '</div></nav>';
-  }
-  function footerHTML() {
-    var year = new Date().getFullYear();
-    return '<footer class="footer"><div class="wrap">' +
-      '<div class="footer-grid">' +
-        '<div><p class="big">Built from <em>problem</em> to <em>platform</em> — one lab at a time.</p></div>' +
-        '<div class="footer-col"><h4>Navigate</h4>' +
-          '<a href="products.html">Work</a><a href="labs.html">Labs</a>' +
-          '<a href="about.html">About</a><a href="contact.html">Contact</a></div>' +
-        '<div class="footer-col"><h4>Case Studies</h4>' +
-          '<a href="case-studies/collections-cloud.html">AI Collections Cloud</a>' +
-          '<a href="case-studies/lending-os.html">LOS — Loan Origination</a></div>' +
-        '<div class="footer-col"><h4>Elsewhere</h4>' +
-          '<a href="' + esc(model.meta.linkedin || '#') + '" target="_blank" rel="noopener">LinkedIn</a>' +
-          '<a href="mailto:' + esc(model.meta.email || '') + '">Email</a>' +
-          '<a href="' + esc(model.meta.resume || 'assets/resume.pdf') + '" target="_blank" rel="noopener">Résumé (PDF)</a></div>' +
-      '</div>' +
-      '<div class="footer-base"><span>© ' + year + ' ' + esc(model.meta.owner) + ' — Product Portfolio</span><span>Designed &amp; built end-to-end</span></div>' +
-    '</div></footer>';
-  }
+  function navHTML() { return SCFG.nav('Labs', '#/', model.meta); }
+  function footerHTML() { return SCFG.footer(model.meta); }
 
   /* =====================================================
      LEVEL 1 — Labs index
@@ -149,16 +115,9 @@
         '</div></div>'
     ) : '';
 
-    var ctaBand = '<section class="cta-band section">' +
-      '<div class="wrap cta">' +
-        '<p class="eyebrow">Let\'s talk</p>' +
-        '<h2 class="display" style="margin:18px auto 16px;max-width:18ch;">Building something <em>hard?</em></h2>' +
-        '<p style="color:#b4aa99;max-width:48ch;margin:0 auto;">I\'d like to hear about it.</p>' +
-        '<a href="contact.html" class="btn" style="margin-top:28px;background:var(--clay-deep);border-color:var(--clay-deep);">Get in touch <span class="arrow">→</span></a>' +
-      '</div>' +
-    '</section>';
+    var ctaBand = SCFG.ctaBand();
 
-    return '<div class="view">' + navHTML("labs") +
+    return '<div class="view">' + navHTML() +
       '<header class="labs-hero wrap">' +
         '<p class="eyebrow">' + ed("span", "meta.eyebrow", "", "") + '</p>' +
         '<h1 class="display">' + ed("span", "meta.title", "") + '</h1>' +
@@ -306,7 +265,7 @@
       '</div>';
     }).join("");
 
-    return '<div class="view">' + navHTML("labs") +
+    return '<div class="view">' + navHTML() +
       '<div class="subhead wrap">' +
         '<button class="back-link" data-nav="index">← All labs</button>' +
         '<div class="lab-head">' +
@@ -368,7 +327,7 @@
       ? '<button class="back-link" data-nav="index">← All labs</button>'
       : '<button class="back-link" data-nav="lab" data-lab="' + lab.id + '">← ' + esc(lab.name) + '</button>';
 
-    return '<div class="view">' + navHTML("labs") +
+    return '<div class="view">' + navHTML() +
       '<div class="prod wrap">' +
         '<div class="subhead" style="padding-bottom:0">' + back + '</div>' +
 

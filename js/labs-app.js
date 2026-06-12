@@ -71,7 +71,7 @@
   /* =====================================================
      NAV + FOOTER (shared chrome)
      ===================================================== */
-  function navHTML() { return SCFG.nav('Labs', '#/', model.meta); }
+  function navHTML() { return SCFG.nav('Labs', 'index.html', model.meta); }
   function footerHTML() { return SCFG.footer(model.meta); }
 
   /* =====================================================

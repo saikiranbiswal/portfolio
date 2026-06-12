@@ -61,7 +61,7 @@
     /* Replace static nav / cta-band / footer with SCFG-rendered versions
        so products.html is driven by site.json just like the SPAs. */
     const nav = document.querySelector("nav.nav");
-    if (nav) nav.outerHTML = SCFG.nav("Work", "products.html", meta);
+    if (nav) nav.outerHTML = SCFG.nav("Work", "index.html", meta);
     const cta = document.querySelector("section.cta-band");
     if (cta) cta.outerHTML = SCFG.ctaBand();
     const ft = document.querySelector("footer.footer");

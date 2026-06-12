@@ -63,7 +63,7 @@
       '</ul></div>';
     }).join("");
 
-    return SCFG.nav('About', 'products.html', meta) +
+    return SCFG.nav('About', 'index.html', meta) +
       '<header class="section wrap" style="padding-bottom:clamp(40px,6vw,72px);">' +
         '<div class="about-hero">' +
           '<div class="reveal">' +

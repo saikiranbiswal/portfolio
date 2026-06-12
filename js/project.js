@@ -225,7 +225,7 @@
       "</a>" +
       '<div class="p-foot"><div class="wrap">' +
         "<span>© " + new Date().getFullYear() + " Sai Kiran Biswal</span>" +
-        '<a href="gallery.html">Explore the 3D gallery ↗</a>' +
+        '<a href="index.html">Return home ↗</a>' +
         '<a href="contact.html">Get in touch →</a>' +
       "</div></div>"
     );

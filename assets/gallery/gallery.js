@@ -21,12 +21,13 @@ const LAT_BAND = (50 * Math.PI) / 180; // cards stay within ±50° latitude
 const IDLE_DELAY = 4000;        // ms before auto-drift kicks in
 const IDLE_DRIFT = 0.0004;      // rad/frame yaw drift when idle
 const CLICK_SLOP = 6;           // px — more movement than this means it was a drag
-const DIM = 0.9;                // resting card brightness (hover goes to 1.0)
+const DIM = 0.94;               // resting card brightness (hover goes to 1.0)
 
 /* ---------- DOM ---------- */
 const canvas = document.getElementById('gl');
 const loader = document.getElementById('loader');
 const dragHint = document.getElementById('dragHint');
+const galleryIntro = document.getElementById('galleryIntro');
 const hoverTitle = document.getElementById('hoverTitle');
 const hoverCategory = document.getElementById('hoverCategory');
 const hoverName = document.getElementById('hoverName');
@@ -40,7 +41,7 @@ const detailLink = document.getElementById('detailLink');
 
 /* ---------- Scene ---------- */
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0x16120d); // --dark
+scene.background = new THREE.Color(0xd2bda3); // warm clay atmosphere
 
 const camera = new THREE.PerspectiveCamera(65, innerWidth / innerHeight, 0.1, 60);
 camera.position.set(0, 0, 0);
@@ -62,11 +63,18 @@ let lastX = 0, lastY = 0;
 let downX = 0, downY = 0;
 let lastInteraction = performance.now();
 let hintDismissed = false;
+let introDismissed = false;
 let detailOpen = false;
 let detailTl = null;
 let hoveredMesh = null;
 const cards = [];
 const blurProxy = { v: 0 };
+
+function dismissIntro() {
+  if (introDismissed || !galleryIntro) return;
+  introDismissed = true;
+  gsap.to(galleryIntro, { autoAlpha: 0, y: 10, duration: 0.45, ease: 'power2.out' });
+}
 
 /* ---------- Card textures: rounded-rect canvas compositing ---------- */
 function loadImage(src) {
@@ -102,15 +110,15 @@ async function makeCardTexture(project) {
     const dw = img.width * s, dh = img.height * s;
     ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
   } else {
-    ctx.fillStyle = '#211b14';
+    ctx.fillStyle = '#ece6da';
     ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = '#b8ad99';
+    ctx.fillStyle = '#3a342d';
     ctx.font = '500 30px IBM Plex Mono, monospace';
     ctx.textAlign = 'center';
     ctx.fillText(project.name, W / 2, H / 2);
   }
-  // hairline edge so dark screenshots separate from the void
-  ctx.strokeStyle = 'rgba(243,239,231,0.16)';
+  // hairline edge so screenshots separate from the warm atmosphere
+  ctx.strokeStyle = 'rgba(58,52,45,0.24)';
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.roundRect(1.5, 1.5, W - 3, H - 3, R);
@@ -181,6 +189,7 @@ canvas.addEventListener('pointerdown', (e) => {
   lastInteraction = performance.now();
   canvas.classList.add('dragging');
   canvas.setPointerCapture(e.pointerId);
+  dismissIntro();
   if (!hintDismissed) {
     hintDismissed = true;
     gsap.to(dragHint, { autoAlpha: 0, duration: 0.6, ease: 'power2.out' });
@@ -227,6 +236,7 @@ function setHover(mesh) {
   hoveredMesh = mesh;
   canvas.classList.toggle('card-hover', !!mesh);
   if (mesh) {
+    dismissIntro();
     gsap.to(mesh.scale, { x: 1.06, y: 1.06, z: 1.06, duration: 0.4, ease: 'power2.out' });
     gsap.to(mesh.material.color, { r: 1, g: 1, b: 1, duration: 0.4, ease: 'power2.out' });
     const p = mesh.userData.project;

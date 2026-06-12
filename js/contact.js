@@ -50,7 +50,7 @@
       '</div>' +
     '</div>';
 
-    return SCFG.nav('Contact', 'products.html', meta) +
+    return SCFG.nav('Contact', 'index.html', meta) +
       '<main class="wrap section">' +
         '<div class="contact-hero">' +
           '<div class="reveal">' +

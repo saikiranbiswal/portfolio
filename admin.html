@@ -260,6 +260,7 @@ window.addEventListener("error", function (event) {
     if (name === "contact")  return { hero: { eyebrow: "", heading: "", body: "" }, links: [] };
     if (name === "site")     return {
       nav: [
+        { label: "Home", href: "index.html" },
         { label: "Work", href: "products.html" }, { label: "Labs", href: "labs.html" },
         { label: "About", href: "about.html" }, { label: "Contact", href: "contact.html" }
       ],
@@ -269,6 +270,7 @@ window.addEventListener("error", function (event) {
         credit: "Designed & built end-to-end",
         columns: [
           { heading: "Navigate", links: [
+            { label: "Home", href: "index.html" },
             { label: "Work", href: "products.html" }, { label: "Labs", href: "labs.html" },
             { label: "About", href: "about.html" }, { label: "Contact", href: "contact.html" }
           ]},
@@ -281,9 +283,9 @@ window.addEventListener("error", function (event) {
       cta: { eyebrow: "Let's talk", heading: "Building something <em>hard?</em>", body: "I'd like to hear about it.", btnLabel: "Get in touch", btnHref: "contact.html" },
       colophon: "Set in Newsreader & Inter · Built by hand · No templates",
       pages: [
+        { id: "home",     title: "Home",    file: "index.html",    visible: true },
         { id: "products", title: "Work",    file: "products.html", visible: true },
         { id: "labs",     title: "Labs",    file: "labs.html",     visible: true },
-        { id: "gallery",  title: "Gallery", file: "gallery.html",  visible: true },
         { id: "about",    title: "About",   file: "about.html",    visible: true },
         { id: "contact",  title: "Contact", file: "contact.html",  visible: true }
       ]

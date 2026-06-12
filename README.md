@@ -7,7 +7,7 @@ password-gated admin panel edits projects and exports an updated `products.json`
 
 ```
 portfolio/
-├── index.html              # redirects to products.html
+├── index.html              # immersive spherical portfolio landing page
 ├── products.html           # public showcase (flagship + work grid + modal)
 ├── about.html              # rebranded
 ├── contact.html            # rebranded, real email/links
@@ -22,14 +22,14 @@ portfolio/
 ## Two things to know up front (these are real, not bugs)
 
 **1. Open it through a server, not by double-clicking.**
-`products.html` and `admin.html` use `fetch("products.json")`. Browsers block
+`index.html`, `products.html`, and `admin.html` use `fetch("products.json")`. Browsers block
 that over the `file://` protocol, so opening the HTML directly shows an empty
 grid. Run a tiny local server instead:
 
 ```bash
 cd portfolio
 python3 -m http.server 8000
-# then visit http://localhost:8000/products.html
+# then visit http://localhost:8000/
 ```
 
 (Once deployed to GitHub Pages / Netlify / Vercel, it's served over HTTP and

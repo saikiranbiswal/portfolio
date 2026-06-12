@@ -9,8 +9,8 @@ html, body.gallery-page {
 }
 
 body.gallery-page {
-  background: var(--dark);
-  color: #cdc4b4;
+  background: #d2bda3;
+  color: var(--ink-soft);
   overscroll-behavior: none;
 }
 
@@ -18,6 +18,7 @@ body.gallery-page {
 #gl {
   position: fixed;
   inset: 0;
+  z-index: 0;
   width: 100%;
   height: 100%;
   display: block;
@@ -32,29 +33,49 @@ body.gallery-page {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center,
-    transparent 52%,
-    color-mix(in srgb, var(--dark) 55%, transparent) 82%,
-    color-mix(in srgb, var(--dark) 92%, transparent) 100%);
+  background:
+    radial-gradient(circle at 50% 42%, rgba(250, 248, 243, 0.24), transparent 38%),
+    radial-gradient(ellipse at center, transparent 50%, rgba(143, 93, 61, 0.18) 82%, rgba(91, 58, 38, 0.34) 100%);
   z-index: 1;
 }
 
-/* ---------- Nav (dark variant of the site nav) ---------- */
+/* ---------- Nav (warm glass variant of the site nav) ---------- */
 .gallery-nav {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 10;
-  background: color-mix(in srgb, var(--dark) 72%, transparent);
+  background: color-mix(in srgb, var(--paper) 76%, transparent);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(243, 239, 231, 0.08);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
 }
-.gallery-nav .wordmark .glyph { background: var(--paper); color: var(--ink); }
-.gallery-nav .wordmark .name { color: var(--paper); }
-.gallery-nav .wordmark .role { color: var(--faint); }
-.gallery-nav .nav-links a { color: #b8ad99; }
+.gallery-nav .wordmark .glyph { background: var(--ink); color: var(--paper); }
+.gallery-nav .wordmark .name { color: var(--ink); }
+.gallery-nav .wordmark .role { color: var(--muted); }
+.gallery-nav .nav-links a { color: var(--ink-soft); }
 .gallery-nav .nav-links a:hover,
-.gallery-nav .nav-links a.active { color: var(--paper); }
-.gallery-nav .nav-status { color: var(--faint); }
+.gallery-nav .nav-links a.active { color: var(--ink); }
+.gallery-nav .nav-status { color: var(--muted); }
+
+/* ---------- Landing statement ---------- */
+.gallery-intro {
+  position: fixed;
+  left: var(--gutter);
+  bottom: clamp(96px, 13vh, 130px);
+  z-index: 4;
+  max-width: min(560px, 70vw);
+  pointer-events: none;
+}
+.gallery-intro .eyebrow { color: var(--clay-deep); margin-bottom: 10px; }
+.gallery-intro h1 {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(34px, 5.2vw, 72px);
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.gallery-intro h1 em { color: var(--clay-deep); font-weight: 400; }
 
 /* ---------- Hover title (bottom-left) ---------- */
 .hover-title {
@@ -65,13 +86,13 @@ body.gallery-page {
   pointer-events: none;
   opacity: 0;
 }
-.hover-title .eyebrow { color: var(--clay); margin-bottom: 8px; }
+.hover-title .eyebrow { color: var(--clay-deep); margin-bottom: 8px; }
 .hover-title h2 {
   font-family: var(--serif);
   font-weight: 400;
   font-size: clamp(26px, 3.4vw, 44px);
   letter-spacing: -0.015em;
-  color: var(--paper);
+  color: var(--ink);
   line-height: 1.05;
   max-width: 14em;
 }
@@ -88,14 +109,14 @@ body.gallery-page {
   font-size: var(--t-mono);
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--faint);
+  color: var(--ink-soft);
 }
 .drag-hint span {
   display: inline-block;
   padding: 9px 18px;
-  border: 1px solid rgba(243, 239, 231, 0.14);
+  border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
   border-radius: 100px;
-  background: color-mix(in srgb, var(--dark) 55%, transparent);
+  background: color-mix(in srgb, var(--paper) 72%, transparent);
   backdrop-filter: blur(6px);
 }
 
@@ -106,7 +127,7 @@ body.gallery-page {
   z-index: 20;
   display: grid;
   place-items: center;
-  background: var(--dark);
+  background: #d2bda3;
   transition: opacity 0.6s var(--ease);
 }
 .gallery-loader .mono-meta { color: var(--faint); letter-spacing: 0.14em; text-transform: uppercase; }
@@ -122,6 +143,8 @@ body.gallery-page {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
+  background: color-mix(in srgb, var(--paper) 58%, transparent);
+  backdrop-filter: blur(2px);
 }
 .detail.open { pointer-events: auto; }
 .detail-inner {
@@ -132,9 +155,9 @@ body.gallery-page {
 .detail-back {
   appearance: none;
   background: transparent;
-  border: 1px solid rgba(243, 239, 231, 0.22);
+  border: 1px solid color-mix(in srgb, var(--ink) 24%, transparent);
   border-radius: 100px;
-  color: #cdc4b4;
+  color: var(--ink-soft);
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 0.06em;
@@ -143,22 +166,22 @@ body.gallery-page {
   margin-bottom: clamp(28px, 5vh, 52px);
   transition: border-color 0.25s ease, color 0.25s ease;
 }
-.detail-back:hover { border-color: var(--paper); color: var(--paper); }
-.detail .eyebrow { color: var(--clay); margin-bottom: 14px; }
+.detail-back:hover { border-color: var(--ink); color: var(--ink); }
+.detail .eyebrow { color: var(--clay-deep); margin-bottom: 14px; }
 .detail-title {
   font-family: var(--serif);
   font-weight: 400;
   font-size: clamp(34px, 5vw, 64px);
   letter-spacing: -0.02em;
   line-height: 1.04;
-  color: var(--paper);
+  color: var(--ink);
   margin-bottom: 16px;
 }
 .detail-role { color: var(--faint); margin-bottom: 22px; }
 .detail-body {
   font-size: var(--t-lead);
   line-height: 1.6;
-  color: #cdc4b4;
+  color: var(--ink-soft);
   max-width: 56ch;
   margin-bottom: 34px;
 }
@@ -166,6 +189,12 @@ body.gallery-page {
 .detail-cta.hidden { display: none; }
 
 @media (max-width: 720px) {
+  .gallery-intro {
+    bottom: 112px;
+    max-width: calc(100vw - (2 * var(--gutter)));
+  }
+  .gallery-intro h1 { font-size: 38px; }
+  .drag-hint { bottom: 20px; }
   .hover-title h2 { font-size: 24px; }
   .detail-title { font-size: 32px; }
 }

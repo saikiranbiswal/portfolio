@@ -8,16 +8,16 @@
   },
   "nav": [
     {
+      "href": "index.html",
+      "label": "Home"
+    },
+    {
       "href": "products.html",
       "label": "Work"
     },
     {
       "href": "labs.html",
       "label": "Labs"
-    },
-    {
-      "href": "gallery.html",
-      "label": "Gallery"
     },
     {
       "href": "about.html",
@@ -30,6 +30,12 @@
   ],
   "pages": [
     {
+      "id": "home",
+      "file": "index.html",
+      "title": "Home",
+      "visible": true
+    },
+    {
       "id": "products",
       "file": "products.html",
       "title": "Work",
@@ -39,12 +45,6 @@
       "id": "labs",
       "file": "labs.html",
       "title": "Labs",
-      "visible": true
-    },
-    {
-      "id": "gallery",
-      "file": "gallery.html",
-      "title": "Gallery",
       "visible": true
     },
     {
@@ -66,16 +66,16 @@
       {
         "links": [
           {
+            "href": "index.html",
+            "label": "Home"
+          },
+          {
             "href": "products.html",
             "label": "Work"
           },
           {
             "href": "labs.html",
             "label": "Labs"
-          },
-          {
-            "href": "gallery.html",
-            "label": "Gallery"
           },
           {
             "href": "about.html",

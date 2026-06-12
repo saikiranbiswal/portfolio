@@ -10,9 +10,9 @@ window.SCFG = (function () {
   /* ---- SEED (mirrors site.json — updated by admin publish) ---- */
   var SEED = {
     nav: [
+      { label: "Home",    href: "index.html" },
       { label: "Work",    href: "products.html" },
       { label: "Labs",    href: "labs.html" },
-      { label: "Gallery", href: "gallery.html" },
       { label: "About",   href: "about.html" },
       { label: "Contact", href: "contact.html" }
     ],
@@ -24,9 +24,9 @@ window.SCFG = (function () {
         {
           heading: "Navigate",
           links: [
+            { label: "Home",    href: "index.html" },
             { label: "Work",    href: "products.html" },
             { label: "Labs",    href: "labs.html" },
-            { label: "Gallery", href: "gallery.html" },
             { label: "About",   href: "about.html" },
             { label: "Contact", href: "contact.html" }
           ]
@@ -84,7 +84,7 @@ window.SCFG = (function () {
       return '<a href="' + esc(n.href) + '"' + (isActive ? ' class="active"' : '') + '>' + esc(n.label) + '</a>';
     }).join("");
     return '<nav class="nav"><div class="nav-inner">' +
-      '<a class="wordmark" href="' + esc(homeHref || "products.html") + '">' +
+      '<a class="wordmark" href="' + esc(homeHref || "index.html") + '">' +
         '<span class="glyph">' + esc(meta.glyph || "SK") + '</span>' +
         '<span>' +
           '<span class="name">' + esc(meta.owner || "") + '</span><br>' +

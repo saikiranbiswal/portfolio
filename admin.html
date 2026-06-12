@@ -78,6 +78,10 @@
     <h1>Portfolio CMS</h1>
     <p>Enter the password to manage the whole portfolio.</p>
     <div class="field">
+      <label for="loginEmail">Email</label>
+      <input type="email" id="loginEmail" autocomplete="email" placeholder="saikiranbiswal@gmail.com" value="saikiranbiswal@gmail.com">
+    </div>
+    <div class="field">
       <label for="pw">Password</label>
       <input type="password" id="pw" autocomplete="current-password" placeholder="••••••••">
     </div>
@@ -186,7 +190,23 @@
   /* ---- auth ---- */
   function isAuthed(){try{return sessionStorage.getItem(AUTH_KEY)==="1";}catch(e){return false;}}
   function setAuthed(v){try{v?sessionStorage.setItem(AUTH_KEY,"1"):sessionStorage.removeItem(AUTH_KEY);}catch(e){}}
-  function login(){var pw=document.getElementById("pw").value;if(pw===PASSWORD){setAuthed(true);showDash();}else{document.getElementById("gateErr").textContent="Incorrect password.";}}
+  async function login(){
+    var pw=document.getElementById("pw").value;
+    var email=document.getElementById("loginEmail").value.trim();
+    var btn=document.getElementById("loginBtn");
+    var err=document.getElementById("gateErr");
+    // Try Supabase first if available
+    if(window.SB && SB.isReady() && email){
+      btn.textContent="Signing in…";btn.disabled=true;
+      var ok=await SB.signIn(email,pw);
+      btn.textContent="Unlock";btn.disabled=false;
+      if(ok){setAuthed(true);showDash();return;}
+      err.textContent="Incorrect email or password.";return;
+    }
+    // Fallback: legacy hardcoded password
+    if(pw===PASSWORD){setAuthed(true);showDash();}
+    else{err.textContent="Incorrect password.";}
+  }
 
   /* ---- field builders ---- */
   function arrVal(v,opts){if(opts.type==="csv")return (v||[]).join(", ");if(opts.type==="lines")return (v||[]).join("\n");return v==null?"":v;}
@@ -657,7 +677,10 @@
   /* ---- boot ---- */
   document.getElementById("loginBtn").onclick=login;
   document.getElementById("pw").addEventListener("keydown",function(e){if(e.key==="Enter")login();});
-  document.getElementById("logoutBtn").onclick=function(){setAuthed(false);location.reload();};
+  document.getElementById("logoutBtn").onclick=async function(){
+    if(window.SB&&SB.isReady())await SB.signOut();
+    setAuthed(false);location.reload();
+  };
   document.getElementById("exportAllBtn").onclick=exportAll;
   document.getElementById("publishAllBtn").onclick=publishAll;
   document.getElementById("ghSettingsBtn").onclick=function(){var p=document.getElementById("ghPanel");p.style.display=(p.style.display==="none"?"block":"none");};
@@ -678,5 +701,7 @@
   loadAll().then(function(){if(isAuthed())showDash();});
 })();
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase-client.js"></script>
 </body>
 </html>

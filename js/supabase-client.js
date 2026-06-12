@@ -19,8 +19,8 @@
 //   await SB.uploadImage(file);               // returns public URL string
 //   await SB.signOut();
 
-const SUPABASE_URL = 'PASTE_YOUR_PROJECT_URL_HERE';
-const SUPABASE_ANON_KEY = 'PASTE_YOUR_ANON_KEY_HERE';
+const SUPABASE_URL = 'https://qasgswyjmnzhggqwuvqc.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFhc2dzd3lqbW56aGdncXd1dnFjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNDM1NjksImV4cCI6MjA5NjgxOTU2OX0.ImQkV19aEHNhizZr1TQjPNiBZQymIfxQ5_2NGoc8FdQ';
 
 const _configured = SUPABASE_URL !== 'PASTE_YOUR_PROJECT_URL_HERE';
 let _client = null;

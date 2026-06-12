@@ -139,6 +139,7 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="js/schemas.js"></script>
 <script>
 /* =========================================================
    Portfolio CMS v2 — Supabase-backed admin.
@@ -328,6 +329,175 @@
     '</div>';
   }
 
+  /* ---- FORM ENGINE ---- */
+  function feRender(key) {
+    var s = window.SCHEMAS[key];
+    if (!s) return '<p>No schema: ' + esc(key) + '</p>';
+    var model = s.model;
+    var topList = s.labsList || s.list;
+    var html = '<div class="inline-actions">';
+    if (topList) html += '<button class="admin-btn" data-act="add" data-model="' + model + '" data-path="' + topList.path + '" data-tmpl="' + esc(topList.template) + '">' + esc(topList.addLabel) + '</button>';
+    html += saveBtn(model) + '</div>';
+    (s.sections || []).forEach(function (sec) { html += feSection(model, sec); });
+    if (s.list) {
+      html += '<div class="subhint">' + ((getPath(models[model], s.list.path) || []).length) + ' ' + s.list.path + '</div>';
+      html += feList(model, s.list);
+    } else if (s.labsList) {
+      html += feLabList(model, s.labsList);
+    }
+    return html;
+  }
+
+  function feSection(model, sec) {
+    if (sec.type === 'collapsible') {
+      var open = openState[sec.stateKey];
+      var bar = '<div class="lab-block"><div class="lab-bar">' +
+        '<span class="lt" data-act="toggle" data-key="' + sec.stateKey + '" style="cursor:pointer;flex:1 1 auto;">' + sec.title + '</span>' +
+        '<span class="lc">' + (open ? '▲' : '▼') + '</span>' +
+      '</div>';
+      if (!open) return bar + '</div>';
+      return bar + '<div class="lab-body">' + feFields(model, '', sec.fields || []) + '</div></div>';
+    }
+    var h = '<div class="section-block"><h3>' + sec.title + '</h3>';
+    if (sec.note) h += '<p class="subhint">' + sec.note + '</p>';
+    return h + feFields(model, '', sec.fields || []) + '</div>';
+  }
+
+  function feFields(model, base, fields) {
+    var h = '';
+    fields.forEach(function (f) {
+      if (f.row) h += '<div class="grid2">' + f.row.map(function (rf) { return feField(model, base, rf); }).join('') + '</div>';
+      else h += feField(model, base, f);
+    });
+    return h;
+  }
+
+  function feField(model, base, f) {
+    if (f.html) return f.html;
+    var fp = f.path ? (base ? base + '.' + f.path : f.path) : base;
+    if (f.type === 'array') return feArray(model, base, f);
+    if (f.type === 'nested-list') return feProdList(model, fp, f, base);
+    if (f.type === 'footer-columns') return feFooterColumns(model);
+    if (f.type === 'textarea-direct') {
+      var dv = getPath(models[model], fp) || '';
+      return '<textarea data-model="' + model + '" data-path="' + fp + '">' + esc(dv) + '</textarea>';
+    }
+    if (f.type === 'feat-list') {
+      var feats = getPath(models[model], fp) || [];
+      var h = '<div class="subhint">FEATURES</div>';
+      h += feats.map(function (ft, k) {
+        return '<div class="feat-row">' +
+          '<input data-model="' + model + '" data-path="' + fp + '.' + k + '.0" value="' + esc(ft[0]) + '">' +
+          '<input data-model="' + model + '" data-path="' + fp + '.' + k + '.1" value="' + esc(ft[1]) + '">' +
+          '<button class="admin-btn danger" data-act="del" data-model="' + model + '" data-path="' + fp + '" data-i="' + k + '">✕</button>' +
+        '</div>';
+      }).join('');
+      return h + '<button class="admin-btn ghost" data-act="add" data-model="' + model + '" data-path="' + fp + '" data-tmpl="feature">+ Add feature</button>';
+    }
+    if (f.type === 'move-lab') {
+      var mx = base.match(/labs\.(\d+)\.products\.(\d+)/);
+      if (!mx) return '';
+      var fi = +mx[1], pi = +mx[2];
+      var labsList = models.labs.labs || [];
+      return '<div class="field"><label>Move to lab</label><select data-movelab data-from="' + fi + '" data-i="' + pi + '">' +
+        labsList.map(function (l, k) { return '<option value="' + k + '"' + (k === fi ? ' selected' : '') + '>' + esc(l.name) + '</option>'; }).join('') +
+      '</select></div>';
+    }
+    if (f.image) {
+      var hint = f.nameFrom ? (getPath(models[model], base ? base + '.' + f.nameFrom : f.nameFrom) || 'img') : (f.name || 'img');
+      return imgField(f.label, model, fp, { dir: f.dir || 'assets/uploads', name: hint, where: f.where });
+    }
+    var opts = {};
+    if (f.area) opts.area = true;
+    if (f.csv) opts.type = 'csv';
+    if (f.lines) { opts.area = true; opts.type = 'lines'; }
+    if (f.type === 'bool') opts.type = 'bool';
+    if (f.select) opts.select = f.select;
+    return F(f.label || '', model, fp, opts);
+  }
+
+  function feArray(model, base, f) {
+    var arrPath = f.path ? (base ? base + '.' + f.path : f.path) : base;
+    var arr = getPath(models[model], arrPath) || [];
+    var h = '';
+    arr.forEach(function (item, idx) {
+      var itemBase = arrPath + '.' + idx;
+      h += repeatItem(model, arrPath, idx, arr.length, feFields(model, itemBase, f.item || []));
+    });
+    return h + '<button class="admin-btn" data-act="add" data-model="' + model + '" data-path="' + arrPath + '" data-tmpl="' + esc(f.template) + '">' + esc(f.addLabel) + '</button>';
+  }
+
+  function feFooterColumns(model) {
+    var cols = getPath(models[model], 'footer.columns') || [];
+    return '<div class="subhint">FOOTER COLUMNS</div>' + cols.map(function (col, ci) {
+      var lArr = 'footer.columns.' + ci + '.links';
+      var links = (col.links || []).map(function (l, li) {
+        var lp = lArr + '.' + li;
+        return repeatItem(model, lArr, li, (col.links || []).length,
+          '<div class="grid2">' + F("Label", model, lp + ".label") + F("Href", model, lp + ".href") + '</div>' +
+          F("Open in new tab", model, lp + ".external", { select: [{ value: "false", label: "No" }, { value: "true", label: "Yes" }], type: "bool" }));
+      }).join('');
+      return '<div class="section-block" style="background:var(--paper);margin-bottom:10px;">' +
+        F("Column heading", model, "footer.columns." + ci + ".heading") + links +
+        '<button class="admin-btn ghost" data-act="add" data-model="' + model + '" data-path="' + lArr + '" data-tmpl="footlink">+ Add link</button></div>';
+    }).join('');
+  }
+
+  function feList(model, listDef) {
+    var arr = getPath(models[model], listDef.path) || [], sum = listDef.summary, h = '';
+    arr.forEach(function (item, i) {
+      var open = openState[listDef.statePrefix + i], itemBase = listDef.path + '.' + i;
+      var head = '<div class="proj-card"><div class="proj-main">' +
+        '<div class="pn">' + esc(item[sum.nameField] || '') + (item[sum.featuredField] ? ' ★' : '') + '</div>' +
+        '<div class="pd">' + esc(item[sum.descField] || '') + '</div>' +
+        '<div class="proj-meta-row">' + esc(([].concat(item[sum.metaFields[0]] || [])).join(" · ")) + ' · ' + esc(item[sum.metaFields[1]] || '') + '</div>' +
+        '</div><div class="proj-ctl">' +
+          '<button class="admin-btn ghost" data-act="toggle" data-key="' + listDef.statePrefix + i + '">' + (open ? "Close" : "Edit") + '</button>' +
+          ctlBtns(model, listDef.path, i, arr.length) +
+        '</div></div>';
+      h += head + (open ? '<div class="edit-form">' + feFields(model, itemBase, listDef.item || []) + '</div>' : '');
+    });
+    return h;
+  }
+
+  function feProdList(model, absArrPath, f, base) {
+    var labIdx = 0;
+    var mx = absArrPath.match(/labs\.(\d+)\.products/);
+    if (mx) labIdx = +mx[1];
+    var prods = getPath(models[model], absArrPath) || [];
+    var h = '<div class="subhint">PRODUCTS</div>';
+    prods.forEach(function (p, j) {
+      var open = openState["labprod:" + labIdx + ":" + j];
+      var bar = '<div class="prod-mini-bar"><span class="pmn">' + esc(p.name || "Product " + (j + 1)) + '</span>' +
+        '<span class="row-btns">' +
+          '<button class="admin-btn ghost" data-act="toggle" data-key="labprod:' + labIdx + ':' + j + '">' + (open ? "Close" : "Edit") + '</button>' +
+          ctlBtns(model, absArrPath, j, prods.length) +
+        '</span></div>';
+      if (!open) { h += '<div class="prod-mini">' + bar + '</div>'; return; }
+      h += '<div class="prod-mini">' + bar +
+        '<div style="margin-top:12px;">' + feFields(model, absArrPath + '.' + j, f.item || []) + '</div>' +
+      '</div>';
+    });
+    return h + '<button class="admin-btn" data-act="add" data-model="' + model + '" data-path="' + absArrPath + '" data-tmpl="' + esc(f.template) + '">' + esc(f.addLabel || '+ Add') + '</button>';
+  }
+
+  function feLabList(model, labListDef) {
+    var labs = getPath(models[model], labListDef.path) || [];
+    var h = '';
+    labs.forEach(function (lab, i) {
+      var open = openState["lab:" + i];
+      var bar = '<div class="lab-bar">' +
+        '<span class="lt" data-act="toggle" data-key="lab:' + i + '" style="cursor:pointer;flex:1 1 auto;">' + esc(lab.name || "Lab " + (i + 1)) + '</span>' +
+        '<span class="lc">' + (lab.products || []).length + ' products</span>' +
+        '<span class="row-btns">' + ctlBtns(model, labListDef.path, i, labs.length) + '</span></div>';
+      if (!open) { h += '<div class="lab-block">' + bar + '</div>'; return; }
+      h += '<div class="lab-block">' + bar +
+        '<div class="lab-body">' + feFields(model, labListDef.path + '.' + i, labListDef.item || []) + '</div>' +
+      '</div>';
+    });
+    return h;
+  }
+
   /* ---- TEMPLATES ---- */
   var TEMPLATES = {
     project: function () { var id = slug("project-" + Date.now()).slice(0, 40); return { id: id, name: "New Project", description: "Describe this project.", tags: ["Tag"], role: "Product Manager", year: "2025", stage: "Working app", screenshot: "", path: "./apps/" + id + "/", displayMode: "modal", featured: false }; },
@@ -344,262 +514,34 @@
   };
 
   /* =====================================================
-     TAB: Site (products.json → meta)
+     TAB: Site identity — schema-driven
      ===================================================== */
-  function renderSite() {
-    var b = "products";
-    return '<div class="inline-actions">' + saveBtn("products") + '</div>' +
-      '<div class="section-block"><h3>Site identity</h3>' +
-        '<div class="grid2">' + F("Owner name", b, "meta.owner") + F("Role / title", b, "meta.role") + '</div>' +
-        '<div class="grid2">' + F("Glyph (nav badge)", b, "meta.glyph") + F("Status", b, "meta.status") + '</div>' +
-        '<div class="grid2">' + F("Email", b, "meta.email") + F("LinkedIn URL", b, "meta.linkedin") + '</div>' +
-        '<p class="subhint">To edit your visible location, use the <strong>Contact</strong> tab → Contact links → Location.</p>' +
-        '<div class="grid2">' + F("Résumé path", b, "meta.resume") +
-          F("Show role on Work cards", b, "meta.showRoleOnCards", { select: [{ value: "false", label: "No" }, { value: "true", label: "Yes" }], type: "bool" }) + '</div>' +
-      '</div>';
-  }
+  function renderSite() { return feRender("site"); }
 
   /* =====================================================
-     TAB: Work (products.json → projects[])
+     TAB: Work — schema-driven
      ===================================================== */
-  function workForm(p, i) {
-    var b = "products", base = "projects." + i;
-    return '<div class="edit-form">' +
-      F("Name", b, base + ".name") +
-      F("Description", b, base + ".description", { area: true }) +
-      '<div class="grid2">' + F("Tags (comma-separated)", b, base + ".tags", { type: "csv" }) + F("Role", b, base + ".role") + '</div>' +
-      '<div class="grid2">' + F("Year", b, base + ".year") + F("Stage", b, base + ".stage") + '</div>' +
-      '<div class="grid2">' +
-        F("Display mode", b, base + ".displayMode", { select: ["modal", "page", "link"] }) +
-        F("Featured (flagship)", b, base + ".featured", { select: [{ value: "false", label: "No" }, { value: "true", label: "Yes" }], type: "bool" }) +
-      '</div>' +
-      imgField("Screenshot", b, base + ".screenshot", { dir: "assets/screenshots", name: p.id || "project",
-        where: "Shows as the <strong>thumbnail</strong> beside this project in the Work list. If this project is the <strong>Featured</strong> one (star), the same image also fills the big <strong>flagship hero</strong> at the top of the Work page." }) +
-      F("App path", b, base + ".path") +
-    '</div>';
-  }
-  function renderWork() {
-    var ps = models.products.projects || [];
-    var html = '<div class="inline-actions">' +
-      '<button class="admin-btn" data-act="add" data-model="products" data-path="projects" data-tmpl="project">+ Add project</button>' +
-      saveBtn("products") + '</div>' +
-      '<div class="subhint">' + ps.length + ' projects</div>';
-    html += ps.map(function (p, i) {
-      var open = openState["work:" + i];
-      var head = '<div class="proj-card"><div class="proj-main">' +
-          '<div class="pn">' + esc(p.name) + (p.featured ? ' ★' : '') + '</div>' +
-          '<div class="pd">' + esc(p.description) + '</div>' +
-          '<div class="proj-meta-row">' + esc((p.tags || []).join(" · ")) + ' · ' + esc(p.displayMode || "modal") + '</div>' +
-        '</div><div class="proj-ctl">' +
-          '<button class="admin-btn ghost" data-act="toggle" data-key="work:' + i + '">' + (open ? "Close" : "Edit") + '</button>' +
-          ctlBtns("products", "projects", i, ps.length) +
-        '</div></div>';
-      return head + (open ? workForm(p, i) : "");
-    }).join("");
-    return html;
-  }
+  function renderWork() { return feRender("work"); }
 
   /* =====================================================
-     TAB: Labs (labs.json)
+     TAB: Labs — schema-driven
      ===================================================== */
-  function prodMini(p, i, j, n) {
-    var open = openState["labprod:" + i + ":" + j];
-    var b = "labs", base = "labs." + i + ".products." + j, arrPath = "labs." + i + ".products";
-    var bar = '<div class="prod-mini-bar"><span class="pmn">' + esc(p.name) + '</span>' +
-      '<span class="row-btns">' +
-        '<button class="admin-btn ghost" data-act="toggle" data-key="labprod:' + i + ':' + j + '">' + (open ? "Close" : "Edit") + '</button>' +
-        ctlBtns("labs", arrPath, j, n) +
-      '</span></div>';
-    if (!open) return '<div class="prod-mini">' + bar + '</div>';
-    var feats = (p.features || []).map(function (f, k) {
-      return '<div class="feat-row">' +
-        '<input data-model="labs" data-path="' + base + '.features.' + k + '.0" value="' + esc(f[0]) + '">' +
-        '<input data-model="labs" data-path="' + base + '.features.' + k + '.1" value="' + esc(f[1]) + '">' +
-        '<button class="admin-btn danger" data-act="del" data-model="labs" data-path="' + base + '.features" data-i="' + k + '">✕</button>' +
-      '</div>';
-    }).join("");
-    var labsList = models.labs.labs || [];
-    var moveSel = '<div class="field"><label>Move to lab</label><select data-movelab data-from="' + i + '" data-i="' + j + '">' +
-      labsList.map(function (l, k) { return '<option value="' + k + '"' + (k === i ? ' selected' : '') + '>' + esc(l.name) + '</option>'; }).join("") + '</select></div>';
-    var body = '<div style="margin-top:12px;">' +
-      F("Name", b, base + ".name") +
-      F("Tagline", b, base + ".tagline") +
-      F("What it does", b, base + ".what", { area: true }) +
-      '<div class="grid2">' + F("Tags (comma-separated)", b, base + ".tags", { type: "csv" }) + F("Stack (comma-separated)", b, base + ".stack", { type: "csv" }) + '</div>' +
-      '<div class="grid2">' + F("Role", b, base + ".role") + F("Year", b, base + ".year") + '</div>' +
-      '<div class="grid2">' + F("Stage (card)", b, base + ".stage") + F("Stage (detail)", b, base + ".stage2") + '</div>' +
-      F("Explore URL", b, base + ".url") +
-      imgField("Product image", b, base + ".image", { dir: "assets/labs", name: p.id || "product",
-        where: "Appears on this product's <strong>card</strong> in its lab, and as the large <strong>hero image</strong> on the product's detail page. Leave empty to keep the patterned placeholder." }) +
-      '<div class="subhint">FEATURES</div>' + feats +
-      '<button class="admin-btn ghost" data-act="add" data-model="labs" data-path="' + base + '.features" data-tmpl="feature">+ Add feature</button>' +
-      moveSel +
-    '</div>';
-    return '<div class="prod-mini">' + bar + body + '</div>';
-  }
-  function labBlock(lab, i, n) {
-    var open = openState["lab:" + i], b = "labs";
-    var bar = '<div class="lab-bar">' +
-      '<span class="lt" data-act="toggle" data-key="lab:' + i + '" style="cursor:pointer;flex:1 1 auto;">' + esc(lab.name) + '</span>' +
-      '<span class="lc">' + (lab.products || []).length + ' products</span>' +
-      '<span class="row-btns">' + ctlBtns("labs", "labs", i, n) + '</span></div>';
-    if (!open) return '<div class="lab-block">' + bar + '</div>';
-    var body = '<div class="lab-body">' +
-      F("Lab name", b, "labs." + i + ".name") +
-      F("Short description", b, "labs." + i + ".desc", { area: true }) +
-      F("Blurb", b, "labs." + i + ".blurb", { area: true }) +
-      '<div class="subhint">PRODUCTS</div>' +
-      (lab.products || []).map(function (p, j) { return prodMini(p, i, j, (lab.products || []).length); }).join("") +
-      '<button class="admin-btn" data-act="add" data-model="labs" data-path="labs.' + i + '.products" data-tmpl="labproduct">+ Add product</button>' +
-    '</div>';
-    return '<div class="lab-block">' + bar + body + '</div>';
-  }
-  function renderLabs() {
-    var L = models.labs, labs = L.labs || [], b = "labs";
-    var html = '<div class="inline-actions">' +
-      '<button class="admin-btn" data-act="add" data-model="labs" data-path="labs" data-tmpl="lab">+ Add lab</button>' +
-      saveBtn("labs") + '</div>';
-    var metaOpen = openState["labsmeta"];
-    html += '<div class="lab-block"><div class="lab-bar"><span class="lt" data-act="toggle" data-key="labsmeta" style="cursor:pointer;flex:1 1 auto;">Labs page header</span><span class="lc">' + (metaOpen ? "▲" : "▼") + '</span></div>';
-    if (metaOpen) {
-      html += '<div class="lab-body">' +
-        F("Eyebrow", b, "meta.eyebrow") + F("Title", b, "meta.title") + F("Intro", b, "meta.intro", { area: true }) +
-        '<div class="grid2">' + F("Stat 1 value", b, "meta.statLabs") + F("Stat 1 label", b, "meta.statLabsLabel") + '</div>' +
-        '<div class="grid2">' + F("Stat 2 value", b, "meta.statProducts") + F("Stat 2 label", b, "meta.statProductsLabel") + '</div>' +
-        '<div class="grid2">' + F("Stat 3 value", b, "meta.statYears") + F("Stat 3 label", b, "meta.statYearsLabel") + '</div>' +
-      '</div>';
-    }
-    html += '</div>';
-    html += labs.map(function (lab, i) { return labBlock(lab, i, labs.length); }).join("");
-    return html;
-  }
+  function renderLabs() { return feRender("labs"); }
 
   /* =====================================================
-     TAB: About (about.json)
+     TAB: About — schema-driven
      ===================================================== */
-  function renderAbout() {
-    var b = "about", a = models.about, hero = a.hero || {};
-    var H = '<div class="inline-actions">' + saveBtn("about") + '</div>';
-    H += '<div class="section-block"><h3>Hero</h3>' +
-      F("Eyebrow", b, "hero.eyebrow") +
-      F("Heading (HTML — &lt;em&gt; allowed)", b, "hero.heading") +
-      imgField("Portrait photo", b, "hero.portrait", { dir: "assets/about", name: "portrait",
-        where: "Appears as your <strong>portrait photo</strong> at the top of the About page, beside the headline (portrait / 4:5 crop). Leave empty to keep the patterned placeholder." }) +
-      F("Lead", b, "hero.lead", { area: true }) +
-      '<div class="subhint">PARAGRAPHS</div>' +
-      (hero.paras || []).map(function (p, k) {
-        return repeatItem("about", "hero.paras", k, (hero.paras || []).length,
-          '<textarea data-model="about" data-path="hero.paras.' + k + '">' + esc(p) + '</textarea>');
-      }).join("") +
-      '<button class="admin-btn" data-act="add" data-model="about" data-path="hero.paras" data-tmpl="para">+ Add paragraph</button>' +
-    '</div>';
-    H += '<div class="section-block"><h3>Background / timeline</h3>' +
-      '<div class="grid2">' + F("Eyebrow", b, "timelineEyebrow") + F("Count label", b, "timelineCount") + '</div>' +
-      (a.timeline || []).map(function (r, k) {
-        return repeatItem("about", "timeline", k, (a.timeline || []).length,
-          '<div class="grid2">' + F("Years", b, "timeline." + k + ".yr") + F("Role", b, "timeline." + k + ".h4") + '</div>' +
-          F("Organization", b, "timeline." + k + ".org") + F("Description", b, "timeline." + k + ".p", { area: true }));
-      }).join("") +
-      '<button class="admin-btn" data-act="add" data-model="about" data-path="timeline" data-tmpl="timeline">+ Add row</button>' +
-    '</div>';
-    H += '<div class="section-block"><h3>Operating principles</h3>' +
-      '<div class="grid2">' + F("Eyebrow", b, "principlesEyebrow") + F("Count label", b, "principlesCount") + '</div>' +
-      (a.principles || []).map(function (r, k) {
-        return repeatItem("about", "principles", k, (a.principles || []).length,
-          '<div class="grid2">' + F("Number", b, "principles." + k + ".n") + F("Title", b, "principles." + k + ".h4") + '</div>' +
-          F("Text", b, "principles." + k + ".p", { area: true }));
-      }).join("") +
-      '<button class="admin-btn" data-act="add" data-model="about" data-path="principles" data-tmpl="principle">+ Add principle</button>' +
-    '</div>';
-    H += '<div class="section-block"><h3>Toolkit / skills</h3>' +
-      '<div class="grid2">' + F("Eyebrow", b, "skillsEyebrow") + F("Count label", b, "skillsCount") + '</div>' +
-      (a.skills || []).map(function (c, k) {
-        return repeatItem("about", "skills", k, (a.skills || []).length,
-          F("Column heading", b, "skills." + k + ".h") + F("Items (one per line)", b, "skills." + k + ".items", { area: true, type: "lines" }));
-      }).join("") +
-      '<button class="admin-btn" data-act="add" data-model="about" data-path="skills" data-tmpl="skill">+ Add column</button>' +
-    '</div>';
-    H += '<div class="section-block"><h3>Call to action</h3>' +
-      F("Eyebrow", b, "cta.eyebrow") + F("Heading", b, "cta.heading") + F("Button label", b, "cta.btn") +
-    '</div>';
-    return H;
-  }
+  function renderAbout() { return feRender("about"); }
 
   /* =====================================================
-     TAB: Contact (contact.json)
+     TAB: Contact — schema-driven
      ===================================================== */
-  function renderContact() {
-    var b = "contact", c = models.contact;
-    var H = '<div class="inline-actions">' + saveBtn("contact") + '</div>';
-    H += '<div class="section-block"><h3>Hero</h3>' +
-      F("Eyebrow", b, "hero.eyebrow") +
-      F("Heading (HTML — &lt;em&gt; allowed)", b, "hero.heading") +
-      F("Body", b, "hero.body", { area: true }) +
-    '</div>';
-    H += '<div class="section-block"><h3>Contact links</h3>' +
-      (c.links || []).map(function (l, k) {
-        return repeatItem("contact", "links", k, (c.links || []).length,
-          '<div class="grid2">' + F("Label", b, "links." + k + ".k") + F("Value", b, "links." + k + ".v") + '</div>' +
-          '<div class="grid2">' +
-            F("Type", b, "links." + k + ".type", { select: [{ value: "none", label: "Plain link" }, { value: "email", label: "Email (uses Site email)" }, { value: "resume", label: "Résumé (uses Site résumé)" }] }) +
-            F("Open in new tab", b, "links." + k + ".external", { select: [{ value: "false", label: "No" }, { value: "true", label: "Yes" }], type: "bool" }) +
-          '</div>' +
-          F("Href (for plain links)", b, "links." + k + ".href"));
-      }).join("") +
-      '<button class="admin-btn" data-act="add" data-model="contact" data-path="links" data-tmpl="link">+ Add link</button>' +
-    '</div>';
-    return H;
-  }
+  function renderContact() { return feRender("contact"); }
 
   /* =====================================================
-     TAB: Config (site.json — nav, footer, CTA, colophon)
+     TAB: Config — schema-driven
      ===================================================== */
-  function renderConfig() {
-    var b = "site", s = models.site, nav = s.nav || [], ft = s.footer || {}, cols = ft.columns || [], cta = s.cta || {};
-    var H = '<div class="inline-actions">' + saveBtn("site") + '</div>';
-
-    H += '<div class="section-block"><h3>Nav items</h3>' +
-      '<p class="subhint">ORDER &amp; LABELS — changes appear instantly on all pages after publish.</p>' +
-      nav.map(function (n, k) {
-        return repeatItem("site", "nav", k, nav.length,
-          '<div class="grid2">' + F("Label", b, "nav." + k + ".label") + F("Href", b, "nav." + k + ".href") + '</div>');
-      }).join("") +
-      '<button class="admin-btn" data-act="add" data-model="site" data-path="nav" data-tmpl="navitem">+ Add nav item</button>' +
-    '</div>';
-
-    H += '<div class="section-block"><h3>Footer</h3>' +
-      F("Brand tagline (HTML — &lt;em&gt; allowed)", b, "footer.brand", { area: true }) +
-      '<div class="subhint">FOOTER COLUMNS</div>' +
-      cols.map(function (col, ci) {
-        var links = (col.links || []).map(function (l, li) {
-          return repeatItem("site", "footer.columns." + ci + ".links", li, (col.links || []).length,
-            '<div class="grid2">' +
-              F("Label", b, "footer.columns." + ci + ".links." + li + ".label") +
-              F("Href",  b, "footer.columns." + ci + ".links." + li + ".href") +
-            '</div>' +
-            F("Open in new tab", b, "footer.columns." + ci + ".links." + li + ".external",
-              { select: [{ value: "false", label: "No" }, { value: "true", label: "Yes" }], type: "bool" }));
-        }).join("");
-        return '<div class="section-block" style="background:var(--paper);margin-bottom:10px;">' +
-          F("Column heading", b, "footer.columns." + ci + ".heading") +
-          links +
-          '<button class="admin-btn ghost" data-act="add" data-model="site" data-path="footer.columns.' + ci + '.links" data-tmpl="footlink">+ Add link</button>' +
-        '</div>';
-      }).join("") +
-    '</div>';
-
-    H += '<div class="section-block"><h3>CTA band</h3>' +
-      '<div class="grid2">' + F("Eyebrow", b, "cta.eyebrow") + F("Body", b, "cta.body") + '</div>' +
-      F("Heading (HTML — &lt;em&gt; allowed)", b, "cta.heading") +
-      '<div class="grid2">' + F("Button label", b, "cta.btnLabel") + F("Button href", b, "cta.btnHref") + '</div>' +
-    '</div>';
-
-    H += '<div class="section-block"><h3>Colophon</h3>' +
-      F("Colophon line (bottom of Work page)", b, "colophon") +
-    '</div>';
-
-    return H;
-  }
+  function renderConfig() { return feRender("config"); }
 
   /* ---- TABS + RENDER ---- */
   var TABS = [["site","Site"],["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["config","Config"]];

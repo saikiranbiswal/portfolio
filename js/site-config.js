@@ -12,6 +12,7 @@ window.SCFG = (function () {
     nav: [
       { label: "Work",    href: "products.html" },
       { label: "Labs",    href: "labs.html" },
+      { label: "Gallery", href: "gallery.html" },
       { label: "About",   href: "about.html" },
       { label: "Contact", href: "contact.html" }
     ],
@@ -25,6 +26,7 @@ window.SCFG = (function () {
           links: [
             { label: "Work",    href: "products.html" },
             { label: "Labs",    href: "labs.html" },
+            { label: "Gallery", href: "gallery.html" },
             { label: "About",   href: "about.html" },
             { label: "Contact", href: "contact.html" }
           ]

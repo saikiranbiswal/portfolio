@@ -16,6 +16,10 @@
       "label": "Labs"
     },
     {
+      "href": "gallery.html",
+      "label": "Gallery"
+    },
+    {
       "href": "about.html",
       "label": "About"
     },
@@ -35,6 +39,12 @@
       "id": "labs",
       "file": "labs.html",
       "title": "Labs",
+      "visible": true
+    },
+    {
+      "id": "gallery",
+      "file": "gallery.html",
+      "title": "Gallery",
       "visible": true
     },
     {
@@ -62,6 +72,10 @@
           {
             "href": "labs.html",
             "label": "Labs"
+          },
+          {
+            "href": "gallery.html",
+            "label": "Gallery"
           },
           {
             "href": "about.html",

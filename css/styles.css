@@ -191,7 +191,10 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
   100% { box-shadow: 0 0 0 0 transparent; }
 }
 @media (max-width: 720px) {
-  .nav-links { gap: 18px; }
+  .nav-inner { padding-block: 13px; }
+  .wordmark > span:last-child { display: none; }
+  .nav-links { gap: clamp(11px, 3.6vw, 18px); }
+  .nav-links a { font-size: 13.5px; }
   .nav-status, .wordmark .role { display: none; }
 }
 

@@ -1,0 +1,228 @@
+/* ============================================================
+   Project pages — phantom.land-style case-study layout
+   on the clay design system (tokens from styles.css)
+   ============================================================ */
+
+.p-loading { padding: 40vh 0; text-align: center; letter-spacing: 0.14em; text-transform: uppercase; }
+
+/* ---------- Reveal-on-scroll ---------- */
+.p-reveal {
+  opacity: 0;
+  transform: translateY(26px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+}
+.p-reveal.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .p-reveal { opacity: 1; transform: none; transition: none; }
+}
+
+/* ---------- Hero ---------- */
+.p-hero { padding-top: clamp(110px, 16vh, 170px); padding-bottom: clamp(28px, 4vw, 48px); }
+.p-hero .eyebrow { margin-bottom: 22px; }
+.p-title {
+  font-family: var(--serif);
+  font-weight: 400;
+  font-size: clamp(48px, 11.5vw, 168px);
+  line-height: 0.92;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  margin: 0 0 clamp(20px, 3vw, 34px);
+  max-width: 11em;
+}
+.p-title em { font-style: italic; color: var(--clay); }
+.p-tagline {
+  font-size: var(--t-lead);
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 44em;
+  margin-bottom: clamp(26px, 4vw, 40px);
+}
+.p-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: clamp(34px, 5vw, 56px); }
+
+.p-meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 18px 28px;
+  border-top: 1px solid var(--line);
+  padding-top: 22px;
+  margin: 0;
+}
+.p-meta dt {
+  font-family: var(--mono); font-size: 10.5px; font-weight: 500;
+  letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 7px;
+}
+.p-meta dd { margin: 0; font-size: 14.5px; color: var(--ink); line-height: 1.45; }
+
+/* ---------- Full-width media ---------- */
+.p-media-hero { padding-block: clamp(10px, 2vw, 26px); }
+.p-frame {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+}
+.p-frame img {
+  display: block; width: 100%; height: auto;
+  will-change: transform;
+}
+.p-frame .fig {
+  position: absolute; left: 14px; bottom: 12px;
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; color: var(--muted);
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  padding: 6px 11px; border-radius: 100px; border: 1px solid var(--line);
+}
+
+/* ---------- Sections ---------- */
+.p-section { padding-block: clamp(48px, 8vw, 110px); border-top: 1px solid var(--line-soft); }
+.p-label {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.18em; text-transform: uppercase; color: var(--clay);
+  margin-bottom: clamp(24px, 4vw, 44px);
+  display: flex; align-items: center; gap: 14px;
+}
+.p-label::after { content: ''; flex: 1; height: 1px; background: var(--line-soft); }
+
+/* About: narrative + highlights box */
+.p-about-grid {
+  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr);
+  gap: clamp(28px, 5vw, 72px); align-items: start;
+}
+.p-narrative p {
+  font-family: var(--serif);
+  font-size: clamp(19px, 2.2vw, 27px);
+  line-height: 1.45; color: var(--ink-soft);
+  margin: 0 0 1.1em;
+}
+.p-narrative p:last-child { margin-bottom: 0; }
+.p-highlights {
+  background: var(--card); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: clamp(22px, 3vw, 32px);
+  position: sticky; top: 96px;
+}
+.p-highlights h3 {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+  margin: 0 0 16px;
+}
+.p-highlights li {
+  list-style: none; font-weight: 700; font-size: 15.5px; color: var(--ink);
+  padding: 11px 0; border-top: 1px solid var(--line-soft);
+}
+.p-highlights ul { margin: 0; padding: 0; }
+.p-highlights li:first-child { border-top: 0; padding-top: 0; }
+
+/* Flagship: who it serves + tested/next */
+.p-users { display: flex; flex-wrap: wrap; gap: 10px; margin-top: clamp(26px, 4vw, 40px); }
+.p-user {
+  font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.05em;
+  color: var(--ink-soft); border: 1px solid var(--line);
+  padding: 9px 16px; border-radius: 100px; background: var(--paper);
+}
+.p-twocol {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 4vw, 56px); margin-top: clamp(36px, 6vw, 64px);
+}
+.p-twocol h3 {
+  font-family: var(--mono); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted);
+  margin: 0 0 12px;
+}
+.p-twocol p { font-size: 15.5px; line-height: 1.65; color: var(--ink-soft); margin: 0; }
+
+/* Features / discipline chips */
+.p-chips { display: flex; flex-wrap: wrap; gap: 10px; }
+.p-chip {
+  font-size: 14px; font-weight: 500; color: var(--ink);
+  border: 1px solid var(--line); border-radius: 100px;
+  padding: 11px 20px; background: var(--card);
+  transition: border-color .25s ease, background .25s ease, color .25s ease;
+}
+a.p-chip:hover { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+
+/* Live demo */
+.p-live-frame {
+  position: relative; overflow: hidden;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--paper-2);
+}
+.p-live-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 10px 14px; border-bottom: 1px solid var(--line);
+  background: var(--card);
+}
+.p-live-bar .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+.p-live-bar .addr {
+  flex: 1; text-align: center;
+  font-family: var(--mono); font-size: 11px; color: var(--muted);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.p-live-frame iframe {
+  display: block; width: 100%; height: clamp(420px, 64vh, 720px);
+  border: 0; background: #fff;
+}
+.p-live-note {
+  display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  margin-top: 14px; flex-wrap: wrap;
+}
+.p-live-note .mono-meta { font-size: 11.5px; }
+
+/* Related work */
+.p-related-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 2vw, 24px); margin-bottom: clamp(28px, 4vw, 44px);
+}
+.p-card { display: block; }
+.p-card .ph-wrap {
+  overflow: hidden; border-radius: var(--radius);
+  border: 1px solid var(--line); background: var(--paper-2);
+  aspect-ratio: 16/10;
+}
+.p-card img {
+  width: 100%; height: 100%; object-fit: cover; object-position: top center;
+  transition: transform .6s var(--ease);
+}
+.p-card:hover img { transform: scale(1.04); }
+.p-card h3 { font-size: 16.5px; font-weight: 600; color: var(--ink); margin: 14px 0 4px; }
+.p-card .mono-meta { font-size: 11px; }
+
+/* Next project — giant dark band, phantom-style */
+.p-next {
+  display: block; background: var(--dark); color: #cdc4b4;
+  padding-block: clamp(64px, 11vw, 140px);
+  margin-top: clamp(48px, 8vw, 110px);
+}
+.p-next .p-label { color: var(--faint); margin-bottom: 18px; }
+.p-next .p-label::after { background: #3a3024; }
+.p-next-name {
+  font-family: var(--serif); font-weight: 400;
+  font-size: clamp(40px, 8.5vw, 120px);
+  line-height: 0.95; letter-spacing: -0.03em; color: var(--paper);
+  display: inline-block;
+  transition: transform .5s var(--ease), color .5s var(--ease);
+}
+.p-next:hover .p-next-name { transform: translateX(18px); color: var(--clay); }
+.p-next .arrow { display: inline-block; transition: transform .5s var(--ease); }
+.p-next:hover .arrow { transform: translateX(10px); }
+
+/* Footer strip */
+.p-foot {
+  background: var(--dark); border-top: 1px solid #2c2419;
+  padding-block: 26px;
+}
+.p-foot .wrap {
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 16px; flex-wrap: wrap;
+}
+.p-foot a, .p-foot span { font-family: var(--mono); font-size: 11.5px; color: var(--faint); letter-spacing: 0.06em; }
+.p-foot a:hover { color: var(--paper); }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 880px) {
+  .p-about-grid { grid-template-columns: 1fr; }
+  .p-highlights { position: static; }
+  .p-twocol { grid-template-columns: 1fr; }
+  .p-related-grid { grid-template-columns: 1fr; }
+}

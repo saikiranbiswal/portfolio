@@ -262,13 +262,8 @@ function handleClick() {
   detailTitle.textContent = p.name;
   detailMeta.textContent = [p.role || 'Product Manager', p.year, p.stage].filter(Boolean).join(' · ');
   detailBody.textContent = p.description || '';
-  const href = p.caseStudy || p.path;
-  if (href) {
-    detailLink.href = href;
-    detailLink.classList.remove('hidden');
-  } else {
-    detailLink.classList.add('hidden');
-  }
+  detailLink.href = `project.html?id=${encodeURIComponent(p.id)}`;
+  detailLink.classList.remove('hidden');
 
   // clicked card flies toward the camera (camera is at origin, so just
   // pull it in along its own radius — it stays facing us by construction)

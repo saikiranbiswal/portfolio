@@ -85,9 +85,9 @@
   }
 
   function workRow(p, i, showRole) {
-    const mode = p.displayMode || "modal";
+    // rows open the phantom-style project page; the live app launches from there
     return '' +
-      '<a class="work-row" href="#" data-launch="' + esc(p.id) + '" data-mode="' + esc(mode) + '">' +
+      '<a class="work-row" href="project.html?id=' + esc(p.id) + '">' +
         '<span class="idx">' + pad(i + 1) + '</span>' +
         '<span class="titles">' +
           '<span class="t">' + esc(p.name) + '</span>' +
@@ -98,7 +98,7 @@
           '<span class="cat">' + esc((p.tags || []).slice(0, 2).join(" · ")) +
             (showRole && p.role ? ' · ' + esc(p.role) : '') + '</span>' +
         '</span>' +
-        '<span class="go">' + (mode === "modal" ? "↗" : "→") + '</span>' +
+        '<span class="go">→</span>' +
       '</a>';
   }
 

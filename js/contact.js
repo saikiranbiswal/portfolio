@@ -94,7 +94,10 @@
             '<p class="eyebrow">' + esc(d.hero.eyebrow) + '</p>' +
             '<h1 class="display" style="margin-top:20px;max-width:13ch;">' + rich(d.hero.heading) + '</h1>' +
             '<p class="body-text" style="margin-top:24px;">' + esc(d.hero.body) + '</p>' +
-            '<a href="mailto:' + esc(meta.email || "") + '" class="btn" style="margin-top:28px;">' + esc(meta.email || "") + ' <span class="arrow">→</span></a>' +
+            '<div style="margin-top:32px;">' +
+              '<a href="mailto:' + esc(meta.email || "") + '" class="email-hero" id="email-copy-btn">' + esc(meta.email || "") + '</a>' +
+              '<div class="email-toast" id="email-toast"></div>' +
+            '</div>' +
           '</div>' +
           '<div class="reveal"><div class="contact-links">' + links + '</div></div>' +
         '</div>' +
@@ -112,5 +115,21 @@
     document.title = "Contact — " + (meta.owner || "");
     root.innerHTML = render(meta, d);
     window.dispatchEvent(new Event("scroll"));
+    var copyBtn = document.getElementById('email-copy-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        navigator.clipboard.writeText(meta.email || '').then(function() {
+          var toast = document.getElementById('email-toast');
+          if (toast) {
+            toast.textContent = 'COPIED — NOW WRITE THE HARD PROBLEM';
+            toast.classList.add('show');
+            setTimeout(function() { toast.classList.remove('show'); }, 3000);
+          }
+        }).catch(function() {
+          window.location.href = 'mailto:' + (meta.email || '');
+        });
+      });
+    }
   })();
 })();

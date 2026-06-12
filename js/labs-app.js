@@ -275,8 +275,11 @@
       inner + '</div>';
   }
   function statHTML(nk, lk) {
+    var v = getPath("meta." + nk);
+    var numStr = String(v || "").replace(/[^0-9]/g, "");
+    var targetAttr = numStr ? ' data-target="' + numStr + '"' : '';
     return '<div class="stat" style="min-width:64px">' +
-      '<div class="n" style="font-family:var(--serif);font-size:clamp(28px,4vw,44px);line-height:1;letter-spacing:-.02em">' + ed("span", "meta." + nk, "") + '</div>' +
+      '<div class="n" style="font-family:var(--serif);font-size:clamp(28px,4vw,44px);line-height:1;letter-spacing:-.02em">' + ed("span", "meta." + nk, "count-num", targetAttr) + '</div>' +
       '<div class="l" style="font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.06em;margin-top:8px;text-transform:uppercase">' + ed("span", "meta." + lk, "") + '</div>' +
     '</div>';
   }
@@ -555,6 +558,29 @@
     return { view: "index" };
   }
 
+  function wireCountUp() {
+    var done = new WeakSet();
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (!e.isIntersecting) return;
+        var el = e.target;
+        if (done.has(el)) return;
+        done.add(el);
+        var target = parseInt(el.getAttribute('data-target'), 10);
+        if (!target) return;
+        var duration = 900, start = performance.now();
+        (function step(now) {
+          var p = Math.min((now - start) / duration, 1);
+          var ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+          el.textContent = Math.round(ease * target);
+          if (p < 1) requestAnimationFrame(step);
+          else el.textContent = target;
+        })(performance.now());
+      });
+    }, {threshold: 0.5});
+    app.querySelectorAll('.count-num[data-target]').forEach(function(el) { io.observe(el); });
+  }
+
   function render() {
     var r = parseHash(), html;
     if (r.view === "lab") html = renderLab(r.lab);
@@ -563,6 +589,7 @@
     app.innerHTML = html;
     applyEditState();
     window.scrollTo({ top: 0, behavior: "auto" });
+    if (r.view === "index") wireCountUp();
   }
 
   function go(hash) { if (location.hash === hash) render(); else location.hash = hash; }

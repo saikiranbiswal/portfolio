@@ -91,7 +91,10 @@
             (p.caseStudy ? 'Walk the case study' : 'View the full story') +
             ' <span class="arrow">→</span></div>' +
         '</div>' +
-        '<div class="ph">' + heroShot(p) + '</div>' +
+        '<div class="flag-img-col">' +
+          '<div class="ph">' + heroShot(p) + '</div>' +
+          '<p class="figcap" style="margin-top:10px;">FIG. 0' + (flip ? '2' : '1') + ' — ' + esc(p.name.toUpperCase()) + ' · FLAGSHIP CASE STUDY</p>' +
+        '</div>' +
       '</a>';
   }
   function flagshipSection(featured) {

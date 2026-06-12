@@ -137,7 +137,10 @@
               '<p class="body-text" style="margin-top:10px;">An AI-native recovery platform — collector copilot, risk scoring, next-best-action, and a working prototype.</p>' +
               '<div style="margin-top:20px;" class="btn">Walk the case study <span class="arrow">→</span></div>' +
             '</div>' +
-            '<div class="ph" style="aspect-ratio:16/10;"></div>' +
+            '<div class="flag-img-col">' +
+              '<div class="ph" style="aspect-ratio:16/10;"></div>' +
+              '<p class="figcap" style="margin-top:10px;">FIG. 01 — AI COLLECTIONS CLOUD · FLAGSHIP CASE STUDY</p>' +
+            '</div>' +
           '</a>' +
           '<a href="case-studies/lending-os.html" class="flagship flip">' +
             '<div>' +
@@ -146,7 +149,10 @@
               '<p class="body-text" style="margin-top:10px;">Guided, state-based loan origination — from application to approval with fewer handoffs and deterministic demo data.</p>' +
               '<div style="margin-top:20px;" class="btn">Walk the case study <span class="arrow">→</span></div>' +
             '</div>' +
-            '<div class="ph" style="aspect-ratio:16/10;"></div>' +
+            '<div class="flag-img-col">' +
+              '<div class="ph" style="aspect-ratio:16/10;"></div>' +
+              '<p class="figcap" style="margin-top:10px;">FIG. 02 — LOS — LOAN ORIGINATION SYSTEM · FLAGSHIP CASE STUDY</p>' +
+            '</div>' +
           '</a>' +
         '</div>' +
       '</section>' +

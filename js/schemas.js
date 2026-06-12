@@ -5,7 +5,20 @@ window.SCHEMAS = {
   /* ── Site identity (products.json → meta) ─────────────────────────── */
   site: {
     model: "products",
-    sections: [{
+    sections: [
+    {
+      title: "Work page hero",
+      fields: [
+        { label: "Eyebrow tags (separate with ·)", path: "meta.hero.eyebrow" },
+        { label: "Heading (one line per line — <em>…</em> allowed)", path: "meta.hero.heading", area: true },
+        { label: "Lead paragraph", path: "meta.hero.lead", area: true },
+        { type: "array", path: "meta.hero.stats", template: "stat", addLabel: "+ Add stat",
+          item: [{ row: [{ label: "Number", path: "n" }, { label: "Label", path: "l" }] }] },
+        { label: "Work count suffix (e.g. "more working products across…")", path: "meta.hero.workCountSuffix" },
+        { label: "Colophon line", path: "meta.hero.colophon" }
+      ]
+    },
+    {
       title: "Site identity",
       fields: [
         { row: [{ label: "Owner name", path: "meta.owner" }, { label: "Role / title", path: "meta.role" }] },

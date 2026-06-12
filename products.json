@@ -1,15 +1,36 @@
 {
   "meta": {
-    "role": "Enterprise · AI Product",
+    "role": "Enterprise \u00b7 AI Product",
     "email": "saikiranbiswal14@gmail.com",
     "glyph": "SK",
     "owner": "Sai Kiran Biswal",
     "resume": "assets/resume.pdf",
     "status": "Open to lead PM roles",
     "linkedin": "https://www.linkedin.com/in/sai-kiran-biswal",
-    "location": "Pune / Bengaluru · Remote",
+    "location": "Pune / Bengaluru \u00b7 Remote",
     "linkedinLabel": "/in/sai-kiran-biswal",
-    "showRoleOnCards": false
+    "showRoleOnCards": false,
+    "hero": {
+      "eyebrow": "Product Manager \u00b7 Enterprise SaaS \u00b7 Fintech \u00b7 AI",
+      "heading": "I build enterprise\nproducts that <em>think</em>\n\u2014 from problem to platform.",
+      "lead": "Working products, platforms, and case studies \u2014 built end-to-end, from discovery through architecture, AI, and go-to-market.",
+      "stats": [
+        {
+          "n": 2,
+          "l": "Flagship case studies"
+        },
+        {
+          "n": 7,
+          "l": "Working products"
+        },
+        {
+          "n": 7,
+          "l": "Years in fintech"
+        }
+      ],
+      "workCountSuffix": "more working products across lending, banking & AI",
+      "colophon": "Set in Newsreader & Inter \u00b7 Built by hand \u00b7 No templates"
+    }
   },
   "projects": [
     {
@@ -23,17 +44,17 @@
         "Collections",
         "Flagship"
       ],
-      "year": "2024–2025",
+      "year": "2024\u20132025",
       "stage": "Flagship",
       "featured": true,
       "caseStudy": "case-studies/collections-cloud.html",
       "screenshot": "assets/screenshots/collections-cloud-mq7ch4i4.png",
-      "description": "An AI-native recovery platform for lenders — collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.",
+      "description": "An AI-native recovery platform for lenders \u2014 collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.",
       "displayMode": "page"
     },
     {
       "id": "lending-cloud",
-      "name": "LOS — Loan Origination System",
+      "name": "LOS \u2014 Loan Origination System",
       "path": "./apps/lending-cloud/",
       "role": "Product Manager",
       "tags": [
@@ -42,17 +63,17 @@
         "SaaS",
         "Platform"
       ],
-      "year": "2024–2025",
+      "year": "2024\u20132025",
       "stage": "Flagship",
       "featured": true,
       "caseStudy": "case-studies/lending-os.html",
       "screenshot": "assets/screenshots/lending-cloud-mq78bpbv.png",
-      "description": "A guided, state-based loan-origination platform — from application to approval with fewer handoffs, over workflow state machines, EMI math, and deterministic demo data.",
+      "description": "A guided, state-based loan-origination platform \u2014 from application to approval with fewer handoffs, over workflow state machines, EMI math, and deterministic demo data.",
       "displayMode": "modal"
     },
     {
       "id": "synthesis",
-      "name": "Synthesis — Strategic Framework Engine",
+      "name": "Synthesis \u2014 Strategic Framework Engine",
       "path": "./apps/synthesis/",
       "role": "Product Manager",
       "tags": [
@@ -69,7 +90,7 @@
     },
     {
       "id": "neuralpath",
-      "name": "NeuralPath — AI Concepts Game",
+      "name": "NeuralPath \u2014 AI Concepts Game",
       "path": "./apps/neuralpath/",
       "role": "Product Manager",
       "tags": [
@@ -81,7 +102,7 @@
       "stage": "Working app",
       "featured": false,
       "screenshot": "assets/screenshots/neuralpath-mq78l565.png",
-      "description": "A gamified AI-learning app — concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
+      "description": "A gamified AI-learning app \u2014 concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
       "displayMode": "modal"
     },
     {
@@ -98,7 +119,7 @@
       "stage": "Working app",
       "featured": false,
       "screenshot": "assets/screenshots/dashboard-studio-mq78n3sv.png",
-      "description": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
+      "description": "A drag-and-drop dashboard builder \u2014 KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
       "displayMode": "modal"
     },
     {

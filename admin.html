@@ -559,6 +559,7 @@
 
   /* ---- TEMPLATES ---- */
   var TEMPLATES = {
+    stat: function () { return { n: 0, l: "Label" }; },
     project: function () { var id = slug("project-" + Date.now()).slice(0, 40); return { id: id, name: "New Project", description: "Describe this project.", tags: ["Tag"], role: "Product Manager", year: "2025", stage: "Working app", screenshot: "", path: "./apps/" + id + "/", displayMode: "modal", featured: false }; },
     lab: function () { var id = slug("lab-" + Date.now()).slice(0, 40); return { id: id, name: "New Lab", desc: "What this lab is about.", blurb: "A longer description.", products: [] }; },
     labproduct: function () { var id = slug("product-" + Date.now()).slice(0, 40); return { id: id, name: "New Product", stage: "Working app", tags: ["Tag"], tagline: "One line about it.", what: "What it does.", features: [["Feature", "Description."]], role: "Product Manager", year: "2025", stage2: "Working app", stack: ["Tag"], url: "https://example.com", image: "" }; },

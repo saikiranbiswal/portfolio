@@ -38,6 +38,35 @@
   }
   function pad(n) { return String(n).padStart(2, "0"); }
 
+  function hydrateHero(meta) {
+    var h = meta && meta.hero;
+    if (!h) return;
+    var heroEl = document.querySelector("header.hero");
+    if (!heroEl) return;
+    var eyebrow = heroEl.querySelector("p.eyebrow");
+    if (eyebrow && h.eyebrow != null)
+      eyebrow.innerHTML = esc(h.eyebrow).replace(/·/g, '<span class="dot">·</span>');
+    var h1 = heroEl.querySelector("h1.display");
+    if (h1 && h.heading != null)
+      h1.innerHTML = String(h.heading).split("\n").filter(Boolean).map(function (line) {
+        return '<span class="line"><span>' + line + '</span></span>';
+      }).join("");
+    var lead = heroEl.querySelector("p.lead");
+    if (lead && h.lead != null) lead.textContent = h.lead;
+    if (h.stats) {
+      var statEls = heroEl.querySelectorAll(".stat");
+      h.stats.forEach(function (s, i) {
+        if (!statEls[i]) return;
+        var numEl = statEls[i].querySelector(".count-num");
+        if (numEl) { numEl.setAttribute("data-target", s.n); numEl.textContent = s.n; }
+        var lEl = statEls[i].querySelector(".l");
+        if (lEl) lEl.textContent = s.l;
+      });
+    }
+    var col = heroEl.querySelector("p.colophon");
+    if (col && h.colophon != null) col.textContent = h.colophon;
+  }
+
   function hydrateChrome(meta) {
     /* Replace static nav / cta-band / footer with SCFG-rendered versions
        so products.html is driven by site.json just like the SPAs. */
@@ -167,6 +196,7 @@
       return;
     }
     hydrateChrome(data.meta || {});
+    hydrateHero(data.meta || {});
     const byId = {};
     (data.projects || []).forEach(p => { byId[p.id] = p; });
 
@@ -182,7 +212,10 @@
     if (list) list.innerHTML = rest.map((p, i) => workRow(p, i, showRole)).join("");
 
     const cnt = document.getElementById("work-count");
-    if (cnt) cnt.textContent = rest.length + " more working products across lending, banking & AI";
+    if (cnt) {
+      const suffix = (data.meta && data.meta.hero && data.meta.hero.workCountSuffix) || "more working products";
+      cnt.textContent = rest.length + " " + suffix;
+    }
 
     wireModal(byId);
     if (window.__reveal) window.__reveal();

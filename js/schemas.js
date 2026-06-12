@@ -16,7 +16,7 @@ window.SCHEMAS = {
         { label: "Lead paragraph", path: "meta.hero.lead", area: true },
         { type: "array", path: "meta.hero.stats", template: "stat", addLabel: "+ Add stat",
           item: [{ row: [{ label: "Number", path: "n" }, { label: "Label", path: "l" }] }] },
-        { label: "Work count suffix (e.g. "more working products across…")", path: "meta.hero.workCountSuffix" },
+        { label: "Work count suffix (e.g. more working products across...)", path: "meta.hero.workCountSuffix" },
         { label: "Colophon line", path: "meta.hero.colophon" }
       ]
     },

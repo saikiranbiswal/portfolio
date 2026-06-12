@@ -373,7 +373,8 @@
             }
           ]
         }
-      ]
+      ],
+      "hidden": true
     },
     {
       "id": "founder",

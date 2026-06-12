@@ -82,6 +82,14 @@
   .di-check { display:flex; align-items:center; gap:5px; font-size:13px; color:var(--muted);
     white-space:nowrap; flex:0 0 auto; cursor:pointer; }
   .di-check input { accent-color:var(--clay); cursor:pointer; }
+  .files-list { margin-top:10px; border:1px solid var(--line-soft); border-radius:6px; overflow:hidden; }
+  .file-row { display:flex; align-items:center; gap:10px; padding:8px 12px; border-bottom:1px solid var(--line-soft); }
+  .file-row:last-child { border-bottom:0; }
+  .file-row.orphan { background:color-mix(in srgb,#c0392b 5%,transparent); }
+  .file-name { flex:1 1 auto; font-family:var(--mono); font-size:12px; word-break:break-all; }
+  .file-size { font-family:var(--mono); font-size:11px; color:var(--muted); flex:0 0 60px; text-align:right; }
+  .orphan-tag { font-family:var(--mono); font-size:10px; color:#c0392b; background:color-mix(in srgb,#c0392b 12%,transparent);
+    padding:2px 6px; border-radius:3px; flex:0 0 auto; }
 </style>
 </head>
 <body>
@@ -192,6 +200,9 @@
 
   /* ---- MODELS ---- */
   var models = {}, openState = {}, currentTab = "site", _dg = null;
+  var FILE_DIRS = ["assets/screenshots", "assets/labs", "assets/about", "apps", "case-studies"];
+  var _files = {};   // dir → null | "loading" | { files: [], error: null|string }
+  var _orphans = null;  // null = not scanned; Set of orphan paths after scan
 
   function defModel(name) {
     if (name === "products") return { meta: { owner: "Sai Kiran Biswal", role: "Enterprise · AI Product", glyph: "SK", showRoleOnCards: false }, projects: [] };
@@ -626,9 +637,120 @@
       '</div>';
   }
 
+  /* =====================================================
+     TAB: Files — browse, delete, orphan scan
+     ===================================================== */
+  function formatSize(n) {
+    if (!n) return "—";
+    if (n < 1024) return n + " B";
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + " KB";
+    return (n / (1024 * 1024)).toFixed(1) + " MB";
+  }
+
+  function loadDir(dir) {
+    if (!requireToken()) return;
+    _files[dir] = "loading";
+    renderTab(currentTab);
+    var c = gh();
+    ghApi("/contents/" + encodeURIComponent(dir) + "?ref=" + encodeURIComponent(c.branch) + "&t=" + Date.now())
+      .then(function (r) { return r.json().then(function (j) {
+        if (!r.ok) throw new Error(ghErrMsg(r.status, j.message));
+        return Array.isArray(j) ? j : [];
+      }); })
+      .then(function (files) { _files[dir] = { files: files, error: null }; renderTab(currentTab); })
+      .catch(function (e) { _files[dir] = { files: [], error: e.message }; renderTab(currentTab); });
+  }
+
+  function runOrphanScan() {
+    var sbBase = SUPABASE_URL + "/storage/v1/object/public/" + BUCKET + "/";
+    function norm(url) {
+      if (!url) return null;
+      if (url.startsWith(sbBase)) return url.slice(sbBase.length);
+      if (url.startsWith("http")) return null;
+      return url.replace(/^\.\//, "").replace(/\/$/, "");
+    }
+    var refs = new Set();
+    (models.products.projects || []).forEach(function (p) {
+      var s = norm(p.screenshot); if (s) refs.add(s);
+      var pt = norm(p.path); if (pt) refs.add(pt);
+    });
+    (models.labs.labs || []).forEach(function (lab) {
+      (lab.products || []).forEach(function (p) { var s = norm(p.image); if (s) refs.add(s); });
+    });
+    var portrait = norm(models.about && models.about.hero && models.about.hero.portrait);
+    if (portrait) refs.add(portrait);
+    (function walkLinks(obj) {
+      if (!obj) return;
+      if (typeof obj === "string" && obj.startsWith("case-studies/")) refs.add(obj);
+      else if (Array.isArray(obj)) obj.forEach(walkLinks);
+      else if (typeof obj === "object") Object.values(obj).forEach(walkLinks);
+    })(models.site);
+
+    var found = new Set();
+    FILE_DIRS.forEach(function (dir) {
+      var s = _files[dir];
+      if (!s || s === "loading" || s.error) return;
+      s.files.forEach(function (f) {
+        if (f.type !== "file" && f.type !== "blob") return;
+        var matched = refs.has(f.path) || Array.from(refs).some(function (r) {
+          return r === f.path || f.path.startsWith(r + "/") || r.startsWith(f.path + "/");
+        });
+        if (!matched) found.add(f.path);
+      });
+    });
+    _orphans = found;
+    renderTab(currentTab);
+    ghStatus(found.size
+      ? "<strong>" + found.size + "</strong> potentially orphaned file(s) — marked ⚠ below."
+      : "Orphan scan complete — no unreferenced files found.", found.size ? "err" : "ok");
+  }
+
+  function renderFiles() {
+    if (!requireToken()) return '<p class="subhint">Set a GitHub token (⚙ GitHub) to browse repo files.</p>';
+    var html = '<div class="inline-actions">' +
+      '<button class="admin-btn ghost" data-act="scan-orphans">⚠ Run orphan scan</button>' +
+      '<button class="admin-btn ghost" data-act="reload-files">↻ Refresh all</button>' +
+    '</div>';
+
+    FILE_DIRS.forEach(function (dir) {
+      var state = _files[dir], open = !!state;
+      html += '<div class="section-block">';
+      html += '<div style="display:flex;align-items:center;gap:12px;">';
+      html += '<h3 style="margin:0;flex:1 1 auto;">📁 ' + esc(dir) + '/</h3>';
+      html += '<button class="admin-btn ghost" data-act="load-dir" data-dir="' + esc(dir) + '">' + (open ? "↻ Reload" : "Browse") + '</button>';
+      html += '</div>';
+
+      if (state === "loading") {
+        html += '<p class="subhint" style="margin-top:10px;">Loading…</p>';
+      } else if (state && state.error) {
+        html += '<p class="subhint" style="margin-top:10px;color:#c0392b;">✗ ' + esc(state.error) + '</p>';
+      } else if (state && state.files.length === 0) {
+        html += '<p class="subhint" style="margin-top:10px;">Directory is empty or does not exist.</p>';
+      } else if (state) {
+        html += '<div class="files-list">';
+        state.files.forEach(function (f) {
+          var orphan = _orphans && _orphans.has(f.path);
+          html += '<div class="file-row' + (orphan ? " orphan" : "") + '">';
+          html += '<span class="file-name">' + esc(f.name) + (f.type === "dir" ? "/" : "") + '</span>';
+          html += '<span class="file-size">' + formatSize(f.size) + '</span>';
+          if (orphan) html += '<span class="orphan-tag">orphan</span>';
+          if (f.type === "dir") {
+            html += '<button class="admin-btn danger" data-act="del-tree" data-path="' + esc(f.path) + '" data-dir="' + esc(dir) + '" style="flex:0 0 auto;">🗑 Delete folder</button>';
+          } else {
+            html += '<button class="admin-btn danger" data-act="del-file" data-path="' + esc(f.path) + '" data-sha="' + esc(f.sha) + '" data-dir="' + esc(dir) + '" style="flex:0 0 auto;">🗑</button>';
+          }
+          html += '</div>';
+        });
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+    return html;
+  }
+
   /* ---- TABS + RENDER ---- */
-  var TABS = [["site","Site"],["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["config","Config"],["structure","Structure"]];
-  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact, config: renderConfig, structure: renderStructure };
+  var TABS = [["site","Site"],["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["config","Config"],["structure","Structure"],["files","Files"]];
+  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact, config: renderConfig, structure: renderStructure, files: renderFiles };
   function renderTabs() {
     document.getElementById("tabs").innerHTML = TABS.map(function (t) {
       return '<button class="tab-btn' + (currentTab === t[0] ? " active" : "") + '" data-tab="' + t[0] + '">' + t[1] + '</button>';
@@ -672,8 +794,55 @@
     return ghApi("/contents/" + encodeURIComponent(file), { method: "PUT", body: JSON.stringify(body) })
       .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.message || ("HTTP " + r.status)); return j; }); });
   }
+  function ghErrMsg(status, msg) {
+    if (!navigator.onLine) return "You appear to be offline — connect and try again.";
+    if (status === 401) return "Auth failed — check your GitHub token.";
+    if (status === 403) return "Token lacks permission or rate-limit hit — wait 60 s then retry.";
+    if (status === 404) return "File not found on GitHub (404).";
+    if (status === 409 || status === 422) return "Conflict (SHA mismatch) — reload the page and retry.";
+    if (status === 429) return "GitHub rate-limited — wait 60 s then retry.";
+    return msg || ("HTTP " + status);
+  }
+  function ghDelete(filePath, sha, msg) {
+    var c = gh(), body = { message: msg || ("CMS: delete " + filePath), sha: sha, branch: c.branch };
+    return ghApi("/contents/" + encodeURIComponent(filePath), { method: "DELETE", body: JSON.stringify(body) })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(ghErrMsg(r.status, j.message)); return j; }); });
+  }
+  function ghDeleteTree(dir, commitMsg) {
+    /* Atomic multi-file delete via Git Data API. */
+    var c = gh(), branchEnc = encodeURIComponent(c.branch);
+    return ghApi("/git/refs/heads/" + branchEnc)
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(ghErrMsg(r.status, j.message)); return j.object.sha; }); })
+      .then(function (commitSha) {
+        return ghApi("/git/commits/" + commitSha)
+          .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(ghErrMsg(r.status, j.message)); return { commitSha: commitSha, treeSha: j.tree.sha }; }); });
+      })
+      .then(function (ctx) {
+        return ghApi("/git/trees/" + ctx.treeSha + "?recursive=1")
+          .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(ghErrMsg(r.status, j.message)); return { ctx: ctx, tree: j.tree || [] }; }); });
+      })
+      .then(function (data) {
+        var prefix = dir.replace(/\/$/, "") + "/";
+        var toDelete = data.tree.filter(function (f) { return f.type === "blob" && f.path.startsWith(prefix); });
+        if (!toDelete.length) return { deleted: 0 };
+        var deletions = toDelete.map(function (f) { return { path: f.path, mode: f.mode, type: "blob", sha: null }; });
+        return ghApi("/git/trees", { method: "POST", body: JSON.stringify({ base_tree: data.ctx.treeSha, tree: deletions }) })
+          .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(ghErrMsg(r.status, j.message)); return { ctx: data.ctx, newTreeSha: j.sha, count: toDelete.length }; }); });
+      })
+      .then(function (data) {
+        if (data.deleted === 0) return data;
+        return ghApi("/git/commits", { method: "POST", body: JSON.stringify({ message: commitMsg || ("CMS: delete folder " + dir), tree: data.newTreeSha, parents: [data.ctx.commitSha] }) })
+          .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(ghErrMsg(r.status, j.message)); return { ctx: data.ctx, newCommitSha: j.sha, count: data.count }; }); });
+      })
+      .then(function (data) {
+        if (data.deleted === 0) return data;
+        return ghApi("/git/refs/heads/" + branchEnc, { method: "PATCH", body: JSON.stringify({ sha: data.newCommitSha }) })
+          .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(ghErrMsg(r.status, j.message)); return { deleted: data.count }; }); });
+      });
+  }
   function modelText(name) { return JSON.stringify(models[name], null, 2) + "\n"; }
   function publishOne(name) {
+    if (!navigator.onLine) return Promise.resolve({ file: FILES[name], status: "error", error: "Offline" });
     var file = FILES[name], text = modelText(name);
     return ghGetFile(file).then(function (cur) {
       if (cur.content != null && cur.content === text) return { file: file, status: "unchanged" };
@@ -799,6 +968,31 @@
       var act = el.getAttribute("data-act");
       if (act === "toggle") { var key = el.getAttribute("data-key"); openState[key] = !openState[key]; renderTab(currentTab); return; }
       if (act === "save") { publishCurrent(el.getAttribute("data-model")); return; }
+      if (act === "load-dir") { loadDir(el.getAttribute("data-dir")); return; }
+      if (act === "reload-files") { FILE_DIRS.forEach(function (d) { if (_files[d]) loadDir(d); }); return; }
+      if (act === "scan-orphans") { runOrphanScan(); return; }
+      if (act === "del-file") {
+        var fp = el.getAttribute("data-path"), sha = el.getAttribute("data-sha"), dir = el.getAttribute("data-dir");
+        if (!confirm("Delete " + fp + " from GitHub? This cannot be undone.")) return;
+        var c = requireToken(); if (!c) return;
+        ghStatus("Deleting <strong>" + esc(fp) + "</strong>…", "busy");
+        ghDelete(fp, sha).then(function () {
+          ghStatus("✓ Deleted " + esc(fp) + ". Live in ~1 min.", "ok");
+          _files[dir] = null; _orphans = null; loadDir(dir);
+        }).catch(function (e) { ghStatus("✗ " + esc(e.message), "err"); });
+        return;
+      }
+      if (act === "del-tree") {
+        var fp = el.getAttribute("data-path"), dir = el.getAttribute("data-dir");
+        if (!confirm("Delete entire folder " + fp + "/ from GitHub? All files inside will be removed. This cannot be undone.")) return;
+        var c = requireToken(); if (!c) return;
+        ghStatus("Deleting folder <strong>" + esc(fp) + "/</strong>…", "busy");
+        ghDeleteTree(fp).then(function (r) {
+          ghStatus("✓ Deleted " + r.deleted + " file(s) from " + esc(fp) + "/. Live in ~1 min.", "ok");
+          _files[dir] = null; _orphans = null; loadDir(dir);
+        }).catch(function (e) { ghStatus("✗ " + esc(e.message), "err"); });
+        return;
+      }
       if (act === "open-add-page") { models.site._newpage = { title: "", file: "" }; openState["addpage"] = true; renderTab(currentTab); return; }
       if (act === "cancel-add-page") { delete models.site._newpage; openState["addpage"] = false; renderTab(currentTab); return; }
       if (act === "confirm-add-page") {

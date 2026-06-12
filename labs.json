@@ -1,44 +1,14 @@
 {
-  "meta": {
-    "owner": "Sai Kiran Biswal",
-    "role": "Enterprise · AI Product",
-    "glyph": "SK",
-    "eyebrow": "Product Portfolio · Two flagship case studies, then six labs",
-    "title": "Two products, end to end. Six labs of how I work.",
-    "intro": "Start with the two flagship case studies — each one taken from a painful workflow all the way to a working prototype, with the PRD, journey, metrics, and architecture in between. Then step into any of the six discipline labs to see how each layer gets built.",
-    "statLabs": "5",
-    "statLabsLabel": "Labs",
-    "statProducts": "7",
-    "statProductsLabel": "Products",
-    "statYears": "7",
-    "statYearsLabel": "Years"
-  },
   "labs": [
     {
       "id": "ai-collections",
-      "name": "AI Collections Cloud",
-      "flagship": true,
       "desc": "An AI-native collections workspace — prioritize accounts, predict risk, recommend the next best action, and drive down DSO.",
+      "name": "AI Collections Cloud",
       "blurb": "A complete PM case study, end to end. AI Collections Cloud turns fragmented AR data into next-best-action workflows — built from the painful workflow through the PRD, the journey, the metrics, the architecture, the tradeoffs, and a working prototype.",
+      "flagship": true,
       "products": [
         {
           "id": "collections-cloud",
-          "name": "AI Collections Cloud",
-          "stage": "Working prototype",
-          "tags": [
-            "AI",
-            "Fintech",
-            "Collections"
-          ],
-          "tagline": "An AI-powered collections workspace that prioritizes accounts, predicts risk, recommends the next best action, and drives down DSO.",
-          "what": "Collections teams burn their day on decisions, not collecting. Who to call first, what to say, which account is about to slip, which dispute is silently blocking a payment, and what should happen next — every one of those is a judgment call made across a fragmented stack of ERP screens, spreadsheets, email threads, and call notes.\n\nThe bet: turn that fragmented AR data into next-best-action workflows. AI Collections Cloud reads the full account picture, scores risk with reasons, and tells the collector exactly what to do next — then drafts the email and logs the outcome.",
-          "why": "Every extra day an invoice sits unpaid is working capital frozen. Slow, inconsistent collector decisions inflate DSO and let recoverable money age into bad debt. For the collector, the pain is decision fatigue — too many accounts, too little context, and no clear signal on where the next hour should go.",
-          "users": [
-            "Collections analyst",
-            "AR manager",
-            "Dispute analyst",
-            "Finance ops leader"
-          ],
           "mvp": [
             "Risk scoring",
             "Account summary",
@@ -46,6 +16,33 @@
             "Email draft",
             "Command-center dashboard"
           ],
+          "url": "./apps/collections-cloud/",
+          "why": "Every extra day an invoice sits unpaid is working capital frozen. Slow, inconsistent collector decisions inflate DSO and let recoverable money age into bad debt. For the collector, the pain is decision fatigue — too many accounts, too little context, and no clear signal on where the next hour should go.",
+          "name": "AI Collections Cloud",
+          "next": "Close the loop: let the copilot auto-log call outcomes, learn which recommendations convert to payment, and re-rank the queue from real results.",
+          "role": "Product Lead",
+          "tags": [
+            "AI",
+            "Fintech",
+            "Collections"
+          ],
+          "what": "Collections teams burn their day on decisions, not collecting. Who to call first, what to say, which account is about to slip, which dispute is silently blocking a payment, and what should happen next — every one of those is a judgment call made across a fragmented stack of ERP screens, spreadsheets, email threads, and call notes.\n\nThe bet: turn that fragmented AR data into next-best-action workflows. AI Collections Cloud reads the full account picture, scores risk with reasons, and tells the collector exactly what to do next — then drafts the email and logs the outcome.",
+          "year": "2025",
+          "stack": [
+            "AI",
+            "Fintech",
+            "Collections"
+          ],
+          "stage": "Working prototype",
+          "users": [
+            "Collections analyst",
+            "AR manager",
+            "Dispute analyst",
+            "Finance ops leader"
+          ],
+          "stage2": "Prototype · In testing",
+          "tagline": "An AI-powered collections workspace that prioritizes accounts, predicts risk, recommends the next best action, and drives down DSO.",
+          "testing": "That a ranked queue plus an explicit next-best-action — not another dashboard — is what actually shortens collector decision time and lifts recovery rate.",
           "features": [
             [
               "Account risk score",
@@ -68,38 +65,27 @@
               "Tracks DSO, aging, collector productivity, and recovery rate in one live view."
             ]
           ],
-          "testing": "That a ranked queue plus an explicit next-best-action — not another dashboard — is what actually shortens collector decision time and lifts recovery rate.",
-          "next": "Close the loop: let the copilot auto-log call outcomes, learn which recommendations convert to payment, and re-rank the queue from real results.",
-          "role": "Product Lead",
-          "year": "2025",
-          "stage2": "Prototype · In testing",
-          "stack": [
-            "AI",
-            "Fintech",
-            "Collections"
-          ],
-          "url": "./apps/collections-cloud/",
           "artifacts": [
             {
-              "kind": "prd",
-              "label": "PRD",
-              "tags": [
-                "Product",
-                "Founder"
-              ],
-              "goal": "Reduce collector decision time and improve recovery rate.",
-              "users": [
-                "Collections analyst",
-                "AR manager",
-                "Dispute analyst",
-                "Finance ops leader"
-              ],
               "mvp": [
                 "Risk scoring",
                 "Account summary",
                 "Next-best-action",
                 "Email draft",
                 "Dashboard"
+              ],
+              "goal": "Reduce collector decision time and improve recovery rate.",
+              "kind": "prd",
+              "tags": [
+                "Product",
+                "Founder"
+              ],
+              "label": "PRD",
+              "users": [
+                "Collections analyst",
+                "AR manager",
+                "Dispute analyst",
+                "Finance ops leader"
               ],
               "nongoals": [
                 "Full ERP replacement",
@@ -109,10 +95,10 @@
             },
             {
               "kind": "flow",
-              "label": "User Flow",
               "tags": [
                 "Product"
               ],
+              "label": "User Flow",
               "steps": [
                 "Collector logs in",
                 "Sees the prioritized account list",
@@ -126,11 +112,10 @@
             },
             {
               "kind": "metrics",
-              "label": "Metrics Tree",
               "tags": [
                 "Analytics"
               ],
-              "business": "Reduce DSO",
+              "label": "Metrics Tree",
               "drivers": [
                 "Faster collector action",
                 "Better prioritization",
@@ -143,14 +128,15 @@
                 "Email acceptance rate",
                 "Dispute resolution time",
                 "Recovery rate"
-              ]
+              ],
+              "business": "Reduce DSO"
             },
             {
               "kind": "workflow",
-              "label": "Workflow Diagram",
               "tags": [
                 "Architecture"
               ],
+              "label": "Workflow Diagram",
               "steps": [
                 "Invoice aging",
                 "Risk scoring",
@@ -163,17 +149,16 @@
             },
             {
               "kind": "beforeafter",
-              "label": "Before / After",
               "tags": [
                 "Product",
                 "Data"
               ],
-              "before": "Collectors manually stitch together ERP screens, email threads, call notes, and dispute logs to decide who to chase and how.",
-              "after": "AI surfaces risk, history, the recommended action, and the draft outreach in one workspace — the collector just acts."
+              "after": "AI surfaces risk, history, the recommended action, and the draft outreach in one workspace — the collector just acts.",
+              "label": "Before / After",
+              "before": "Collectors manually stitch together ERP screens, email threads, call notes, and dispute logs to decide who to chase and how."
             },
             {
               "kind": "screens",
-              "label": "Prototype / Screens",
               "tags": [
                 "Product",
                 "AI"
@@ -194,7 +179,8 @@
                 {
                   "name": "Dispute intelligence view"
                 }
-              ]
+              ],
+              "label": "Prototype / Screens"
             }
           ]
         }
@@ -202,29 +188,13 @@
     },
     {
       "id": "los",
-      "name": "LOS — Loan Origination System",
-      "flagship": true,
       "desc": "A guided, state-based loan-origination platform — lift completion, speed up KYC and decisioning, and shorten approval turnaround.",
+      "name": "LOS — Loan Origination System",
       "blurb": "A complete PM case study, end to end. LOS moves a borrower from application to approval with fewer handoffs — built from the painful workflow through the PRD, the journey, the metrics, the state machine, the tradeoffs, and a working prototype.",
+      "flagship": true,
       "products": [
         {
           "id": "lending-os",
-          "name": "LOS — Loan Origination System",
-          "stage": "Working prototype",
-          "tags": [
-            "Fintech",
-            "Lending",
-            "SaaS"
-          ],
-          "tagline": "A digital loan-origination platform that lifts application completion, speeds up KYC and credit decisioning, and shortens approval turnaround.",
-          "what": "Loan journeys are slow for the same reasons everywhere: long forms, the same documents uploaded twice, manual KYC, no visibility into status, and credit decisions that disappear into a queue.\n\nThe bet: a guided, state-based LOS that moves a borrower from application to approval with fewer handoffs. Every applicant always knows their current state and the single next step; every bank team works from one shared workflow instead of chasing paper.",
-          "why": "Drop-off is the silent killer of loan volume — borrowers abandon long, opaque journeys, and approved-but-slow applications lose to faster competitors. Internally, manual KYC and document chasing eat the team's capacity and stretch approval TAT.",
-          "users": [
-            "Borrower",
-            "Loan officer",
-            "Credit analyst",
-            "Operations team"
-          ],
           "mvp": [
             "Application form",
             "Document upload",
@@ -232,6 +202,33 @@
             "Credit decision state",
             "Application tracker"
           ],
+          "url": "./apps/lending-cloud/",
+          "why": "Drop-off is the silent killer of loan volume — borrowers abandon long, opaque journeys, and approved-but-slow applications lose to faster competitors. Internally, manual KYC and document chasing eat the team's capacity and stretch approval TAT.",
+          "name": "LOS — Loan Origination System",
+          "next": "Layer in lightweight decisioning assists — document auto-extraction and rule-based pre-checks — to cut KYC retries and analyst back-and-forth.",
+          "role": "Product Lead",
+          "tags": [
+            "Fintech",
+            "Lending",
+            "SaaS"
+          ],
+          "what": "Loan journeys are slow for the same reasons everywhere: long forms, the same documents uploaded twice, manual KYC, no visibility into status, and credit decisions that disappear into a queue.\n\nThe bet: a guided, state-based LOS that moves a borrower from application to approval with fewer handoffs. Every applicant always knows their current state and the single next step; every bank team works from one shared workflow instead of chasing paper.",
+          "year": "2025",
+          "stack": [
+            "Fintech",
+            "Lending",
+            "SaaS"
+          ],
+          "stage": "Working prototype",
+          "users": [
+            "Borrower",
+            "Loan officer",
+            "Credit analyst",
+            "Operations team"
+          ],
+          "stage2": "Prototype · In testing",
+          "tagline": "A digital loan-origination platform that lifts application completion, speeds up KYC and credit decisioning, and shortens approval turnaround.",
+          "testing": "That making state and the next step explicit at every stage is what reduces drop-off and shortens approval TAT — more than any single faster step.",
           "features": [
             [
               "Smart application form",
@@ -254,38 +251,27 @@
               "The borrower always sees the current status and the next step."
             ]
           ],
-          "testing": "That making state and the next step explicit at every stage is what reduces drop-off and shortens approval TAT — more than any single faster step.",
-          "next": "Layer in lightweight decisioning assists — document auto-extraction and rule-based pre-checks — to cut KYC retries and analyst back-and-forth.",
-          "role": "Product Lead",
-          "year": "2025",
-          "stage2": "Prototype · In testing",
-          "stack": [
-            "Fintech",
-            "Lending",
-            "SaaS"
-          ],
-          "url": "./apps/lending-cloud/",
           "artifacts": [
             {
-              "kind": "prd",
-              "label": "PRD",
-              "tags": [
-                "Product",
-                "Founder"
-              ],
-              "goal": "Increase completed loan applications and reduce approval turnaround time.",
-              "users": [
-                "Borrower",
-                "Loan officer",
-                "Credit analyst",
-                "Operations team"
-              ],
               "mvp": [
                 "Application form",
                 "Document upload",
                 "KYC state",
                 "Credit decision state",
                 "Application tracker"
+              ],
+              "goal": "Increase completed loan applications and reduce approval turnaround time.",
+              "kind": "prd",
+              "tags": [
+                "Product",
+                "Founder"
+              ],
+              "label": "PRD",
+              "users": [
+                "Borrower",
+                "Loan officer",
+                "Credit analyst",
+                "Operations team"
               ],
               "nongoals": [
                 "Full core-banking replacement",
@@ -295,10 +281,10 @@
             },
             {
               "kind": "flow",
-              "label": "User Flow",
               "tags": [
                 "Product"
               ],
+              "label": "User Flow",
               "steps": [
                 "User starts the application",
                 "Selects a loan product",
@@ -313,11 +299,10 @@
             },
             {
               "kind": "metrics",
-              "label": "Metrics Tree",
               "tags": [
                 "Analytics"
               ],
-              "business": "Increase approved loan volume",
+              "label": "Metrics Tree",
               "drivers": [
                 "Higher application completion",
                 "Faster KYC",
@@ -330,14 +315,15 @@
                 "KYC retry rate",
                 "Approval TAT",
                 "Drop-off by step"
-              ]
+              ],
+              "business": "Increase approved loan volume"
             },
             {
               "kind": "workflow",
-              "label": "Workflow Diagram",
               "tags": [
                 "Architecture"
               ],
+              "label": "Workflow Diagram",
               "steps": [
                 "Lead created",
                 "Application started",
@@ -352,17 +338,16 @@
             },
             {
               "kind": "beforeafter",
-              "label": "Before / After",
               "tags": [
                 "Product",
                 "Data"
               ],
-              "before": "The borrower submits forms and waits blindly while bank teams chase documents and KYC by hand.",
-              "after": "The borrower sees status, missing items, and the next step; bank teams work one shared workflow end to end."
+              "after": "The borrower sees status, missing items, and the next step; bank teams work one shared workflow end to end.",
+              "label": "Before / After",
+              "before": "The borrower submits forms and waits blindly while bank teams chase documents and KYC by hand."
             },
             {
               "kind": "screens",
-              "label": "Prototype / Screens",
               "tags": [
                 "Product",
                 "Architecture"
@@ -383,7 +368,8 @@
                 {
                   "name": "Credit analyst review queue"
                 }
-              ]
+              ],
+              "label": "Prototype / Screens"
             }
           ]
         }
@@ -391,27 +377,36 @@
     },
     {
       "id": "founder",
-      "name": "Founder Lab",
       "desc": "Zero-to-one bets — the ventures, pitches, and operating systems built before there was a product to manage.",
+      "name": "Founder Lab",
       "blurb": "Where ideas become companies. Founder Lab holds the early-stage ventures, the napkin-to-narrative pitches, and the operating frameworks used to take a bet from conviction to a fundable, buildable plan.",
       "products": []
     },
     {
       "id": "analytics",
-      "name": "Analytics Lab",
       "desc": "Decisions made legible — metric trees, dashboards, and the measurement systems that tell a business the truth.",
+      "name": "Analytics Lab",
       "blurb": "Numbers that earn trust. Analytics Lab is where raw events become metric trees, experiments, and dashboards a leadership team can actually steer with — measurement designed to change decisions, not just decorate slides.",
       "products": [
         {
           "id": "cohort",
+          "url": "https://example.com/cohort",
           "name": "Cohort",
-          "stage": "Shipped",
+          "role": "Lead PM",
           "tags": [
             "Retention",
             "Growth"
           ],
-          "tagline": "Retention analysis that finally answers 'which users come back, and what made them.'",
           "what": "Cohort makes retention investigable. Instead of a flat curve, it lets a team slice survival by acquisition source, first-week behavior, and feature adoption — then quantifies which early actions actually predict long-term return.\n\nThis lab covers the analytical framing and the experiment design behind every claim.",
+          "year": "2022",
+          "stack": [
+            "SQL",
+            "Stats",
+            "dbt"
+          ],
+          "stage": "Shipped",
+          "stage2": "Live",
+          "tagline": "Retention analysis that finally answers 'which users come back, and what made them.'",
           "features": [
             [
               "Behavioral cohorts",
@@ -425,27 +420,27 @@
               "Experiment-ready",
               "Every insight ships with a testable hypothesis."
             ]
-          ],
-          "role": "Lead PM",
-          "year": "2022",
-          "stage2": "Live",
-          "stack": [
-            "SQL",
-            "Stats",
-            "dbt"
-          ],
-          "url": "https://example.com/cohort"
+          ]
         },
         {
           "id": "signal",
+          "url": "https://example.com/signal",
           "name": "Signal",
-          "stage": "Beta",
+          "role": "Lead PM",
           "tags": [
             "Alerting",
             "Ops"
           ],
-          "tagline": "Anomaly detection for business metrics that pages a human only when it's worth it.",
           "what": "Signal watches the metric tree and learns each line's normal rhythm, so it can tell a genuine anomaly from ordinary noise. When something real breaks, it routes a concise, contextual alert to the right owner — and stays quiet otherwise.\n\nAnalytics Lab holds the detection model and the false-positive tuning that makes the alerts trusted.",
+          "year": "2025",
+          "stack": [
+            "ML",
+            "Time-series",
+            "Slack"
+          ],
+          "stage": "Beta",
+          "stage2": "Private beta",
+          "tagline": "Anomaly detection for business metrics that pages a human only when it's worth it.",
           "features": [
             [
               "Seasonality-aware",
@@ -459,27 +454,27 @@
               "Trust tuning",
               "Aggressive false-positive suppression by design."
             ]
-          ],
-          "role": "Lead PM",
-          "year": "2025",
-          "stage2": "Private beta",
-          "stack": [
-            "ML",
-            "Time-series",
-            "Slack"
-          ],
-          "url": "https://example.com/signal"
+          ]
         },
         {
           "id": "dashboard-studio",
+          "url": "./apps/dashboard-studio/",
           "name": "Dashboard Studio",
-          "stage": "Working app",
+          "role": "Product Manager",
           "tags": [
             "Data",
             "Visualization"
           ],
-          "tagline": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
           "what": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
+          "year": "2025",
+          "stack": [
+            "Data",
+            "Visualization",
+            "Tools"
+          ],
+          "stage": "Working app",
+          "stage2": "Working app",
+          "tagline": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
           "features": [
             [
               "Drag-and-drop",
@@ -493,35 +488,35 @@
               "Private by default",
               "Data never leaves the browser."
             ]
-          ],
-          "role": "Product Manager",
-          "year": "2025",
-          "stage2": "Working app",
-          "stack": [
-            "Data",
-            "Visualization",
-            "Tools"
-          ],
-          "url": "./apps/dashboard-studio/"
+          ]
         }
       ]
     },
     {
       "id": "ai",
-      "name": "AI Lab",
       "desc": "AI-native products done honestly — copilots, RAG, evals, and guardrails with a cost model that survives contact.",
+      "name": "AI Lab",
       "blurb": "AI that ships and holds up. AI Lab is where use-cases get framed, retrieval gets designed, and outputs get evaluated — copilots and agents built with guardrails, eval harnesses, and an honest unit-economics model from day one.",
       "products": [
         {
           "id": "synthesis",
+          "url": "https://example.com/synthesis",
           "name": "Synthesis",
-          "stage": "Shipped",
+          "role": "Lead AI PM",
           "tags": [
             "Docs",
             "RAG"
           ],
-          "tagline": "Document understanding that reads a 200-page contract and answers like an analyst.",
           "what": "Synthesis ingests dense enterprise documents — contracts, policies, filings — and lets a user interrogate them in plain language, with answers anchored to the exact clause. It's built to refuse confidently when the document doesn't say.\n\nThis lab holds the chunking strategy, the citation model, and the abstention behavior that makes it trustworthy.",
+          "year": "2023",
+          "stack": [
+            "RAG",
+            "Embeddings",
+            "Eval"
+          ],
+          "stage": "Shipped",
+          "stage2": "Live",
+          "tagline": "Document understanding that reads a 200-page contract and answers like an analyst.",
           "features": [
             [
               "Clause-level citations",
@@ -535,27 +530,27 @@
               "Long-context retrieval",
               "Handles 200-page documents without losing the thread."
             ]
-          ],
-          "role": "Lead AI PM",
-          "year": "2023",
-          "stage2": "Live",
-          "stack": [
-            "RAG",
-            "Embeddings",
-            "Eval"
-          ],
-          "url": "https://example.com/synthesis"
+          ]
         },
         {
           "id": "collections-cloud",
+          "url": "./apps/collections-cloud/",
           "name": "AI Collections Cloud",
-          "stage": "Flagship",
+          "role": "Product Manager",
           "tags": [
             "AI",
             "Fintech"
           ],
-          "tagline": "An AI-native recovery platform for lenders — collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.",
           "what": "An AI-native recovery platform for lenders — collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.",
+          "year": "2024–2025",
+          "stack": [
+            "AI",
+            "Fintech",
+            "Collections"
+          ],
+          "stage": "Flagship",
+          "stage2": "Flagship · Live",
+          "tagline": "An AI-native recovery platform for lenders — collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.",
           "features": [
             [
               "Collector copilot",
@@ -569,27 +564,27 @@
               "Clean event spine",
               "Domain, data, and events designed to build on."
             ]
-          ],
-          "role": "Product Manager",
-          "year": "2024–2025",
-          "stage2": "Flagship · Live",
-          "stack": [
-            "AI",
-            "Fintech",
-            "Collections"
-          ],
-          "url": "./apps/collections-cloud/"
+          ]
         },
         {
           "id": "synthesis",
+          "url": "./apps/synthesis/",
           "name": "Synthesis — Strategic Framework Engine",
-          "stage": "Working app",
+          "role": "Product Manager",
           "tags": [
             "Strategy",
             "Tools"
           ],
-          "tagline": "An offline strategic-framework builder: import data, configure the analysis, and export to PDF, Markdown, CSV, or JSON — entirely in-browser.",
           "what": "An offline strategic-framework builder: import data, configure the analysis, and export to PDF, Markdown, CSV, or JSON — entirely in-browser.",
+          "year": "2025",
+          "stack": [
+            "Strategy",
+            "Tools",
+            "AI"
+          ],
+          "stage": "Working app",
+          "stage2": "Working app",
+          "tagline": "An offline strategic-framework builder: import data, configure the analysis, and export to PDF, Markdown, CSV, or JSON — entirely in-browser.",
           "features": [
             [
               "Framework engine",
@@ -603,27 +598,27 @@
               "Multi-format export",
               "PDF, Markdown, CSV, or JSON in one click."
             ]
-          ],
-          "role": "Product Manager",
-          "year": "2025",
-          "stage2": "Working app",
-          "stack": [
-            "Strategy",
-            "Tools",
-            "AI"
-          ],
-          "url": "./apps/synthesis/"
+          ]
         },
         {
           "id": "neuralpath",
+          "url": "./apps/neuralpath/",
           "name": "NeuralPath — AI Concepts Game",
-          "stage": "Working app",
+          "role": "Product Manager",
           "tags": [
             "AI",
             "Education"
           ],
-          "tagline": "A gamified AI-learning app — concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
           "what": "A gamified AI-learning app — concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
+          "year": "2025",
+          "stack": [
+            "AI",
+            "Education",
+            "Interactive"
+          ],
+          "stage": "Working app",
+          "stage2": "Working app",
+          "tagline": "A gamified AI-learning app — concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
           "features": [
             [
               "Gamified learning",
@@ -637,35 +632,35 @@
               "Level-by-level",
               "AI mastery one concept at a time."
             ]
-          ],
-          "role": "Product Manager",
-          "year": "2025",
-          "stage2": "Working app",
-          "stack": [
-            "AI",
-            "Education",
-            "Interactive"
-          ],
-          "url": "./apps/neuralpath/"
+          ]
         }
       ]
     },
     {
       "id": "architecture",
-      "name": "Architecture Lab",
       "desc": "The structure under the surface — context maps, event flows, APIs, and the diagrams engineers can build from.",
+      "name": "Architecture Lab",
       "blurb": "Spoken fluently with engineering. Architecture Lab is where products get their skeleton — context diagrams, component boundaries, event flows, and API contracts designed alongside engineers, not thrown over a wall to them.",
       "products": [
         {
           "id": "lending-cloud",
+          "url": "./apps/lending-cloud/",
           "name": "LOS — Loan Origination System",
-          "stage": "Working app",
+          "role": "Product Manager",
           "tags": [
             "Fintech",
             "Lending"
           ],
-          "tagline": "A unified LOS + LMS + collections + analytics engine — workflow state machines, EMI math, and deterministic demo data, all client-side.",
           "what": "A unified LOS + LMS + collections + analytics engine — workflow state machines, EMI math, and deterministic demo data, all client-side.",
+          "year": "2024",
+          "stack": [
+            "Fintech",
+            "Lending",
+            "SaaS"
+          ],
+          "stage": "Working app",
+          "stage2": "Working app",
+          "tagline": "A unified LOS + LMS + collections + analytics engine — workflow state machines, EMI math, and deterministic demo data, all client-side.",
           "features": [
             [
               "Unified platform",
@@ -679,35 +674,35 @@
               "Deterministic demo data",
               "Reproducible EMI math, fully client-side."
             ]
-          ],
-          "role": "Product Manager",
-          "year": "2024",
-          "stage2": "Working app",
-          "stack": [
-            "Fintech",
-            "Lending",
-            "SaaS"
-          ],
-          "url": "./apps/lending-cloud/"
+          ]
         }
       ]
     },
     {
       "id": "data",
-      "name": "Data & Entity Lab",
       "desc": "The semantic spine — entity models, master data, and the schemas that make a business legible to software and AI.",
+      "name": "Data & Entity Lab",
       "blurb": "A shared language for the business. Data & Entity Lab is where the domain gets modeled — entities, relationships, master data, and the semantic layer that lets analytics, products, and AI all mean the same thing by the same word.",
       "products": [
         {
           "id": "graphmind",
+          "url": "https://example.com/graphmind",
           "name": "Graphmind",
-          "stage": "Shipped",
+          "role": "Data Product Lead",
           "tags": [
             "Entity model",
             "Semantic"
           ],
-          "tagline": "A knowledge graph of the lending domain that every product and model reads from.",
           "what": "Graphmind is the canonical entity model for the lending domain — borrowers, accounts, obligations, events — expressed as a graph that products, analytics, and AI all share. One definition of 'delinquency,' used everywhere.\n\nData & Entity Lab holds the ontology, the governance, and the migration that consolidated five conflicting schemas into one.",
+          "year": "2024",
+          "stack": [
+            "Ontology",
+            "Graph",
+            "MDM"
+          ],
+          "stage": "Shipped",
+          "stage2": "In production",
+          "tagline": "A knowledge graph of the lending domain that every product and model reads from.",
           "features": [
             [
               "One ontology",
@@ -721,27 +716,27 @@
               "Five-into-one",
               "Consolidated conflicting legacy models into a spine."
             ]
-          ],
-          "role": "Data Product Lead",
-          "year": "2024",
-          "stage2": "In production",
-          "stack": [
-            "Ontology",
-            "Graph",
-            "MDM"
-          ],
-          "url": "https://example.com/graphmind"
+          ]
         },
         {
           "id": "registry",
+          "url": "https://example.com/registry",
           "name": "Registry",
-          "stage": "Shipped",
+          "role": "Data Product Lead",
           "tags": [
             "Master data",
             "Governance"
           ],
-          "tagline": "Master data management that gives every customer exactly one trusted golden record.",
           "what": "Registry resolves the same customer appearing five times across five systems into a single golden record — matched, merged, and survivorship-ruled — so downstream products stop arguing about who the customer is.\n\nThis lab covers the matching logic, the survivorship rules, and the stewardship workflow for the hard cases.",
+          "year": "2022",
+          "stack": [
+            "MDM",
+            "Matching",
+            "Quality"
+          ],
+          "stage": "Shipped",
+          "stage2": "In production",
+          "tagline": "Master data management that gives every customer exactly one trusted golden record.",
           "features": [
             [
               "Entity resolution",
@@ -755,27 +750,27 @@
               "Stewardship",
               "A human workflow for the ambiguous matches."
             ]
-          ],
-          "role": "Data Product Lead",
-          "year": "2022",
-          "stage2": "In production",
-          "stack": [
-            "MDM",
-            "Matching",
-            "Quality"
-          ],
-          "url": "https://example.com/registry"
+          ]
         },
         {
           "id": "conduit",
+          "url": "https://example.com/conduit",
           "name": "Conduit",
-          "stage": "Beta",
+          "role": "Data Product Lead",
           "tags": [
             "Pipeline",
             "Streaming"
           ],
-          "tagline": "A streaming data layer that keeps the semantic model fresh in seconds, not nightly.",
           "what": "Conduit is the real-time pipeline feeding the entity model — capturing change events from source systems and reconciling them into the graph continuously, so analytics and AI act on minutes-old truth instead of last night's batch.\n\nData & Entity Lab holds the CDC design, the reconciliation logic, and the freshness SLAs.",
+          "year": "2025",
+          "stack": [
+            "CDC",
+            "Kafka",
+            "Flink"
+          ],
+          "stage": "Beta",
+          "stage2": "Private beta",
+          "tagline": "A streaming data layer that keeps the semantic model fresh in seconds, not nightly.",
           "features": [
             [
               "Change data capture",
@@ -789,27 +784,27 @@
               "Freshness SLAs",
               "Defined, monitored latency budgets."
             ]
-          ],
-          "role": "Data Product Lead",
-          "year": "2025",
-          "stage2": "Private beta",
-          "stack": [
-            "CDC",
-            "Kafka",
-            "Flink"
-          ],
-          "url": "https://example.com/conduit"
+          ]
         },
         {
           "id": "excel-transformer",
+          "url": "./apps/excel-transformer/",
           "name": "Excel Transformer",
-          "stage": "Working app",
+          "role": "Product Manager",
           "tags": [
             "Tools",
             "Data"
           ],
-          "tagline": "A client-side spreadsheet tool to drop, rename, filter, and re-export Excel/CSV files — no data leaves the page.",
           "what": "A client-side spreadsheet tool to drop, rename, filter, and re-export Excel/CSV files — no data leaves the page.",
+          "year": "2025",
+          "stack": [
+            "Tools",
+            "Data",
+            "Productivity"
+          ],
+          "stage": "Working app",
+          "stage2": "Working app",
+          "tagline": "A client-side spreadsheet tool to drop, rename, filter, and re-export Excel/CSV files — no data leaves the page.",
           "features": [
             [
               "Drop & reshape",
@@ -823,27 +818,27 @@
               "No data leaves",
               "Everything runs on the page."
             ]
-          ],
+          ]
+        },
+        {
+          "id": "excel-merger",
+          "url": "./apps/excel-merger/",
+          "name": "Excel Merger",
           "role": "Product Manager",
+          "tags": [
+            "Tools",
+            "Data"
+          ],
+          "what": "An in-browser tool to merge multiple Excel/CSV files — column strategies, header normalization, and gap-fill — fully offline.",
           "year": "2025",
-          "stage2": "Working app",
           "stack": [
             "Tools",
             "Data",
             "Productivity"
           ],
-          "url": "./apps/excel-transformer/"
-        },
-        {
-          "id": "excel-merger",
-          "name": "Excel Merger",
           "stage": "Working app",
-          "tags": [
-            "Tools",
-            "Data"
-          ],
+          "stage2": "Working app",
           "tagline": "An in-browser tool to merge multiple Excel/CSV files — column strategies, header normalization, and gap-fill — fully offline.",
-          "what": "An in-browser tool to merge multiple Excel/CSV files — column strategies, header normalization, and gap-fill — fully offline.",
           "features": [
             [
               "Multi-file merge",
@@ -857,18 +852,23 @@
               "Fully offline",
               "Merge without uploading anything."
             ]
-          ],
-          "role": "Product Manager",
-          "year": "2025",
-          "stage2": "Working app",
-          "stack": [
-            "Tools",
-            "Data",
-            "Productivity"
-          ],
-          "url": "./apps/excel-merger/"
+          ]
         }
       ]
     }
-  ]
+  ],
+  "meta": {
+    "role": "Enterprise · AI Product",
+    "glyph": "SK",
+    "intro": "Start with the two flagship case studies — each one taken from a painful workflow all the way to a working prototype, with the PRD, journey, metrics, and architecture in between. Then step into any of the six discipline labs to see how each layer gets built.",
+    "owner": "Sai Kiran Biswal",
+    "title": "Two products, end to end. Six labs of how I work.",
+    "eyebrow": "Product Portfolio · Two flagship case studies, then six labs",
+    "statLabs": "5",
+    "statYears": "7",
+    "statProducts": "7",
+    "statLabsLabel": "Labs",
+    "statYearsLabel": "Years",
+    "statProductsLabel": "Products"
+  }
 }

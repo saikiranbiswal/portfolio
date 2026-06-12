@@ -1,6 +1,63 @@
 # Next-Session Handoff: Labs Flagship Case Studies
 
-Last updated: June 12, 2026 (session 8)
+Last updated: June 12, 2026 (session 9)
+
+---
+
+## ⭐⭐⭐ SESSION 9 — M2 inspired-tier polish — all 8 items DONE, pushed & LIVE
+
+**Commit: `718c486` on `main`, pushed.**
+
+### What was built this session (delta only)
+
+All 8 remaining "inspired tier" items from the Session 8 NOT-built table are now shipped:
+
+| Item | Files | Notes |
+|------|-------|-------|
+| **Hero line-by-line reveal** | `products.html`, `css/styles.css` | h1 broken into 3 `<span class="line"><span>…</span></span>` clips; keyframe `line-rise` staggered 70ms per line; `prefers-reduced-motion` disables it. |
+| **Work rows dotted leaders** | `css/styles.css` | `.work-row .titles .t` is now `display:flex`; `::after` flex-1 dotted border fills space to meta column; turns clay on hover. |
+| **Flagship figcaps** | `js/site.js`, `js/about.js` | `.ph` wrapped in `.flag-img-col` (flex column); `<p class="figcap">FIG. 01/02 — NAME · FLAGSHIP CASE STUDY</p>` below image. CSS `.flagship.flip > .flag-img-col { order:1 }` added. |
+| **Portrait plate tilt** | `css/styles.css` | `.portrait { transform: rotate(-.5deg); transition: .4s; border: 1px solid var(--line); box-shadow: 0 0 0 8px var(--paper); }` + `:hover { rotate(0) }`. |
+| **Timeline ledger rule** | `css/styles.css` | `.timeline { position:relative; padding-left:20px; }` + `::before` 1px left rule; `.tl-row .yr::before` 12px clay tick extends right from rule. Hidden at <620px. |
+| **Contact email hero** | `js/contact.js`, `css/styles.css` | Large Newsreader italic `.email-hero` replaces old `.btn`; `::after` clay underline draw-in on hover; click = `navigator.clipboard.writeText()` + `.email-toast` "COPIED — NOW WRITE THE HARD PROBLEM" (3s). |
+| **Labs stat count-up** | `js/labs-app.js` | `statHTML()` now passes `data-target` + `class="count-num"` via `ed()` `extra` param; `wireCountUp()` IntersectionObserver wired in `render()` when `view === "index"`. |
+| **Footer underline draw-in** | `css/styles.css` | `.footer-col a { position:relative }` + `::after` clay underline, `width: 0 → 100%` on hover `.28s`. Matches nav pattern. |
+
+### QA status (verified this session)
+
+| Check | Status |
+|-------|--------|
+| Zero console errors — all 4 editorial pages | ✅ |
+| Hero 3-line clip reveal renders (products.html) | ✅ |
+| Work rows dotted leaders visible | ✅ |
+| Flagship FIG. 01 figcap — Work page | ✅ |
+| Flagship FIG. 02 figcap — Work page (flip) | ✅ |
+| Flagship FIG. 01 figcap — About proof section | ✅ |
+| Portrait photo visible with tilt | ✅ |
+| Timeline ledger rule + clay ticks | ✅ |
+| Contact email hero in Newsreader italic | ✅ |
+| Labs stats count-up: 6 / 27 / 7 | ✅ |
+| Footer link underline draw-in (::after computed) | ✅ |
+
+### Current working-tree state
+
+Clean. Local `main` == `origin/main`. Latest commit `718c486`.
+
+### What's left to build
+
+Nothing from the original M2 list. The full "inspired tier" is now shipped.
+Potential next sessions: screenshots/real images for flagship `.ph` placeholders, mobile QA pass, performance audit, or new content sections.
+
+### Resume prompt for next session
+
+```
+Continue the portfolio design revamp in /Users/saikiranbiswal/Downloads/portfolio.
+Read LABS_FLAGSHIP_HANDOFF.md (Session 9 section at the top).
+M1–M6 (Session 8) and all 8 M2 inspired-tier items (Session 9) are DONE and live.
+The working tree is clean at commit 718c486.
+Start the server: python3 -m http.server 8000
+Decide with Sai what to tackle next.
+```
 
 ---
 

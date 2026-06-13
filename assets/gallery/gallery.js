@@ -112,8 +112,11 @@ async function makeCardTexture(project) {
   ctx.roundRect(0, 0, W, H, R);
   ctx.clip();
   if (img) {
-    // cover-fit
-    const s = Math.max(W / img.width, H / img.height);
+    // contain-fit on a paper mat — shows the whole screenshot (incl. wide
+    // ones like the Excel tools) without cropping the toolbars off the sides.
+    ctx.fillStyle = '#ece6da';
+    ctx.fillRect(0, 0, W, H);
+    const s = Math.min(W / img.width, H / img.height);
     const dw = img.width * s, dh = img.height * s;
     ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
   } else {

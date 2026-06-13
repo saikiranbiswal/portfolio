@@ -190,6 +190,47 @@ window.CMSSections = (function () {
     return document.body.getAttribute('data-cms-page') || PAGE_IDS[file] || null;
   }
 
+  /* Zone → anchor map. Self-contained so public pages need no extra script;
+     mirrors the selectors in admin/screen-registry.js. A section with a known
+     `zone` mounts at its anchor; anything else falls back to the default host
+     (before the CTA band / footer), preserving the original behavior. */
+  var ZONES = {
+    work: {
+      "after-hero":      { selector: ".hero",      position: "after" },
+      "after-work-grid": { selector: "#work-list", position: "after" },
+      "before-cta":      { selector: ".cta-band",  position: "before" }
+    },
+    labs:    { "end-of-page": { selector: "#app",  position: "after" } },
+    about:   { "end-of-page": { selector: "#page", position: "after" } },
+    contact: { "end-of-page": { selector: "#page", position: "after" } }
+  };
+
+  function makeHost(zoneId) {
+    var host = document.createElement('div');
+    host.setAttribute('data-cms-sections', zoneId || '');
+    return host;
+  }
+
+  /* Insert `host` relative to a zone's anchor; return true on success. */
+  function mountZoneHost(pageId, zoneId, host) {
+    var z = ZONES[pageId] && ZONES[pageId][zoneId];
+    if (!z) return false;
+    var anchor = document.querySelector(z.selector);
+    if (!anchor || !anchor.parentNode) return false;
+    if (z.position === 'after') anchor.parentNode.insertBefore(host, anchor.nextSibling);
+    else anchor.parentNode.insertBefore(host, anchor); // "before"
+    return true;
+  }
+
+  /* Default host: before the CTA band / footer, else body end (legacy behavior). */
+  function mountDefaultHost(host) {
+    host.setAttribute('data-cms-sections', 'default');
+    var anchor = document.querySelector('.cta-band') || document.querySelector('footer.footer');
+    if (anchor && anchor.parentNode) anchor.parentNode.insertBefore(host, anchor);
+    else document.body.appendChild(host);
+    return host;
+  }
+
   async function mount() {
     var pageId = currentPageId();
     if (!pageId) return;
@@ -197,17 +238,36 @@ window.CMSSections = (function () {
       ? await window.PreviewData.load('pages', 'content/pages.json')
       : await fetch('content/pages.json', { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; });
     var sections = (data && data.sections || []).filter(function (s) { return s.page === pageId && s.visible !== false; });
+
+    /* Clear any previous mounts (idempotent across re-renders). */
+    Array.prototype.forEach.call(document.querySelectorAll('[data-cms-sections]'), function (n) { n.parentNode && n.parentNode.removeChild(n); });
     if (!sections.length) return;
-    var host = document.querySelector('[data-cms-sections]');
-    if (!host) {
-      host = document.createElement('div');
-      host.setAttribute('data-cms-sections', '');
-      var anchor = document.querySelector('.cta-band') || document.querySelector('footer.footer');
-      if (anchor) anchor.parentNode.insertBefore(host, anchor);
-      else document.body.appendChild(host);
+
+    /* Group by zone, preserving array order within each zone. */
+    var byZone = {}, order = [];
+    sections.forEach(function (s) {
+      var z = s.zone || 'default';
+      if (!byZone[z]) { byZone[z] = []; order.push(z); }
+      byZone[z].push(s);
+    });
+
+    var leftovers = [];
+    order.forEach(function (zoneId) {
+      if (zoneId === 'default') { leftovers = leftovers.concat(byZone[zoneId]); return; }
+      var host = makeHost(zoneId);
+      if (mountZoneHost(pageId, zoneId, host)) {
+        host.innerHTML = byZone[zoneId].map(render).join('');
+        activate(host);
+      } else {
+        leftovers = leftovers.concat(byZone[zoneId]); // unknown/missing anchor → fallback
+      }
+    });
+
+    if (leftovers.length) {
+      var dflt = mountDefaultHost(makeHost('default'));
+      dflt.innerHTML = leftovers.map(render).join('');
+      activate(dflt);
     }
-    host.innerHTML = sections.map(render).join('');
-    activate(host);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', mount);

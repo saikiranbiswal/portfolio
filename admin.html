@@ -118,6 +118,89 @@
   .prod-mini.hidden-section { opacity:.58; border-style:dashed; background:var(--paper-2); }
   .prod-mini.hidden-section .pmn { text-decoration:line-through; text-decoration-color:var(--faint); }
   @media (max-width: 700px) { .sections-guide-grid { grid-template-columns:1fr; } }
+
+  /* ── Drag-Drop Screen Composer ── */
+  .composer-modebar { display:flex; gap:6px; margin-bottom:14px; }
+  .composer-modebar .admin-btn { padding:7px 14px; }
+  .composer-screens { display:flex; gap:8px; flex-wrap:wrap; }
+  .composer-screen { flex:1 1 130px; text-align:left; border:1px solid var(--line); border-radius:7px; padding:11px 13px;
+    background:var(--paper); cursor:pointer; font:inherit; color:var(--ink); transition:border-color .15s, background .15s; }
+  .composer-screen:hover { border-color:var(--clay); }
+  .composer-screen.active { border-color:var(--clay); background:color-mix(in srgb,var(--clay) 8%,var(--card)); box-shadow:0 0 0 1px var(--clay) inset; }
+  .composer-screen strong { display:block; font-size:14px; }
+  .composer-screen span { font-size:11.5px; color:var(--muted); line-height:1.4; }
+  .composer-cols { display:grid; grid-template-columns:minmax(0,260px) minmax(0,1fr); gap:14px; align-items:start; }
+  .composer-palette { display:grid; gap:8px; }
+  .composer-comp { border:1px solid var(--line); border-radius:8px; padding:10px 12px; background:linear-gradient(180deg,var(--card),var(--paper));
+    cursor:grab; user-select:none; transition:border-color .15s, box-shadow .15s, transform .1s; }
+  .composer-comp:hover { border-color:var(--clay); box-shadow:0 6px 16px color-mix(in srgb,var(--clay) 14%,transparent); }
+  .composer-comp:active { cursor:grabbing; transform:scale(.99); }
+  .composer-comp.selected { border-color:var(--clay); box-shadow:0 0 0 2px color-mix(in srgb,var(--clay) 30%,transparent); }
+  .composer-comp strong { display:block; font-size:13.5px; }
+  .composer-comp span { font-size:11.5px; color:var(--muted); line-height:1.4; }
+  .composer-comp .tag { display:inline-block; margin-top:5px; font-family:var(--mono); font-size:10px; color:var(--clay-deep);
+    background:color-mix(in srgb,var(--clay) 10%,transparent); border:1px solid color-mix(in srgb,var(--clay) 24%,var(--line)); border-radius:999px; padding:2px 7px; }
+  .composer-zones { display:grid; gap:10px; }
+  .composer-zone { border:1.5px dashed var(--line); border-radius:9px; padding:13px; background:var(--paper); transition:border-color .15s, background .15s, transform .1s; }
+  .composer-zone.dragover { border-color:var(--clay); background:color-mix(in srgb,var(--clay) 8%,transparent); transform:translateY(-1px); }
+  .composer-zone.armed { border-color:var(--clay); }
+  .composer-zone-head { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; flex-wrap:wrap; }
+  .composer-zone-head .zt { font-weight:600; font-size:14px; }
+  .composer-zone-head .za { font-family:var(--mono); font-size:10px; color:var(--muted); background:var(--card); border:1px solid var(--line-soft); border-radius:999px; padding:3px 8px; max-width:100%; }
+  .composer-zone .zd { font-size:12px; color:var(--muted); line-height:1.45; margin:5px 0 0; }
+  .composer-chips { display:flex; gap:7px; flex-wrap:wrap; margin-top:10px; min-height:8px; }
+  .comp-chip { display:inline-flex; align-items:center; gap:7px; border:1px solid var(--line); background:var(--card); border-radius:999px; padding:6px 11px; font-size:12.5px; }
+  .comp-chip.invalid { border-color:#e0b3ae; background:#fbeeec; color:#7a2a23; }
+  .comp-chip.hidden-chip { opacity:.55; text-decoration:line-through; }
+  .comp-chip button { border:0; background:transparent; cursor:pointer; font-size:12px; color:var(--clay-deep); padding:0 0 0 2px; }
+  .composer-hint { font-family:var(--mono); font-size:11px; color:var(--muted); margin:0 0 10px; }
+  /* in-page shell preview */
+  .composer-shell { border:1px solid var(--line); border-radius:9px; overflow:hidden; background:var(--paper); }
+  .cs-bar { height:30px; background:var(--paper-2); border-bottom:1px solid var(--line-soft); display:flex; align-items:center; gap:6px; padding:0 12px; }
+  .cs-bar i { width:8px; height:8px; border-radius:50%; background:var(--faint); }
+  .cs-bar span { margin-left:8px; font-family:var(--mono); font-size:10.5px; color:var(--muted); }
+  .cs-stack { padding:14px; display:grid; gap:11px; }
+  .cs-mock { border:1px solid var(--line-soft); border-radius:7px; padding:14px; background:var(--card); }
+  .cs-mock .mk-k { font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; color:var(--muted); text-transform:uppercase; }
+  .cs-mock h4 { font-family:var(--serif); font-size:20px; margin:5px 0 0; }
+  .cs-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .cs-grid .cs-card { border:1px solid var(--line-soft); border-radius:6px; padding:11px; min-height:54px; font-size:11.5px; color:var(--muted); background:var(--paper); }
+  .cs-cta { background:#1f1b17; color:#f5efe6; border-radius:7px; padding:15px; }
+  .cs-cta .mk-k { color:#b9ad9c; }
+  .cs-slot { border:1.5px dashed var(--line); border-radius:7px; padding:9px; text-align:center; font-family:var(--mono); font-size:10.5px; color:var(--faint); }
+  .cs-live { border:2px solid var(--clay); border-radius:8px; overflow:hidden; position:relative; background:var(--paper); }
+  .cs-live > .cs-live-tag { position:absolute; top:0; left:0; z-index:2; font-family:var(--mono); font-size:9.5px; letter-spacing:.06em;
+    background:var(--clay); color:#fff; padding:3px 8px; border-radius:0 0 7px 0; }
+  .cs-live .cms-section, .cs-live section { padding-block:18px !important; }
+  .cs-live-inner { zoom:.62; }
+  /* score panel */
+  .score-panel { display:grid; grid-template-columns:128px minmax(0,1fr); gap:16px; align-items:center; }
+  .score-circle { width:124px; height:124px; border-radius:50%; display:grid; place-items:center; position:relative;
+    background:conic-gradient(var(--clay) calc(var(--deg,0) * 1deg), color-mix(in srgb,var(--clay) 14%,var(--line)) 0); }
+  .score-circle:before { content:""; position:absolute; inset:11px; border-radius:50%; background:var(--card); }
+  .score-circle b { position:relative; font-size:30px; font-family:var(--serif); }
+  .score-circle small { position:relative; display:block; font-family:var(--mono); font-size:9.5px; color:var(--muted); margin-top:-3px; }
+  .score-bars { display:grid; gap:8px; }
+  .score-bar { display:grid; grid-template-columns:118px minmax(0,1fr) 34px; gap:9px; align-items:center; font-size:12px; }
+  .score-bar > span:first-child { color:var(--muted); }
+  .score-bar .track { height:8px; border-radius:99px; background:color-mix(in srgb,var(--clay) 12%,var(--line)); overflow:hidden; }
+  .score-bar .track i { display:block; height:100%; background:var(--clay); width:0; transition:width .25s; }
+  .compat-status { font-family:var(--mono); font-size:11px; letter-spacing:.05em; padding:4px 10px; border-radius:999px; display:inline-block; margin-bottom:10px; }
+  .compat-status.pass { color:#1c6b3c; background:#eefaf1; border:1px solid #b6e0c4; }
+  .compat-status.warn { color:#8a5a10; background:#fff6e7; border:1px solid #e7cd96; }
+  .compat-status.block { color:#9b2226; background:#fdeeee; border:1px solid #f0c0c2; }
+  .compat-msgs { display:grid; gap:6px; margin-top:12px; }
+  .compat-msg { font-size:12.5px; line-height:1.45; padding:7px 11px; border-radius:6px; border:1px solid var(--line); }
+  .compat-msg.pass { color:#1c6b3c; background:#f4fbf6; border-color:#cdead8; }
+  .compat-msg.warn { color:#8a5a10; background:#fff9ef; border-color:#ecd8ab; }
+  .compat-msg.block { color:#9b2226; background:#fdf2f2; border-color:#f0cccd; }
+  .compat-msg.info { color:var(--muted); background:var(--paper); }
+  @media (max-width: 760px) {
+    .composer-cols { grid-template-columns:1fr; }
+    .cs-grid { grid-template-columns:1fr; }
+    .score-panel { grid-template-columns:1fr; justify-items:center; }
+    .score-bar { grid-template-columns:96px minmax(0,1fr) 30px; }
+  }
 </style>
 </head>
 <body>
@@ -237,6 +320,9 @@ window.addEventListener("error", function (event) {
 <script src="js/schemas.js"></script>
 <script src="js/sections.js"></script>
 <script src="admin/validators.js"></script>
+<script src="admin/screen-registry.js"></script>
+<script src="admin/component-registry.js"></script>
+<script src="admin/section-compatibility.js"></script>
 <script>
 /* =========================================================
    Portfolio CMS v3 — GitHub-native, no backend.
@@ -695,6 +781,7 @@ window.addEventListener("error", function (event) {
     principle: function () { return { n: "00", h4: "Principle", p: "Describe it." }; },
     skill: function () { return { h: "Column", items: ["Item"] }; },
     link:     function () { return { k: "Label", v: "Value", type: "none", href: "#", external: false }; },
+    worklink: function () { return { label: "Button label", href: "#" }; },
     navitem:  function () { return { label: "New page", href: "new.html" }; },
     footlink: function () { return { label: "Link", href: "#", external: false }; },
     page:     function () { return { id: "new-page", title: "New Page", file: "new-page.html", visible: true }; },
@@ -942,7 +1029,31 @@ window.addEventListener("error", function (event) {
     renderer: "Names the coded Lane 4 renderer registered in window.CMS_RENDERERS.",
     fallback: "Content shown when the Lane 4 renderer is unavailable or fails to register."
   };
-  var secUI = { lane: 3, editIdx: null, draft: null };
+  var secUI = { mode: "composer", screen: "work", selectedComponent: null, lane: 3, editIdx: null, draft: null };
+
+  /* ── Composer registries (loaded from admin/*.js) ── */
+  function scrReg() { return window.PORTFOLIO_SCREEN_REGISTRY || {}; }
+  function compReg() { return window.PORTFOLIO_COMPONENT_REGISTRY || []; }
+  function compById(id) { return (window.PORTFOLIO_COMPONENT_HELPERS && window.PORTFOLIO_COMPONENT_HELPERS.byId(id)) || null; }
+  function compsForScreen(screenId) {
+    return (window.PORTFOLIO_COMPONENT_HELPERS && window.PORTFOLIO_COMPONENT_HELPERS.forScreen(screenId)) || [];
+  }
+  function zoneOf(screenId, zoneId) {
+    return (window.PORTFOLIO_SCREEN_REGISTRY_HELPERS && window.PORTFOLIO_SCREEN_REGISTRY_HELPERS.zone(screenId, zoneId)) || null;
+  }
+  function secComponent() { return secUI.draft && secUI.draft.component ? compById(secUI.draft.component) : null; }
+  /* Build a draft from a placed component + zone (content/pages.json-compatible). */
+  function newComponentDraft(componentId, screenId, zoneId) {
+    if (!window.PORTFOLIO_COMPONENT_HELPERS) return null;
+    return window.PORTFOLIO_COMPONENT_HELPERS.toSection(componentId, screenId, zoneId, function () {
+      return "section-" + Date.now().toString(36);
+    });
+  }
+  function secCompat(d) {
+    d = d || secUI.draft;
+    if (!d || !d.component || !window.checkSectionCompatibility) return null;
+    return window.checkSectionCompatibility({ screenId: d.page, zoneId: d.zone, componentId: d.component, fields: d.fields || {} });
+  }
 
   function secSchemas() { return (window.CMSValidators && CMSValidators.schemas()) || {}; }
   function secSchemaOpts(schema, fieldId, fallback) {
@@ -1022,56 +1133,121 @@ window.addEventListener("error", function (event) {
     var d = secUI.draft;
     if (!d) return;
     var pv = document.getElementById("secPreview");
-    if (pv) pv.innerHTML = window.CMSSections ? CMSSections.render(d) : "";
+    if (pv) pv.innerHTML = d.component ? renderScreenShell(d) : (window.CMSSections ? CMSSections.render(d) : "");
     var jb = document.getElementById("secJson");
     if (jb) jb.textContent = "Generated JSON (stored in content/pages.json — you never edit this by hand):\n\n" + JSON.stringify(d, null, 2);
     var ck = document.getElementById("secChecks");
     if (ck) ck.innerHTML = secChecksHtml(secRunChecks());
+    var sc = document.getElementById("secScore");
+    if (sc) sc.innerHTML = scorePanelHtml(secCompat(d));
   }
 
-  function renderSections() {
-    var sections = (models.pages && models.pages.sections) || [];
-    var html = '<div class="section-block sections-guide"><h3>Sections guide</h3>' +
-      '<p class="subhint" style="margin-top:0;">Sections are stored in <strong>content/pages.json</strong>. Use the lane that matches how much custom structure the content needs.</p>' +
-      '<div class="sections-guide-grid">' +
-        '<div class="sections-guide-item"><strong>Lane 1 · Edit existing content</strong><p>Update projects, labs, about, contact, navigation, and other content that already has a home. Lane 1 does not create a page section.</p></div>' +
-        '<div class="sections-guide-item"><strong>Lane 2 · Reusable block</strong><p>Add a proven pattern such as a hero, metric strip, timeline, card grid, artifact card, or feature grid.</p></div>' +
-        '<div class="sections-guide-item"><strong>Lane 3 · Flexible section</strong><p>Build a one-off section by choosing a layout, visual preset, page placement, and optional content fields.</p></div>' +
-        '<div class="sections-guide-item"><strong>Lane 4 · Custom renderer</strong><p>Connect editable content to coded interactive markup. The renderer runs when registered; otherwise visitors see the selected fallback.</p></div>' +
-        '<div class="sections-guide-item"><strong>Hide vs Delete</strong><p><strong>Hide</strong> keeps the section in JSON with visible:false so it can be restored. <strong>Delete</strong> removes the section from the draft, but never deletes its uploaded images automatically.</p></div>' +
-        '<div class="sections-guide-item"><strong>Preview vs Publish</strong><p><strong>Preview</strong> opens browser-only draft content. <strong>Publish</strong> validates and writes the draft to GitHub so it becomes live.</p></div>' +
-      '</div></div>' +
-      '<div class="inline-actions">' + draftBtn("pages") + previewBtn() + saveBtn("pages") + '</div>';
-
-    /* lane picker */
-    html += '<div class="section-block"><h3>1 · Choose a lane</h3><p class="field-help" style="margin:-6px 0 14px;"><strong>Lane:</strong> ' + esc(SEC_HELP.lane) + '</p><div class="grid2">';
-    [1, 2, 3, 4].forEach(function (l) {
-      var active = secUI.lane === l;
-      html += '<button class="admin-btn ' + (active ? '' : 'ghost') + '" data-act="lane-pick" data-lane="' + l + '" style="text-align:left;display:block;width:100%;margin-bottom:8px;' + (active ? 'border-color:var(--clay);' : '') + '">' +
-        '<strong>Lane ' + l + ' — ' + SEC_LANES[l].name + '</strong><br>' +
-        '<span style="font-size:12px;color:var(--muted);font-weight:400;">' + SEC_LANES[l].hint + '</span></button>';
-    });
-    html += '</div></div>';
-
-    /* lane 1 → pointer to content tabs */
-    if (secUI.lane === 1) {
-      html += '<div class="section-block"><h3>Lane 1 · No-code content edit</h3>' +
-        '<p class="subhint">Simple edits happen directly on the content, not as new sections. Jump to the right tab:</p>' +
-        '<div class="inline-actions">' +
-        [["work", "Work projects"], ["labs", "Labs"], ["about", "About"], ["contact", "Contact"], ["site", "Site identity / nav / footer"]].map(function (t) {
-          return '<button class="admin-btn ghost" data-act="goto-tab" data-tab="' + t[0] + '">' + t[1] + ' →</button>';
-        }).join('') + '</div></div>';
-    } else if (!secUI.draft) {
-      html += '<div class="section-block"><h3>2 · ' + SEC_LANES[secUI.lane].name + '</h3>' +
-        '<button class="admin-btn" data-act="sec-new">+ New ' + SEC_LANES[secUI.lane].name.toLowerCase() + '</button></div>';
+  /* ── Composer preview shell + fit score ── */
+  function renderScreenShell(d) {
+    var screen = scrReg()[d.page] || {};
+    function liveBlock() {
+      var inner = window.CMSSections ? CMSSections.render(d) : '';
+      return '<div class="cs-live"><span class="cs-live-tag">YOUR NEW SECTION</span><div class="cs-live-inner">' + inner + '</div></div>';
     }
+    function slot(zoneId, label) { return d.zone === zoneId ? liveBlock() : '<div class="cs-slot">' + esc(label) + ' — empty</div>'; }
+    var head = '<div class="cs-bar"><i></i><i></i><i></i><span>' + esc(screen.file || (d.page + '.html')) + '</span></div>';
+    var body;
+    if (d.page === 'work') {
+      body =
+        '<div class="cs-mock"><span class="mk-k">Hero</span><h4>Work that proves product judgment</h4></div>' +
+        slot('after-hero', 'After hero') +
+        '<div class="cs-grid"><div class="cs-card">Project 01</div><div class="cs-card">Project 02</div><div class="cs-card">Project 03</div></div>' +
+        slot('after-work-grid', 'After the work list') +
+        slot('before-cta', 'Before the CTA') +
+        '<div class="cs-cta"><span class="mk-k">CTA</span><h4>Ready to discuss product work?</h4></div>';
+    } else {
+      var label = (screen.label || d.page);
+      body =
+        '<div class="cs-mock"><span class="mk-k">' + esc(label) + '</span><h4>' + esc(label) + ' page</h4></div>' +
+        '<div class="cs-mock" style="color:var(--muted);font-size:12px;">…page content…</div>' +
+        slot('end-of-page', 'End of page') +
+        '<div class="cs-cta"><span class="mk-k">Footer</span><h4>Let’s talk →</h4></div>';
+    }
+    return '<div class="composer-shell">' + head + '<div class="cs-stack">' + body + '</div></div>';
+  }
+  function compatMsgsHtml(res) {
+    if (!res || !res.messages.length) return '';
+    return '<div class="compat-msgs">' + res.messages.map(function (m) {
+      var icon = m.level === 'pass' ? '✓' : m.level === 'warn' ? '!' : m.level === 'block' ? '✕' : '·';
+      return '<div class="compat-msg ' + m.level + '">' + icon + '&nbsp;&nbsp;' + esc(m.text) + '</div>';
+    }).join('') + '</div>';
+  }
+  function scorePanelHtml(res) {
+    if (!res) return '<p class="subhint">Fit score appears once a component is placed.</p>';
+    var rows = [['Screen fit', res.breakdown.screenFit], ['Component fit', res.breakdown.componentFit], ['Required fields', res.breakdown.requiredFields], ['Preview confidence', res.breakdown.previewConfidence], ['Publish safety', res.breakdown.publishSafety]];
+    var bars = rows.map(function (r) {
+      var v = Math.max(0, Math.min(100, Math.round(r[1] || 0)));
+      return '<div class="score-bar"><span>' + r[0] + '</span><div class="track"><i style="width:' + v + '%"></i></div><b>' + v + '</b></div>';
+    }).join('');
+    var statusLabel = res.status === 'pass' ? 'READY' : res.status === 'warn' ? 'OK · WARNINGS' : 'BLOCKED';
+    return '<span class="compat-status ' + res.status + '">' + statusLabel + ' · ' + res.score + '/100</span>' +
+      '<div class="score-panel"><div class="score-circle" style="--deg:' + (res.score * 3.6) + ';"><div><b>' + res.score + '</b><small>fit score</small></div></div>' +
+      '<div class="score-bars">' + bars + '</div></div>' + compatMsgsHtml(res);
+  }
 
-    /* editor */
-    if (secUI.draft && secUI.lane !== 1) {
-      var d = secUI.draft, f = d.fields || {};
+  /* ── Composer board: screens → palette → zones ── */
+  function renderComposerBoard() {
+    var ids = Object.keys(scrReg());
+    if (!ids.length) return '<div class="section-block"><p class="subhint">Composer registry failed to load. Use Advanced (lanes) below.</p></div>';
+    if (ids.indexOf(secUI.screen) === -1) secUI.screen = ids[0];
+    var screen = scrReg()[secUI.screen];
+    var sections = (models.pages && models.pages.sections) || [];
+    var html = '<div class="section-block"><h3>1 · Choose a screen</h3><div class="composer-screens">' +
+      ids.map(function (id) {
+        var s = scrReg()[id];
+        return '<button class="composer-screen' + (secUI.screen === id ? ' active' : '') + '" data-act="screen-pick" data-screen="' + id + '">' +
+          '<strong>' + esc(s.label) + '</strong><span>' + esc(s.blurb || '') + '</span></button>';
+      }).join('') + '</div></div>';
+
+    var palette = compsForScreen(secUI.screen).map(function (c) {
+      return '<div class="composer-comp' + (secUI.selectedComponent === c.id ? ' selected' : '') + '" draggable="true" data-comp="' + c.id + '" data-act="comp-select">' +
+        '<strong>' + esc(c.label) + '</strong><span>' + esc(c.description) + '</span><span class="tag">Lane ' + c.lane + '</span></div>';
+    }).join('');
+
+    var zones = (screen.zones || []).map(function (z) {
+      var armed = secUI.selectedComponent && z.allowedComponents.indexOf(secUI.selectedComponent) !== -1;
+      var chips = sections.map(function (s, i) { return { s: s, i: i }; })
+        .filter(function (x) { return x.s.page === secUI.screen && x.s.zone === z.id; })
+        .map(function (x) {
+          var bad = x.s.component && z.allowedComponents.indexOf(x.s.component) === -1;
+          return '<span class="comp-chip' + (bad ? ' invalid' : '') + (x.s.visible === false ? ' hidden-chip' : '') + '">' +
+            esc((x.s.fields && x.s.fields.title) || '(untitled)') +
+            ' <button data-act="sec-edit" data-i="' + x.i + '">Edit</button></span>';
+        }).join('');
+      return '<div class="composer-zone' + (armed ? ' armed' : '') + '" data-zone="' + z.id + '" data-act="zone-place">' +
+        '<div class="composer-zone-head"><span class="zt">' + esc(z.label) + '</span>' +
+        '<span class="za">Allows: ' + esc(z.allowedComponents.join(', ')) + '</span></div>' +
+        '<p class="zd">' + esc(z.description) + '</p>' +
+        '<div class="composer-chips">' + (chips || '<span class="subhint" style="margin:0;">empty — drop a component here</span>') + '</div></div>';
+    }).join('');
+
+    html += '<div class="section-block"><h3>2 · Drag a component into a zone</h3>' +
+      '<p class="composer-hint">Desktop: drag a block onto a zone. Mobile: tap a block, then tap a zone.' +
+      (secUI.selectedComponent ? ' <strong>Selected: ' + esc((compById(secUI.selectedComponent) || {}).label || '') + '</strong> — now tap a zone.' : '') + '</p>' +
+      '<div class="composer-cols"><div class="composer-palette">' + palette + '</div>' +
+      '<div class="composer-zones">' + zones + '</div></div></div>';
+    return html;
+  }
+
+  /* ── Shared draft editor (composer-aware) ── */
+  function renderDraftEditor() {
+    var d = secUI.draft, f = d.fields || {};
+    var isComposer = !!d.component;
+    var comp = isComposer ? (compById(d.component) || {}) : null;
+    var html = '';
+    if (isComposer) {
+      var screen = scrReg()[d.page] || {}, zn = zoneOf(d.page, d.zone) || {};
+      html += '<div class="section-block"><h3>3 · Edit ' + esc(comp.label || 'section') +
+        ' <span class="pill" style="margin-left:8px;">' + esc(zn.label || d.zone || '') + ' · ' + esc(screen.label || d.page) + '</span></h3>' +
+        '<p class="field-help" style="margin:-6px 0 14px;">Layout and styling are set by the component. Fill the content below; the preview shows where it lands.</p>';
+    } else {
       html += '<div class="section-block"><h3>2 · Configure <span class="pill" style="margin-left:8px;">Lane ' + d.lane + ' · ' + SEC_LANES[d.lane].name + '</span></h3>' +
         '<p class="field-help" style="margin:-6px 0 16px;"><strong>Lane:</strong> ' + esc(SEC_HELP.lane) + '</p>';
-
       if (d.lane === 2) html += sf("Block type", "blockType", d.blockType, { select: secBlockTypes().map(function (b) { return { value: b.id, label: b.label }; }), help: SEC_HELP.blockType });
       if (d.lane === 3) html += '<div class="grid2">' +
         sf("Layout variant", "layout", d.layout, { select: secSchemaOpts("flexible-section", "layout", ["split", "stacked", "metric-led", "card-grid", "full-bleed"]), help: SEC_HELP.layout }) +
@@ -1079,47 +1255,105 @@ window.addEventListener("error", function (event) {
       if (d.lane === 4) html += '<div class="grid2">' +
         sf("Renderer name", "renderer", d.renderer, { select: secSchemaOpts("custom-renderer", "renderer", ["spherical-gallery", "interactive-canvas", "embedded-app", "advanced-animation", "custom-visualization"]), help: SEC_HELP.renderer }) +
         sf("Fallback mode", "fallback", d.fallback, { select: secSchemaOpts("custom-renderer", "fallback", ["static-image", "simple-card", "text-summary", "hide"]), help: SEC_HELP.fallback }) + '</div>';
-
       html += '<div class="grid2">' +
         sf("Page placement", "page", d.page, { select: secSchemaOpts("flexible-section", "page", ["work", "labs", "about", "contact"]), help: SEC_HELP.page }) +
         sf("Visible", "visible", String(d.visible !== false), { select: [{ value: "true", label: "Visible" }, { value: "false", label: "Hidden" }] }) + '</div>';
-      html += sf("Title", "fields.title", f.title);
-      html += sf("Body", "fields.body", f.body, { area: true });
-      if (d.lane === 4) html += sf("Developer note (for the renderer's coder)", "fields.note", f.note, { area: true });
+    }
 
-      /* optional fields present + add buttons */
-      var avail = SEC_OPTS_BY_LANE[d.lane] || [];
-      avail.forEach(function (k) { if (f[k] !== undefined) html += secOptGroup(k, d); });
-      var addable = avail.filter(function (k) { return f[k] === undefined; });
-      if (addable.length) {
-        html += '<div class="field"><label>Add optional fields</label><div class="inline-actions">' +
-          addable.map(function (k) { return '<button class="admin-btn ghost" data-act="sec-addopt" data-opt="' + k + '">+ ' + k.charAt(0).toUpperCase() + k.slice(1) + '</button>'; }).join('') +
-        '</div></div>';
-      }
+    html += sf("Title", "fields.title", f.title);
+    html += sf("Body", "fields.body", f.body, { area: true });
+    if (d.lane === 4) html += sf("Developer note (for the renderer's coder)", "fields.note", f.note, { area: true });
 
-      html += '<div class="inline-actions" style="margin-top:16px;">' +
-        '<button class="admin-btn" data-act="sec-save">' + (secUI.editIdx == null ? "Add section to page" : "Update section") + '</button>' +
-        '<button class="admin-btn ghost" data-act="sec-validate">Validate (incl. images &amp; links)</button>' +
-        '<button class="admin-btn ghost" data-act="sec-cancel">Cancel</button></div>';
-      html += '</div>';
+    var groupKeys = ["eyebrow", "image", "metrics", "quote", "cta", "evidence", "link", "cards"];
+    var avail;
+    if (isComposer) {
+      (comp.requiredFields || []).forEach(function (k) { if (groupKeys.indexOf(k) !== -1 && f[k] === undefined) f[k] = deepClone(SEC_OPT_DEFAULTS[k]); });
+      avail = (comp.requiredFields || []).concat(comp.optionalFields || []).filter(function (k) { return groupKeys.indexOf(k) !== -1; });
+      avail = avail.filter(function (k, i) { return avail.indexOf(k) === i; });
+    } else {
+      avail = SEC_OPTS_BY_LANE[d.lane] || [];
+    }
+    avail.forEach(function (k) { if (f[k] !== undefined) html += secOptGroup(k, d); });
+    var addable = avail.filter(function (k) { return f[k] === undefined; });
+    if (addable.length) {
+      html += '<div class="field"><label>Add optional fields</label><div class="inline-actions">' +
+        addable.map(function (k) { return '<button class="admin-btn ghost" data-act="sec-addopt" data-opt="' + k + '">+ ' + k.charAt(0).toUpperCase() + k.slice(1) + '</button>'; }).join('') + '</div></div>';
+    }
 
-      /* live preview — exact renderer the public pages use */
+    html += '<div class="inline-actions" style="margin-top:16px;">' +
+      '<button class="admin-btn" data-act="sec-save">' + (secUI.editIdx == null ? "Add to page" : "Update section") + '</button>' +
+      '<button class="admin-btn ghost" data-act="sec-validate">Validate (images &amp; links)</button>' +
+      '<button class="admin-btn ghost" data-act="sec-cancel">Cancel</button></div></div>';
+
+    if (isComposer) {
+      html += '<div class="section-block"><h3>4 · Preview in page context</h3>' +
+        '<p class="subhint">Your section (highlighted) shown where it will appear on ' + esc((scrReg()[d.page] || {}).label || d.page) + '.</p>' +
+        '<div id="secPreview"></div></div>';
+      html += '<div class="grid2" style="align-items:start;">' +
+        '<div class="section-block"><h3>5 · Fit &amp; validation</h3><div id="secScore"></div>' +
+        '<div class="validation" id="secChecks" style="margin-top:14px;"></div></div>' +
+        '<div class="section-block"><h3>6 · Hidden JSON</h3><pre id="secJson" style="font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--muted);white-space:pre-wrap;word-break:break-word;max-height:340px;overflow:auto;margin:0;"></pre></div></div>';
+    } else {
       html += '<div class="section-block"><h3>3 · Live preview</h3>' +
         '<p class="subhint">Rendered by js/sections.js — identical to what visitors will see (shown at 66%).</p>' +
         '<div id="secPreview" style="zoom:.66;border:1px dashed var(--line);border-radius:8px;overflow:hidden;background:var(--paper);"></div></div>';
-
-      /* validation + generated JSON */
       html += '<div class="grid2" style="align-items:start;">' +
         '<div class="section-block"><h3>4 · Validation</h3><div class="validation" id="secChecks"></div></div>' +
         '<div class="section-block"><h3>5 · Hidden JSON</h3><pre id="secJson" style="font-family:var(--mono);font-size:11px;line-height:1.6;color:var(--muted);white-space:pre-wrap;word-break:break-word;max-height:340px;overflow:auto;margin:0;"></pre></div></div>';
     }
+    return html;
+  }
+
+  function renderSections() {
+    var sections = (models.pages && models.pages.sections) || [];
+    var html = '<div class="section-block sections-guide"><h3>Screen composer</h3>' +
+      '<p class="subhint" style="margin-top:0;">Pick a <strong>screen</strong>, drag a <strong>component</strong> into a <strong>zone</strong>, fill its fields, and watch it land in a preview of the real page. Everything is stored in <strong>content/pages.json</strong> — you never edit JSON by hand.</p>' +
+      '<div class="sections-guide-grid">' +
+        '<div class="sections-guide-item"><strong>Screen → Zone → Component</strong><p>Screens are real pages. Zones are safe spots on them. Only components that fit a zone can be dropped there.</p></div>' +
+        '<div class="sections-guide-item"><strong>Fit score</strong><p>Each placement is scored for screen fit, zone fit, required fields, preview confidence, and publish safety. Blocked placements can’t be saved.</p></div>' +
+        '<div class="sections-guide-item"><strong>Hide vs Delete</strong><p><strong>Hide</strong> keeps the section in JSON (restorable). <strong>Delete</strong> removes it from the draft but never deletes uploaded images.</p></div>' +
+        '<div class="sections-guide-item"><strong>Preview vs Publish</strong><p><strong>Preview</strong> is browser-only. <strong>Publish</strong> validates and writes to GitHub so it goes live.</p></div>' +
+      '</div>' +
+      '<p class="field-help" style="margin-top:12px;">Case Studies &amp; Artifacts aren’t composer screens yet — they have no standalone public page. Edit them from their own tabs.</p></div>' +
+      '<div class="inline-actions">' + draftBtn("pages") + previewBtn() + saveBtn("pages") + '</div>' +
+      '<div class="composer-modebar">' +
+        '<button class="admin-btn' + (secUI.mode === 'advanced' ? ' ghost' : '') + '" data-act="mode-toggle" data-mode="composer">🧩 Composer</button>' +
+        '<button class="admin-btn' + (secUI.mode === 'advanced' ? '' : ' ghost') + '" data-act="mode-toggle" data-mode="advanced">⚙ Advanced (lanes)</button>' +
+      '</div>';
+
+    if (secUI.mode === 'advanced') {
+      html += '<div class="section-block"><h3>1 · Choose a lane</h3><p class="field-help" style="margin:-6px 0 14px;"><strong>Lane:</strong> ' + esc(SEC_HELP.lane) + '</p><div class="grid2">';
+      [1, 2, 3, 4].forEach(function (l) {
+        var active = secUI.lane === l;
+        html += '<button class="admin-btn ' + (active ? '' : 'ghost') + '" data-act="lane-pick" data-lane="' + l + '" style="text-align:left;display:block;width:100%;margin-bottom:8px;' + (active ? 'border-color:var(--clay);' : '') + '">' +
+          '<strong>Lane ' + l + ' — ' + SEC_LANES[l].name + '</strong><br>' +
+          '<span style="font-size:12px;color:var(--muted);font-weight:400;">' + SEC_LANES[l].hint + '</span></button>';
+      });
+      html += '</div></div>';
+      if (secUI.lane === 1) {
+        html += '<div class="section-block"><h3>Lane 1 · No-code content edit</h3>' +
+          '<p class="subhint">Simple edits happen directly on the content, not as new sections. Jump to the right tab:</p>' +
+          '<div class="inline-actions">' +
+          [["work", "Work projects"], ["labs", "Labs"], ["about", "About"], ["contact", "Contact"], ["site", "Site identity / nav / footer"]].map(function (t) {
+            return '<button class="admin-btn ghost" data-act="goto-tab" data-tab="' + t[0] + '">' + t[1] + ' →</button>';
+          }).join('') + '</div></div>';
+      } else if (!secUI.draft) {
+        html += '<div class="section-block"><h3>2 · ' + SEC_LANES[secUI.lane].name + '</h3>' +
+          '<button class="admin-btn" data-act="sec-new">+ New ' + SEC_LANES[secUI.lane].name.toLowerCase() + '</button></div>';
+      }
+    } else {
+      html += renderComposerBoard();
+    }
+
+    /* shared editor (shown whenever a draft is active, except advanced lane 1) */
+    if (secUI.draft && (secUI.mode === 'composer' || secUI.lane !== 1)) html += renderDraftEditor();
 
     /* existing sections list */
     html += '<div class="section-block"><h3>Sections on your pages (' + sections.length + ')</h3>';
-    if (!sections.length) html += '<p class="subhint">None yet. Pick a lane above and add one.</p>';
+    if (!sections.length) html += '<p class="subhint">None yet. Pick a screen above and drag a component into a zone.</p>';
     sections.forEach(function (s, i) {
       var fT = (s.fields && s.fields.title) || "(untitled)";
-      var kind = s.lane === 2 ? ("block · " + (s.blockType || "?")) : s.lane === 4 ? ("renderer · " + (s.renderer || "?")) : ("flexible · " + (s.layout || "?") + " / " + (s.preset || "?"));
+      var kind = s.component ? (s.component + (s.zone ? " · " + s.zone : "")) : (s.lane === 2 ? ("block · " + (s.blockType || "?")) : s.lane === 4 ? ("renderer · " + (s.renderer || "?")) : ("flexible · " + (s.layout || "?") + " / " + (s.preset || "?")));
       html += '<div class="prod-mini' + (s.visible === false ? ' hidden-section' : '') + '"><div class="prod-mini-bar">' +
         '<span class="pmn">' + esc(fT) +
           ' <span class="pill" style="margin-left:6px;">L' + s.lane + '</span>' +
@@ -1173,7 +1407,26 @@ window.addEventListener("error", function (event) {
     if (act === "lane-pick") { secUI.lane = +el.getAttribute("data-lane"); secUI.draft = null; secUI.editIdx = null; renderTab("sections"); return true; }
     if (act === "goto-tab") { currentTab = el.getAttribute("data-tab"); openState = {}; renderTabs(); renderTab(currentTab); return true; }
     if (act === "sec-new") { secUI.draft = newSectionDraft(secUI.lane); secUI.editIdx = null; renderTab("sections"); secLiveUpdate(); return true; }
-    if (act === "sec-edit") { secUI.draft = deepClone(sections[i]); secUI.editIdx = i; secUI.lane = secUI.draft.lane; renderTab("sections"); secLiveUpdate(); return true; }
+    /* ── composer actions ── */
+    if (act === "mode-toggle") { secUI.mode = el.getAttribute("data-mode"); secUI.draft = null; secUI.editIdx = null; secUI.selectedComponent = null; renderTab("sections"); return true; }
+    if (act === "screen-pick") { secUI.screen = el.getAttribute("data-screen"); secUI.selectedComponent = null; secUI.draft = null; secUI.editIdx = null; renderTab("sections"); return true; }
+    if (act === "comp-select") {
+      var cid = el.getAttribute("data-comp");
+      secUI.selectedComponent = secUI.selectedComponent === cid ? null : cid;
+      renderTab("sections"); return true;
+    }
+    if (act === "zone-place") {
+      var zoneId = el.getAttribute("data-zone");
+      if (!secUI.selectedComponent) { ghStatus("Pick a component first, then tap a zone.", "busy"); return true; }
+      composerPlace(secUI.selectedComponent, secUI.screen, zoneId);
+      return true;
+    }
+    if (act === "sec-edit") {
+      secUI.draft = deepClone(sections[i]); secUI.editIdx = i; secUI.lane = secUI.draft.lane;
+      if (secUI.draft.component) { secUI.mode = "composer"; secUI.screen = secUI.draft.page; }
+      else { secUI.mode = "advanced"; }
+      renderTab("sections"); secLiveUpdate(); return true;
+    }
     if (act === "sec-cancel") { secUI.draft = null; secUI.editIdx = null; renderTab("sections"); return true; }
     if (act === "sec-dup" && sections[i]) {
       var copy = deepClone(sections[i]);
@@ -1226,6 +1479,14 @@ window.addEventListener("error", function (event) {
       return true;
     }
     if (act === "sec-save") {
+      /* composer placements are gated on the fit engine too */
+      var compat = secCompat(secUI.draft);
+      if (compat && compat.status === "block") {
+        var sc = document.getElementById("secScore"); if (sc) sc.innerHTML = scorePanelHtml(compat);
+        alert("This placement is blocked — fix these before saving:\n\n" +
+          compat.messages.filter(function (m) { return m.level === "block"; }).map(function (m) { return "• " + m.text; }).join("\n"));
+        return true;
+      }
       var checks = secRunChecks();
       var errs = checks.filter(function (c) { return !c.pass && c.level === "error"; });
       if (errs.length) {
@@ -1243,6 +1504,18 @@ window.addEventListener("error", function (event) {
       return true;
     }
     return false;
+  }
+
+  /* Place a component into a zone → focused composer draft (drag drop or tap). */
+  function composerPlace(componentId, screenId, zoneId) {
+    var d = newComponentDraft(componentId, screenId, zoneId);
+    if (!d) { ghStatus("Component registry not loaded.", "err"); return; }
+    secUI.draft = d; secUI.editIdx = null; secUI.selectedComponent = null; secUI.mode = "composer";
+    renderTab("sections"); secLiveUpdate();
+    var z = zoneOf(screenId, zoneId);
+    if (z && z.allowedComponents.indexOf(componentId) === -1) {
+      ghStatus("Heads up: that component isn’t ideal for this zone — check the fit score below.", "busy");
+    }
   }
 
   /* ---- TABS + RENDER ---- */
@@ -1673,11 +1946,23 @@ window.addEventListener("error", function (event) {
     panel.addEventListener("change", function (e) { if (e.target.hasAttribute("data-sec-img")) uploadSectionImage(e.target); });
     /* ── image DnD ── */
     panel.addEventListener("dragover", function (e) {
+      var zone = e.target.closest(".composer-zone"); if (zone) { e.preventDefault(); e.dataTransfer.dropEffect = "copy"; zone.classList.add("dragover"); return; }
       var d = e.target.closest(".img-drop"); if (d) { e.preventDefault(); d.classList.add("drag"); return; }
       var item = e.target.closest("[data-dg-i]"); if (item && _dg) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }
     });
-    panel.addEventListener("dragleave", function (e) { var d = e.target.closest(".img-drop"); if (d) d.classList.remove("drag"); });
+    panel.addEventListener("dragleave", function (e) {
+      var zone = e.target.closest(".composer-zone"); if (zone) zone.classList.remove("dragover");
+      var d = e.target.closest(".img-drop"); if (d) d.classList.remove("drag");
+    });
     panel.addEventListener("drop", function (e) {
+      /* composer component → zone */
+      var zone = e.target.closest(".composer-zone");
+      if (zone) {
+        e.preventDefault(); zone.classList.remove("dragover");
+        var cid = e.dataTransfer.getData("text/cms-comp") || e.dataTransfer.getData("text/plain");
+        if (cid && compById(cid)) composerPlace(cid, secUI.screen, zone.getAttribute("data-zone"));
+        return;
+      }
       /* image drop */
       var d = e.target.closest(".img-drop");
       if (d) { e.preventDefault(); d.classList.remove("drag"); var inp = d.querySelector("[data-imgfile]"), files = e.dataTransfer && e.dataTransfer.files; if (inp && files && files.length) uploadImage(inp, files[0]); return; }
@@ -1687,6 +1972,8 @@ window.addEventListener("error", function (event) {
     });
     /* ── drag-sort for nav / pages lists ── */
     panel.addEventListener("dragstart", function (e) {
+      var comp = e.target.closest(".composer-comp");
+      if (comp) { e.dataTransfer.effectAllowed = "copy"; e.dataTransfer.setData("text/cms-comp", comp.getAttribute("data-comp")); e.dataTransfer.setData("text/plain", comp.getAttribute("data-comp")); return; }
       var item = e.target.closest("[data-dg-i]"); if (!item) return;
       _dg = { model: item.dataset.model, path: item.dataset.dgPath, fromIdx: +item.dataset.dgI, toIdx: +item.dataset.dgI };
       e.dataTransfer.effectAllowed = "move";
@@ -1712,7 +1999,7 @@ window.addEventListener("error", function (event) {
     panel.addEventListener("click", function (e) {
       var el = e.target.closest("[data-act]"); if (!el) return;
       var act = el.getAttribute("data-act");
-      if (/^(sec-|lane-pick|goto-tab)/.test(act) && handleSectionAct(act, el)) return;
+      if (/^(sec-|lane-pick|goto-tab|mode-toggle|screen-pick|comp-select|zone-place)/.test(act) && handleSectionAct(act, el)) return;
       if (act === "toggle") { var key = el.getAttribute("data-key"); openState[key] = !openState[key]; renderTab(currentTab); return; }
       if (act === "save") { showPublishDialog(); return; }
       if (act === "save-draft") { saveDraft(el.getAttribute("data-model")); return; }

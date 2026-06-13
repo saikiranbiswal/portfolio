@@ -28,33 +28,45 @@
   }
   function pad(n) { return String(n).padStart(2, "0"); }
 
+  function mark(el, path, opts) {
+    if (!el) return el;
+    el.setAttribute("data-cms-path", path);
+    if (opts && opts.multiline) el.setAttribute("data-cms-multiline", "");
+    if (opts && opts.image) { el.setAttribute("data-cms-image", ""); el.setAttribute("data-cms-dir", opts.dir || "assets/sections"); }
+    return el;
+  }
+
   function hydrateHero(meta) {
     var h = meta && meta.hero;
     if (!h) return;
     var heroEl = document.querySelector("header.hero");
     if (!heroEl) return;
     var eyebrow = heroEl.querySelector("p.eyebrow");
-    if (eyebrow && h.eyebrow != null)
+    if (eyebrow && h.eyebrow != null) {
       eyebrow.innerHTML = esc(h.eyebrow).replace(/·/g, '<span class="dot">·</span>');
+      mark(eyebrow, "meta.hero.eyebrow");
+    }
     var h1 = heroEl.querySelector("h1.display");
-    if (h1 && h.heading != null)
+    if (h1 && h.heading != null) {
       h1.innerHTML = String(h.heading).split("\n").filter(Boolean).map(function (line) {
         return '<span class="line"><span>' + line + '</span></span>';
       }).join("");
+      mark(h1, "meta.hero.heading", { multiline: true });
+    }
     var lead = heroEl.querySelector("p.lead");
-    if (lead && h.lead != null) lead.textContent = h.lead;
+    if (lead && h.lead != null) { lead.textContent = h.lead; mark(lead, "meta.hero.lead", { multiline: true }); }
     if (h.stats) {
       var statEls = heroEl.querySelectorAll(".stat");
       h.stats.forEach(function (s, i) {
         if (!statEls[i]) return;
         var numEl = statEls[i].querySelector(".count-num");
-        if (numEl) { numEl.setAttribute("data-target", s.n); numEl.textContent = s.n; }
+        if (numEl) { numEl.setAttribute("data-target", s.n); numEl.textContent = s.n; mark(numEl, "meta.hero.stats." + i + ".n"); }
         var lEl = statEls[i].querySelector(".l");
-        if (lEl) lEl.textContent = s.l;
+        if (lEl) { lEl.textContent = s.l; mark(lEl, "meta.hero.stats." + i + ".l"); }
       });
     }
     var col = heroEl.querySelector("p.colophon");
-    if (col && h.colophon != null) col.textContent = h.colophon;
+    if (col && h.colophon != null) { col.textContent = h.colophon; mark(col, "meta.hero.colophon"); }
   }
 
   function hydrateChrome(meta) {
@@ -90,8 +102,8 @@
       '<a class="work-row" href="project.html?id=' + esc(p.id) + '">' +
         '<span class="idx">' + pad(i + 1) + '</span>' +
         '<span class="titles">' +
-          '<span class="t">' + esc(p.name) + '</span>' +
-          '<span class="d">' + esc(p.description) + '</span>' +
+          '<span class="t" data-cms-path="projects[id=' + esc(p.id) + '].name">' + esc(p.name) + '</span>' +
+          '<span class="d" data-cms-path="projects[id=' + esc(p.id) + '].description" data-cms-multiline>' + esc(p.description) + '</span>' +
         '</span>' +
         '<span class="meta">' +
           (p.screenshot ? cardShot(p) : '') +
@@ -114,14 +126,14 @@
             (p.tags || []).slice(0, 3).map(t => '<span class="pill">' + esc(t) + '</span>').join("") +
             '<span class="pill pill-int">▸ Interactive</span>' +
           '</div>' +
-          '<h3 class="display">' + esc(p.name) + '</h3>' +
-          '<p class="body-text">' + esc(p.description) + '</p>' +
+          '<h3 class="display" data-cms-path="projects[id=' + esc(p.id) + '].name">' + esc(p.name) + '</h3>' +
+          '<p class="body-text" data-cms-path="projects[id=' + esc(p.id) + '].description" data-cms-multiline>' + esc(p.description) + '</p>' +
           '<div style="margin-top:26px;" class="btn">' +
             (p.caseStudy ? 'Walk the case study' : 'View the full story') +
             ' <span class="arrow">→</span></div>' +
         '</div>' +
         '<div class="flag-img-col">' +
-          '<div class="ph">' + heroShot(p) + '</div>' +
+          '<div class="ph" data-cms-path="projects[id=' + esc(p.id) + '].screenshot" data-cms-image data-cms-dir="assets/screenshots">' + heroShot(p) + '</div>' +
           '<p class="figcap" style="margin-top:10px;">FIG. 0' + (flip ? '2' : '1') + ' — ' + esc(p.name.toUpperCase()) + ' · FLAGSHIP CASE STUDY</p>' +
         '</div>' +
       '</a>';
@@ -178,6 +190,7 @@
   }
 
   window.renderShowcase = async function () {
+    document.body.setAttribute("data-cms-model", "products");
     if (window.SCFG && SCFG.ready) await SCFG.ready;
     let data;
     try { data = await loadProducts(); }

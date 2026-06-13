@@ -27,5 +27,14 @@
       "v": "Pune / Bengaluru · Remote",
       "href": "#"
     }
-  ]
+  ],
+  "work": {
+    "visible": true,
+    "eyebrow": "Or start with the work",
+    "links": [
+      { "label": "FIG. 01 · AI Collections Cloud", "href": "case-studies/collections-cloud.html" },
+      { "label": "FIG. 02 · LOS — Loan Origination", "href": "case-studies/lending-os.html" }
+    ]
+  },
+  "toast": "COPIED — NOW WRITE THE HARD PROBLEM"
 }

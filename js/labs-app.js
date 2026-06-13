@@ -16,6 +16,14 @@
   // falling back to a local draft / the seed for file:// use.
   var model = deepClone(window.LABS_SEED || { meta: {}, labs: [] });
 
+  /* When opened inside the admin Visual editor pane (?edit=1 in an iframe), the
+     admin's inline-editor.js owns editing + saving; labs' own dormant edit
+     machinery stands down so the two don't fight over the same nodes. */
+  var ADMIN_EDIT = (function () {
+    try { return new URLSearchParams(location.search).get("edit") === "1" && window.parent && window.parent !== window; }
+    catch (e) { return false; }
+  }());
+
   var saveTimer = null;
   function save() {
     clearTimeout(saveTimer);
@@ -51,10 +59,12 @@
       'style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" ' +
       'onerror="this.outerHTML=\'<span class=&quot;ph-label&quot;>' + esc(label) + '</span>\'">';
   }
-  /* editable span/heading. tag = element tag, path = model path, cls = classes */
+  /* editable span/heading. tag = element tag, path = model path, cls = classes.
+     Also carries data-cms-path so the admin Visual Inline Editor (inline-editor.js)
+     can wire it when the page is opened inside the admin edit pane. */
   function ed(tag, path, cls, extra) {
     var v = getPath(path);
-    return "<" + tag + ' class="' + (cls || "") + '" data-edit data-path="' + path + '"' +
+    return "<" + tag + ' class="' + (cls || "") + '" data-edit data-path="' + path + '" data-cms-path="' + path + '"' +
       (extra || "") + ">" + esc(v) + "</" + tag + ">";
   }
 
@@ -340,13 +350,13 @@
               '<a class="btn" data-explore href="' + esc(p.url) + '" target="_blank" rel="noopener">Explore ' + esc(p.name) + ' <span class="arrow">→</span></a>' +
             '</div>' +
           '</div>' +
-          '<div class="ph prod-cover">' + phShot(p.image, p.name.toLowerCase() + ' — product shot') + '</div>' +
+          '<div class="ph prod-cover" data-cms-path="' + base + '.image" data-cms-image data-cms-dir="assets/labs">' + phShot(p.image, p.name.toLowerCase() + ' — product shot') + '</div>' +
         '</div>' +
 
         '<div class="prod-body">' +
           '<div class="prod-about">' +
             '<div class="sec-label">What it does</div>' +
-            '<div data-edit data-path="' + base + '.what" data-multiline class="prod-prose">' + paras + '</div>' +
+            '<div data-edit data-path="' + base + '.what" data-cms-path="' + base + '.what" data-multiline data-cms-multiline class="prod-prose">' + paras + '</div>' +
             '<ul class="feature-list">' + feats + '</ul>' +
           '</div>' +
 
@@ -575,6 +585,7 @@
   var editing = false;
 
   function applyEditState() {
+    if (ADMIN_EDIT) return; // admin inline-editor.js controls contenteditable here
     document.body.classList.toggle("editing", editing);
     var nodes = app.querySelectorAll("[data-edit]");
     for (var i = 0; i < nodes.length; i++) {
@@ -586,6 +597,7 @@
 
   /* save edits back to model */
   app.addEventListener("input", function (e) {
+    if (ADMIN_EDIT) return; // admin bridge persists; don't double-write labs' own draft
     var el = e.target.closest("[data-edit]");
     if (!el) return;
     var path = el.getAttribute("data-path");
@@ -602,6 +614,7 @@
 
   /* prevent Enter from creating newlines in single-line fields */
   app.addEventListener("keydown", function (e) {
+    if (ADMIN_EDIT) return; // admin inline-editor.js handles Enter here
     if (e.key !== "Enter") return;
     var el = e.target.closest("[data-edit]");
     if (el && !el.hasAttribute("data-multiline")) { e.preventDefault(); el.blur(); }
@@ -617,6 +630,7 @@
     model = saved ? JSON.parse(saved) : deepClone(window.LABS_SEED || { meta: {}, labs: [] });
   }
   function boot() {
+    document.body.setAttribute("data-cms-model", "labs");
     var load = window.PreviewData
       ? window.PreviewData.load("labs", "content/labs.json")
       : fetch("content/labs.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; });

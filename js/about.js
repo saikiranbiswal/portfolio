@@ -29,6 +29,13 @@
       'style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover" ' +
       'onerror="this.outerHTML=\'<span class=&quot;ph-label&quot;>' + esc(label) + '</span>\'">';
   }
+  // data-cms-path attribute helper for marked-up editable nodes
+  function cp(path, opts) {
+    var s = ' data-cms-path="' + esc(path) + '"';
+    if (opts && opts.multiline) s += ' data-cms-multiline';
+    if (opts && opts.image) s += ' data-cms-image data-cms-dir="' + (opts.dir || "assets/sections") + '"';
+    return s;
+  }
 
   async function loadJSON(path) {
     if (window.PreviewData) return window.PreviewData.load(path.split("/").pop().replace(".json", ""), path);
@@ -39,27 +46,27 @@
   function render(meta, d, featured) {
     featured = featured || [];
     var paras = (d.hero.paras || []).map(function (p, i) {
-      return '<p class="body-text" style="margin-top:' + (i === 0 ? 20 : 16) + 'px;">' + esc(p) + '</p>';
+      return '<p class="body-text"' + cp("hero.paras." + i, { multiline: true }) + ' style="margin-top:' + (i === 0 ? 20 : 16) + 'px;">' + esc(p) + '</p>';
     }).join("");
 
-    var tl = (d.timeline || []).map(function (r) {
+    var tl = (d.timeline || []).map(function (r, i) {
       return '<div class="tl-row">' +
-        '<div class="yr">' + esc(r.yr) + '</div>' +
-        '<div><h4>' + esc(r.h4) + '</h4><div class="org">' + esc(r.org) + '</div><p>' + esc(r.p) + '</p></div>' +
+        '<div class="yr"' + cp("timeline." + i + ".yr") + '>' + esc(r.yr) + '</div>' +
+        '<div><h4' + cp("timeline." + i + ".h4") + '>' + esc(r.h4) + '</h4><div class="org"' + cp("timeline." + i + ".org") + '>' + esc(r.org) + '</div><p' + cp("timeline." + i + ".p", { multiline: true }) + '>' + esc(r.p) + '</p></div>' +
       '</div>';
     }).join("");
 
-    var pr = (d.principles || []).map(function (p) {
+    var pr = (d.principles || []).map(function (p, i) {
       return '<div class="principle" style="background:var(--dark);">' +
-        '<div class="n">' + esc(p.n) + '</div>' +
-        '<h4 style="color:#f3efe7;">' + esc(p.h4) + '</h4>' +
-        '<p style="color:#b4aa99;">' + esc(p.p) + '</p>' +
+        '<div class="n"' + cp("principles." + i + ".n") + '>' + esc(p.n) + '</div>' +
+        '<h4 style="color:#f3efe7;"' + cp("principles." + i + ".h4") + '>' + esc(p.h4) + '</h4>' +
+        '<p style="color:#b4aa99;"' + cp("principles." + i + ".p", { multiline: true }) + '>' + esc(p.p) + '</p>' +
       '</div>';
     }).join("");
 
-    var sk = (d.skills || []).map(function (c) {
-      return '<div><h4>' + esc(c.h) + '</h4><ul>' +
-        (c.items || []).map(function (it) { return '<li>' + esc(it) + '</li>'; }).join("") +
+    var sk = (d.skills || []).map(function (c, i) {
+      return '<div><h4' + cp("skills." + i + ".h") + '>' + esc(c.h) + '</h4><ul>' +
+        (c.items || []).map(function (it, j) { return '<li' + cp("skills." + i + ".items." + j) + '>' + esc(it) + '</li>'; }).join("") +
       '</ul></div>';
     }).join("");
 
@@ -67,25 +74,25 @@
       '<header class="section wrap" style="padding-bottom:clamp(40px,6vw,72px);">' +
         '<div class="about-hero">' +
           '<div class="reveal">' +
-            '<p class="eyebrow">' + esc(d.hero.eyebrow) + '</p>' +
-            '<h1 class="display" style="margin-top:20px;max-width:14ch;">' + rich(d.hero.heading) + '</h1>' +
+            '<p class="eyebrow"' + cp("hero.eyebrow") + '>' + esc(d.hero.eyebrow) + '</p>' +
+            '<h1 class="display" style="margin-top:20px;max-width:14ch;"' + cp("hero.heading", { multiline: true }) + '>' + rich(d.hero.heading) + '</h1>' +
           '</div>' +
-          '<div class="ph portrait reveal">' + phShot(d.hero.portrait, "portrait") + '</div>' +
+          '<div class="ph portrait reveal"' + cp("hero.portrait", { image: true, dir: "assets/about" }) + '>' + phShot(d.hero.portrait, "portrait") + '</div>' +
         '</div>' +
         '<div class="reveal" style="margin-top:clamp(36px,5vw,64px);max-width:62ch;">' +
-          '<p class="lead" style="max-width:none;">' + esc(d.hero.lead) + '</p>' + paras +
+          '<p class="lead" style="max-width:none;"' + cp("hero.lead", { multiline: true }) + '>' + esc(d.hero.lead) + '</p>' + paras +
         '</div>' +
       '</header>' +
       '<section class="section wrap" style="padding-top:0;">' +
-        '<div class="sec-head reveal"><p class="eyebrow">' + esc(d.timelineEyebrow) + '</p><span class="count">' + esc(d.timelineCount) + '</span></div>' +
+        '<div class="sec-head reveal"><p class="eyebrow"' + cp("timelineEyebrow") + '>' + esc(d.timelineEyebrow) + '</p><span class="count"' + cp("timelineCount") + '>' + esc(d.timelineCount) + '</span></div>' +
         '<div class="timeline reveal">' + tl + '</div>' +
       '</section>' +
       '<section class="band"><div class="section wrap">' +
-        '<div class="sec-head reveal"><p class="eyebrow">' + esc(d.principlesEyebrow) + '</p><span class="count" style="color:#8a8071;">' + esc(d.principlesCount) + '</span></div>' +
+        '<div class="sec-head reveal"><p class="eyebrow"' + cp("principlesEyebrow") + '>' + esc(d.principlesEyebrow) + '</p><span class="count" style="color:#8a8071;"' + cp("principlesCount") + '>' + esc(d.principlesCount) + '</span></div>' +
         '<div class="principles reveal" style="background:#322a20;border-color:#322a20;">' + pr + '</div>' +
       '</div></section>' +
       '<section class="section wrap">' +
-        '<div class="sec-head reveal"><p class="eyebrow">' + esc(d.skillsEyebrow) + '</p><span class="count">' + esc(d.skillsCount) + '</span></div>' +
+        '<div class="sec-head reveal"><p class="eyebrow"' + cp("skillsEyebrow") + '>' + esc(d.skillsEyebrow) + '</p><span class="count"' + cp("skillsCount") + '>' + esc(d.skillsCount) + '</span></div>' +
         '<div class="skill-cols reveal">' + sk + '</div>' +
       '</section>' +
       '<section class="section wrap">' +
@@ -122,15 +129,16 @@
       '</section>' +
       '<section class="cta-band section">' +
         '<div class="wrap cta reveal">' +
-          '<p class="eyebrow">' + esc(d.cta.eyebrow) + '</p>' +
-          '<h2 class="display" style="margin:18px auto 16px;max-width:18ch;">' + rich(d.cta.heading) + '</h2>' +
-          '<a href="contact.html" class="btn" style="margin-top:28px;background:var(--clay-deep);border-color:var(--clay-deep);">' + esc(d.cta.btn) + ' <span class="arrow">→</span></a>' +
+          '<p class="eyebrow"' + cp("cta.eyebrow") + '>' + esc(d.cta.eyebrow) + '</p>' +
+          '<h2 class="display" style="margin:18px auto 16px;max-width:18ch;"' + cp("cta.heading", { multiline: true }) + '>' + rich(d.cta.heading) + '</h2>' +
+          '<a href="contact.html" class="btn" style="margin-top:28px;background:var(--clay-deep);border-color:var(--clay-deep);"><span' + cp("cta.btn") + '>' + esc(d.cta.btn) + '</span> <span class="arrow">→</span></a>' +
         '</div>' +
       '</section>' +
       SCFG.footer(meta);
   }
 
   (async function () {
+    document.body.setAttribute("data-cms-model", "about");
     if (window.SCFG && SCFG.ready) await SCFG.ready;
     var prod = await loadJSON("content/products.json");
     var meta = (prod && prod.meta) || META_FALLBACK;

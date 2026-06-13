@@ -1519,8 +1519,8 @@ window.addEventListener("error", function (event) {
   }
 
   /* ---- TABS + RENDER ---- */
-  var TABS = [["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["sections","Sections"],["caseStudies","Case studies"],["artifacts","Artifacts"],["site","Site"],["structure","Structure"],["files","Files"]];
-  var RENDER = { site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact,
+  var TABS = [["visual","Visual editor"],["work","Work"],["labs","Labs"],["about","About"],["contact","Contact"],["sections","Sections"],["caseStudies","Case studies"],["artifacts","Artifacts"],["site","Site"],["structure","Structure"],["files","Files"]];
+  var RENDER = { visual: renderVisual, site: renderSite, work: renderWork, labs: renderLabs, about: renderAbout, contact: renderContact,
     sections: renderSections, caseStudies: function () { return feRender("caseStudies"); }, artifacts: function () { return feRender("artifacts"); },
     structure: renderStructure, files: renderFiles };
   function renderTabs() {
@@ -1725,9 +1725,106 @@ window.addEventListener("error", function (event) {
       publishOne(names[i]).then(function (r) { results.push(r); next(i + 1); });
     })(0);
   }
-  var TAB_PREVIEW = { site:"index.html", work:"products.html", labs:"labs.html", about:"about.html", contact:"contact.html",
+  var TAB_PREVIEW = { visual:"products.html", site:"index.html", work:"products.html", labs:"labs.html", about:"about.html", contact:"contact.html",
     sections:"products.html", caseStudies:"products.html", artifacts:"products.html", structure:"index.html", files:"index.html" };
   var PAGE_FILES = { work:"products.html", labs:"labs.html", about:"about.html", contact:"contact.html" };
+
+  /* ── Visual Inline Editor (admin preview pane) ──────────────────────────
+     Renders a real page in an iframe (?preview=1&edit=1); js/inline-editor.js
+     inside posts edits up here, which we map onto the in-memory content model
+     and into the draft. Images route through the existing GitHub uploader. */
+  var VE_MODEL = { work:"products", labs:"labs", about:"about", contact:"contact" };
+  var veUI = { page: "work" };
+  var _veWired = false, _vePendingImage = null, _veFileInput = null;
+
+  function renderVisual() {
+    var pages = Object.keys(PAGE_FILES);
+    var html = '<div class="section-block sections-guide"><h3>Visual inline editor</h3>' +
+      '<p class="subhint" style="margin-top:0;">Click any highlighted text on the page below to edit it in place; click an image to replace it. Edits are saved to your <strong>draft</strong> automatically — hit <strong>↑ Save &amp; publish</strong> when you’re ready to go live.</p>' +
+      '<p class="field-help" style="margin-top:8px;">Shared nav, footer and the CTA band are edited in the <strong>Site</strong> tab; whole new sections are built in the <strong>Sections</strong> composer.</p></div>' +
+      '<div class="inline-actions">' + draftBtn("products") + saveBtn("products") + '</div>' +
+      '<div class="section-block"><h3>1 · Choose a page</h3><div class="composer-screens">' +
+        pages.map(function (p) {
+          return '<button class="composer-screen' + (veUI.page === p ? ' active' : '') + '" data-act="ve-page" data-page="' + p + '">' +
+            '<strong>' + esc(({work:"Work",labs:"Labs",about:"About",contact:"Contact"})[p]) + '</strong>' +
+            '<span>' + esc(PAGE_FILES[p]) + '</span></button>';
+        }).join('') + '</div></div>' +
+      '<div class="section-block"><h3>2 · Edit the page</h3>' +
+        '<div id="veStatus" class="subhint" style="margin:0 0 10px;">Loading preview…</div>' +
+        '<iframe id="veFrame" title="Visual editor preview" style="width:100%;height:72vh;border:1px solid var(--line);border-radius:8px;background:var(--paper);"></iframe>' +
+      '</div>';
+    veEnsureBridge();
+    setTimeout(veMount, 0); // run after the panel HTML is in the DOM
+    return html;
+  }
+
+  function veMount() {
+    var frame = document.getElementById("veFrame");
+    if (!frame) return;
+    Promise.all(MODEL_NAMES.map(saveDraft)).then(function () {
+      writePreview(); // seed cms_preview_* so the iframe shows the current draft
+      var file = PAGE_FILES[veUI.page] || "products.html";
+      frame.src = file + "?preview=1&edit=1&v=" + Date.now();
+    });
+  }
+
+  /* Resolve a data-cms-path (supports `key[id=value]` array segments) and set it. */
+  function setPathByCms(root, cmsPath, val) {
+    if (!root || !cmsPath) return false;
+    var raw = cmsPath.split("."), cur = root, parent = null, lastKey = null;
+    for (var i = 0; i < raw.length; i++) {
+      var seg = raw[i], m = seg.match(/^([a-zA-Z0-9_]+)\[id=(.+)\]$/);
+      if (m) {
+        var arr = cur ? cur[m[1]] : null;
+        if (!Array.isArray(arr)) return false;
+        var idx = -1;
+        for (var k = 0; k < arr.length; k++) { if (arr[k] && String(arr[k].id) === m[2]) { idx = k; break; } }
+        if (idx < 0) return false;
+        parent = arr; lastKey = idx; cur = arr[idx];
+      } else {
+        parent = cur; lastKey = seg; cur = cur ? cur[seg] : undefined;
+      }
+    }
+    if (parent == null || lastKey == null) return false;
+    parent[lastKey] = val;
+    return true;
+  }
+
+  function veEnsureBridge() {
+    if (_veWired) return;
+    _veWired = true;
+    _veFileInput = document.createElement("input");
+    _veFileInput.type = "file"; _veFileInput.accept = "image/*"; _veFileInput.style.display = "none";
+    document.body.appendChild(_veFileInput);
+    _veFileInput.addEventListener("change", function () {
+      var file = _veFileInput.files && _veFileInput.files[0], job = _vePendingImage;
+      _veFileInput.value = ""; _vePendingImage = null;
+      if (!file || !job) return;
+      if (!requireToken()) return;
+      ghStatus("Committing " + esc(file.name) + " to " + esc(job.dir) + "…", "busy");
+      ghUploadBinary(file, job.dir, (job.path || "image").replace(/[^a-z0-9]+/gi, "-")).then(function (fname) {
+        setPathByCms(models[job.model], job.path, fname);
+        saveDraft(job.model).then(function () { updateSyncPill(); writePreview(); veMount(); });
+        ghStatus("✓ Image updated: " + esc(fname), "ok");
+      }).catch(function (e) { ghStatus("✗ " + esc(e.message), "err"); });
+    });
+
+    window.addEventListener("message", function (e) {
+      if (e.origin !== location.origin || !e.data || typeof e.data !== "object") return;
+      var d = e.data, model = d.model && models[d.model] ? d.model : VE_MODEL[veUI.page];
+      if (d.type === "cms-ready") { var s = document.getElementById("veStatus"); if (s) s.textContent = d.count + " editable fields on this page · click to edit"; return; }
+      if (d.type === "cms-edit") {
+        if (!model) return;
+        if (setPathByCms(models[model], d.path, d.value)) { saveDraft(model).then(updateSyncPill); }
+        return;
+      }
+      if (d.type === "cms-edit-image") {
+        _vePendingImage = { model: model, path: d.path, dir: d.dir || "assets/sections" };
+        if (_veFileInput) _veFileInput.click();
+        return;
+      }
+    });
+  }
 
   function computeDiff(live, draft, path) {
     var changes = [];
@@ -2000,6 +2097,7 @@ window.addEventListener("error", function (event) {
       var el = e.target.closest("[data-act]"); if (!el) return;
       var act = el.getAttribute("data-act");
       if (/^(sec-|lane-pick|goto-tab|mode-toggle|screen-pick|comp-select|zone-place)/.test(act) && handleSectionAct(act, el)) return;
+      if (act === "ve-page") { veUI.page = el.getAttribute("data-page"); renderTab("visual"); return; }
       if (act === "toggle") { var key = el.getAttribute("data-key"); openState[key] = !openState[key]; renderTab(currentTab); return; }
       if (act === "save") { showPublishDialog(); return; }
       if (act === "save-draft") { saveDraft(el.getAttribute("data-model")); return; }

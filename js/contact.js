@@ -34,29 +34,40 @@
     return ' href="' + esc(href || "#") + '"' + rel;
   }
 
+  function cp(path, opts) {
+    var s = ' data-cms-path="' + esc(path) + '"';
+    if (opts && opts.multiline) s += ' data-cms-multiline';
+    return s;
+  }
+
   function render(meta, d) {
-    var links = (d.links || []).map(function (l) {
+    var links = (d.links || []).map(function (l, i) {
       return '<a' + linkAttrs(l, meta) + ' class="contact-link">' +
-        '<div><div class="k">' + esc(l.k) + '</div><div class="v">' + esc(l.v) + '</div></div>' +
+        '<div><div class="k"' + cp("links." + i + ".k") + '>' + esc(l.k) + '</div><div class="v"' + cp("links." + i + ".v") + '>' + esc(l.v) + '</div></div>' +
         '<span class="go">→</span>' +
       '</a>';
     }).join("");
 
-    var caseStudyRow = '<div class="reveal" style="margin-top:clamp(48px,7vw,80px);padding-top:clamp(28px,4vw,42px);border-top:1px solid var(--line);">' +
-      '<p class="eyebrow" style="margin-bottom:14px;">Or start with the work</p>' +
-      '<div style="display:flex;gap:16px;flex-wrap:wrap;">' +
-        '<a href="case-studies/collections-cloud.html" class="btn btn-ghost">FIG. 01 · AI Collections Cloud <span class="arrow">→</span></a>' +
-        '<a href="case-studies/lending-os.html" class="btn btn-ghost">FIG. 02 · LOS — Loan Origination <span class="arrow">→</span></a>' +
-      '</div>' +
-    '</div>';
+    var w = d.work || {};
+    var caseStudyRow = '';
+    if (w.visible !== false && (w.links || []).length) {
+      caseStudyRow = '<div class="reveal" style="margin-top:clamp(48px,7vw,80px);padding-top:clamp(28px,4vw,42px);border-top:1px solid var(--line);">' +
+        '<p class="eyebrow" style="margin-bottom:14px;">' + esc(w.eyebrow || "Or start with the work") + '</p>' +
+        '<div style="display:flex;gap:16px;flex-wrap:wrap;">' +
+          w.links.map(function (l) {
+            return '<a href="' + esc(l.href || "#") + '" class="btn btn-ghost">' + esc(l.label) + ' <span class="arrow">→</span></a>';
+          }).join('') +
+        '</div>' +
+      '</div>';
+    }
 
     return SCFG.nav('Contact', 'index.html', meta) +
       '<main class="wrap section">' +
         '<div class="contact-hero">' +
           '<div class="reveal">' +
-            '<p class="eyebrow">' + esc(d.hero.eyebrow) + '</p>' +
-            '<h1 class="display" style="margin-top:20px;max-width:13ch;">' + rich(d.hero.heading) + '</h1>' +
-            '<p class="body-text" style="margin-top:24px;">' + esc(d.hero.body) + '</p>' +
+            '<p class="eyebrow"' + cp("hero.eyebrow") + '>' + esc(d.hero.eyebrow) + '</p>' +
+            '<h1 class="display" style="margin-top:20px;max-width:13ch;"' + cp("hero.heading", { multiline: true }) + '>' + rich(d.hero.heading) + '</h1>' +
+            '<p class="body-text" style="margin-top:24px;"' + cp("hero.body", { multiline: true }) + '>' + esc(d.hero.body) + '</p>' +
             '<div style="margin-top:32px;">' +
               '<a href="mailto:' + esc(meta.email || "") + '" class="email-hero" id="email-copy-btn">' + esc(meta.email || "") + '</a>' +
               '<div class="email-toast" id="email-toast"></div>' +
@@ -70,6 +81,7 @@
   }
 
   (async function () {
+    document.body.setAttribute("data-cms-model", "contact");
     if (window.SCFG && SCFG.ready) await SCFG.ready;
     var prod = await loadJSON("content/products.json");
     var meta = (prod && prod.meta) || META_FALLBACK;
@@ -87,7 +99,7 @@
         navigator.clipboard.writeText(meta.email || '').then(function() {
           var toast = document.getElementById('email-toast');
           if (toast) {
-            toast.textContent = 'COPIED — NOW WRITE THE HARD PROBLEM';
+            toast.textContent = d.toast || 'COPIED — NOW WRITE THE HARD PROBLEM';
             toast.classList.add('show');
             setTimeout(function() { toast.classList.remove('show'); }, 3000);
           }

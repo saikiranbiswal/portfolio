@@ -387,6 +387,10 @@ async function init() {
   const projects = data.projects || [];
   const textures = await Promise.all(projects.map(makeCardTexture));
   buildCards(projects, textures);
+  // First load shouldn't sit frozen for the full IDLE_DELAY before the gallery
+  // begins drifting — that dead pause read as load lag. Start the idle drift
+  // after a short settling beat; real interactions still reset to IDLE_DELAY.
+  lastInteraction = performance.now() - IDLE_DELAY + 700;
   tick();
   loader.classList.add('done');
 }

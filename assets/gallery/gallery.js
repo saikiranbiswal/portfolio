@@ -19,7 +19,7 @@ const VELOCITY_DECAY = 0.95;    // inertia decay per frame after release
 const PITCH_LIMIT = 0.8;        // rad — never flip over the poles (and never face the empty cap)
 const LAT_BAND = (56 * Math.PI) / 180; // broader coverage reduces empty polar areas
 const IDLE_DELAY = 4000;        // ms before auto-drift kicks in
-const IDLE_DRIFT = 0.0004;      // rad/frame yaw drift when idle
+const IDLE_DRIFT = 0.00048;     // rad/frame yaw drift when idle (20% faster)
 const CLICK_SLOP = 6;           // px — more movement than this means it was a drag
 const DIM = 0.94;               // resting card brightness (hover goes to 1.0)
 

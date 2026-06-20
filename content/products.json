@@ -5,11 +5,11 @@
       "stats": [
         {
           "l": "Case studies",
-          "n": 2
+          "n": 3
         },
         {
           "l": "Working products",
-          "n": 7
+          "n": 8
         },
         {
           "l": "Years in fintech & SaaS",
@@ -19,7 +19,7 @@
       "eyebrow": "Product Manager · Enterprise SaaS · Fintech · AI",
       "heading": "I build enterprise\nproducts that <em>think</em>\n— from problem to platform.",
       "colophon": "",
-      "workCountSuffix": "more working products across lending, banking & AI"
+      "workCountSuffix": "more products and strategy artifacts across fintech, mobility, data & AI"
     },
     "role": "Enterprise · AI Product",
     "email": "saikiranbiswal14@gmail.com",
@@ -69,6 +69,40 @@
       "caseStudy": "case-studies/lending-os.html",
       "screenshot": "assets/screenshots/lending-cloud-mq78bpbv.png",
       "description": "A guided, state-based loan-origination platform — from application to approval with fewer handoffs, over workflow state machines, EMI math, and deterministic demo data.",
+      "displayMode": "modal"
+    },
+    {
+      "id": "fastag-redesign",
+      "name": "FASTag Redesign — National Toll & Mobility Trust Layer",
+      "role": "Product Strategy",
+      "tags": [
+        "GovTech",
+        "Mobility",
+        "Strategy"
+      ],
+      "year": "2026",
+      "stage": "Strategy + PRD",
+      "featured": false,
+      "caseStudy": "case-studies/fastag.html",
+      "screenshot": "assets/screenshots/fastag-redesign.png",
+      "description": "A problem-first strategy and PRD for a trusted national toll and mobility account — FASTag health, explainable deductions, disputes, annual-pass intelligence, fleet controls, and operator exceptions.",
+      "displayMode": "page"
+    },
+    {
+      "id": "atlas-task-management",
+      "name": "Atlas — Task Management System",
+      "path": "./apps/atlas/",
+      "role": "Product Manager",
+      "tags": [
+        "Workflow",
+        "Delivery",
+        "SaaS"
+      ],
+      "year": "2026",
+      "stage": "Working prototype",
+      "featured": false,
+      "screenshot": "assets/screenshots/atlas-task-management.png",
+      "description": "A task-orchestration workspace for planning initiatives, assigning owners, surfacing blockers, filtering delivery work, and keeping execution evidence close to the task.",
       "displayMode": "modal"
     },
     {

@@ -120,8 +120,8 @@
       '<div class="wrap">' +
         '<hr class="divider" style="margin-block:clamp(32px,5vw,56px) 0;">' +
         '<div class="flag-head" style="margin-top:clamp(24px,4vw,42px)">' +
-          '<p class="eyebrow">Six discipline labs <span class="dot">·</span> how each layer gets built</p>' +
-          '<span class="flag-sub">The craft behind the flagships — six labs, every layer.</span>' +
+          '<p class="eyebrow">Five discipline labs <span class="dot">·</span> how each layer gets built</p>' +
+          '<span class="flag-sub">The craft behind the flagships — five labs, every layer.</span>' +
         '</div></div>'
     ) : '';
 

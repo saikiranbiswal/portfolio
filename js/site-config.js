@@ -12,6 +12,7 @@ window.SCFG = (function () {
     nav: [
       { label: "Home",    href: "index.html" },
       { label: "Work",    href: "products.html" },
+      { label: "Artifacts", href: "artifacts.html" },
       { label: "Labs",    href: "labs.html" },
       { label: "About",   href: "about.html" },
       { label: "Contact", href: "contact.html" }
@@ -26,6 +27,7 @@ window.SCFG = (function () {
           links: [
             { label: "Home",    href: "index.html" },
             { label: "Work",    href: "products.html" },
+            { label: "Artifacts", href: "artifacts.html" },
             { label: "Labs",    href: "labs.html" },
             { label: "About",   href: "about.html" },
             { label: "Contact", href: "contact.html" }
@@ -35,7 +37,8 @@ window.SCFG = (function () {
           heading: "Case Studies",
           links: [
             { label: "AI Collections Cloud",   href: "case-studies/collections-cloud.html" },
-            { label: "LOS — Loan Origination", href: "case-studies/lending-os.html" }
+            { label: "LOS — Loan Origination", href: "case-studies/lending-os.html" },
+            { label: "FASTag Redesign", href: "case-studies/fastag.html" }
           ]
         }
       ]

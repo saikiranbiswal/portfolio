@@ -21,7 +21,7 @@ window.PORTFOLIO_COMPONENT_REGISTRY = [
     lane: 2, blockType: "hero-band",
     requiredFields: ["title"],
     optionalFields: ["eyebrow", "body", "cta"],
-    allowedPages: ["work", "labs", "about", "contact"]
+    allowedPages: ["work", "artifacts", "labs", "about", "contact"]
   },
   {
     id: "card-grid",
@@ -30,7 +30,7 @@ window.PORTFOLIO_COMPONENT_REGISTRY = [
     lane: 2, blockType: "card-grid",
     requiredFields: ["title", "cards"],
     optionalFields: ["eyebrow", "body", "cta", "link"],
-    allowedPages: ["work", "labs", "about", "contact"]
+    allowedPages: ["work", "artifacts", "labs", "about", "contact"]
   },
   {
     id: "metric-strip",
@@ -39,7 +39,7 @@ window.PORTFOLIO_COMPONENT_REGISTRY = [
     lane: 2, blockType: "metric-strip",
     requiredFields: ["title", "metrics"],
     optionalFields: ["eyebrow", "body"],
-    allowedPages: ["work", "labs", "about", "contact"]
+    allowedPages: ["work", "artifacts", "labs", "about", "contact"]
   },
   {
     id: "quote-block",
@@ -48,7 +48,7 @@ window.PORTFOLIO_COMPONENT_REGISTRY = [
     lane: 3, layout: "stacked", preset: "calm-editorial",
     requiredFields: ["quote"],
     optionalFields: ["title", "body"],
-    allowedPages: ["work", "labs", "about", "contact"]
+    allowedPages: ["work", "artifacts", "labs", "about", "contact"]
   },
   {
     id: "cta-block",
@@ -57,7 +57,7 @@ window.PORTFOLIO_COMPONENT_REGISTRY = [
     lane: 3, layout: "stacked", preset: "boardroom",
     requiredFields: ["title", "cta"],
     optionalFields: ["body"],
-    allowedPages: ["work", "labs", "about", "contact"]
+    allowedPages: ["work", "artifacts", "labs", "about", "contact"]
   },
   {
     id: "case-card",
@@ -66,7 +66,7 @@ window.PORTFOLIO_COMPONENT_REGISTRY = [
     lane: 2, blockType: "case-study-section",
     requiredFields: ["title", "body"],
     optionalFields: ["eyebrow", "quote", "evidence", "metrics", "image", "cta"],
-    allowedPages: ["work", "labs"]
+    allowedPages: ["work", "artifacts", "labs"]
   },
   {
     id: "artifact-card",
@@ -75,7 +75,7 @@ window.PORTFOLIO_COMPONENT_REGISTRY = [
     lane: 2, blockType: "artifact-card",
     requiredFields: ["title", "body"],
     optionalFields: ["eyebrow", "image", "link"],
-    allowedPages: ["work", "labs", "about"]
+    allowedPages: ["work", "artifacts", "labs", "about"]
   },
   {
     id: "custom-renderer",
@@ -84,7 +84,7 @@ window.PORTFOLIO_COMPONENT_REGISTRY = [
     lane: 4, renderer: "spherical-gallery", fallback: "simple-card",
     requiredFields: ["title", "renderer", "fallback"],
     optionalFields: ["body", "image", "link"],
-    allowedPages: ["work", "labs"]
+    allowedPages: ["work", "artifacts", "labs"]
   }
 ];
 

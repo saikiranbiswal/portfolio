@@ -10,7 +10,7 @@
     { "id": "preset", "label": "Visual preset", "type": "select", "required": true,
       "options": ["calm-editorial", "case-study", "dark-hero", "minimal-proof", "boardroom"] },
     { "id": "page",   "label": "Page placement", "type": "select", "required": true,
-      "options": ["work", "labs", "about", "contact"] }
+      "options": ["work", "artifacts", "labs", "about", "contact"] }
   ],
   "optionalFields": [
     { "id": "eyebrow",  "label": "Eyebrow", "type": "text" },

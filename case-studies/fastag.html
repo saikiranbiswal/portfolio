@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FASTag Redesign — Strategy Case Study · Sai Kiran Biswal</title>
+<meta name="description" content="A strategy and PRD for redesigning FASTag as a trusted national toll and mobility account.">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<script>document.documentElement.dataset.theme=(function(){try{return localStorage.getItem('portfolio.theme')||'dark'}catch(e){return'dark'}})();</script>
+<link rel="stylesheet" href="../css/styles.css?v=16">
+<link rel="stylesheet" href="../css/fastag.css?v=1">
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a class="wordmark" href="../index.html"><span class="glyph">SK</span><span><span class="name">Sai Kiran Biswal</span><br><span class="role">Enterprise · AI Product</span></span></a>
+    <div class="nav-links">
+      <a href="../index.html">Home</a><a href="../products.html" class="active">Work</a><a href="../artifacts.html">Artifacts</a><a href="../labs.html">Labs</a><a href="../about.html">About</a><a href="../contact.html">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <header class="ft-hero wrap">
+    <a class="back-link" href="../products.html">← All work</a>
+    <p class="eyebrow">Product strategy · GovTech · Mobility · 2026</p>
+    <h1 class="display">FASTag Redesign — National Toll &amp; Mobility Trust Layer</h1>
+    <p class="lead">Redesign FASTag as a National Toll and Mobility Account: one trusted place to confirm toll readiness, understand deductions, resolve disputes, manage annual passes, and protect fleet uptime.</p>
+    <div class="ft-actions">
+      <a class="btn" href="../assets/artifacts/files/fastag-redesign-strategy-prd.docx" download>Download the strategy + PRD <span class="arrow">↓</span></a>
+      <a class="btn btn-ghost" href="../artifacts.html#fastag">See supporting context <span class="arrow">→</span></a>
+    </div>
+    <dl class="ft-meta">
+      <div><dt>Role</dt><dd>Product strategy &amp; requirements</dd></div>
+      <div><dt>Stage</dt><dd>Strategy + PRD</dd></div>
+      <div><dt>Primary users</dt><dd>Drivers, commuters, fleets, toll operators</dd></div>
+      <div><dt>North Star</dt><dd>Successful toll crossings without user intervention</dd></div>
+    </dl>
+  </header>
+
+  <section class="ft-section wrap">
+    <div class="ft-section-label"><span>01</span><p class="eyebrow">The frame</p></div>
+    <div class="ft-section-body ft-two-col">
+      <div>
+        <h2 class="display">The sticker works. The system around it does not.</h2>
+        <p>Users cannot reliably tell whether a vehicle is toll-ready, why a tag is blocked, whether an annual pass applied, or where a disputed deduction sits. The experience is split across issuer banks, plazas, NHAI/IHMCL services, and complaint channels.</p>
+      </div>
+      <aside class="ft-callout">
+        <p class="eyebrow">Not solving</p>
+        <p>No new wallet, no nationwide GNSS replacement, no changes to government toll pricing, and no fully autonomous penalty, blacklist, or refund decisions.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section class="ft-section wrap">
+    <div class="ft-section-label"><span>02</span><p class="eyebrow">The wedge</p></div>
+    <div class="ft-section-body">
+      <h2 class="display">Win on trust, diagnostics, and interoperability.</h2>
+      <div class="ft-bet-grid">
+        <article><span>01</span><h3>FASTag Health</h3><p>Turn “inactive” or “blacklisted” into a specific root cause, severity, and fix-now action.</p></article>
+        <article><span>02</span><h3>Explainable ledger</h3><p>Show plaza, class, amount, payment source, pass application, and supporting evidence for every event.</p></article>
+        <article><span>03</span><h3>Dispute workflow</h3><p>Package the evidence automatically, expose SLA status, and keep refunds and rejections governed.</p></article>
+        <article><span>04</span><h3>Pass intelligence</h3><p>Make eligibility, trips left, validity, route impact, and pass application obvious before travel.</p></article>
+        <article><span>05</span><h3>Fleet control</h3><p>Aggregate vehicle health, low balance, toll spend, and disputes for bulk action.</p></article>
+        <article><span>06</span><h3>Operator exceptions</h3><p>Prioritize failed reads, duplicates, class mismatches, and ANPR conflicts with human approval.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="ft-section wrap">
+    <div class="ft-section-label"><span>03</span><p class="eyebrow">MVP journey</p></div>
+    <div class="ft-section-body">
+      <h2 class="display">A pre-trip check that continues through resolution.</h2>
+      <ol class="ft-flow">
+        <li><b>Check readiness</b><span>Vehicle, issuer, KYC, balance, tag, and pass status resolve into one health state.</span></li>
+        <li><b>Cross with confidence</b><span>The event ledger explains what the plaza read and what was charged or applied.</span></li>
+        <li><b>Challenge an exception</b><span>A dispute starts with a reason and an auto-assembled evidence pack.</span></li>
+        <li><b>Track the outcome</b><span>Status, owner, SLA, refund, and next action stay visible without channel hopping.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="ft-section wrap">
+    <div class="ft-section-label"><span>04</span><p class="eyebrow">Success</p></div>
+    <div class="ft-section-body ft-two-col">
+      <div><h2 class="display">Measure predictable crossings, not app engagement.</h2><p>The MVP succeeds when the vehicle crosses, the correct amount or entitlement is applied, and the user does not need manual intervention.</p></div>
+      <div class="ft-metrics">
+        <div><strong>&lt; 60 sec</strong><span>Target time to raise a complete dispute</span></div>
+        <div><strong>One status</strong><span>Vehicle health with reason and recovery action</span></div>
+        <div><strong>One ledger</strong><span>Every toll event, pass use, and deduction explained</span></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="ft-footer"><div class="wrap"><p class="display">The deliverable is a strategy and PRD—not a claim of a shipped national platform.</p><a href="../assets/artifacts/files/fastag-redesign-strategy-prd.docx" download>Download source document →</a></div></footer>
+<script src="../js/theme.js?v=1"></script>
+</body>
+</html>

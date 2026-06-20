@@ -22,6 +22,18 @@
   // Hand-curated highlights for working products, derived strictly
   // from each product's own description in products.json.
   var HIGHLIGHTS = {
+    "fastag-redesign": [
+      "FASTag health diagnostics",
+      "Explainable toll-event ledger",
+      "Dispute and annual-pass workflows",
+      "Fleet and operator controls"
+    ],
+    "atlas-task-management": [
+      "Delivery board and focused views",
+      "Owner, blocker, and priority filters",
+      "Task creation and detail states",
+      "Evidence kept close to execution"
+    ],
     "synthesis": [
       "Strategic framework generation",
       "Implications & 30-60-90 action plan",
@@ -65,7 +77,10 @@
   function appUrl(p) { return p.path ? p.path.replace(/\/$/, "") + "/index.html" : null; }
 
   function heroHTML(p, flag) {
-    var kicker = (p.stage === "Flagship" ? "Flagship case study" : "Working product") +
+    var kickerType = p.stage === "Flagship"
+      ? "Flagship case study"
+      : (/strategy/i.test(p.stage || "") ? "Product strategy" : "Working product");
+    var kicker = kickerType +
       " · " + (p.year || "");
     var actions = "";
     var live = appUrl(p);
@@ -115,9 +130,9 @@
       highlights = flag.mvp || [];
     } else {
       paras.push(p.description || "");
-      paras.push(
-        "Like everything in this portfolio, it was built end-to-end as a product manager — " +
-        "from problem discovery through architecture and a working prototype you can open and use."
+      paras.push(/strategy/i.test(p.stage || "")
+        ? "This entry is deliberately labeled as strategy and requirements work. The downloadable source shows the frame, scope, non-goals, user stories, risks, and evidence trail without implying a shipped national platform."
+        : "Like everything in this portfolio, it was built end-to-end as a product manager — from problem discovery through architecture and a working prototype you can open and use."
       );
       highlights = HIGHLIGHTS[p.id] || (p.tags || []);
     }
@@ -277,8 +292,8 @@
   }
 
   Promise.all([
-    fetch("content/products.json").then(function (r) { return r.json(); }),
-    fetch("content/labs.json").then(function (r) { return r.json(); }).catch(function () { return null; })
+    fetch("content/products.json", { cache: "no-store" }).then(function (r) { return r.json(); }),
+    fetch("content/labs.json", { cache: "no-store" }).then(function (r) { return r.json(); }).catch(function () { return null; })
   ]).then(function (res) {
     var data = res[0], labs = res[1];
     var projects = (data && data.projects) || [];

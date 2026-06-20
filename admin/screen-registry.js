@@ -7,9 +7,8 @@
    mount a section (see the mirrored ZONES map in js/sections.js).
 
    Only screens that map to a REAL public page with safe anchors live here.
-   Case Studies and Artifacts are intentionally absent — they have no
-   standalone public listing page yet, so the composer cannot target them.
-   They remain editable from their own admin tabs.
+   Case Studies remain intentionally absent because they have no shared
+   public listing page. Artifacts now has a standalone evidence library.
    ========================================================= */
 window.PORTFOLIO_SCREEN_REGISTRY = {
   work: {
@@ -41,6 +40,39 @@ window.PORTFOLIO_SCREEN_REGISTRY = {
         position: "before",
         description: "The last word before the contact band. Good for persuasive proof.",
         allowedComponents: ["quote-block", "metric-strip", "cta-block", "card-grid"]
+      }
+    ]
+  },
+
+  artifacts: {
+    label: "Artifacts",
+    file: "artifacts.html",
+    pageKey: "artifacts",
+    blurb: "The evidence library — hero, interactive category browser, artifact grid, then footer.",
+    zones: [
+      {
+        id: "after-hero",
+        label: "After hero",
+        selector: ".artifact-hero",
+        position: "after",
+        description: "Between the evidence-library introduction and category browser.",
+        allowedComponents: ["metric-strip", "quote-block", "artifact-card", "card-grid"]
+      },
+      {
+        id: "after-artifact-grid",
+        label: "After artifact grid",
+        selector: "#artifact-grid",
+        position: "after",
+        description: "After downloadable evidence. Good for provenance or an additional proof note.",
+        allowedComponents: ["quote-block", "metric-strip", "cta-block"]
+      },
+      {
+        id: "before-footer",
+        label: "Before footer",
+        selector: "footer.footer",
+        position: "before",
+        description: "A closing evidence or contact section.",
+        allowedComponents: ["cta-block", "quote-block", "metric-strip"]
       }
     ]
   },

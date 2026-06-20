@@ -42,6 +42,23 @@
   --stagger: 70ms;
 }
 
+html[data-theme="dark"] {
+  --paper:      #070b14;
+  --paper-2:    #0c1320;
+  --card:       #101a2b;
+  --ink:        #f4f1ea;
+  --ink-soft:   #d8dce4;
+  --muted:      #9ba7b8;
+  --faint:      #6e7c91;
+  --line:       #243149;
+  --line-soft:  #19243a;
+  --clay:       oklch(0.72 0.13 45);
+  --clay-deep:  oklch(0.76 0.12 48);
+  --ink-blue:   oklch(0.74 0.11 250);
+  --dark:       #03060d;
+  --dark-paper: #080d17;
+}
+
 /* View transition (progressive enhancement) */
 @view-transition { navigation: auto; }
 
@@ -64,6 +81,7 @@ body::before {
   position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: .025;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
 }
+html[data-theme="dark"] body::before { opacity: .018; mix-blend-mode: screen; }
 
 ::selection { background: var(--clay); color: var(--paper); }
 
@@ -193,10 +211,48 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
 @media (max-width: 720px) {
   .nav-inner { padding-block: 13px; }
   .wordmark > span:last-child { display: none; }
-  .nav-links { gap: clamp(11px, 3.6vw, 18px); }
+  .nav-links {
+    gap: clamp(14px, 4.2vw, 22px);
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    margin-left: 18px;
+    padding-right: 4px;
+  }
+  .nav-links::-webkit-scrollbar { display: none; }
   .nav-links a { font-size: 13.5px; }
   .nav-status, .wordmark .role { display: none; }
 }
+
+.theme-toggle {
+  position: fixed;
+  right: clamp(14px, 2.4vw, 28px);
+  bottom: clamp(14px, 2.4vw, 28px);
+  z-index: 40;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--paper) 82%, transparent);
+  color: var(--ink-soft);
+  backdrop-filter: blur(14px);
+  box-shadow: 0 10px 32px rgba(0,0,0,.16);
+  cursor: pointer;
+  font: 500 10px/1 var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.theme-toggle i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--clay);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--clay) 72%, transparent);
+}
+.theme-toggle:focus-visible { outline: 2px solid var(--clay); outline-offset: 3px; }
 
 /* ---------- Buttons ---------- */
 .btn {

@@ -16,6 +16,10 @@
       "label": "Work"
     },
     {
+      "href": "artifacts.html",
+      "label": "Artifacts"
+    },
+    {
       "href": "labs.html",
       "label": "Labs"
     },
@@ -39,6 +43,12 @@
       "id": "products",
       "file": "products.html",
       "title": "Work",
+      "visible": true
+    },
+    {
+      "id": "artifacts",
+      "file": "artifacts.html",
+      "title": "Artifacts",
       "visible": true
     },
     {
@@ -74,6 +84,10 @@
             "label": "Work"
           },
           {
+            "href": "artifacts.html",
+            "label": "Artifacts"
+          },
+          {
             "href": "labs.html",
             "label": "Labs"
           },
@@ -97,6 +111,10 @@
           {
             "href": "case-studies/lending-os.html",
             "label": "LOS - Loan Origination System"
+          },
+          {
+            "href": "case-studies/fastag.html",
+            "label": "FASTag Redesign"
           }
         ],
         "heading": "Case Studies"

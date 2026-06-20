@@ -1256,7 +1256,7 @@ window.addEventListener("error", function (event) {
         sf("Renderer name", "renderer", d.renderer, { select: secSchemaOpts("custom-renderer", "renderer", ["spherical-gallery", "interactive-canvas", "embedded-app", "advanced-animation", "custom-visualization"]), help: SEC_HELP.renderer }) +
         sf("Fallback mode", "fallback", d.fallback, { select: secSchemaOpts("custom-renderer", "fallback", ["static-image", "simple-card", "text-summary", "hide"]), help: SEC_HELP.fallback }) + '</div>';
       html += '<div class="grid2">' +
-        sf("Page placement", "page", d.page, { select: secSchemaOpts("flexible-section", "page", ["work", "labs", "about", "contact"]), help: SEC_HELP.page }) +
+        sf("Page placement", "page", d.page, { select: secSchemaOpts("flexible-section", "page", ["work", "artifacts", "labs", "about", "contact"]), help: SEC_HELP.page }) +
         sf("Visible", "visible", String(d.visible !== false), { select: [{ value: "true", label: "Visible" }, { value: "false", label: "Hidden" }] }) + '</div>';
     }
 
@@ -1314,7 +1314,7 @@ window.addEventListener("error", function (event) {
         '<div class="sections-guide-item"><strong>Hide vs Delete</strong><p><strong>Hide</strong> keeps the section in JSON (restorable). <strong>Delete</strong> removes it from the draft but never deletes uploaded images.</p></div>' +
         '<div class="sections-guide-item"><strong>Preview vs Publish</strong><p><strong>Preview</strong> is browser-only. <strong>Publish</strong> validates and writes to GitHub so it goes live.</p></div>' +
       '</div>' +
-      '<p class="field-help" style="margin-top:12px;">Case Studies &amp; Artifacts aren’t composer screens yet — they have no standalone public page. Edit them from their own tabs.</p></div>' +
+      '<p class="field-help" style="margin-top:12px;">Case Studies remain outside the composer because they are standalone pages. Artifacts has its own public evidence-library screen.</p></div>' +
       '<div class="inline-actions">' + draftBtn("pages") + previewBtn() + saveBtn("pages") + '</div>' +
       '<div class="composer-modebar">' +
         '<button class="admin-btn' + (secUI.mode === 'advanced' ? ' ghost' : '') + '" data-act="mode-toggle" data-mode="composer">🧩 Composer</button>' +
@@ -1334,7 +1334,7 @@ window.addEventListener("error", function (event) {
         html += '<div class="section-block"><h3>Lane 1 · No-code content edit</h3>' +
           '<p class="subhint">Simple edits happen directly on the content, not as new sections. Jump to the right tab:</p>' +
           '<div class="inline-actions">' +
-          [["work", "Work projects"], ["labs", "Labs"], ["about", "About"], ["contact", "Contact"], ["site", "Site identity / nav / footer"]].map(function (t) {
+          [["work", "Work projects"], ["artifacts", "Artifacts"], ["labs", "Labs"], ["about", "About"], ["contact", "Contact"], ["site", "Site identity / nav / footer"]].map(function (t) {
             return '<button class="admin-btn ghost" data-act="goto-tab" data-tab="' + t[0] + '">' + t[1] + ' →</button>';
           }).join('') + '</div></div>';
       } else if (!secUI.draft) {
@@ -1726,7 +1726,7 @@ window.addEventListener("error", function (event) {
     })(0);
   }
   var TAB_PREVIEW = { visual:"products.html", site:"index.html", work:"products.html", labs:"labs.html", about:"about.html", contact:"contact.html",
-    sections:"products.html", caseStudies:"products.html", artifacts:"products.html", structure:"index.html", files:"index.html" };
+    sections:"products.html", caseStudies:"products.html", artifacts:"artifacts.html", structure:"index.html", files:"index.html" };
   var PAGE_FILES = { work:"products.html", labs:"labs.html", about:"about.html", contact:"contact.html" };
 
   /* ── Visual Inline Editor (admin preview pane) ──────────────────────────

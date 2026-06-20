@@ -21,7 +21,7 @@ const LAT_BAND = (56 * Math.PI) / 180; // broader coverage reduces empty polar a
 const IDLE_DELAY = 4000;        // ms before auto-drift kicks in
 const IDLE_DRIFT = 0.00048;     // rad/frame yaw drift when idle (20% faster)
 const CLICK_SLOP = 6;           // px — more movement than this means it was a drag
-const DIM = 0.94;               // resting card brightness (hover goes to 1.0)
+const DIM = 0.82;               // resting card brightness (hover goes to 1.0)
 
 /* ---------- DOM ---------- */
 const canvas = document.getElementById('gl');
@@ -41,13 +41,13 @@ const detailLink = document.getElementById('detailLink');
 
 /* ---------- Scene ---------- */
 const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xd2bda3); // warm clay atmosphere
 
 const camera = new THREE.PerspectiveCamera(65, innerWidth / innerHeight, 0.1, 60);
 camera.position.set(0, 0, 0);
 camera.rotation.order = 'YXZ';
 
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setClearColor(0x000000, 0);
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 
@@ -103,7 +103,6 @@ async function makeCardTexture(project) {
   let img = null;
   const sources = [];
   if (project.screenshot) sources.push(project.screenshot);
-  sources.push(`https://picsum.photos/seed/${project.id}/800/600`);
   for (const src of sources) {
     try { img = await loadImage(src); break; } catch { /* try next */ }
   }
@@ -114,21 +113,21 @@ async function makeCardTexture(project) {
   if (img) {
     // contain-fit on a paper mat — shows the whole screenshot (incl. wide
     // ones like the Excel tools) without cropping the toolbars off the sides.
-    ctx.fillStyle = '#ece6da';
+    ctx.fillStyle = '#0b1220';
     ctx.fillRect(0, 0, W, H);
     const s = Math.min(W / img.width, H / img.height);
     const dw = img.width * s, dh = img.height * s;
     ctx.drawImage(img, (W - dw) / 2, (H - dh) / 2, dw, dh);
   } else {
-    ctx.fillStyle = '#ece6da';
+    ctx.fillStyle = '#0b1220';
     ctx.fillRect(0, 0, W, H);
-    ctx.fillStyle = '#3a342d';
+    ctx.fillStyle = '#d8e2f0';
     ctx.font = '500 30px IBM Plex Mono, monospace';
     ctx.textAlign = 'center';
     ctx.fillText(project.name, W / 2, H / 2);
   }
   // hairline edge so screenshots separate from the warm atmosphere
-  ctx.strokeStyle = 'rgba(58,52,45,0.24)';
+  ctx.strokeStyle = 'rgba(157,185,223,0.28)';
   ctx.lineWidth = 3;
   ctx.beginPath();
   ctx.roundRect(1.5, 1.5, W - 3, H - 3, R);
@@ -382,7 +381,8 @@ addEventListener('resize', () => {
 
 /* ---------- Boot ---------- */
 async function init() {
-  const res = await fetch('content/products.json');
+  const res = await fetch('content/products.json', { cache: 'no-store' });
+  if (!res.ok) throw new Error(`products.json returned ${res.status}`);
   const data = await res.json();
   const projects = data.projects || [];
   const textures = await Promise.all(projects.map(makeCardTexture));
@@ -393,6 +393,7 @@ async function init() {
   lastInteraction = performance.now() - IDLE_DELAY + 700;
   tick();
   loader.classList.add('done');
+  loader.setAttribute('aria-hidden', 'true');
 }
 
 init().catch((err) => {

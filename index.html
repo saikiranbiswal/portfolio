@@ -4,13 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sai Kiran Biswal · Enterprise AI Product Manager</title>
-<meta name="description" content="An explorable portfolio of working products and case studies built by Sai Kiran Biswal — drag to look around, click a card to dive in.">
+<meta name="description" content="An interactive portfolio of enterprise AI and fintech products built by Sai Kiran Biswal — explore the work, evidence, and operating artifacts behind each product.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Sai Kiran Biswal · Enterprise AI Product">
-<meta property="og:description" content="Drag to explore working products and flagship case studies, tiled across an immersive sphere.">
+<meta property="og:description" content="Explore working products, flagship case studies, and the evidence behind them in an immersive portfolio.">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
-<link rel="stylesheet" href="css/styles.css?v=13">
-<link rel="stylesheet" href="assets/gallery/gallery.css?v=2">
+<script>document.documentElement.dataset.theme=(function(){try{return localStorage.getItem('portfolio.theme')||'dark'}catch(e){return'dark'}})();</script>
+<link rel="stylesheet" href="css/styles.css?v=16">
+<link rel="stylesheet" href="assets/gallery/gallery.css?v=6">
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
 </script>
@@ -18,7 +19,10 @@
 </head>
 <body class="gallery-page">
 
-<canvas id="gl" aria-label="3D project gallery — drag to look around"></canvas>
+<a class="gallery-skip" href="products.html">Skip the interactive gallery — browse all work</a>
+
+<canvas class="particle-bg" aria-hidden="true"></canvas>
+<canvas id="gl" aria-label="Interactive project gallery — drag to explore, select a project to open details"></canvas>
 <div class="vignette" aria-hidden="true"></div>
 
 <nav class="nav gallery-nav">
@@ -31,6 +35,7 @@
     <div class="nav-links">
       <a href="index.html" class="active">Home</a>
       <a href="products.html">Work</a>
+      <a href="artifacts.html">Artifacts</a>
       <a href="labs.html">Labs</a>
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
@@ -40,8 +45,8 @@
 </nav>
 
 <div class="gallery-intro" id="galleryIntro">
-  <p class="eyebrow">Selected products · Enterprise AI &amp; fintech</p>
-  <h1>Products built from <em>problem</em> to platform.</h1>
+  <p class="eyebrow">Enterprise AI · Fintech · Product systems</p>
+  <h1>Products built from <em>problem</em> to proof.</h1>
 </div>
 
 <div class="hover-title" id="hoverTitle" aria-live="polite">
@@ -49,9 +54,9 @@
   <h2 id="hoverName"></h2>
 </div>
 
-<div class="drag-hint" id="dragHint"><span>drag to explore</span></div>
+<div class="drag-hint" id="dragHint"><span>drag to explore · select to open</span></div>
 
-<div class="gallery-loader" id="loader"><span class="mono-meta">loading portfolio…</span></div>
+<div class="gallery-loader" id="loader" role="status"><span class="mono-meta">loading portfolio…</span></div>
 
 <section class="detail" id="detail" aria-hidden="true">
   <div class="detail-inner">
@@ -64,6 +69,8 @@
   </div>
 </section>
 
-<script type="module" src="assets/gallery/gallery.js?v=4"></script>
+<script src="js/particle-bg.js?v=1"></script>
+<script type="module" src="assets/gallery/gallery.js?v=6"></script>
+<script src="js/theme.js?v=1"></script>
 </body>
 </html>

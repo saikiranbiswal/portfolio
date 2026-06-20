@@ -5,7 +5,7 @@
   "envelope": {
     "required": ["id", "lane", "page", "fields"],
     "laneValues": [2, 3, 4],
-    "pageValues": ["work", "labs", "about", "contact"]
+    "pageValues": ["work", "artifacts", "labs", "about", "contact"]
   },
   "blockTypes": [
     { "id": "hero-band",     "label": "Hero band",          "requiredFields": ["title"] },
@@ -20,6 +20,6 @@
     { "id": "blockType", "label": "Block type", "type": "select", "optionsFrom": "blockTypes", "required": true },
     { "id": "title", "label": "Title", "type": "text", "required": true },
     { "id": "body", "label": "Body", "type": "textarea" },
-    { "id": "page", "label": "Page placement", "type": "select", "options": ["work", "labs", "about", "contact"], "required": true }
+    { "id": "page", "label": "Page placement", "type": "select", "options": ["work", "artifacts", "labs", "about", "contact"], "required": true }
   ]
 }

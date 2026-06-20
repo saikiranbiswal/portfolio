@@ -6,7 +6,7 @@
    (live preview pane), so what you preview is what ships.
 
    Section envelope (see admin/schemas/page-section.schema.json):
-     { id, lane: 2|3|4, page: "work"|"labs"|"about"|"contact",
+     { id, lane: 2|3|4, page: "work"|"artifacts"|"labs"|"about"|"contact",
        blockType?   (lane 2)
        layout?, preset?  (lane 3)
        renderer?, fallback?  (lane 4)
@@ -184,7 +184,7 @@ window.CMSSections = (function () {
   }
 
   /* ---- public-page auto-mount ---- */
-  var PAGE_IDS = { "products.html": "work", "labs.html": "labs", "about.html": "about", "contact.html": "contact" };
+  var PAGE_IDS = { "products.html": "work", "artifacts.html": "artifacts", "labs.html": "labs", "about.html": "about", "contact.html": "contact" };
   function currentPageId() {
     var file = (location.pathname.split('/').pop() || 'index.html');
     return document.body.getAttribute('data-cms-page') || PAGE_IDS[file] || null;
@@ -199,6 +199,11 @@ window.CMSSections = (function () {
       "after-hero":      { selector: ".hero",      position: "after" },
       "after-work-grid": { selector: "#work-list", position: "after" },
       "before-cta":      { selector: ".cta-band",  position: "before" }
+    },
+    artifacts: {
+      "after-hero":          { selector: ".artifact-hero", position: "after" },
+      "after-artifact-grid": { selector: "#artifact-grid", position: "after" },
+      "before-footer":       { selector: "footer.footer", position: "before" }
     },
     labs:    { "end-of-page": { selector: "#app",  position: "after" } },
     about:   { "end-of-page": { selector: "#page", position: "after" } },

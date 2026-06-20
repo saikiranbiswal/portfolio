@@ -15,6 +15,14 @@
       "file": "case-studies/lending-os.html",
       "renderer": "static-html",
       "visible": true
+    },
+    {
+      "id": "fastag-redesign",
+      "title": "FASTag Redesign",
+      "summary": "A national toll and mobility trust-layer strategy with health diagnostics, explainable events, disputes, passes, and fleet controls.",
+      "file": "case-studies/fastag.html",
+      "renderer": "static-html",
+      "visible": true
     }
   ]
 }

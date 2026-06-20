@@ -9,16 +9,42 @@ html, body.gallery-page {
 }
 
 body.gallery-page {
-  background: #d2bda3;
+  background: #040711;
   color: var(--ink-soft);
   overscroll-behavior: none;
 }
 
+.gallery-skip {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  transform: translateY(-140%);
+  padding: 10px 14px;
+  border: 1px solid rgba(255,255,255,.26);
+  border-radius: 999px;
+  background: #f5f2eb;
+  color: #080d16;
+  font: 600 12px/1.2 var(--font-sans);
+  transition: transform .18s ease;
+}
+
+.gallery-skip:focus { transform: translateY(0); }
+
 /* ---------- Canvas ---------- */
-#gl {
+.particle-bg {
   position: fixed;
   inset: 0;
   z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  pointer-events: none;
+}
+#gl {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
   width: 100%;
   height: 100%;
   display: block;
@@ -34,18 +60,18 @@ body.gallery-page {
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 42%, rgba(250, 248, 243, 0.24), transparent 38%),
-    radial-gradient(ellipse at center, transparent 50%, rgba(143, 93, 61, 0.18) 82%, rgba(91, 58, 38, 0.34) 100%);
-  z-index: 1;
+    radial-gradient(circle at 50% 42%, rgba(70, 112, 173, 0.08), transparent 38%),
+    radial-gradient(ellipse at center, transparent 48%, rgba(1, 4, 10, 0.3) 78%, rgba(0, 0, 0, 0.72) 100%);
+  z-index: 2;
 }
 
-/* ---------- Nav (warm glass variant of the site nav) ---------- */
+/* ---------- Nav ---------- */
 .gallery-nav {
   position: fixed;
   top: 0; left: 0; right: 0;
   z-index: 10;
-  background: color-mix(in srgb, var(--paper) 76%, transparent);
-  backdrop-filter: blur(10px);
+  background: color-mix(in srgb, var(--paper) 70%, transparent);
+  backdrop-filter: blur(16px);
   border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
 }
 .gallery-nav .wordmark .glyph { background: var(--ink); color: var(--paper); }
@@ -62,10 +88,10 @@ body.gallery-page {
   left: var(--gutter);
   bottom: clamp(96px, 13vh, 130px);
   z-index: 4;
-  max-width: min(560px, 70vw);
+  max-width: min(620px, 72vw);
   pointer-events: none;
 }
-.gallery-intro .eyebrow { color: var(--clay-deep); margin-bottom: 10px; }
+.gallery-intro .eyebrow { color: var(--clay); margin-bottom: 10px; }
 .gallery-intro h1 {
   font-family: var(--serif);
   font-weight: 400;
@@ -86,7 +112,7 @@ body.gallery-page {
   pointer-events: none;
   opacity: 0;
 }
-.hover-title .eyebrow { color: var(--clay-deep); margin-bottom: 8px; }
+.hover-title .eyebrow { color: var(--clay); margin-bottom: 8px; }
 .hover-title h2 {
   font-family: var(--serif);
   font-weight: 400;
@@ -127,7 +153,7 @@ body.gallery-page {
   z-index: 20;
   display: grid;
   place-items: center;
-  background: #d2bda3;
+  background: #040711;
   transition: opacity 0.6s var(--ease);
 }
 .gallery-loader .mono-meta { color: var(--faint); letter-spacing: 0.14em; text-transform: uppercase; }
@@ -143,8 +169,8 @@ body.gallery-page {
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
-  background: color-mix(in srgb, var(--paper) 58%, transparent);
-  backdrop-filter: blur(2px);
+  background: color-mix(in srgb, var(--paper) 74%, transparent);
+  backdrop-filter: blur(12px);
 }
 .detail.open { pointer-events: auto; }
 .detail-inner {
@@ -194,7 +220,12 @@ body.gallery-page {
     max-width: calc(100vw - (2 * var(--gutter)));
   }
   .gallery-intro h1 { font-size: 38px; }
+  .gallery-nav .nav-inner { align-items: center; }
   .drag-hint { bottom: 20px; }
   .hover-title h2 { font-size: 24px; }
   .detail-title { font-size: 32px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-status .pulse { animation: none; }
 }

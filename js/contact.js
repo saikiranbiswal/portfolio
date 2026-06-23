@@ -8,7 +8,7 @@
 
   var META_FALLBACK = {
     owner: "Sai Kiran Biswal", role: "Enterprise · AI Product", glyph: "SK",
-    email: "saikiranbiswal14@gmail.com",
+    email: "saikiran.biswal@outlook.com",
     linkedin: "https://www.linkedin.com/in/sai-kiran-biswal",
     resume: "assets/resume.pdf", status: "Open to lead PM roles"
   };

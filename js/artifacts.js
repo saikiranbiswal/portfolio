@@ -106,7 +106,7 @@
     document.getElementById("site-footer").outerHTML = SCFG.footer({
       owner: "Sai Kiran Biswal",
       linkedin: "https://www.linkedin.com/in/sai-kiran-biswal",
-      email: "saikiranbiswal14@gmail.com",
+      email: "saikiran.biswal@outlook.com",
       resume: "assets/resume.pdf"
     });
 

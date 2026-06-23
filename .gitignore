@@ -13,3 +13,7 @@ CLAUDE_CODE_PROMPT.txt
 # OS noise
 .DS_Store
 Thumbs.db
+
+# CMS server runtime artifacts
+.cms_server.log
+cms_server.py

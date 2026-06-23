@@ -1,11 +1,10 @@
 .artifact-hero {
-  min-height: min(660px, 78vh);
-  padding-top: clamp(90px, 13vw, 180px);
-  padding-bottom: clamp(72px, 9vw, 120px);
+  padding-top: clamp(56px, 7vw, 96px);
+  padding-bottom: clamp(56px, 8vw, 104px);
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
   gap: clamp(44px, 8vw, 120px);
-  align-items: end;
+  align-items: start;
   border-bottom: 1px solid var(--line);
 }
 .artifact-hero h1 { max-width: 9ch; margin-top: 22px; }

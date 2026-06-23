@@ -1,5 +1,5 @@
 /* =========================================================
-   about.js — renders the About page from about.json + the
+   about.js, renders the About page from about.json + the
    shared site identity (products.json → meta). Markup, classes,
    and inline styles mirror the original hand-authored about.html
    exactly; only the copy is data-driven so the admin CMS can edit it.
@@ -105,24 +105,24 @@
             '<div>' +
               '<div class="tag-row"><span class="pill">AI</span><span class="pill">Fintech</span><span class="pill">Collections</span><span class="pill pill-int">▸ Interactive</span></div>' +
               '<h3 class="display" style="font-size:clamp(22px,2.8vw,34px);">AI Collections Cloud</h3>' +
-              '<p class="body-text" style="margin-top:10px;">An AI-native recovery platform — collector copilot, risk scoring, next-best-action, and a working prototype.</p>' +
+              '<p class="body-text" style="margin-top:10px;">An AI-native recovery platform, collector copilot, risk scoring, next-best-action, and a working prototype.</p>' +
               '<div style="margin-top:20px;" class="btn">Walk the case study <span class="arrow">→</span></div>' +
             '</div>' +
             '<div class="flag-img-col">' +
-              '<div class="ph" style="aspect-ratio:16/10;">' + phShot((featured[0] || {}).screenshot, 'AI Collections Cloud — product hero') + '</div>' +
-              '<p class="figcap" style="margin-top:10px;">FIG. 01 — AI COLLECTIONS CLOUD · FLAGSHIP CASE STUDY</p>' +
+              '<div class="ph" style="aspect-ratio:16/10;">' + phShot((featured[0] || {}).screenshot, 'AI Collections Cloud, product hero') + '</div>' +
+              '<p class="figcap" style="margin-top:10px;">FIG. 01, AI COLLECTIONS CLOUD · FLAGSHIP CASE STUDY</p>' +
             '</div>' +
           '</a>' +
           '<a href="case-studies/lending-os.html" class="flagship flip">' +
             '<div>' +
               '<div class="tag-row"><span class="pill">Fintech</span><span class="pill">Lending</span><span class="pill">Platform</span><span class="pill pill-int">▸ Interactive</span></div>' +
-              '<h3 class="display" style="font-size:clamp(22px,2.8vw,34px);">LOS — Loan Origination System</h3>' +
-              '<p class="body-text" style="margin-top:10px;">Guided, state-based loan origination — from application to approval with fewer handoffs and deterministic demo data.</p>' +
+              '<h3 class="display" style="font-size:clamp(22px,2.8vw,34px);">LOS, Loan Origination System</h3>' +
+              '<p class="body-text" style="margin-top:10px;">Guided, state-based loan origination, from application to approval with fewer handoffs and deterministic demo data.</p>' +
               '<div style="margin-top:20px;" class="btn">Walk the case study <span class="arrow">→</span></div>' +
             '</div>' +
             '<div class="flag-img-col">' +
-              '<div class="ph" style="aspect-ratio:16/10;">' + phShot((featured[1] || {}).screenshot, 'LOS — Loan Origination System — product hero') + '</div>' +
-              '<p class="figcap" style="margin-top:10px;">FIG. 02 — LOS — LOAN ORIGINATION SYSTEM · FLAGSHIP CASE STUDY</p>' +
+              '<div class="ph" style="aspect-ratio:16/10;">' + phShot((featured[1] || {}).screenshot, 'LOS, Loan Origination System, product hero') + '</div>' +
+              '<p class="figcap" style="margin-top:10px;">FIG. 02, LOS, LOAN ORIGINATION SYSTEM · FLAGSHIP CASE STUDY</p>' +
             '</div>' +
           '</a>' +
         '</div>' +
@@ -145,7 +145,7 @@
     var d = await loadJSON("content/about.json");
     var root = document.getElementById("page");
     if (!d) { root.innerHTML = '<p class="body-text" style="padding:80px 24px;">Could not load about.json. Run a local server (see README).</p>'; return; }
-    document.title = "About — " + (meta.owner || "");
+    document.title = "About, " + (meta.owner || "");
     var featured = (prod && prod.projects || []).filter(function(p) { return p.featured; });
     root.innerHTML = render(meta, d, featured);
     if (window.PreviewData) PreviewData.banner();

@@ -1,5 +1,5 @@
 /* =========================================================
-   site-config.js — shared nav / footer / CTA renderers
+   site-config.js, shared nav / footer / CTA renderers
    Load BEFORE page-specific scripts. Access via window.SCFG.
    Data source: site.json (fetched async). SEED is the
    embedded fallback so pages render instantly without waiting.
@@ -7,19 +7,19 @@
 window.SCFG = (function () {
   "use strict";
 
-  /* ---- SEED (mirrors site.json — updated by admin publish) ---- */
+  /* ---- SEED (mirrors site.json, updated by admin publish) ---- */
   var SEED = {
     nav: [
       { label: "Home",    href: "index.html" },
       { label: "Work",    href: "products.html" },
+      { label: "Playground", href: "labs.html" },
       { label: "Artifacts", href: "artifacts.html" },
-      { label: "Labs",    href: "labs.html" },
       { label: "About",   href: "about.html" },
       { label: "Contact", href: "contact.html" }
     ],
     footer: {
       brand: "Building products from <em>problem</em> to <em>platform.</em>",
-      copyright: "© {year} Sai Kiran Biswal — Product Portfolio",
+      copyright: "© {year} Sai Kiran Biswal, Product Portfolio",
       credit: "Designed & built end-to-end",
       columns: [
         {
@@ -27,8 +27,8 @@ window.SCFG = (function () {
           links: [
             { label: "Home",    href: "index.html" },
             { label: "Work",    href: "products.html" },
+            { label: "Playground", href: "labs.html" },
             { label: "Artifacts", href: "artifacts.html" },
-            { label: "Labs",    href: "labs.html" },
             { label: "About",   href: "about.html" },
             { label: "Contact", href: "contact.html" }
           ]
@@ -37,7 +37,7 @@ window.SCFG = (function () {
           heading: "Case Studies",
           links: [
             { label: "AI Collections Cloud",   href: "case-studies/collections-cloud.html" },
-            { label: "LOS — Loan Origination", href: "case-studies/lending-os.html" },
+            { label: "LOS, Loan Origination", href: "case-studies/lending-os.html" },
             { label: "FASTag Redesign", href: "case-studies/fastag.html" }
           ]
         }
@@ -94,6 +94,8 @@ window.SCFG = (function () {
           '<span class="role">' + esc(meta.role  || "") + '</span>' +
         '</span>' +
       '</a>' +
+      '<input class="nav-cb" type="checkbox" id="navToggle" aria-hidden="true" tabindex="-1">' +
+      '<label class="nav-burger" for="navToggle" aria-label="Toggle navigation menu"><span></span></label>' +
       '<div class="nav-links">' +
         links +
         (meta.status ? '<span class="nav-status"><span class="pulse"></span> ' + esc(meta.status) + '</span>' : '') +
@@ -131,7 +133,7 @@ window.SCFG = (function () {
         elsewhere +
       '</div>' +
       '<div class="footer-base">' +
-        '<span>' + esc((f.copyright || ("© {year} " + (meta.owner || "") + " — Product Portfolio")).replace("{year}", year)) + '</span>' +
+        '<span>' + esc((f.copyright || ("© {year} " + (meta.owner || "") + ", Product Portfolio")).replace("{year}", year)) + '</span>' +
         '<span>' + esc(f.credit || "Designed & built end-to-end") + '</span>' +
       '</div>' +
     '</div></footer>';

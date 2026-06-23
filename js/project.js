@@ -1,5 +1,5 @@
 /* ============================================================
-   Project page renderer — phantom.land-style case study
+   Project page renderer, phantom.land-style case study
    Data: products.json (source of truth) + labs.json flagship
    narratives (why / users / mvp / testing / next).
    URL: project.html?id=<project-id>
@@ -38,7 +38,7 @@
       "Strategic framework generation",
       "Implications & 30-60-90 action plan",
       "Multi-format export",
-      "Fully offline — runs in the browser"
+      "Fully offline, runs in the browser"
     ],
     "neuralpath": [
       "Concept levels & quizzes",
@@ -100,9 +100,9 @@
         '<div class="p-actions p-reveal">' + actions + "</div>" +
         '<dl class="p-meta p-reveal">' +
           "<div><dt>Role</dt><dd>" + esc(p.role || "Product Manager") + "</dd></div>" +
-          "<div><dt>Year</dt><dd>" + esc(p.year || "—") + "</dd></div>" +
-          "<div><dt>Stage</dt><dd>" + esc(p.stage || "—") + "</dd></div>" +
-          "<div><dt>Disciplines</dt><dd>" + esc(disciplines || "—") + "</dd></div>" +
+          "<div><dt>Year</dt><dd>" + esc(p.year || ", ") + "</dd></div>" +
+          "<div><dt>Stage</dt><dd>" + esc(p.stage || ", ") + "</dd></div>" +
+          "<div><dt>Disciplines</dt><dd>" + esc(disciplines || ", ") + "</dd></div>" +
           (stack ? "<div><dt>Built on</dt><dd>" + esc(stack) + "</dd></div>" : "") +
         "</dl>" +
       "</header>"
@@ -114,8 +114,8 @@
     return (
       '<div class="p-media-hero wrap p-reveal">' +
         '<figure class="p-frame">' +
-          '<img id="hero-shot" src="' + esc(p.screenshot) + '" alt="' + esc(p.name) + ' — product screenshot">' +
-          '<figcaption class="fig">Fig. 01 — ' + esc(p.name) + "</figcaption>" +
+          '<img id="hero-shot" src="' + esc(p.screenshot) + '" alt="' + esc(p.name) + ', product screenshot">' +
+          '<figcaption class="fig">Fig. 01, ' + esc(p.name) + "</figcaption>" +
         "</figure>" +
       "</div>"
     );
@@ -132,7 +132,7 @@
       paras.push(p.description || "");
       paras.push(/strategy/i.test(p.stage || "")
         ? "This entry is deliberately labeled as strategy and requirements work. The downloadable source shows the frame, scope, non-goals, user stories, risks, and evidence trail without implying a shipped national platform."
-        : "Like everything in this portfolio, it was built end-to-end as a product manager — from problem discovery through architecture and a working prototype you can open and use."
+        : "Like everything in this portfolio, it was built end-to-end as a product manager, from problem discovery through architecture and a working prototype you can open and use."
       );
       highlights = HIGHLIGHTS[p.id] || (p.tags || []);
     }
@@ -193,10 +193,10 @@
             '<span class="dot"></span><span class="dot"></span><span class="dot"></span>' +
             '<span class="addr">' + esc(live) + "</span>" +
           "</div>" +
-          '<iframe id="live-frame" data-src="' + esc(live) + '" title="' + esc(p.name) + ' — live product" loading="lazy"></iframe>' +
+          '<iframe id="live-frame" data-src="' + esc(live) + '" title="' + esc(p.name) + ', live product" loading="lazy"></iframe>' +
         "</div>" +
         '<div class="p-live-note p-reveal">' +
-          '<span class="mono-meta">This is the real working product, embedded — not a mock.</span>' +
+          '<span class="mono-meta">This is the real working product, embedded, not a mock.</span>' +
           '<a class="btn btn-ghost" href="' + esc(live) + '" target="_blank" rel="noopener">Open full screen <span class="arrow">↗</span></a>' +
         "</div>" +
       "</section>"
@@ -305,7 +305,7 @@
     }
     var flag = findFlagship(labs, p.id);
 
-    document.title = p.name + " — Sai Kiran Biswal · Product Case Study";
+    document.title = p.name + ", Sai Kiran Biswal · Product Case Study";
 
     var root = document.getElementById("project-root");
     root.innerHTML =
@@ -321,6 +321,6 @@
   }).catch(function (err) {
     console.error("Project page failed to load:", err);
     var root = document.getElementById("project-root");
-    root.innerHTML = '<div class="p-loading mono-meta">could not load project — <a href="products.html">back to work</a></div>';
+    root.innerHTML = '<div class="p-loading mono-meta">could not load project, <a href="products.html">back to work</a></div>';
   });
 })();

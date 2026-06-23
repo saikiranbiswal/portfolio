@@ -1,5 +1,5 @@
 /* =========================================================
-   Labs — app: hash router, view rendering, inline editing,
+   Labs, app: hash router, view rendering, inline editing,
    and localStorage persistence. Vanilla JS so contentEditable
    stays rock-solid (no framework re-renders fighting the caret).
    ========================================================= */
@@ -12,7 +12,7 @@
   /* ---- model load / save ---- */
   function deepClone(o) { return JSON.parse(JSON.stringify(o)); }
   // Default to the bundled seed; boot() (bottom of file) replaces this with the
-  // published labs.json — authoritative each visit — when served over http,
+  // published labs.json, authoritative each visit, when served over http,
   // falling back to a local draft / the seed for file:// use.
   var model = deepClone(window.LABS_SEED || { meta: {}, labs: [] });
 
@@ -85,7 +85,7 @@
   function footerHTML() { return SCFG.footer(model.meta); }
 
   /* =====================================================
-     LEVEL 1 — Labs index
+     LEVEL 1, Labs index
      ===================================================== */
   function renderIndex() {
     /* Flagship labs (a single deep case-study product each) get a featured
@@ -112,7 +112,7 @@
     var flagSection = flags ? (
       '<div class="wrap"><div class="flag-head">' +
         '<p class="eyebrow">Flagship case studies <span class="dot">·</span> problem → prototype</p>' +
-        '<span class="flag-sub">Two products, taken end to end — PRD, journey, metrics, architecture, tradeoffs, and a working prototype.</span>' +
+        '<span class="flag-sub">Two products, taken end to end, PRD, journey, metrics, architecture, tradeoffs, and a working prototype.</span>' +
       '</div><div class="flag-strip stagger">' + flags + '</div></div>'
     ) : '';
 
@@ -121,7 +121,7 @@
         '<hr class="divider" style="margin-block:clamp(32px,5vw,56px) 0;">' +
         '<div class="flag-head" style="margin-top:clamp(24px,4vw,42px)">' +
           '<p class="eyebrow">Five discipline labs <span class="dot">·</span> how each layer gets built</p>' +
-          '<span class="flag-sub">The craft behind the flagships — five labs, every layer.</span>' +
+          '<span class="flag-sub">The craft behind the flagships, five labs, every layer.</span>' +
         '</div></div>'
     ) : '';
 
@@ -201,7 +201,7 @@
     return '';
   }
 
-  /* Featured flagship card — a self-contained case study at a glance
+  /* Featured flagship card, a self-contained case study at a glance
      (live mini-mockup, problem→outcome, what it moves, artifacts), linking
      into the full case-study experience. */
   function flagCardHTML(lab, i) {
@@ -254,7 +254,7 @@
   }
 
   /* =====================================================
-     LEVEL 2 — Lab page
+     LEVEL 2, Lab page
      ===================================================== */
   function renderLab(labId) {
     var found = labById(labId);
@@ -264,7 +264,7 @@
     var cards = lab.products.map(function (p, j) {
       var base = "labs." + i + ".products." + j;
       return '<div class="product-card" data-nav="product" data-lab="' + lab.id + '" data-prod="' + p.id + '">' +
-        '<div class="ph">' + phShot(p.image, p.name.toLowerCase() + ' — preview') + '</div>' +
+        '<div class="ph">' + phShot(p.image, p.name.toLowerCase() + ', preview') + '</div>' +
         '<div class="pc-tags">' + tagsHTML(base, p.tags) + '</div>' +
         ed("div", base + ".name", "pc-name") +
         ed("div", base + ".tagline", "pc-tagline") +
@@ -296,7 +296,7 @@
   }
 
   /* =====================================================
-     LEVEL 3 — Product page
+     LEVEL 3, Product page
      ===================================================== */
   function renderProduct(labId, prodId) {
     var f = labById(labId);
@@ -322,7 +322,7 @@
       '</li>';
     }).join("");
 
-    /* "Next" — within the lab normally; for a flagship single-product lab,
+    /* "Next", within the lab normally; for a flagship single-product lab,
        point at the other flagship case study (cross-sell), else the lab. */
     var nextLab = lab, nextP = lab.products[(j + 1) % lab.products.length];
     if (lab.flagship && lab.products.length === 1) {
@@ -332,7 +332,7 @@
       }
     }
 
-    /* Flagship case studies skip the one-card lab grid — back to the index. */
+    /* Flagship case studies skip the one-card lab grid, back to the index. */
     var back = lab.flagship
       ? '<button class="back-link" data-nav="index">← All labs</button>'
       : '<button class="back-link" data-nav="lab" data-lab="' + lab.id + '">← ' + esc(lab.name) + '</button>';
@@ -350,7 +350,7 @@
               '<a class="btn" data-explore href="' + esc(p.url) + '" target="_blank" rel="noopener">Explore ' + esc(p.name) + ' <span class="arrow">→</span></a>' +
             '</div>' +
           '</div>' +
-          '<div class="ph prod-cover" data-cms-path="' + base + '.image" data-cms-image data-cms-dir="assets/labs">' + phShot(p.image, p.name.toLowerCase() + ' — product shot') + '</div>' +
+          '<div class="ph prod-cover" data-cms-path="' + base + '.image" data-cms-image data-cms-dir="assets/labs">' + phShot(p.image, p.name.toLowerCase() + ', product shot') + '</div>' +
         '</div>' +
 
         '<div class="prod-body">' +
@@ -392,7 +392,7 @@
   }
 
   /* =====================================================
-     CASE STUDY — Why / Users / MVP / Artifacts / Testing / Next
+     CASE STUDY, Why / Users / MVP / Artifacts / Testing / Next
      Rendered only when the product carries this richer content.
      ===================================================== */
   function caseStudyHTML(p, base) {
@@ -417,7 +417,7 @@
     if (p.artifacts && p.artifacts.length) {
       var arts = p.artifacts.map(artifactHTML).join("");
       blocks += csSection("Product artifacts", "03",
-        '<p class="cs-sub">The work behind the product — each artifact tagged with the discipline lab it draws on.</p>' +
+        '<p class="cs-sub">The work behind the product, each artifact tagged with the discipline lab it draws on.</p>' +
         '<div class="artifacts">' + arts + '</div>');
     }
 
@@ -592,7 +592,7 @@
       nodes[i].setAttribute("contenteditable", editing ? "true" : "false");
     }
     var t = document.getElementById("editLabel");
-    if (t) t.textContent = editing ? "Editing — click any text" : "Edit content";
+    if (t) t.textContent = editing ? "Editing, click any text" : "Edit content";
   }
 
   /* save edits back to model */

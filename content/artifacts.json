@@ -40,7 +40,7 @@
   "artifacts": [
     {
       "id": "collections-strategy-deck",
-      "title": "AI Collections Cloud — Product Strategy & MVP",
+      "title": "AI Collections Cloud, Product Strategy & MVP",
       "project": "AI Collections Cloud",
       "category": "collections",
       "format": "PDF · 11 pages",
@@ -54,7 +54,7 @@
     },
     {
       "id": "collections-product-deck",
-      "title": "Collections Cloud — Product Interface Deck",
+      "title": "Collections Cloud, Product Interface Deck",
       "project": "AI Collections Cloud",
       "category": "collections",
       "format": "PPTX · Editable",
@@ -81,7 +81,7 @@
     },
     {
       "id": "fastag-strategy-prd",
-      "title": "FASTag Redesign India — Strategy + PRD",
+      "title": "FASTag Redesign India, Strategy + PRD",
       "project": "FASTag Redesign",
       "category": "fastag",
       "format": "DOCX · Source document",
@@ -105,7 +105,7 @@
     },
     {
       "id": "ai-forward-prd-template",
-      "title": "AI Forward Framework — Agent PRD Template",
+      "title": "AI Forward Framework, Agent PRD Template",
       "project": "AI Agent Product System",
       "category": "ai-framework",
       "format": "DOCX · Fillable template",
@@ -117,7 +117,7 @@
     },
     {
       "id": "universal-data-workbench-dataset",
-      "title": "Universal Data Workbench — Relational Test Dataset",
+      "title": "Universal Data Workbench, Relational Test Dataset",
       "project": "Data Utilities",
       "category": "data-tools",
       "format": "XLSX · 6 worksheets",
@@ -141,7 +141,7 @@
     },
     {
       "id": "product-cms-backlog",
-      "title": "Portfolio CMS — Product Backlog",
+      "title": "Portfolio CMS, Product Backlog",
       "project": "Portfolio CMS",
       "category": "data-tools",
       "format": "CSV · 34 backlog items",

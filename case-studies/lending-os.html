@@ -4,25 +4,32 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#101c36">
-<title>LOS — Loan Origination System — Interactive Case Study · Sai Kiran Biswal</title>
-<meta name="description" content="End-to-end PM case study: LOS — Loan Origination System — from fragmented origination workflow to guided, state-based platform with deterministic demo data.">
+<title>LOS, Loan Origination System, Interactive Case Study · Sai Kiran Biswal</title>
+<meta name="description" content="End-to-end PM case study: LOS, Loan Origination System, from fragmented origination workflow to guided, state-based platform with deterministic demo data.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="LOS — Loan Origination System — Interactive Case Study">
+<meta property="og:title" content="LOS, Loan Origination System, Interactive Case Study">
 <meta property="og:description" content="Guided loan origination, state machines, EMI math. Built end to end by Sai Kiran Biswal.">
+<meta property="og:url" content="https://saikiranbiswal.github.io/portfolio/case-studies/lending-os.html">
+<meta property="og:image" content="../assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sai Kiran Biswal · Enterprise AI Product Manager">
+<meta name="twitter:image" content="../assets/og-image.png">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Newsreader:ital,opsz,wght@0,6..72,300;0,6..72,400;1,6..72,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 /* =========================================================
-   LOS — Loan Origination System — Interactive Case Study
+   LOS, Loan Origination System, Interactive Case Study
    "Cloud" enterprise design language (navy + blue), Inter.
-   Same family as collections-cloud.html — shared classes on purpose.
+   Same family as collections-cloud.html, shared classes on purpose.
    Data-driven: content loaded from ../labs.json (LABS_SEED fallback).
    ========================================================= */
 :root{
   --navy:#101c36; --navy-2:#162544; --navy-3:#1e3157;
-  --blue:#2f6fed; --blue-2:#5a8cf5; --blue-soft:#edf4ff; --blue-line:#cfe0ff;
+  --blue:#b85c38; --blue-2:#d4794f; --blue-soft:#f6ece4; --blue-line:#e8d3c4;
   --ink:#162033; --ink-soft:#2b3650; --muted:#68758c; --faint:#9aa6ba;
   --line:#e5eaf1; --line-2:#eef2f7;
   --surface:#ffffff; --canvas:#f4f6f9; --canvas-2:#eef1f6;
@@ -48,14 +55,14 @@ body::before{content:"";position:fixed;inset:0;z-index:999;pointer-events:none;o
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");}
 .figcap{font:500 10.5px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);
   display:flex;gap:10px;align-items:center;margin-top:12px;}
-.figcap::before{content:"";width:22px;height:1px;background:#2f6fed;flex:none;}
+.figcap::before{content:"";width:22px;height:1px;background:#b85c38;flex:none;}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 ::selection{background:var(--blue);color:#fff}
 
 /* ---------- Reading progress (top) ---------- */
 .progress-top{position:fixed;top:0;left:0;right:0;height:3px;z-index:90;background:transparent}
-.progress-top span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--blue-2));box-shadow:0 0 12px rgba(47,111,237,.5);transition:width .1s linear}
+.progress-top span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--blue-2));box-shadow:0 0 12px rgba(184,92,56,.5);transition:width .1s linear}
 
 /* ---------- Top bar ---------- */
 .topbar{position:fixed;top:0;left:0;right:0;z-index:80;height:60px;display:flex;align-items:center;gap:16px;
@@ -66,13 +73,13 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .topbar .back:hover{background:#fff;box-shadow:var(--shadow-sm);color:var(--blue)}
 .topbar .brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:-.01em}
 .topbar .brand .mark{display:grid;place-items:center;width:30px;height:30px;border-radius:9px;color:#fff;
-  background:linear-gradient(145deg,#3d82ff,#2359cb);box-shadow:0 6px 16px rgba(47,111,237,.32);font-weight:900;font-size:14px}
+  background:linear-gradient(145deg,#3d82ff,#2359cb);box-shadow:0 6px 16px rgba(184,92,56,.32);font-weight:900;font-size:14px}
 .topbar .brand small{display:block;font-weight:500;font-size:10.5px;color:var(--muted);letter-spacing:.04em}
 .topbar .counter{margin-left:auto;display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:12px;color:var(--muted)}
 .topbar .counter b{color:var(--blue);font-weight:600}
 .topbar .live-btn{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:9px;font-size:13px;font-weight:700;
-  color:#fff;background:var(--blue);box-shadow:0 7px 18px rgba(47,111,237,.22);transition:.2s var(--ease)}
-.topbar .live-btn:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(47,111,237,.32)}
+  color:#fff;background:var(--blue);box-shadow:0 7px 18px rgba(184,92,56,.22);transition:.2s var(--ease)}
+.topbar .live-btn:hover{transform:translateY(-1px);box-shadow:0 12px 26px rgba(184,92,56,.32)}
 .topbar .live-btn .dot{width:7px;height:7px;border-radius:50%;background:#5ef0b0;box-shadow:0 0 0 4px rgba(94,240,176,.25)}
 @media(max-width:720px){.topbar .brand small,.topbar .counter{display:none}}
 
@@ -87,7 +94,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .rail button:hover .lbl{opacity:1;transform:none}
 .rail button.visited .pip{border-color:var(--blue)}
 .rail button.visited .pip::after{transform:scale(.62)}
-.rail button.active .pip{border-color:var(--blue);box-shadow:0 0 0 5px rgba(47,111,237,.16)}
+.rail button.active .pip{border-color:var(--blue);box-shadow:0 0 0 5px rgba(184,92,56,.16)}
 .rail button.active .pip::after{transform:scale(1)}
 .rail button.active .lbl{opacity:1;transform:none;color:var(--ink)}
 .rail .rail-line{position:absolute;left:14.5px;top:14px;bottom:14px;width:2px;background:var(--line);z-index:-1}
@@ -106,7 +113,7 @@ button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
 .stage-head h2{font-size:clamp(28px,4.2vw,46px);line-height:1.08;letter-spacing:-.03em;margin:14px 0 14px;font-weight:800}
 .stage-head h2 em{font-style:normal;color:var(--blue)}
 .stage-head p{font-size:clamp(16px,1.7vw,18.5px);color:var(--ink-soft);max-width:58ch;line-height:1.6}
-/* stage brief — data-driven stat card that fills the right of every stage header */
+/* stage brief, data-driven stat card that fills the right of every stage header */
 .stage-brief{display:flex;flex-direction:column;min-width:215px;background:#fff;border:1px solid var(--line);
   border-radius:14px;padding:16px 19px;box-shadow:var(--shadow-sm)}
 .stage-brief .cap{font-family:var(--mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:4px}
@@ -131,7 +138,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .hero{background:radial-gradient(120% 140% at 80% -10%,#23386a 0%,var(--navy) 46%,#0b1428 100%);color:#eaf1ff;
   border-radius:0;position:relative;overflow:hidden;padding-top:clamp(96px,12vw,140px);padding-bottom:clamp(60px,8vw,96px)}
 .hero::before{content:"";position:absolute;inset:0;background:
-  radial-gradient(40% 50% at 12% 90%,rgba(47,111,237,.28),transparent 70%),
+  radial-gradient(40% 50% at 12% 90%,rgba(184,92,56,.28),transparent 70%),
   radial-gradient(30% 40% at 95% 20%,rgba(117,87,211,.22),transparent 70%);pointer-events:none}
 .hero .wrap{position:relative}
 .hero .eyebrow{color:var(--blue-2)}
@@ -170,7 +177,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .chaos .t4{bottom:4%;left:0%;animation-delay:-2s;transform:rotate(3deg)}
 .chaos .t5{bottom:8%;right:2%;animation-delay:-3.6s;transform:rotate(-4deg)}
 .chaos .collector{position:absolute;top:46%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;
-  border-radius:50%;display:grid;place-items:center;text-align:center;background:rgba(47,111,237,.16);
+  border-radius:50%;display:grid;place-items:center;text-align:center;background:rgba(184,92,56,.16);
   border:1px dashed rgba(122,160,255,.5);z-index:4}
 .chaos .collector span{font-family:var(--mono);font-size:10px;color:#a9bdea;letter-spacing:.1em}
 .chaos .collector b{display:block;font-size:13px;color:#fff;margin-top:3px}
@@ -245,7 +252,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .flow-node.open .card .det{max-height:120px;opacity:1}
 .flow-node .ic{position:absolute;top:14px;right:13px;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;
   background:var(--blue-soft);color:var(--blue)}
-.flow-node.active .card{border-color:var(--blue);box-shadow:0 14px 30px rgba(47,111,237,.22);transform:translateY(-3px)}
+.flow-node.active .card{border-color:var(--blue);box-shadow:0 14px 30px rgba(184,92,56,.22);transform:translateY(-3px)}
 .flow-node.done .card{border-color:#cdeede;background:linear-gradient(180deg,#fff,#f4fbf7)}
 .flow-node.done .ic{background:var(--green-soft);color:var(--green)}
 .flow-arrow{flex:0 0 auto;width:30px;display:grid;place-items:center;color:var(--faint);transition:.25s var(--ease)}
@@ -268,7 +275,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .node-root span{font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:#9fb6e6;text-transform:uppercase}
 .node-root b{display:block;font-size:clamp(18px,2.4vw,24px);font-weight:700;margin-top:4px;letter-spacing:-.02em}
 .node-driver{cursor:pointer}
-.node-driver.lit{border-color:var(--blue);box-shadow:0 12px 26px rgba(47,111,237,.2);transform:translateX(3px)}
+.node-driver.lit{border-color:var(--blue);box-shadow:0 12px 26px rgba(184,92,56,.2);transform:translateX(3px)}
 .node-driver b{font-size:13.5px;font-weight:650;display:flex;align-items:center;gap:9px}
 .node-driver .d-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex:0 0 auto}
 .node-metric{font-size:12.5px;padding:11px 13px}
@@ -290,7 +297,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .pipe-stage .box .ic{width:34px;height:34px;border-radius:10px;display:grid;place-items:center;background:var(--navy);color:#fff;margin-bottom:11px}
 .pipe-stage .box .ph{font-family:var(--mono);font-size:9.5px;color:var(--faint);letter-spacing:.1em;text-transform:uppercase}
 .pipe-stage .box b{display:block;font-size:13.5px;font-weight:650;line-height:1.25;margin-top:5px;letter-spacing:-.01em}
-.pipe-stage.pulse .box{border-color:var(--blue);box-shadow:0 14px 30px rgba(47,111,237,.24)}
+.pipe-stage.pulse .box{border-color:var(--blue);box-shadow:0 14px 30px rgba(184,92,56,.24)}
 .pipe-stage.pulse .box .ic{background:var(--blue)}
 .pipe-conn{flex:0 0 auto;width:26px;display:grid;place-items:center;color:var(--line)}
 .pipe-conn.lit{color:var(--blue)}
@@ -374,7 +381,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .mk-ai b{display:block;color:#fff;font-size:13px;margin:6px 0 7px;font-weight:650}
 .mk-ai p{font-size:11px;color:#aebfde;line-height:1.5}
 .mk-ai .act{margin-top:10px;display:inline-block;background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:7px 12px;border-radius:8px}
-/* compact AI next-best-action bar — the one navy accent every screen shares */
+/* compact AI next-best-action bar, the one navy accent every screen shares */
 .mk-aibar{margin-top:auto;display:flex;align-items:center;gap:11px;background:var(--navy-grad);color:#dce7fb;
   border-radius:10px;padding:10px 13px;box-shadow:var(--shadow-sm)}
 .mk-aibar .tag{flex:0 0 auto;font-family:var(--mono);font-size:8.5px;letter-spacing:.12em;color:#8fb0ee;text-transform:uppercase;
@@ -388,18 +395,18 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 .mk-donut{width:90px;height:90px;border-radius:50%;background:conic-gradient(var(--red) 0 62%,var(--canvas-2) 62% 100%);
   display:grid;place-items:center;margin:0 auto}
 .mk-donut .hole{width:62px;height:62px;border-radius:50%;background:#fff;display:grid;place-items:center;font-weight:800;font-size:16px}
-/* application-state stepper — the LOS signature element */
+/* application-state stepper, the LOS signature element */
 .mk-steps{display:flex;align-items:flex-start;gap:4px;background:#fff;border:1px solid var(--line);border-radius:10px;padding:13px 10px;box-shadow:var(--shadow-sm)}
 .mk-step{flex:1;text-align:center;font-size:9px;font-weight:650;color:var(--muted);letter-spacing:.02em}
 .mk-step .pt{width:19px;height:19px;border-radius:50%;margin:0 auto 5px;display:grid;place-items:center;font-size:9.5px;font-weight:800;
   background:var(--canvas-2);color:var(--faint);border:1.5px solid var(--line)}
 .mk-step.done .pt{background:var(--green);border-color:var(--green);color:#fff}
-.mk-step.now .pt{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 0 4px rgba(47,111,237,.15)}
+.mk-step.now .pt{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 0 4px rgba(184,92,56,.15)}
 .mk-step.now{color:var(--ink)}
 .mk-field .k{font-size:9.5px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
 .mk-field .in{height:24px;border:1px solid var(--line);border-radius:7px;background:var(--canvas);position:relative;overflow:hidden}
 .mk-field .in span{position:absolute;inset:6px auto 6px 8px;width:55%;border-radius:3px;background:var(--canvas-2)}
-.mk-field .in.focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,237,.12)}
+.mk-field .in.focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(184,92,56,.12)}
 .scr>.mk-card{flex:0 0 auto}
 /* proto side controls */
 .proto-side h3{font-size:20px;font-weight:750;letter-spacing:-.02em;margin-bottom:8px}
@@ -459,7 +466,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
   <a class="back" href="../index.html">← Portfolio</a>
   <div class="brand">
     <span class="mark">L</span>
-    <span>LOS — Loan Origination<small>Interactive case study</small></span>
+    <span>LOS, Loan Origination<small>Interactive case study</small></span>
   </div>
   <div class="counter"><b id="exploredN">0</b>/<span id="totalN">7</span> stages explored</div>
   <a class="live-btn" href="../apps/lending-cloud/index.html"><span class="dot"></span>Open live prototype</a>
@@ -481,8 +488,8 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     "Product":"product","Analytics":"analytics","AI":"ai","Architecture":"architecture",
     "Data":"data","Founder":"founder"
   };
-  var AV = ["#2f6fed","#7557d3","#16835b","#b76509","#0f8a9c"];
-  var PRD_PDF = null; // no PRD deck for LOS yet — PRD CTAs are hidden
+  var AV = ["#b85c38","#7557d3","#16835b","#b76509","#0f8a9c"];
+  var PRD_PDF = null; // no PRD deck for LOS yet, PRD CTAs are hidden
 
   // ---------- data load (hybrid: labs.json source of truth) ----------
   function findProduct(data){
@@ -517,7 +524,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       '<h2>'+title+'</h2>'+(sub?'<p>'+esc(sub)+'</p>':'')+(tagArr?tags(tagArr):'')+'</div>'+
       (brief||'')+'</div>';
   }
-  // stage brief — small data-driven stat card, fills the right of the stage header
+  // stage brief, small data-driven stat card, fills the right of the stage header
   function brief(cap,rows){
     return '<aside class="stage-brief"><span class="cap">'+esc(cap)+'</span>'+
       rows.map(function(r){return '<span class="row"><b'+(r[2]?' class="hl"':'')+'>'+esc(r[0])+'</b><span>'+esc(r[1])+'</span></span>';}).join("")+
@@ -564,16 +571,16 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     document.getElementById("totalN").textContent=T;
     var H=[];
 
-    // ===== STAGE 0 — HERO =====
+    // ===== STAGE 0, HERO =====
     var flowIcons=["login","list","open","brain","bolt","send","check","chart"];
     H.push('<section class="stage hero" id="s0" data-stage="0"><div class="wrap"><div class="hero-grid">'+
       '<div class="reveal">'+
         '<span class="eyebrow">Flagship case study · '+esc((p.tags||[]).join(" · "))+'</span>'+
-        '<h1>LOS — <em>Loan Origination</em> System</h1>'+
+        '<h1>LOS, <em>Loan Origination</em> System</h1>'+
         '<p class="lede">'+esc(p.tagline)+'</p>'+
         (p.why?'<div class="why">'+esc(p.why)+'</div>':'')+
         '<div class="hero-meta">'+
-          '<div><span>Role</span><b>'+esc(p.role||"Product Lead")+'</b></div>'+
+          '<div><span>Role</span><b>'+esc(p.role||"Product Manager · Lending Platform")+'</b></div>'+
           '<div><span>Year</span><b>'+esc(p.year||"")+'</b></div>'+
           '<div><span>Stage</span><b>'+esc(p.stage2||p.stage||"")+'</b></div>'+
         '</div>'+
@@ -593,19 +600,19 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       '</div>'+
     '</div></div></section>');
 
-    // ===== STAGE 1 — PRD =====
+    // ===== STAGE 1, PRD =====
     var prdUsers=prd.users||p.users||[], prdMvp=prd.mvp||p.mvp||[], prdNon=prd.nongoals||[];
     H.push('<section class="stage alt" id="s1" data-stage="1"><div class="wrap">'+
-      head("01",T,"Define the bet · PRD","Decide <em>exactly</em> what to build — and what not to.",
+      head("01",T,"Define the bet · PRD","Decide <em>exactly</em> what to build, and what not to.",
         "One goal, the people it serves, the smallest slice that proves it, and the lines we deliberately won't cross.",prd.tags,
-        brief("The bet, sized",[["1","goal",true],[String(prdUsers.length),"primary users"],[String(prdMvp.length),"in scope — MVP"],[String(prdNon.length),"deliberate no's"]]))+
+        brief("The bet, sized",[["1","goal",true],[String(prdUsers.length),"primary users"],[String(prdMvp.length),"in scope, MVP"],[String(prdNon.length),"deliberate no's"]]))+
       '<div class="reveal">'+
         '<div class="prd-goal"><span class="badge">Goal</span><b>'+esc(prd.goal||p.tagline)+'</b></div>'+
         '<div class="prd-cols">'+
           '<div class="prd-card prd-who"><h4><span class="ic">'+ic("user")+'</span>Who it serves</h4><div class="sub">Primary users</div>'+
             prdUsers.map(function(u,i){return '<div class="persona"><span class="av" style="background:'+AV[i%AV.length]+'">'+esc(u.split(" ").map(function(w){return w[0];}).join("").slice(0,2).toUpperCase())+'</span><b>'+esc(u)+'</b></div>';}).join("")+
           '</div>'+
-          '<div class="prd-card prd-in"><h4><span class="ic">'+ic("check")+'</span>In scope — MVP</h4><div class="sub">The smallest slice that tests the bet</div>'+
+          '<div class="prd-card prd-in"><h4><span class="ic">'+ic("check")+'</span>In scope, MVP</h4><div class="sub">The smallest slice that tests the bet</div>'+
             prdMvp.map(function(m){return '<div class="scope-item"><span class="tick">✓</span><b>'+esc(m)+'</b></div>';}).join("")+
           '</div>'+
           '<div class="prd-card prd-out"><h4><span class="ic">'+ic("ban")+'</span>Out of scope</h4><div class="sub">Said no on purpose</div>'+
@@ -615,16 +622,16 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       '</div>'+
     '</div></section>');
 
-    // ===== STAGE 2 — USER FLOW =====
+    // ===== STAGE 2, USER FLOW =====
     var fsteps=flow.steps||[];
     var flowDetail=[
-      "One click in — no branch visit, and progress is saved from the first field.",
+      "One click in, no branch visit, and progress is saved from the first field.",
       "Product-fit rules surface the right loan and rate up front.",
       "Dynamic fields skip what's irrelevant and never ask for the same data twice.",
-      "Upload once — validation flags issues immediately, not days later.",
+      "Upload once, validation flags issues immediately, not days later.",
       "KYC runs as a visible state, with a reason attached to every retry.",
       "A soft decline routes to a next-best offer instead of a dead end.",
-      "The analyst opens a complete file — no document chasing.",
+      "The analyst opens a complete file, no document chasing.",
       "A clear state transition the borrower sees the moment it happens.",
       "Approved offers hand off to disbursement with nothing re-keyed."
     ];
@@ -637,7 +644,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
     });
     H.push('<section class="stage" id="s2" data-stage="2"><div class="wrap">'+
       head("02",T,"The happy path · User flow","One clean line from <em>application</em> to <em>approval</em>.",
-        "Click any step to open it — or press play and watch a borrower move through the whole journey.",flow.tags,
+        "Click any step to open it, or press play and watch a borrower move through the whole journey.",flow.tags,
         brief("The happy path",[[String(fsteps.length),"steps, end to end",true],["1","visible status"],["0","blind waits"]]))+
       '<div class="reveal">'+
         '<div class="flow-toolbar"><button class="flow-play" id="flowPlay"><span class="tri"></span>Play the walkthrough</button>'+
@@ -646,7 +653,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       '</div>'+
     '</div></section>');
 
-    // ===== STAGE 3 — METRICS TREE =====
+    // ===== STAGE 3, METRICS TREE =====
     var drivers=met.drivers||[], pmetrics=met.product||[];
     var dHtml=drivers.map(function(d,i){return '<div class="node node-driver" data-d="'+i+'"><b><span class="d-dot"></span>'+esc(d)+'</b></div>';}).join("");
     var mHtml=pmetrics.map(function(m,i){return '<div class="node node-metric" data-m="'+i+'"><span>Instrumented</span>'+esc(m)+'</div>';}).join("");
@@ -665,7 +672,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       '</div>'+
     '</div></section>');
 
-    // ===== STAGE 4 — ARCHITECTURE / WORKFLOW =====
+    // ===== STAGE 4, ARCHITECTURE / WORKFLOW =====
     var wsteps=wf.steps||[];
     var wIcons=["user","doc","open","shield","check","gauge","flag","money","send"];
     var wPhase=["Lead","Apply","Docs","KYC","Verified","Review","Decision","Offer","Disburse"];
@@ -676,20 +683,20 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       if(i<wsteps.length-1) pHtml+='<div class="pipe-conn" data-pc="'+i+'">'+arrow()+'</div>';
     });
     H.push('<section class="stage" id="s4" data-stage="4"><div class="wrap">'+
-      head("04",T,"How it runs · State machine","Every application is in <em>exactly one state</em> — never in limbo.",
-        "Watch a single application travel the state machine — each transition is visible to the borrower and the bank.",wf.tags,
+      head("04",T,"How it runs · State machine","Every application is in <em>exactly one state</em>, never in limbo.",
+        "Watch a single application travel the state machine, each transition is visible to the borrower and the bank.",wf.tags,
         brief("The system",[[String(wsteps.length),"explicit states",true],["1","shared workflow"],["0","limbo states"]]))+
       '<div class="reveal">'+
         '<div class="pipe-toolbar"><button class="pipe-pulse-btn" id="pulseBtn">'+ic("bolt")+'Run an application through</button></div>'+
         '<div class="pipe" id="pipe">'+pHtml+'</div>'+
-        '<div class="pipe-loop"><span class="ar">'+ic("loop")+'</span><div>Drop-off and KYC-retry signals flow back into the <b>form and document steps</b> — the journey gets shorter from real outcomes.</div></div>'+
+        '<div class="pipe-loop"><span class="ar">'+ic("loop")+'</span><div>Drop-off and KYC-retry signals flow back into the <b>form and document steps</b>, the journey gets shorter from real outcomes.</div></div>'+
       '</div>'+
     '</div></section>');
 
-    // ===== STAGE 5 — BEFORE / AFTER =====
+    // ===== STAGE 5, BEFORE / AFTER =====
     H.push('<section class="stage alt" id="s5" data-stage="5"><div class="wrap">'+
       head("05",T,"The shift · Before / After","From <em>waiting blindly</em> to <em>watching it move</em>.",
-        "Same borrower, same bank — the difference is that state and the next step are always explicit.",ba.tags,
+        "Same borrower, same bank, the difference is that state and the next step are always explicit.",ba.tags,
         brief("The shift",[["6","loose ends before"],["1","shared workflow",true],["1","next step, always"]]))+
       '<div class="reveal">'+
         '<div class="ba-toggle" id="baToggle"><button class="before-on on" data-ba="before">Before</button><button class="after-on" data-ba="after">After</button></div>'+
@@ -713,35 +720,35 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       '</div>'+
     '</div></section>');
 
-    // ===== STAGE 6 — PROTOTYPE =====
+    // ===== STAGE 6, PROTOTYPE =====
     var sItems=scr.items||[];
     var mocks=buildMocks(sItems);
     var navBtns=sItems.map(function(it,i){return '<button class="'+(i===0?"on":"")+'" data-scr="'+i+'"><span class="n">'+String(i+1).padStart(2,"0")+'</span>'+esc(it.name)+'</button>';}).join("");
     var screens=sItems.map(function(it,i){return '<div class="scr '+(i===0?"show":"")+'" data-screen="'+i+'"><div class="scr-cap">'+esc(it.name)+'</div>'+mocks[i]+'</div>';}).join("");
     H.push('<section class="stage" id="s6" data-stage="6"><div class="wrap">'+
-      head("06",T,"See it work · Prototype","Five screens, <em>built in HTML</em> — then open the real thing.",
+      head("06",T,"See it work · Prototype","Five screens, <em>built in HTML</em>, then open the real thing.",
         "Click through the journey, then launch the live, clickable prototype.",scr.tags,
         brief("Proof of build",[[String(sItems.length),"screens to walk",true],["1","live prototype"],["0","mock screenshots"]]))+
       '<div class="proto-wrap reveal">'+
         '<div class="device"><div class="chrome"><div class="dots"><i></i><i></i><i></i></div>'+
           '<div class="url">lending.cloud / application</div></div>'+
           '<div class="screen" id="screenStage">'+screens+'</div>'+
-          '<p class="figcap">FIG. 06 — LOS — LOAN ORIGINATION SYSTEM · WORKING PROTOTYPE</p>'+
+          '<p class="figcap">FIG. 06, LOS, LOAN ORIGINATION SYSTEM · WORKING PROTOTYPE</p>'+
           '</div>'+
         '<div class="proto-side">'+
-          '<h3>Walk the journey</h3><p>Both sides of the desk — the borrower\'s guided path and the bank\'s shared workflow.</p>'+
+          '<h3>Walk the journey</h3><p>Both sides of the desk, the borrower\'s guided path and the bank\'s shared workflow.</p>'+
           '<div class="proto-nav" id="protoNav">'+navBtns+'</div>'+
           '<a class="proto-live" href="../apps/lending-cloud/index.html"><span class="dot"></span>Open the live prototype</a>'+
         '</div>'+
       '</div>'+
-      // closing — hypothesis + next
+      // closing, hypothesis + next
       '<div class="close-grid reveal" style="margin-top:46px">'+
         '<div class="close-card hyp"><div class="lab"><span class="d"></span>What I\'m testing</div><p>'+esc(p.testing||"")+'</p></div>'+
         '<div class="close-card nxt"><div class="lab"><span class="d"></span>What\'s next</div><p>'+esc(p.next||"")+'</p></div>'+
       '</div>'+
     '</div></section>');
 
-    // ===== FOOTER — cross-sell the other flagship =====
+    // ===== FOOTER, cross-sell the other flagship =====
     H.push('<footer class="foot"><div class="wrap">'+
       '<div class="next"><span class="eyebrow">Next case study</span>'+
       '<h3>AI Collections <em>Cloud</em></h3>'+
@@ -769,7 +776,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
 
   // ---------- screen mock-ups ----------
   // Every screen shares ONE skeleton: light workspace cards on the canvas,
-  // and a single navy state bar pinned to the bottom — current state + next step,
+  // and a single navy state bar pinned to the bottom, current state + next step,
   // the LOS signature (same family as the Collections AI bar).
   function buildMocks(items){
     function statebar(tag,line,sub,act){
@@ -787,7 +794,7 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
       "Loan product selection":
         '<div class="mk-row"><div class="mk-card"><div class="k">Personal loan</div><div class="v blue">11.5%</div>'+
           '<div style="font-size:9.5px;color:var(--muted);margin-top:3px">Up to $40K · 5 yrs</div></div>'+
-        '<div class="mk-card" style="border-color:var(--blue);box-shadow:0 0 0 3px rgba(47,111,237,.1)"><div class="k">Auto loan</div><div class="v green">9.2%</div>'+
+        '<div class="mk-card" style="border-color:var(--blue);box-shadow:0 0 0 3px rgba(184,92,56,.1)"><div class="k">Auto loan</div><div class="v green">9.2%</div>'+
           '<div style="font-size:9.5px;color:var(--muted);margin-top:3px">Up to $80K · 7 yrs</div></div>'+
         '<div class="mk-card"><div class="k">Home loan</div><div class="v purple">8.4%</div>'+
           '<div style="font-size:9.5px;color:var(--muted);margin-top:3px">Up to $400K · 25 yrs</div></div></div>'+
@@ -800,13 +807,13 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
         '<div class="mk-card mk-field"><div class="k">Monthly income</div><div class="in focus"><span style="width:45%"></span></div></div></div>'+
         '<div class="mk-row"><div class="mk-card mk-field"><div class="k">Employer</div><div class="in"><span style="width:60%"></span></div></div>'+
         '<div class="mk-card mk-field"><div class="k">PAN <span style="text-transform:none;color:var(--green)">· pre-filled from KYC</span></div><div class="in"><span style="width:40%;background:var(--green-soft)"></span></div></div></div>'+
-        statebar("STATE","Progress saved — resume anytime","Income details next · about 4 minutes left","Continue"),
+        statebar("STATE","Progress saved, resume anytime","Income details next · about 4 minutes left","Continue"),
       "Document upload / KYC":
         '<div class="mk-h">KYC · documents</div><div class="mk-list">'+
         liDoc("ID","PAN card","Uploaded · auto-validated",'lo','Verified')+
-        liDoc("BS","Bank statement","Checking — usually under a minute",'md','Checking')+
+        liDoc("BS","Bank statement","Checking, usually under a minute",'md','Checking')+
         liDoc("AP","Address proof","Not uploaded yet",'hi','Missing')+'</div>'+
-        statebar("STATE","1 document missing — upload to continue","Validation runs instantly, with the reason shown on any retry","Upload"),
+        statebar("STATE","1 document missing, upload to continue","Validation runs instantly, with the reason shown on any retry","Upload"),
       "Application status tracker":
         steps(3)+
         '<div class="mk-card" style="margin-top:10px"><div class="k">Current state</div>'+
@@ -816,11 +823,11 @@ a.tagchip::after{content:" ↗";color:var(--faint)}
         statebar("STATE","Decision expected today","You’ll be notified the moment the state changes","Track"),
       "Credit analyst review queue":
         '<div class="mk-h">Review queue · complete files only</div><div class="mk-list">'+
-        liQ("#2f6fed","AS","A. Sharma — Personal","$18.0K · file complete",'lo','Clear')+
-        liQ("#7557d3","RI","R. Iyer — Auto","$42.5K · co-applicant",'md','Refer')+
-        liQ("#b76509","MK","M. Khan — Home","$240K · income variance",'hi','Flags')+
-        liQ("#16835b","DP","D. Patel — Personal","$12.0K · repeat borrower",'lo','Clear')+'</div>'+
-        statebar("STATE","3 referred cases need a second look","Every file arrives complete — no document chasing","Open")
+        liQ("#b85c38","AS","A. Sharma, Personal","$18.0K · file complete",'lo','Clear')+
+        liQ("#7557d3","RI","R. Iyer, Auto","$42.5K · co-applicant",'md','Refer')+
+        liQ("#b76509","MK","M. Khan, Home","$240K · income variance",'hi','Flags')+
+        liQ("#16835b","DP","D. Patel, Personal","$12.0K · repeat borrower",'lo','Clear')+'</div>'+
+        statebar("STATE","3 referred cases need a second look","Every file arrives complete, no document chasing","Open")
     };
     function chipG(t){return '<span class="mk-chip"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block"></span>'+t+'</span>';}
     function liQ(c,av,name,meta,rk,rl){return '<div class="mk-li"><span class="av" style="background:'+c+'">'+av+'</span><div><b>'+name+'</b><div style="color:var(--muted);font-size:10px">'+meta+'</div></div><span class="risk '+rk+'">'+rl+'</span></div>';}

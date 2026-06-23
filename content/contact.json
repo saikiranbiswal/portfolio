@@ -2,7 +2,7 @@
   "hero": {
     "eyebrow": "Contact",
     "heading": "Let's build something <em>worth</em> building.",
-    "body": "I'm open to lead, principal, and senior product roles in enterprise SaaS, fintech, and AI — and to a good conversation about a hard problem. The fastest way to reach me is email."
+    "body": "I'm open to lead, principal, and senior product roles in enterprise SaaS, fintech, and AI, and to a good conversation about a hard problem. The fastest way to reach me is email."
   },
   "links": [
     {
@@ -33,8 +33,8 @@
     "eyebrow": "Or start with the work",
     "links": [
       { "label": "FIG. 01 · AI Collections Cloud", "href": "case-studies/collections-cloud.html" },
-      { "label": "FIG. 02 · LOS — Loan Origination", "href": "case-studies/lending-os.html" }
+      { "label": "FIG. 02 · LOS, Loan Origination", "href": "case-studies/lending-os.html" }
     ]
   },
-  "toast": "COPIED — NOW WRITE THE HARD PROBLEM"
+  "toast": "COPIED, NOW WRITE THE HARD PROBLEM"
 }

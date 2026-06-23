@@ -1,5 +1,5 @@
 /* =========================================================
-   contact.js — renders the Contact page from contact.json + the
+   contact.js, renders the Contact page from contact.json + the
    shared site identity (products.json → meta). Markup/classes
    mirror the original contact.html; only the copy is data-driven.
    ========================================================= */
@@ -88,7 +88,7 @@
     var d = await loadJSON("content/contact.json");
     var root = document.getElementById("page");
     if (!d) { root.innerHTML = '<p class="body-text" style="padding:80px 24px;">Could not load contact.json. Run a local server (see README).</p>'; return; }
-    document.title = "Contact — " + (meta.owner || "");
+    document.title = "Contact, " + (meta.owner || "");
     root.innerHTML = render(meta, d);
     if (window.PreviewData) PreviewData.banner();
     window.dispatchEvent(new Event("scroll"));
@@ -99,7 +99,7 @@
         navigator.clipboard.writeText(meta.email || '').then(function() {
           var toast = document.getElementById('email-toast');
           if (toast) {
-            toast.textContent = d.toast || 'COPIED — NOW WRITE THE HARD PROBLEM';
+            toast.textContent = d.toast || 'COPIED, NOW WRITE THE HARD PROBLEM';
             toast.classList.add('show');
             setTimeout(function() { toast.classList.remove('show'); }, 3000);
           }

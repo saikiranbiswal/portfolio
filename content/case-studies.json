@@ -3,14 +3,14 @@
     {
       "id": "collections-cloud",
       "title": "AI Collections Cloud",
-      "summary": "From painful collections workflow to a working AI-assisted prototype — PRD, journey, metrics, and architecture.",
+      "summary": "From painful collections workflow to a working AI-assisted prototype, PRD, journey, metrics, and architecture.",
       "file": "case-studies/collections-cloud.html",
       "renderer": "static-html",
       "visible": true
     },
     {
       "id": "lending-os",
-      "title": "LOS — Loan Origination",
+      "title": "LOS, Loan Origination",
       "summary": "End-to-end loan origination case study, from problem framing to platform.",
       "file": "case-studies/lending-os.html",
       "renderer": "static-html",

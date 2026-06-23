@@ -1,5 +1,5 @@
 /* =========================================================
-   site.js — public showcase logic
+   site.js, public showcase logic
    Loads products.json, renders flagship + work grid, wires modal.
    No admin UI here; admin is isolated in admin.html.
    ========================================================= */
@@ -89,7 +89,7 @@
   // Full-bleed hero image for the flagship card; falls back to the placeholder
   // label block when the featured project has no screenshot set.
   function heroShot(p) {
-    var label = esc(p.name.toLowerCase()) + ' — product hero';
+    var label = esc(p.name.toLowerCase()) + ', product hero';
     if (!p.screenshot) return '<span class="ph-label">' + label + '</span>';
     return '<img src="' + esc(p.screenshot) + '" alt="" ' +
       'style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center" ' +
@@ -134,7 +134,7 @@
         '</div>' +
         '<div class="flag-img-col">' +
           '<div class="ph" data-cms-path="projects[id=' + esc(p.id) + '].screenshot" data-cms-image data-cms-dir="assets/screenshots">' + heroShot(p) + '</div>' +
-          '<p class="figcap" style="margin-top:10px;">FIG. 0' + (flip ? '2' : '1') + ' — ' + esc(p.name.toUpperCase()) + ' · FLAGSHIP CASE STUDY</p>' +
+          '<p class="figcap" style="margin-top:10px;">FIG. 0' + (flip ? '2' : '1') + ', ' + esc(p.name.toUpperCase()) + ' · FLAGSHIP CASE STUDY</p>' +
         '</div>' +
       '</a>';
   }

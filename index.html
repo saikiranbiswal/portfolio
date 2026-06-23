@@ -4,14 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sai Kiran Biswal · Enterprise AI Product Manager</title>
-<meta name="description" content="An interactive portfolio of enterprise AI and fintech products built by Sai Kiran Biswal — explore the work, evidence, and operating artifacts behind each product.">
+<meta name="description" content="An interactive portfolio of enterprise AI and fintech products built by Sai Kiran Biswal, explore the work, evidence, and operating artifacts behind each product.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Sai Kiran Biswal · Enterprise AI Product">
 <meta property="og:description" content="Explore working products, flagship case studies, and the evidence behind them in an immersive portfolio.">
+<meta property="og:url" content="https://saikiranbiswal.github.io/portfolio/">
+<meta property="og:image" content="assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Sai Kiran Biswal · Enterprise AI Product Manager">
+<meta name="twitter:image" content="assets/og-image.png">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <script>document.documentElement.dataset.theme=(function(){try{return localStorage.getItem('portfolio.theme')||'dark'}catch(e){return'dark'}})();</script>
-<link rel="stylesheet" href="css/styles.css?v=16">
-<link rel="stylesheet" href="assets/gallery/gallery.css?v=6">
+<link rel="stylesheet" href="css/styles.css?v=17">
+<link rel="stylesheet" href="assets/gallery/gallery.css?v=7">
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
 </script>
@@ -19,10 +26,10 @@
 </head>
 <body class="gallery-page">
 
-<a class="gallery-skip" href="products.html">Skip the interactive gallery — browse all work</a>
+<a class="gallery-skip" href="products.html">Skip the interactive gallery, browse all work</a>
 
 <canvas class="particle-bg" aria-hidden="true"></canvas>
-<canvas id="gl" aria-label="Interactive project gallery — drag to explore, select a project to open details"></canvas>
+<canvas id="gl" aria-label="Interactive project gallery, drag to explore, select a project to open details"></canvas>
 <div class="vignette" aria-hidden="true"></div>
 
 <nav class="nav gallery-nav">
@@ -32,11 +39,13 @@
       <span><span class="name">Sai Kiran Biswal</span><br>
       <span class="role">Enterprise · AI Product</span></span>
     </a>
+    <input class="nav-cb" type="checkbox" id="navToggle" aria-hidden="true" tabindex="-1">
+    <label class="nav-burger" for="navToggle" aria-label="Toggle navigation menu"><span></span></label>
     <div class="nav-links">
       <a href="index.html" class="active">Home</a>
       <a href="products.html">Work</a>
+      <a href="labs.html">Playground</a>
       <a href="artifacts.html">Artifacts</a>
-      <a href="labs.html">Labs</a>
       <a href="about.html">About</a>
       <a href="contact.html">Contact</a>
       <span class="nav-status"><span class="pulse"></span> <span>Open to lead PM roles</span></span>
@@ -48,6 +57,27 @@
   <p class="eyebrow">Enterprise AI · Fintech · Product systems</p>
   <h1>Products built from <em>problem</em> to proof.</h1>
 </div>
+
+<!-- Progressive-enhancement fallback: real HTML for search engines, screen
+     readers, and keyboard users. Visually hidden behind the canvas on desktop;
+     becomes the primary stacked layout on mobile. -->
+<main class="home-fallback" id="homeFallback">
+  <p class="eyebrow">Enterprise AI · Fintech · Product systems</p>
+  <h1>Products built from problem to proof.</h1>
+  <p class="home-fallback-lead">I'm Sai Kiran Biswal, a product manager building enterprise AI and fintech products end to end, from discovery and architecture through to go-to-market.</p>
+  <a class="btn home-fallback-cta" href="products.html">See the work <span class="arrow">→</span></a>
+  <nav class="home-fallback-list" aria-label="Featured projects">
+    <a href="case-studies/collections-cloud.html"><strong>AI Collections Cloud</strong><span>Flagship case study · AI-native recovery platform</span></a>
+    <a href="case-studies/lending-os.html"><strong>LOS, Loan Origination System</strong><span>Flagship case study · 0-to-1 lending platform</span></a>
+    <a href="case-studies/fastag.html"><strong>FASTag Redesign</strong><span>Strategy &amp; PRD · National toll and mobility trust layer</span></a>
+    <a href="project.html?id=atlas-task-management"><strong>Atlas</strong><span>Working prototype · Task management system</span></a>
+    <a href="project.html?id=synthesis"><strong>Synthesis</strong><span>Working app · Strategic framework engine</span></a>
+    <a href="project.html?id=neuralpath"><strong>NeuralPath</strong><span>Working app · AI concepts game</span></a>
+    <a href="project.html?id=dashboard-studio"><strong>Dashboard Studio</strong><span>Working app · Analytics dashboard builder</span></a>
+    <a href="project.html?id=excel-transformer"><strong>Excel Transformer</strong><span>Working app · Spreadsheet automation</span></a>
+    <a href="project.html?id=excel-merger"><strong>Excel Merger</strong><span>Working app · Data consolidation tool</span></a>
+  </nav>
+</main>
 
 <div class="hover-title" id="hoverTitle" aria-live="polite">
   <p class="eyebrow" id="hoverCategory"></p>

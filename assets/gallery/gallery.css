@@ -214,6 +214,38 @@ body.gallery-page {
 .detail-cta { text-decoration: none; }
 .detail-cta.hidden { display: none; }
 
+/* ---------- Progressive-enhancement fallback ---------- */
+/* Desktop: clipped for SEO + screen readers, but revealed as an overlay
+   panel the moment a keyboard user tabs into it (P-02 / P-08). */
+.home-fallback {
+  position: fixed;
+  top: 50%; left: 50%;
+  width: min(560px, 90vw);
+  transform: translate(-50%, -50%);
+  z-index: 9;
+  background: color-mix(in srgb, var(--paper) 96%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  border-radius: 8px;
+  padding: 32px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, .5);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity .2s ease, visibility .2s;
+}
+.home-fallback:focus-within { opacity: 1; visibility: visible; pointer-events: auto; }
+.home-fallback .eyebrow { color: var(--muted); }
+.home-fallback h1 { font-family: var(--serif); font-weight: 400; font-size: 34px; line-height: 1.05; margin: 10px 0 14px; color: var(--ink); }
+.home-fallback-lead { color: var(--ink-soft); font-size: 16px; line-height: 1.55; margin-bottom: 20px; }
+.home-fallback-cta { margin-bottom: 22px; }
+.home-fallback-list { display: flex; flex-direction: column; }
+.home-fallback-list a {
+  display: flex; flex-direction: column; gap: 2px;
+  padding: 11px 2px; border-top: 1px solid var(--line-soft); color: var(--ink);
+}
+.home-fallback-list a:last-child { border-bottom: 1px solid var(--line-soft); }
+.home-fallback-list strong { font-weight: 600; font-size: 15px; }
+.home-fallback-list span { font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.home-fallback-list a:hover strong { color: var(--clay); }
+
 @media (max-width: 720px) {
   .gallery-intro {
     bottom: 112px;
@@ -224,6 +256,21 @@ body.gallery-page {
   .drag-hint { bottom: 20px; }
   .hover-title h2 { font-size: 24px; }
   .detail-title { font-size: 32px; }
+
+  /* Mobile: the canvas gallery is unreadable on small screens (P-06 / P-19);
+     replace it with the clean stacked fallback list. */
+  html, body.gallery-page { height: auto; overflow: auto; }
+  #gl, .particle-bg, .vignette, .gallery-intro, .drag-hint, .hover-title, .gallery-loader, .gallery-skip { display: none !important; }
+  .home-fallback {
+    position: static;
+    transform: none;
+    opacity: 1; visibility: visible; pointer-events: auto;
+    width: auto; margin: 0;
+    border: 0; border-radius: 0; box-shadow: none;
+    padding: 90px var(--gutter) 60px;
+    background: var(--paper);
+  }
+  .home-fallback h1 { font-size: 40px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

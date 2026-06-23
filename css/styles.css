@@ -170,6 +170,7 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
   border-bottom: 1px solid var(--line-soft);
 }
 .nav-inner {
+  position: relative;
   max-width: var(--maxw); margin: 0 auto; padding: 16px var(--gutter);
   display: flex; align-items: center; justify-content: space-between;
 }
@@ -182,6 +183,23 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
 }
 .wordmark .name { font-weight: 600; font-size: 15.5px; letter-spacing: -0.01em; }
 .wordmark .role { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; white-space: nowrap; }
+
+/* Hamburger toggle — hidden on desktop, shown under 720px */
+.nav-cb { position: absolute; opacity: 0; pointer-events: none; width: 0; height: 0; }
+.nav-burger {
+  display: none;
+  width: 40px; height: 40px; flex: none;
+  border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--card); cursor: pointer;
+  align-items: center; justify-content: center;
+}
+.nav-burger span, .nav-burger span::before, .nav-burger span::after {
+  content: ''; display: block; width: 18px; height: 1.6px;
+  background: var(--ink); transition: transform .25s var(--ease), opacity .2s ease;
+}
+.nav-burger span { position: relative; }
+.nav-burger span::before { position: absolute; top: -6px; }
+.nav-burger span::after  { position: absolute; top:  6px; }
 
 .nav-links { display: flex; align-items: center; gap: 30px; }
 .nav-links a {
@@ -211,17 +229,39 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
 @media (max-width: 720px) {
   .nav-inner { padding-block: 13px; }
   .wordmark > span:last-child { display: none; }
+  .nav-burger { display: inline-flex; }
+  /* Collapse links into a full-width drawer below the bar */
   .nav-links {
-    gap: clamp(14px, 4.2vw, 22px);
-    overflow-x: auto;
-    overscroll-behavior-inline: contain;
-    scrollbar-width: none;
-    margin-left: 18px;
-    padding-right: 4px;
+    position: absolute;
+    top: 100%; left: 0; right: 0;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: var(--paper);
+    border-bottom: 1px solid var(--line);
+    padding: 6px var(--gutter) 14px;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    transition: max-height .3s var(--ease), opacity .2s ease, visibility .3s;
   }
-  .nav-links::-webkit-scrollbar { display: none; }
-  .nav-links a { font-size: 13.5px; }
-  .nav-status, .wordmark .role { display: none; }
+  .nav-cb:checked ~ .nav-links {
+    max-height: 80vh;
+    opacity: 1;
+    visibility: visible;
+  }
+  .nav-links a { font-size: 16px; padding: 13px 2px; border-bottom: 1px solid var(--line-soft); }
+  .nav-links a::after { display: none; }
+  .nav-status {
+    margin-top: 12px; padding-top: 4px;
+    display: flex; font-size: 12px;
+  }
+  .wordmark .role { display: none; }
+  /* Burger → X when open */
+  .nav-cb:checked ~ .nav-burger span { background: transparent; }
+  .nav-cb:checked ~ .nav-burger span::before { transform: translateY(6px) rotate(45deg); }
+  .nav-cb:checked ~ .nav-burger span::after  { transform: translateY(-6px) rotate(-45deg); }
 }
 
 .theme-toggle {

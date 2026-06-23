@@ -16,12 +16,12 @@
       "label": "Work"
     },
     {
-      "href": "artifacts.html",
-      "label": "Artifacts"
+      "href": "labs.html",
+      "label": "Playground"
     },
     {
-      "href": "labs.html",
-      "label": "Labs"
+      "href": "artifacts.html",
+      "label": "Artifacts"
     },
     {
       "href": "about.html",
@@ -46,15 +46,15 @@
       "visible": true
     },
     {
-      "id": "artifacts",
-      "file": "artifacts.html",
-      "title": "Artifacts",
+      "id": "labs",
+      "file": "labs.html",
+      "title": "Playground",
       "visible": true
     },
     {
-      "id": "labs",
-      "file": "labs.html",
-      "title": "Labs",
+      "id": "artifacts",
+      "file": "artifacts.html",
+      "title": "Artifacts",
       "visible": true
     },
     {
@@ -84,12 +84,12 @@
             "label": "Work"
           },
           {
-            "href": "artifacts.html",
-            "label": "Artifacts"
+            "href": "labs.html",
+            "label": "Playground"
           },
           {
-            "href": "labs.html",
-            "label": "Labs"
+            "href": "artifacts.html",
+            "label": "Artifacts"
           },
           {
             "href": "about.html",
@@ -120,7 +120,7 @@
         "heading": "Case Studies"
       }
     ],
-    "copyright": "© {year} Sai Kiran Biswal — Product Portfolio",
+    "copyright": "© {year} Sai Kiran Biswal, Product Portfolio",
     "credit": "Designed & built end-to-end"
   },
   "colophon": "Set in Newsreader & Inter · Built by hand · No templates"

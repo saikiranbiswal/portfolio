@@ -1,7 +1,7 @@
 {
   "meta": {
     "hero": {
-      "lead": "Working products, platforms, and case studies — built end-to-end, from discovery through architecture, AI, and go-to-market.",
+      "lead": "Working products, platforms, and case studies, built end-to-end, from discovery through architecture, AI, and go-to-market.",
       "stats": [
         {
           "l": "Case studies",
@@ -17,7 +17,7 @@
         }
       ],
       "eyebrow": "Product Manager · Enterprise SaaS · Fintech · AI",
-      "heading": "I build enterprise\nproducts that <em>think</em>\n— from problem to platform.",
+      "heading": "I build enterprise\nproducts that <em>think</em>\nfrom problem to platform.",
       "colophon": "",
       "workCountSuffix": "more products and strategy artifacts across fintech, mobility, data & AI"
     },
@@ -49,12 +49,12 @@
       "featured": true,
       "caseStudy": "case-studies/collections-cloud.html",
       "screenshot": "assets/screenshots/collections-cloud-mq7ch4i4.png",
-      "description": "An AI-native recovery platform for lenders — collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.",
+      "description": "An AI-native recovery platform for lenders, collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.",
       "displayMode": "page"
     },
     {
       "id": "lending-cloud",
-      "name": "LOS — Loan Origination System",
+      "name": "LOS, Loan Origination System",
       "path": "./apps/lending-cloud/",
       "role": "Product Manager",
       "tags": [
@@ -68,12 +68,12 @@
       "featured": true,
       "caseStudy": "case-studies/lending-os.html",
       "screenshot": "assets/screenshots/lending-cloud-mq78bpbv.png",
-      "description": "A guided, state-based loan-origination platform — from application to approval with fewer handoffs, over workflow state machines, EMI math, and deterministic demo data.",
+      "description": "A guided, state-based loan-origination platform, from application to approval with fewer handoffs, over workflow state machines, EMI math, and deterministic demo data.",
       "displayMode": "modal"
     },
     {
       "id": "fastag-redesign",
-      "name": "FASTag Redesign — National Toll & Mobility Trust Layer",
+      "name": "FASTag Redesign, National Toll & Mobility Trust Layer",
       "role": "Product Strategy",
       "tags": [
         "GovTech",
@@ -85,12 +85,12 @@
       "featured": false,
       "caseStudy": "case-studies/fastag.html",
       "screenshot": "assets/screenshots/fastag-redesign.png",
-      "description": "A problem-first strategy and PRD for a trusted national toll and mobility account — FASTag health, explainable deductions, disputes, annual-pass intelligence, fleet controls, and operator exceptions.",
+      "description": "A problem-first strategy and PRD for a trusted national toll and mobility account, FASTag health, explainable deductions, disputes, annual-pass intelligence, fleet controls, and operator exceptions.",
       "displayMode": "page"
     },
     {
       "id": "atlas-task-management",
-      "name": "Atlas — Task Management System",
+      "name": "Atlas, Task Management System",
       "path": "./apps/atlas/",
       "role": "Product Manager",
       "tags": [
@@ -107,7 +107,7 @@
     },
     {
       "id": "synthesis",
-      "name": "Synthesis — Strategic Framework Engine",
+      "name": "Synthesis, Strategic Framework Engine",
       "path": "./apps/synthesis/",
       "role": "Product Manager",
       "tags": [
@@ -124,7 +124,7 @@
     },
     {
       "id": "neuralpath",
-      "name": "NeuralPath — AI Concepts Game",
+      "name": "NeuralPath, AI Concepts Game",
       "path": "./apps/neuralpath/",
       "role": "Product Manager",
       "tags": [
@@ -136,7 +136,7 @@
       "stage": "Working app",
       "featured": false,
       "screenshot": "assets/screenshots/neuralpath-mq78l565.png",
-      "description": "A gamified AI-learning app — concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
+      "description": "A gamified AI-learning app, concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time.",
       "displayMode": "modal"
     },
     {
@@ -153,7 +153,7 @@
       "stage": "Working app",
       "featured": false,
       "screenshot": "assets/screenshots/dashboard-studio-mq78n3sv.png",
-      "description": "A drag-and-drop dashboard builder — KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
+      "description": "A drag-and-drop dashboard builder, KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser.",
       "displayMode": "modal"
     },
     {

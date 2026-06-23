@@ -1,5 +1,5 @@
 /* =========================================================
-   sections.js — shared CMS section renderer
+   sections.js, shared CMS section renderer
    Renders content/pages.json → sections[] entries into native
    portfolio markup (classes from css/styles.css).
    Used by BOTH the public pages (auto-mount) and admin.html
@@ -50,7 +50,7 @@ window.CMSSections = (function () {
     if (!q || !q.text) return '';
     return '<blockquote style="border-left:2px solid var(--clay);margin:24px 0;padding:6px 0 6px 18px;">' +
       '<p class="lead" style="font-style:italic;">&ldquo;' + esc(q.text) + '&rdquo;</p>' +
-      (q.attribution ? '<p class="mono-meta" style="margin-top:8px;">— ' + esc(q.attribution) + '</p>' : '') +
+      (q.attribution ? '<p class="mono-meta" style="margin-top:8px;">,  ' + esc(q.attribution) + '</p>' : '') +
     '</blockquote>';
   }
   function fEvidence(f) {
@@ -78,7 +78,7 @@ window.CMSSections = (function () {
   }
   function allExtras(f) { return fMetrics(f) + fQuote(f) + fEvidence(f) + fCards(f) + fCta(f) + fLink(f); }
 
-  /* ---- visual presets (lane 3) — inline style on the <section> ---- */
+  /* ---- visual presets (lane 3), inline style on the <section> ---- */
   var PRESETS = {
     "calm-editorial": "",
     "case-study":     "background:var(--paper-2,#f4efe9);",

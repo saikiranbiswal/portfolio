@@ -92,6 +92,54 @@
       "visible": true
     },
     {
+      "id": "fastag-ux-ai-blueprint",
+      "title": "FASTag Redesign India, UX Workflow + AI Agent Blueprint",
+      "project": "FASTag Redesign",
+      "category": "fastag",
+      "format": "DOCX · UX + AI spec",
+      "status": "Experience design",
+      "description": "Experience architecture across citizen, fleet, and operator surfaces, with happy paths, unhappy paths, empty states, and the TollTrust Copilot agent spec.",
+      "proof": "Defines a safe autonomy boundary: AI suggests, drafts, and diagnoses, while penalties, blacklisting, and refund rejection stay human or rule governed.",
+      "file": "assets/artifacts/files/fastag-redesign-ux-ai-blueprint.docx",
+      "visible": true
+    },
+    {
+      "id": "fastag-roadmap-metrics-backlog",
+      "title": "FASTag Redesign India, Roadmap, Metrics + Backlog",
+      "project": "FASTag Redesign",
+      "category": "fastag",
+      "format": "XLSX · PM control tower",
+      "status": "Delivery plan",
+      "description": "A Now / Next / Later roadmap, a North Star with input and guardrail metrics, a RICE-scored backlog, a risk register, and an experiment plan.",
+      "proof": "Connects the strategy to sequenced delivery with measurable targets and explicit kill criteria.",
+      "file": "assets/artifacts/files/fastag-redesign-roadmap-metrics-backlog.xlsx",
+      "visible": true
+    },
+    {
+      "id": "fastag-discovery-experiment-plan",
+      "title": "FASTag Redesign India, Customer Discovery + Experiment Plan",
+      "project": "FASTag Redesign",
+      "category": "fastag",
+      "format": "DOCX · Research plan",
+      "status": "Discovery",
+      "description": "A research sample, interview guide, and the cheapest tests for each hypothesis, with go rules and a pilot success scorecard.",
+      "proof": "Shows the validation plan before build: what to learn, from whom, and the decision rule for each experiment.",
+      "file": "assets/artifacts/files/fastag-redesign-discovery-experiment-plan.docx",
+      "visible": true
+    },
+    {
+      "id": "fastag-decision-memo",
+      "title": "FASTag Redesign India, Decision Memo + Stakeholder Alignment",
+      "project": "FASTag Redesign",
+      "category": "fastag",
+      "format": "DOCX · Decision package",
+      "status": "Recommendation",
+      "description": "A one-page BLUF recommendation to approve a 90-day pilot, with options considered, a stakeholder map, kill criteria, and a 30/60/90 plan.",
+      "proof": "Turns the strategy into a governed decision a sponsor can approve, including pre-wired objections per stakeholder.",
+      "file": "assets/artifacts/files/fastag-redesign-decision-memo.docx",
+      "visible": true
+    },
+    {
       "id": "ai-forward-framework",
       "title": "The AI Forward Framework",
       "project": "AI Agent Product System",

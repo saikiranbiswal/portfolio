@@ -16,10 +16,6 @@
       "label": "Work"
     },
     {
-      "href": "labs.html",
-      "label": "Playground"
-    },
-    {
       "href": "artifacts.html",
       "label": "Artifacts"
     },
@@ -43,12 +39,6 @@
       "id": "products",
       "file": "products.html",
       "title": "Work",
-      "visible": true
-    },
-    {
-      "id": "labs",
-      "file": "labs.html",
-      "title": "Playground",
       "visible": true
     },
     {
@@ -82,10 +72,6 @@
           {
             "href": "products.html",
             "label": "Work"
-          },
-          {
-            "href": "labs.html",
-            "label": "Playground"
           },
           {
             "href": "artifacts.html",

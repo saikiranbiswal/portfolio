@@ -16,13 +16,6 @@
 <script>document.documentElement.dataset.theme=(function(){try{return localStorage.getItem('portfolio.theme')||'dark'}catch(e){return'dark'}})();</script>
 <link rel="stylesheet" href="../css/styles.css?v=17">
 <link rel="stylesheet" href="../css/fastag.css?v=1">
-<style>
-  .ft-artifact { display:flex; flex-direction:column; gap:8px; padding:18px; border:1px solid var(--line,#d8d0c1); border-radius:12px; background:var(--card,#faf8f3); color:inherit; transition:transform .2s, border-color .2s, box-shadow .2s; }
-  .ft-artifact:hover { transform:translateY(-2px); border-color:var(--clay,#b85c38); box-shadow:0 12px 30px rgba(0,0,0,.08); }
-  .ft-artifact h3 { font-size:16px; margin:0; letter-spacing:-.01em; }
-  .ft-artifact p { margin:0; font-size:13px; color:var(--muted,#6f675b); line-height:1.5; }
-  .ft-artifact .eyebrow { color:var(--clay-deep,#a34e2d); }
-</style>
 </head>
 <body>
 <nav class="nav">
@@ -31,7 +24,7 @@
     <input class="nav-cb" type="checkbox" id="navToggle" aria-hidden="true" tabindex="-1">
     <label class="nav-burger" for="navToggle" aria-label="Toggle navigation menu"><span></span></label>
     <div class="nav-links">
-      <a href="../index.html">Home</a><a href="../products.html" class="active">Work</a><a href="../labs.html">Playground</a><a href="../artifacts.html">Artifacts</a><a href="../about.html">About</a><a href="../contact.html">Contact</a>
+      <a href="../index.html">Home</a><a href="../products.html" class="active">Work</a><a href="../artifacts.html">Artifacts</a><a href="../about.html">About</a><a href="../contact.html">Contact</a>
     </div>
   </div>
 </nav>
@@ -45,7 +38,6 @@
     <div class="ft-actions">
       <a class="btn" href="../apps/fastag/index.html" target="_blank" rel="noopener">Launch the prototype <span class="arrow">↗</span></a>
       <a class="btn btn-ghost" href="#prototype">See it in action <span class="arrow">↓</span></a>
-      <a class="btn btn-ghost" href="../assets/artifacts/files/fastag-redesign-strategy-prd.docx" download>Strategy + PRD <span class="arrow">↓</span></a>
     </div>
     <dl class="ft-meta">
       <div><dt>Role</dt><dd>Product Manager · Strategy &amp; PRD</dd></div>
@@ -120,24 +112,9 @@
       </div>
     </div>
   </section>
-
-  <section class="ft-section wrap" id="artifacts">
-    <div class="ft-section-label"><span>06</span><p class="eyebrow">The evidence</p></div>
-    <div class="ft-section-body">
-      <h2 class="display">Every claim has a source document.</h2>
-      <p style="max-width:62ch;color:var(--muted)">The full PM artifact pack behind the redesign, from framing and discovery through strategy, UX, AI, roadmap, and the decision memo.</p>
-      <div class="ft-bet-grid" style="margin-top:22px">
-        <a class="ft-artifact" href="../assets/artifacts/files/fastag-redesign-strategy-prd.docx" download><span class="eyebrow">DOCX · Strategy</span><h3>Strategy + PRD</h3><p>Problem framing, JTBD, where-to-play / how-to-win, MVP scope, user stories, risks.</p></a>
-        <a class="ft-artifact" href="../assets/artifacts/files/fastag-redesign-ux-ai-blueprint.docx" download><span class="eyebrow">DOCX · UX + AI</span><h3>UX + AI Agent Blueprint</h3><p>Experience architecture, happy and unhappy paths, and the agent autonomy boundary.</p></a>
-        <a class="ft-artifact" href="../assets/artifacts/files/fastag-redesign-roadmap-metrics-backlog.xlsx" download><span class="eyebrow">XLSX · Delivery</span><h3>Roadmap, Metrics + Backlog</h3><p>Now / Next / Later, North Star with guardrails, RICE backlog, risks, experiments.</p></a>
-        <a class="ft-artifact" href="../assets/artifacts/files/fastag-redesign-discovery-experiment-plan.docx" download><span class="eyebrow">DOCX · Discovery</span><h3>Discovery + Experiment Plan</h3><p>Research sample, interview guide, cheapest tests, go rules, pilot scorecard.</p></a>
-        <a class="ft-artifact" href="../assets/artifacts/files/fastag-redesign-decision-memo.docx" download><span class="eyebrow">DOCX · Decision</span><h3>Decision Memo</h3><p>BLUF recommendation, options, stakeholder map, kill criteria, 30/60/90 plan.</p></a>
-      </div>
-    </div>
-  </section>
 </main>
 
-<footer class="ft-footer"><div class="wrap"><p class="display">The deliverable is a strategy, PRD, and working prototype, not a claim of a shipped national platform.</p><a href="../artifacts.html#fastag">See all FASTag artifacts →</a></div></footer>
+<footer class="ft-footer"><div class="wrap"><p class="display">An interactive case study, framing FASTag as a trusted toll operating system, taken from problem to working prototype.</p><a href="../apps/fastag/index.html" target="_blank" rel="noopener">Open the interactive prototype →</a></div></footer>
 <script src="../js/theme.js?v=1"></script>
 </body>
 </html>

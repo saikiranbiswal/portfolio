@@ -84,7 +84,7 @@
       "stage": "Interactive prototype + case study",
       "featured": false,
       "caseStudy": "case-studies/fastag.html",
-      "screenshot": "assets/screenshots/fastag-redesign.png",
+      "screenshot": "assets/screenshots/fastag-redesign.png?v=2",
       "description": "A problem-first strategy and PRD for a trusted national toll and mobility account, FASTag health, explainable deductions, disputes, annual-pass intelligence, fleet controls, and operator exceptions.",
       "displayMode": "page",
       "path": "./apps/fastag/"

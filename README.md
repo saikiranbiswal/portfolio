@@ -11,7 +11,7 @@ portfolio/
 ├── products.html           # public showcase (flagship + work grid + modal)
 ├── about.html              # rebranded
 ├── contact.html            # rebranded, real email/links
-├── admin.html              # password-gated editor (password: portfolio123)
+├── admin.html              # GitHub-token-authed editor (encrypted, noindex)
 ├── products.json           # SINGLE SOURCE OF TRUTH
 ├── css/  (styles.css, modal.css, admin.css, labs.css)
 ├── js/   (site.js, reveal.js, labs-app.js, labs-data.js)
@@ -35,25 +35,23 @@ python3 -m http.server 8000
 (Once deployed to GitHub Pages / Netlify / Vercel, it's served over HTTP and
 just works — this only matters for local testing.)
 
-**2. The admin password is UI-gating, not security.**
-`portfolio123` lives in `admin.html`'s source, which anyone can read. It stops a
-casual visitor, nothing more. For real protection either:
-- don't deploy `admin.html` publicly (edit locally, push `products.json`), or
-- put host-level auth in front of it (Netlify/Vercel password, Cloudflare Access,
-  or `.htaccess`).
+**2. The admin page authenticates with a GitHub token, not a password.**
+`admin.html` is intentionally published. It signs in with a GitHub fine-grained
+token (Contents: read/write on this repo) that you enter in-browser. The token is
+encrypted with a passphrase and stored only in your browser's localStorage — it is
+never committed. The page also carries `noindex,nofollow` to keep it out of search
+engines. There is no hardcoded password.
 
 ## How editing actually works
 
-A web page can't write to files on disk, so the flow is:
+A web page can't write to files on disk, so the admin commits through the GitHub API:
 
-1. Open `admin.html` → enter `portfolio123`.
-2. Add / edit / delete / drag-reorder projects. Changes are saved in your
-   browser as a draft as you go.
-3. Click **Export products.json** → downloads the updated file.
-4. Replace the `products.json` in your repo with that download, commit, push.
-
-That's the "saves to products.json" step — export is the bridge between the
-browser and your files.
+1. Open `admin.html` → unlock with your passphrase → it loads your encrypted token
+   (first-time setup: paste a GitHub fine-grained token and set a passphrase).
+2. Add / edit / delete / drag-reorder content. Changes are saved in your browser as
+   a draft as you go.
+3. Publish → the admin commits the updated JSON (e.g. `content/products.json`) to the
+   repo via the GitHub API. No manual export/replace step is required.
 
 ## Screenshots
 

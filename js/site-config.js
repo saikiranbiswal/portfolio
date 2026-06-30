@@ -121,6 +121,7 @@ window.SCFG = (function () {
           (meta.linkedin ? '<a href="' + esc(meta.linkedin) + '" target="_blank" rel="noopener">LinkedIn</a>' : '') +
           (meta.email    ? '<a href="mailto:' + esc(meta.email) + '">Email</a>' : '') +
           (meta.resume   ? '<a href="' + esc(meta.resume) + '" target="_blank" rel="noopener">Résumé (PDF)</a>' : '') +
+          '<a href="assets/sai-kiran-biswal-brief.pdf" target="_blank" rel="noopener">One-page brief (PDF)</a>' +
         '</div>'
       : '';
 

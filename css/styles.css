@@ -418,6 +418,26 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
   .flagship.flip > .ph { order: 1; }
 }
 
+/* Tier 2 supporting cards (2-up) */
+.support-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px, 3vw, 32px); }
+.support-card {
+  display: flex; flex-direction: column;
+  background: var(--card); border: 1px solid var(--line); border-radius: 6px;
+  overflow: hidden; transition: border-color .3s ease, transform .3s ease;
+}
+.support-card:hover { border-color: var(--clay); transform: translateY(-2px); }
+.support-shot { position: relative; aspect-ratio: 16/10; width: 100%; overflow: hidden; }
+.support-body { padding: clamp(20px, 2.2vw, 30px); display: flex; flex-direction: column; flex: 1; }
+.support-body h3 { margin: 14px 0 10px; }
+.support-body .body-text { color: var(--muted); flex: 1; }
+.support-cta {
+  margin-top: 20px; font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.04em;
+  color: var(--clay); display: inline-flex; align-items: center; gap: 8px;
+}
+.support-card:hover .support-cta .arrow { transform: translateX(4px); }
+.support-cta .arrow { transition: transform .3s ease; }
+@media (max-width: 860px) { .support-grid { grid-template-columns: 1fr; } }
+
 .pill {
   font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em;
   text-transform: uppercase; color: var(--ink-soft);
@@ -668,3 +688,69 @@ h3.display { font-size: clamp(26px, 3.4vw, 40px); }
 .hero h1 .line:nth-child(3) > span { animation-delay: 140ms; }
 @keyframes line-rise { from { transform: translateY(110%); } to { transform: translateY(0); } }
 @media (prefers-reduced-motion: reduce) { .hero h1 .line > span { animation: none; } }
+
+/* =========================================================
+   Homepage — "Product Memo" editorial landing
+   New classes only where the layout needs them; everything
+   else reuses the shared system (nav, hero, flagship, pill,
+   principles, cta-band, footer, figcap, reveal).
+   ========================================================= */
+
+/* Eyebrow rule + standalone pulsing status dot (hero / about) */
+.eyebrow-rule { display: inline-block; width: 24px; height: 1px; background: var(--line); vertical-align: middle; margin-right: 10px; }
+.pulse-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--clay); vertical-align: middle; margin-right: 4px; animation: pulse 2.4s infinite; }
+@media (prefers-reduced-motion: reduce) { .pulse-dot { animation: none; } }
+
+/* Hairline-framed screenshot (flagship + selected work) */
+.home-frame {
+  overflow: hidden; border: 1px solid var(--line); border-radius: 4px;
+  background: var(--paper-2); transition: border-color .3s var(--ease);
+}
+.home-frame img { width: 100%; aspect-ratio: 16/10; object-fit: cover; object-position: top left; display: block; }
+.home-frame .hatch {
+  width: 100%; aspect-ratio: 16/10; display: grid; place-items: center;
+  color: var(--faint); font: 500 11px/1 var(--mono); letter-spacing: .12em; text-transform: uppercase;
+  background: repeating-linear-gradient(45deg, var(--paper-2) 0, var(--paper-2) 9px, var(--line-soft) 9px, var(--line-soft) 18px);
+}
+
+/* Selected work — 3-up framed grid */
+.home-work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(20px, 2.4vw, 32px); }
+.home-work-card { display: block; color: inherit; }
+.home-work-card .home-frame img,
+.home-work-card .home-frame .hatch { aspect-ratio: 16/11; object-position: top center; }
+.home-work-card:hover .home-frame { border-color: var(--clay); }
+.home-work-card:hover .figcap::before { width: 34px; }
+.home-work-card h3 { font-family: var(--serif); font-weight: 400; font-size: 24px; letter-spacing: -0.015em; line-height: 1.08; margin: 16px 0 8px; }
+.home-work-card p { color: var(--muted); font-size: 14.5px; }
+@media (max-width: 860px) { .home-work-grid { grid-template-columns: 1fr; max-width: 520px; } }
+
+/* More working products — hairline list */
+.prod-list { border-top: 1px solid var(--line); }
+.prod-row {
+  display: grid; grid-template-columns: 48px 1.6fr 2fr 42px; align-items: center;
+  gap: clamp(14px, 2vw, 28px); padding: 20px 6px; border-bottom: 1px solid var(--line);
+  color: inherit; transition: background .25s var(--ease), padding-left .25s var(--ease);
+}
+.prod-row:hover { background: var(--paper-2); padding-left: 18px; }
+.prod-row .pi { font-family: var(--mono); font-size: 12px; letter-spacing: .1em; color: var(--faint); }
+.prod-row .pn { font-size: 18px; font-weight: 600; letter-spacing: -0.01em; }
+.prod-row .pd { font-size: 14.5px; color: var(--muted); }
+.prod-row .pgo {
+  justify-self: end; width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--line);
+  display: grid; place-items: center; color: var(--ink-soft); font-size: 15px;
+  transition: background .25s, color .25s, border-color .25s, transform .25s;
+}
+.prod-row:hover .pgo { background: var(--ink); color: var(--paper); border-color: var(--ink); transform: translate(2px, -2px); }
+@media (max-width: 680px) {
+  .prod-row { grid-template-columns: 34px 1fr 34px; }
+  .prod-row .pd { display: none; }
+}
+
+/* About band */
+.about-band { background: var(--paper-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.about-band-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: clamp(36px, 5vw, 80px); align-items: start; }
+.about-band-grid .about-lede { font-size: clamp(16px, 1.7vw, 19px); line-height: 1.7; color: var(--ink-soft); margin: 0 0 20px; max-width: 60ch; }
+.about-band-grid .about-sub { font-size: clamp(15px, 1.5vw, 17px); line-height: 1.7; color: var(--muted); margin: 0 0 28px; max-width: 60ch; }
+/* plain principle grid (no leading number) for the about band */
+.principles.is-plain .principle h4 { margin-top: 0; }
+@media (max-width: 860px) { .about-band-grid { grid-template-columns: 1fr; } }

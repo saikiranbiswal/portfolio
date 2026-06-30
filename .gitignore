@@ -17,3 +17,10 @@ Thumbs.db
 # CMS server runtime artifacts
 .cms_server.log
 cms_server.py
+
+# Internal working files / deliverables — kept locally, not part of the public site
+Portfolio-Proposal.docx
+build_proposal.py
+assets/concept/
+assets/one-pager.html
+assets/sai-kiran-biswal-brief.pdf

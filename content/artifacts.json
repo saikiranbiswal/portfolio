@@ -76,7 +76,6 @@
       "proof": "Demonstrates formula-backed evaluation, configurable vendor inputs, and a comparison dashboard for an enterprise buying decision.",
       "file": "assets/artifacts/files/collections-management-vendor-scorecard.xlsx",
       "preview": "assets/artifacts/previews/collections-scorecard-dashboard.png",
-      "featured": true,
       "visible": true
     },
     {
@@ -137,7 +136,8 @@
       "description": "A one-page BLUF recommendation to approve a 90-day pilot, with options considered, a stakeholder map, kill criteria, and a 30/60/90 plan.",
       "proof": "Turns the strategy into a governed decision a sponsor can approve, including pre-wired objections per stakeholder.",
       "file": "assets/artifacts/files/fastag-redesign-decision-memo.docx",
-      "visible": true
+      "visible": true,
+      "featured": true
     },
     {
       "id": "ai-forward-framework",
@@ -149,7 +149,8 @@
       "description": "A practical operating model for building, validating, and forward-deploying AI agents through production-quality data, a semantic layer, DESPASIDO, Algo Quotient, and measurable business value.",
       "proof": "Makes the human role explicit: define the decision model, validate outputs, and shorten the theory-to-evidence loop.",
       "file": "assets/artifacts/files/ai-forward-framework.docx",
-      "visible": true
+      "visible": true,
+      "featured": true
     },
     {
       "id": "ai-forward-prd-template",

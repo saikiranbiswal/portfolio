@@ -4,10 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Sai Kiran Biswal · Enterprise AI Product Manager</title>
-<meta name="description" content="An interactive portfolio of enterprise AI and fintech products built by Sai Kiran Biswal, explore the work, evidence, and operating artifacts behind each product.">
+<meta name="description" content="Sai Kiran Biswal builds enterprise AI and fintech products end to end — from problem and domain modeling through AI design, architecture, and go-to-market.">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Sai Kiran Biswal · Enterprise AI Product">
-<meta property="og:description" content="Explore working products, flagship case studies, and the evidence behind them in an immersive portfolio.">
+<meta property="og:description" content="Working products, platforms, and case studies — built end-to-end, from discovery through AI architecture and go-to-market.">
 <meta property="og:url" content="https://saikiranbiswal.github.io/portfolio/">
 <meta property="og:image" content="assets/og-image.png">
 <meta property="og:image:width" content="1200">
@@ -17,22 +17,12 @@
 <meta name="twitter:image" content="assets/og-image.png">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <script>document.documentElement.dataset.theme=(function(){try{return localStorage.getItem('portfolio.theme')||'dark'}catch(e){return'dark'}})();</script>
-<link rel="stylesheet" href="css/styles.css?v=17">
-<link rel="stylesheet" href="assets/gallery/gallery.css?v=7">
-<script type="importmap">
-{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
-</script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+<link rel="stylesheet" href="css/styles.css?v=19">
 </head>
-<body class="gallery-page">
+<body>
 
-<a class="gallery-skip" href="products.html">Skip the interactive gallery, browse all work</a>
-
-<canvas class="particle-bg" aria-hidden="true"></canvas>
-<canvas id="gl" aria-label="Interactive project gallery, drag to explore, select a project to open details"></canvas>
-<div class="vignette" aria-hidden="true"></div>
-
-<nav class="nav gallery-nav">
+<!-- ============ NAV ============ -->
+<nav class="nav">
   <div class="nav-inner">
     <a class="wordmark" href="index.html">
       <span class="glyph">SK</span>
@@ -52,54 +42,199 @@
   </div>
 </nav>
 
-<div class="gallery-intro" id="galleryIntro">
-  <p class="eyebrow">Enterprise AI · Fintech · Product systems</p>
-  <h1>Products built from <em>problem</em> to proof.</h1>
-</div>
+<main id="top">
 
-<!-- Progressive-enhancement fallback: real HTML for search engines, screen
-     readers, and keyboard users. Visually hidden behind the canvas on desktop;
-     becomes the primary stacked layout on mobile. -->
-<main class="home-fallback" id="homeFallback">
-  <p class="eyebrow">Enterprise AI · Fintech · Product systems</p>
-  <h1>Products built from problem to proof.</h1>
-  <p class="home-fallback-lead">I'm Sai Kiran Biswal, a product manager building enterprise AI and fintech products end to end, from discovery and architecture through to go-to-market.</p>
-  <a class="btn home-fallback-cta" href="products.html">See the work <span class="arrow">→</span></a>
-  <nav class="home-fallback-list" aria-label="Featured projects">
-    <a href="case-studies/collections-cloud.html"><strong>AI Collections Cloud</strong><span>Flagship case study · AI-native recovery platform</span></a>
-    <a href="case-studies/lending-os.html"><strong>LOS, Loan Origination System</strong><span>Flagship case study · 0-to-1 lending platform</span></a>
-    <a href="case-studies/fastag.html"><strong>FASTag Redesign</strong><span>Strategy &amp; PRD · National toll and mobility trust layer</span></a>
-    <a href="project.html?id=atlas-task-management"><strong>Atlas</strong><span>Working prototype · Task management system</span></a>
-    <a href="project.html?id=synthesis"><strong>Synthesis</strong><span>Working app · Strategic framework engine</span></a>
-    <a href="project.html?id=neuralpath"><strong>NeuralPath</strong><span>Working app · AI concepts game</span></a>
-    <a href="project.html?id=dashboard-studio"><strong>Dashboard Studio</strong><span>Working app · Analytics dashboard builder</span></a>
-    <a href="project.html?id=excel-transformer"><strong>Excel Transformer</strong><span>Working app · Spreadsheet automation</span></a>
-    <a href="project.html?id=excel-merger"><strong>Excel Merger</strong><span>Working app · Data consolidation tool</span></a>
-  </nav>
-</main>
+<!-- ============ 1. HERO (no background image) ============ -->
+<header class="hero wrap">
+  <div class="reveal">
+    <p class="eyebrow">
+      <span class="eyebrow-rule" aria-hidden="true"></span>
+      <span class="pulse-dot" aria-hidden="true"></span> Open to lead PM roles
+      <span class="dot">·</span> Enterprise SaaS · Fintech · AI
+    </p>
+    <h1 class="display">I build enterprise products that <em>think</em> — from problem to platform.</h1>
+  </div>
+  <div class="hero-foot reveal">
+    <p class="lead">Working products, platforms, and case studies — built end-to-end, from discovery and domain modeling through AI design, architecture, and go-to-market.</p>
+    <div class="hero-stats">
+      <div class="stat"><div class="n"><span class="count-num" data-target="3">3</span></div><div class="l">Flagship case studies</div></div>
+      <div class="stat"><div class="n"><span class="count-num" data-target="8">8</span></div><div class="l">Working products</div></div>
+      <div class="stat"><div class="n"><span class="count-num" data-target="7">7</span></div><div class="l">Years · fintech &amp; SaaS</div></div>
+    </div>
+  </div>
+</header>
 
-<div class="hover-title" id="hoverTitle" aria-live="polite">
-  <p class="eyebrow" id="hoverCategory"></p>
-  <h2 id="hoverName"></h2>
-</div>
+<!-- ============ 2. FLAGSHIP ============ -->
+<section class="wrap" style="padding-bottom:clamp(40px,6vw,64px);" id="work">
+  <a class="flagship reveal" href="case-studies/collections-cloud.html" style="text-decoration:none;">
+    <div>
+      <div class="tag-row">
+        <span class="pill pill-int">Flagship</span>
+        <span class="pill">AI</span>
+        <span class="pill">Fintech</span>
+      </div>
+      <h3 class="display">AI Collections Cloud</h3>
+      <p class="body-text" style="color:var(--ink-soft);">An AI-native recovery platform for lenders — a collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture.</p>
+      <p class="body-text">Trusted DSO, aging, and cash-at-risk visibility; a prioritized collector workbench; and a controlled copilot that drafts, ranks, and recommends — with human approval on every high-risk action.</p>
+      <span class="btn" style="margin-top:26px;">Read the case study <span class="arrow">→</span></span>
+    </div>
+    <div class="flag-img-col">
+      <div class="home-frame">
+        <img src="assets/screenshots/collections-cloud-mq7ch4i4.png" alt="AI Collections Cloud — collector command center"
+             onerror="this.outerHTML='&lt;div class=&quot;hatch&quot;&gt;collections cloud&lt;/div&gt;'">
+      </div>
+      <p class="figcap">Fig. 01 · Collector command center</p>
+    </div>
+  </a>
+</section>
 
-<div class="drag-hint" id="dragHint"><span>drag to explore · select to open</span></div>
-
-<div class="gallery-loader" id="loader" role="status"><span class="mono-meta">loading portfolio…</span></div>
-
-<section class="detail" id="detail" aria-hidden="true">
-  <div class="detail-inner">
-    <button class="detail-back" id="detailBack">← Back to projects</button>
-    <p class="eyebrow" id="detailCategory"></p>
-    <h1 class="detail-title" id="detailTitle"></h1>
-    <p class="detail-role mono-meta" id="detailMeta"></p>
-    <p class="detail-body" id="detailBody"></p>
-    <a class="btn detail-cta" id="detailLink" href="#">Open project <span class="arrow">→</span></a>
+<!-- ============ 3. SELECTED WORK (3-up) ============ -->
+<section class="wrap" style="padding-bottom:clamp(20px,3vw,40px);">
+  <div class="sec-head reveal" style="border-bottom:1px solid var(--line);padding-bottom:16px;">
+    <p class="eyebrow">Selected work</p>
+    <span style="font-family:var(--serif);font-style:italic;font-size:clamp(18px,2vw,24px);color:var(--muted);">From flagship platforms to working apps.</span>
+  </div>
+  <div class="home-work-grid">
+    <a class="home-work-card reveal" href="case-studies/fastag.html">
+      <div class="home-frame">
+        <img src="assets/screenshots/fastag-redesign.png?v=2" alt="FASTag Redesign"
+             onerror="this.outerHTML='&lt;div class=&quot;hatch&quot;&gt;fastag redesign&lt;/div&gt;'">
+      </div>
+      <p class="figcap">Fig. 02 · GovTech · Mobility</p>
+      <h3>FASTag Redesign</h3>
+      <p>A national toll &amp; mobility trust layer — health diagnostics, explainable deductions, disputes, annual-pass intelligence, and fleet controls.</p>
+    </a>
+    <a class="home-work-card reveal" href="case-studies/lending-os.html">
+      <div class="home-frame">
+        <img src="assets/screenshots/lending-cloud-mq78bpbv.png" alt="Loan Origination System"
+             onerror="this.outerHTML='&lt;div class=&quot;hatch&quot;&gt;loan origination&lt;/div&gt;'">
+      </div>
+      <p class="figcap">Fig. 03 · Lending · Platform</p>
+      <h3>Loan Origination System</h3>
+      <p>An end-to-end origination platform — application intake, decisioning, document workflow, and underwriting, modeled around a clean credit domain.</p>
+    </a>
+    <a class="home-work-card reveal" href="project.html?id=synthesis">
+      <div class="home-frame">
+        <img src="assets/screenshots/synthesis-mq78ih0i.png" alt="Synthesis Engine"
+             onerror="this.outerHTML='&lt;div class=&quot;hatch&quot;&gt;synthesis engine&lt;/div&gt;'">
+      </div>
+      <p class="figcap">Fig. 04 · Strategy · AI</p>
+      <h3>Synthesis Engine</h3>
+      <p>A strategic-framework engine — turn raw inputs into structured frameworks, implications, and a 30-60-90 action plan a team can act on.</p>
+    </a>
   </div>
 </section>
 
-<script src="js/particle-bg.js?v=1"></script>
-<script type="module" src="assets/gallery/gallery.js?v=6"></script>
+<!-- ============ 4. MORE WORKING PRODUCTS ============ -->
+<section class="wrap" style="padding-bottom:clamp(48px,7vw,96px);">
+  <p class="eyebrow reveal" style="margin-bottom:20px;">More working products</p>
+  <div class="prod-list reveal">
+    <a class="prod-row" href="project.html?id=atlas-task-management">
+      <span class="pi">01</span><span class="pn">Atlas</span>
+      <span class="pd">Task management for product teams</span><span class="pgo">→</span>
+    </a>
+    <a class="prod-row" href="project.html?id=neuralpath">
+      <span class="pi">02</span><span class="pn">NeuralPath</span>
+      <span class="pd">A game for learning AI concepts</span><span class="pgo">→</span>
+    </a>
+    <a class="prod-row" href="project.html?id=dashboard-studio">
+      <span class="pi">03</span><span class="pn">Dashboard Studio</span>
+      <span class="pd">A no-code dashboard builder</span><span class="pgo">→</span>
+    </a>
+    <a class="prod-row" href="project.html?id=excel-transformer">
+      <span class="pi">04</span><span class="pn">Excel Transformer</span>
+      <span class="pd">Spreadsheet-to-workflow automation</span><span class="pgo">→</span>
+    </a>
+    <a class="prod-row" href="project.html?id=excel-merger">
+      <span class="pi">05</span><span class="pn">Excel Merger</span>
+      <span class="pd">Multi-source data consolidation</span><span class="pgo">→</span>
+    </a>
+  </div>
+</section>
+
+<!-- ============ 5. ABOUT BAND ============ -->
+<section class="about-band" id="about">
+  <div class="wrap section about-band-grid">
+    <div class="reveal">
+      <p class="eyebrow"><span class="eyebrow-rule" aria-hidden="true"></span> About</p>
+      <h2 class="display" style="margin-top:24px;max-width:14ch;">From problem to <em>platform</em>, end to end.</h2>
+    </div>
+    <div class="reveal">
+      <p class="about-lede">I started in business analysis — close enough to operations to see exactly where they break — and grew into product strategy and 0→1 platform work.</p>
+      <p class="about-sub">A real product needs a clear problem, an honest business case, a clean domain model, an architecture engineering can build, an experience people adopt, and a commercial model that holds up. I'm comfortable owning all of it. Lately my focus is AI-native products that ship and move a number — not artifacts that sit in a deck.</p>
+      <div class="principles is-plain">
+        <div class="principle"><h4>Model the domain first</h4><p>Get the objects and lifecycle right and the screens, data, and AI fall into place.</p></div>
+        <div class="principle"><h4>Earn the next feature</h4><p>Lead with the painkiller, prove value, then expand. Trust compounds; scope creep doesn't.</p></div>
+        <div class="principle"><h4>AI is a product decision</h4><p>Use case, trust, evaluation, guardrails, and cost beat whichever model is trending.</p></div>
+        <div class="principle"><h4>Tie it to a number</h4><p>A north-star metric and an honest unit-economics model keep a roadmap defensible.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 6. CONTACT CTA (dark) ============ -->
+<section class="cta-band section" id="contact">
+  <div class="wrap cta">
+    <p class="eyebrow reveal">Let's talk</p>
+    <h2 class="display reveal" style="margin:18px auto 16px;max-width:16ch;">Building something <em>hard?</em> I'd like to hear about it.</h2>
+    <p class="reveal">Open to lead PM roles in enterprise AI and fintech — Pune / Bengaluru or remote.</p>
+    <a href="mailto:saikiran.biswal@outlook.com" class="btn reveal" style="margin-top:28px;background:var(--clay-deep);border-color:var(--clay-deep);">Get in touch <span class="arrow">→</span></a>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ 7. FOOTER ============ -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div><p class="big">Building products from <em>problem</em> to <em>platform.</em></p></div>
+      <div class="footer-col"><h4>Navigate</h4><a href="index.html">Home</a><a href="products.html">Work</a><a href="artifacts.html">Artifacts</a><a href="about.html">About</a><a href="contact.html">Contact</a></div>
+      <div class="footer-col"><h4>Case Studies</h4>
+        <a href="case-studies/collections-cloud.html">AI Collections Cloud</a>
+        <a href="case-studies/lending-os.html">LOS, Loan Origination</a>
+        <a href="case-studies/fastag.html">FASTag Redesign</a>
+      </div>
+      <div class="footer-col"><h4>Elsewhere</h4>
+        <a href="https://www.linkedin.com/in/sai-kiran-biswal" target="_blank" rel="noopener">/in/sai-kiran-biswal</a>
+        <a href="mailto:saikiran.biswal@outlook.com">saikiran.biswal@outlook.com</a>
+        <a href="assets/resume.pdf" target="_blank" rel="noopener">Résumé (PDF) ↓</a>
+      </div>
+    </div>
+    <div class="footer-base"><span>© 2026 Sai Kiran Biswal, Product Portfolio</span><span>Set in Newsreader · Inter · IBM Plex Mono</span></div>
+  </div>
+</footer>
+
+<script src="js/reveal.js?v=11"></script>
 <script src="js/theme.js?v=1"></script>
+<script>
+// Count-up animation, runs once per number when scrolled into view (respects reduced motion).
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var done = new WeakSet();
+  function animateNum(el){
+    if(done.has(el)) return; done.add(el);
+    var target = parseInt(el.getAttribute('data-target'),10);
+    if(reduce){ el.textContent = target; return; }
+    var duration = 900, start = performance.now();
+    function step(now){
+      var p = Math.min((now - start) / duration, 1);
+      var ease = p < 0.5 ? 2*p*p : -1+(4-2*p)*p;
+      el.textContent = Math.round(ease * target);
+      if(p < 1) requestAnimationFrame(step); else el.textContent = target;
+    }
+    requestAnimationFrame(step);
+  }
+  var nums = document.querySelectorAll('.count-num[data-target]');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){ if(e.isIntersecting){ animateNum(e.target); io.unobserve(e.target); } });
+    }, {threshold: 0.5});
+    nums.forEach(function(el){ io.observe(el); });
+  } else {
+    nums.forEach(animateNum);
+  }
+})();
+</script>
 </body>
 </html>

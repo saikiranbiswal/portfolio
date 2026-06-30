@@ -14,8 +14,8 @@
 <meta name="twitter:image" content="../assets/og-image.png">
 <link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
 <script>document.documentElement.dataset.theme=(function(){try{return localStorage.getItem('portfolio.theme')||'dark'}catch(e){return'dark'}})();</script>
-<link rel="stylesheet" href="../css/styles.css?v=17">
-<link rel="stylesheet" href="../css/fastag.css?v=1">
+<link rel="stylesheet" href="../css/styles.css?v=18">
+<link rel="stylesheet" href="../css/fastag.css?v=2">
 </head>
 <body>
 <nav class="nav">
@@ -47,39 +47,98 @@
     </dl>
   </header>
 
+  <!-- 01 · PROBLEM -->
   <section class="ft-section wrap">
-    <div class="ft-section-label"><span>01</span><p class="eyebrow">The frame</p></div>
+    <div class="ft-section-label"><span>01</span><p class="eyebrow">Problem</p></div>
     <div class="ft-section-body ft-two-col">
       <div>
         <h2 class="display">The sticker works. The system around it does not.</h2>
-        <p>Users cannot reliably tell whether a vehicle is toll-ready, why a tag is blocked, whether an annual pass applied, or where a disputed deduction sits. The experience is split across issuer banks, plazas, NHAI/IHMCL services, and complaint channels.</p>
+        <p>Users cannot reliably tell whether a vehicle is toll-ready, why a tag is blocked, whether an annual pass applied, or where a disputed deduction sits. The experience is split across issuer banks, plazas, NHAI/IHMCL services, and complaint channels — so every exception becomes a manual chase.</p>
       </div>
       <aside class="ft-callout">
-        <p class="eyebrow">Not solving</p>
-        <p>No new wallet, no nationwide GNSS replacement, no changes to government toll pricing, and no fully autonomous penalty, blacklist, or refund decisions.</p>
+        <p class="eyebrow">Why it matters</p>
+        <p>Failed and disputed crossings erode trust in a national payment rail, generate complaint volume, and leak revenue — while the underlying tag technology is fine.</p>
       </aside>
     </div>
   </section>
 
+  <!-- 02 · USERS & JOBS -->
   <section class="ft-section wrap">
-    <div class="ft-section-label"><span>02</span><p class="eyebrow">The wedge</p></div>
+    <div class="ft-section-label"><span>02</span><p class="eyebrow">Users &amp; jobs</p></div>
     <div class="ft-section-body">
-      <h2 class="display">Win on trust, diagnostics, and interoperability.</h2>
+      <h2 class="display">Four users, one shared job: cross without friction.</h2>
       <div class="ft-bet-grid">
-        <article><span>01</span><h3>FASTag Health</h3><p>Turn “inactive” or “blacklisted” into a specific root cause, severity, and fix-now action.</p></article>
-        <article><span>02</span><h3>Explainable ledger</h3><p>Show plaza, class, amount, payment source, pass application, and supporting evidence for every event.</p></article>
-        <article><span>03</span><h3>Dispute workflow</h3><p>Package the evidence automatically, expose SLA status, and keep refunds and rejections governed.</p></article>
-        <article><span>04</span><h3>Pass intelligence</h3><p>Make eligibility, trips left, validity, route impact, and pass application obvious before travel.</p></article>
-        <article><span>05</span><h3>Fleet control</h3><p>Aggregate vehicle health, low balance, toll spend, and disputes for bulk action.</p></article>
-        <article><span>06</span><h3>Operator exceptions</h3><p>Prioritize failed reads, duplicates, class mismatches, and ANPR conflicts with human approval.</p></article>
+        <article><span>JTBD</span><h3>Driver / commuter</h3><p>“Tell me my vehicle is toll-ready, and explain any charge — before and after I cross.”</p></article>
+        <article><span>JTBD</span><h3>Fleet manager</h3><p>“Keep the whole fleet crossing — catch low balance, blocks, and disputes in bulk, not one tag at a time.”</p></article>
+        <article><span>JTBD</span><h3>Toll operator</h3><p>“Resolve failed reads, duplicates, and class mismatches with a fast, auditable decision.”</p></article>
+        <article><span>JTBD</span><h3>Issuer / authority</h3><p>“Cut complaint volume and leakage with explainable, governed resolution I can stand behind.”</p></article>
       </div>
     </div>
   </section>
 
+  <!-- 03 · DOMAIN MODEL -->
   <section class="ft-section wrap">
-    <div class="ft-section-label"><span>03</span><p class="eyebrow">MVP journey</p></div>
+    <div class="ft-section-label"><span>03</span><p class="eyebrow">Domain model</p></div>
     <div class="ft-section-body">
-      <h2 class="display">A pre-trip check that continues through resolution.</h2>
+      <h2 class="display">Model the toll account, not the sticker.</h2>
+      <p>Get these objects and their lifecycle right and the screens, disputes, and AI fall into place. The redesign is built on six core objects with explicit states.</p>
+      <div class="ft-bet-grid">
+        <article><span>OBJECT</span><h3>Vehicle &amp; Tag</h3><p>States: active, low-balance, blacklisted, KYC-pending — each with a reason code and a fix-now action.</p></article>
+        <article><span>OBJECT</span><h3>Toll Account</h3><p>Balance, KYC, and linked vehicles — the single source of toll-readiness truth.</p></article>
+        <article><span>OBJECT</span><h3>Toll Event</h3><p>Plaza, class, amount, payment source, pass applied, and supporting evidence — the explainable ledger entry.</p></article>
+        <article><span>OBJECT</span><h3>Pass</h3><p>Eligibility, trips remaining, validity, and route impact — resolved before travel.</p></article>
+        <article><span>OBJECT</span><h3>Dispute</h3><p>Reason, auto-assembled evidence pack, SLA, owner, and outcome — governed end to end.</p></article>
+        <article><span>OBJECT</span><h3>Exception</h3><p>Failed read, duplicate, class mismatch, or ANPR conflict — queued for operator approval.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 · AI DESIGN -->
+  <section class="ft-section wrap">
+    <div class="ft-section-label"><span>04</span><p class="eyebrow">AI design</p></div>
+    <div class="ft-section-body">
+      <h2 class="display">TollTrust Copilot, inside a safe boundary.</h2>
+      <p>AI is a product decision here, not a model choice. The copilot accelerates diagnosis and drafting; consequential, irreversible decisions stay human- or rule-governed.</p>
+      <div class="ft-boundary">
+        <div class="ai-does">
+          <p class="eyebrow">The copilot does</p>
+          <ul class="ft-list">
+            <li>Diagnose a blocked or inactive tag into a specific root cause and severity.</li>
+            <li>Explain a deduction in plain language from the event ledger.</li>
+            <li>Draft a dispute with the evidence pack already assembled.</li>
+            <li>Surface pass eligibility and the next-best action before travel.</li>
+          </ul>
+        </div>
+        <div class="ai-gov">
+          <p class="eyebrow">Humans &amp; rules govern</p>
+          <ul class="ft-list">
+            <li>Penalties and blacklisting decisions.</li>
+            <li>Refund approval and rejection.</li>
+            <li>Government toll pricing — never changed by the product.</li>
+            <li>Operator exception sign-off on contested reads.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 · MVP SCOPE -->
+  <section class="ft-section wrap">
+    <div class="ft-section-label"><span>05</span><p class="eyebrow">MVP scope</p></div>
+    <div class="ft-section-body">
+      <h2 class="display">Win on trust, diagnostics, and interoperability.</h2>
+      <div class="ft-bet-grid">
+        <article><span>IN · 01</span><h3>FASTag Health</h3><p>Turn “inactive” or “blacklisted” into a specific root cause, severity, and fix-now action.</p></article>
+        <article><span>IN · 02</span><h3>Explainable ledger</h3><p>Show plaza, class, amount, payment source, pass application, and evidence for every event.</p></article>
+        <article><span>IN · 03</span><h3>Dispute workflow</h3><p>Package the evidence automatically, expose SLA status, and keep refunds and rejections governed.</p></article>
+        <article><span>IN · 04</span><h3>Pass intelligence</h3><p>Make eligibility, trips left, validity, route impact, and pass application obvious before travel.</p></article>
+        <article><span>IN · 05</span><h3>Fleet control</h3><p>Aggregate vehicle health, low balance, toll spend, and disputes for bulk action.</p></article>
+        <article><span>IN · 06</span><h3>Operator exceptions</h3><p>Prioritize failed reads, duplicates, class mismatches, and ANPR conflicts with human approval.</p></article>
+      </div>
+      <aside class="ft-callout" style="margin-top:40px">
+        <p class="eyebrow">Out of scope, on purpose</p>
+        <p>No new wallet, no nationwide GNSS replacement, no changes to government toll pricing, and no fully autonomous penalty, blacklist, or refund decisions.</p>
+      </aside>
       <ol class="ft-flow">
         <li><b>Check readiness</b><span>Vehicle, issuer, KYC, balance, tag, and pass status resolve into one health state.</span></li>
         <li><b>Cross with confidence</b><span>The event ledger explains what the plaza read and what was charged or applied.</span></li>
@@ -89,10 +148,11 @@
     </div>
   </section>
 
+  <!-- 06 · METRICS -->
   <section class="ft-section wrap">
-    <div class="ft-section-label"><span>04</span><p class="eyebrow">Success</p></div>
+    <div class="ft-section-label"><span>06</span><p class="eyebrow">Metrics</p></div>
     <div class="ft-section-body ft-two-col">
-      <div><h2 class="display">Measure predictable crossings, not app engagement.</h2><p>The MVP succeeds when the vehicle crosses, the correct amount or entitlement is applied, and the user does not need manual intervention.</p></div>
+      <div><h2 class="display">Measure predictable crossings, not app engagement.</h2><p>North star: successful toll crossings without user intervention. The MVP succeeds when the vehicle crosses, the correct amount or entitlement is applied, and the user does not need to chase anything.</p></div>
       <div class="ft-metrics">
         <div><strong>&lt; 60 sec</strong><span>Target time to raise a complete dispute</span></div>
         <div><strong>One status</strong><span>Vehicle health with reason and recovery action</span></div>
@@ -101,14 +161,23 @@
     </div>
   </section>
 
+  <!-- 07 · EVIDENCE -->
   <section class="ft-section wrap" id="prototype">
-    <div class="ft-section-label"><span>05</span><p class="eyebrow">Prototype</p></div>
+    <div class="ft-section-label"><span>07</span><p class="eyebrow">Evidence</p></div>
     <div class="ft-section-body">
-      <h2 class="display">A working prototype, not a slide.</h2>
-      <p style="max-width:62ch;color:var(--muted)">Four surfaces in one toll operating system: a citizen account with explainable ledger and dispute wizard, a fleet control tower, an operator exception queue, and a pilot-metrics dashboard. The TollTrust Copilot stays inside a safe boundary, it suggests, drafts, and diagnoses, while penalties, blacklisting, and refund rejection remain human or rule governed.</p>
+      <h2 class="display">A working prototype, plus the decision package.</h2>
+      <p style="max-width:62ch;color:var(--muted)">Four surfaces in one toll operating system: a citizen account with explainable ledger and dispute wizard, a fleet control tower, an operator exception queue, and a pilot-metrics dashboard.</p>
       <div style="margin-top:22px"><a class="btn" href="../apps/fastag/index.html" target="_blank" rel="noopener">Open the full prototype <span class="arrow">↗</span></a></div>
       <div style="margin-top:22px;border:1px solid var(--line,#d8d0c1);border-radius:12px;overflow:hidden;background:var(--card,#faf8f3);aspect-ratio:16/10;">
         <iframe src="../apps/fastag/index.html" title="FASTag Trust Layer interactive prototype" loading="lazy" style="width:100%;height:100%;border:0;display:block"></iframe>
+      </div>
+      <p class="eyebrow" style="margin-top:48px">The decision package — source artifacts</p>
+      <div class="ft-evidence-list">
+        <a href="../assets/artifacts/files/fastag-redesign-strategy-prd.docx" download><span class="ev-t">Strategy + PRD</span><span class="ev-m">DOCX</span></a>
+        <a href="../assets/artifacts/files/fastag-redesign-ux-ai-blueprint.docx" download><span class="ev-t">UX Workflow + AI Agent Blueprint</span><span class="ev-m">DOCX</span></a>
+        <a href="../assets/artifacts/files/fastag-redesign-roadmap-metrics-backlog.xlsx" download><span class="ev-t">Roadmap, Metrics + Backlog</span><span class="ev-m">XLSX</span></a>
+        <a href="../assets/artifacts/files/fastag-redesign-discovery-experiment-plan.docx" download><span class="ev-t">Customer Discovery + Experiment Plan</span><span class="ev-m">DOCX</span></a>
+        <a href="../assets/artifacts/files/fastag-redesign-decision-memo.docx" download><span class="ev-t">Decision Memo + Stakeholder Alignment</span><span class="ev-m">DOCX</span></a>
       </div>
     </div>
   </section>

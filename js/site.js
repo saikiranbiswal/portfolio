@@ -141,11 +141,42 @@
   function flagshipSection(featured) {
     return '' +
       '<div class="sec-head reveal">' +
-        '<p class="eyebrow">Flagship case studies</p>' +
-        '<span class="count">' + featured.length + ' products, problem → prototype</span>' +
+        '<p class="eyebrow">Flagship case study</p>' +
+        '<span class="count">' + (featured.length > 1 ? featured.length + ' products, problem → prototype' : 'Problem → domain → AI → MVP → metrics') + '</span>' +
       '</div>' +
       '<div class="flag-stack">' +
         featured.map((p, i) => flagshipHTML(p, i % 2 === 1)).join("") +
+      '</div>';
+  }
+
+  // Tier 2 supporting card: a case study / interactive prototype, one click deep.
+  function supportingCard(p) {
+    var href, cta, launch = "";
+    if (p.caseStudy) { href = esc(p.caseStudy); cta = "Read the case study"; }
+    else { href = "project.html?id=" + esc(p.id); cta = "Open the project"; }
+    return '' +
+      '<a class="support-card reveal" href="' + href + '"' + launch + '>' +
+        '<div class="support-shot ph" data-cms-path="projects[id=' + esc(p.id) + '].screenshot" data-cms-image data-cms-dir="assets/screenshots">' +
+          heroShot(p) +
+        '</div>' +
+        '<div class="support-body">' +
+          '<div class="tag-row">' +
+            (p.tags || []).slice(0, 3).map(function (t) { return '<span class="pill">' + esc(t) + '</span>'; }).join("") +
+          '</div>' +
+          '<h3 data-cms-path="projects[id=' + esc(p.id) + '].name">' + esc(p.name) + '</h3>' +
+          '<p class="body-text" data-cms-path="projects[id=' + esc(p.id) + '].description" data-cms-multiline>' + esc(p.description) + '</p>' +
+          '<span class="support-cta">' + cta + ' <span class="arrow">→</span></span>' +
+        '</div>' +
+      '</a>';
+  }
+  function supportingSection(supporting) {
+    return '' +
+      '<div class="sec-head reveal">' +
+        '<p class="eyebrow">Supporting proof</p>' +
+        '<span class="count">Case study &amp; interactive prototype</span>' +
+      '</div>' +
+      '<div class="support-grid">' +
+        supporting.map(supportingCard).join("") +
       '</div>';
   }
 
@@ -205,12 +236,26 @@
     (data.projects || []).forEach(p => { byId[p.id] = p; });
 
     const showRole = !!(data.meta && data.meta.showRoleOnCards);
-    let featured = (data.projects || []).filter(p => p.featured && !p.hidden);
-    if (!featured.length) featured = (data.projects || []).filter(p => !p.hidden).slice(0, 1);
-    const rest = (data.projects || []).filter(p => !p.hidden && featured.indexOf(p) === -1);
+    const live = (data.projects || []).filter(p => !p.hidden);
+
+    // Three explicit tiers. Tier defaults keep older data working:
+    // featured → 1 (flagship), a case study → 2 (supporting), else → 3 (also built).
+    function tierOf(p) {
+      if (p.tier) return p.tier;
+      if (p.featured) return 1;
+      if (p.caseStudy) return 2;
+      return 3;
+    }
+    let featured = live.filter(p => tierOf(p) === 1);
+    if (!featured.length) featured = live.slice(0, 1);
+    const supporting = live.filter(p => tierOf(p) === 2 && featured.indexOf(p) === -1);
+    const rest = live.filter(p => featured.indexOf(p) === -1 && supporting.indexOf(p) === -1);
 
     const fsec = document.getElementById("flagship-section");
     if (fsec && featured.length) fsec.innerHTML = flagshipSection(featured);
+
+    const ssec = document.getElementById("supporting-section");
+    if (ssec) ssec.innerHTML = supporting.length ? supportingSection(supporting) : "";
 
     const list = document.getElementById("work-list");
     if (list) list.innerHTML = rest.map((p, i) => workRow(p, i, showRole)).join("");

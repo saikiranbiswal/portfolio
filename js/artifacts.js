@@ -53,6 +53,10 @@
     var items = state.data.artifacts.filter(function (item) {
       return item.visible !== false && (state.active === "all" || item.category === state.active);
     });
+    // Pin featured artifacts to the top of every view, preserving source order otherwise.
+    items = items.slice().sort(function (a, b) {
+      return (b.featured ? 1 : 0) - (a.featured ? 1 : 0);
+    });
     document.getElementById("artifact-count").textContent = items.length + (items.length === 1 ? " artifact" : " artifacts") + " in this view";
     document.getElementById("artifact-grid").innerHTML = items.length
       ? items.map(artifactCard).join("")

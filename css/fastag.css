@@ -29,6 +29,21 @@
 .ft-metrics div { padding: 24px; border: 1px solid var(--line); border-radius: 8px; background: var(--card); }
 .ft-metrics strong { display: block; font: 400 38px/1 var(--serif); }
 .ft-metrics span { display: block; margin-top: 8px; color: var(--muted); }
+/* AI design — autonomy boundary */
+.ft-boundary { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin-top: 48px; background: var(--line); border: 1px solid var(--line); }
+.ft-boundary > div { background: var(--card); padding: 30px; }
+.ft-boundary .ai-gov { border-left: 2px solid var(--clay); }
+.ft-list { list-style: none; margin-top: 18px; display: grid; gap: 14px; }
+.ft-list li { position: relative; padding-left: 22px; color: var(--muted); line-height: 1.6; }
+.ft-list li::before { content: ""; position: absolute; left: 0; top: 9px; width: 7px; height: 7px; border-radius: 50%; background: var(--clay-deep); }
+
+/* Evidence — source artifacts */
+.ft-evidence-list { margin-top: 20px; display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.ft-evidence-list a { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 24px; background: var(--card); color: var(--ink); transition: background .2s ease; }
+.ft-evidence-list a:hover { background: var(--card-2, rgba(0,0,0,.04)); }
+.ft-evidence-list .ev-t { font-weight: 600; }
+.ft-evidence-list .ev-m { color: var(--muted); font: 500 11px/1 var(--mono); letter-spacing: .08em; }
+
 .ft-footer { background: var(--dark); color: #f4f1ea; padding-block: clamp(72px, 10vw, 130px); }
 .ft-footer .wrap { display: flex; justify-content: space-between; align-items: end; gap: 36px; }
 .ft-footer p { max-width: 18ch; font-size: clamp(30px, 4vw, 48px); color: #f4f1ea; }

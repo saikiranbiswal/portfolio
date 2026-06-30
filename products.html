@@ -17,7 +17,7 @@
 <meta name="twitter:image" content="assets/og-image.png">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <script>document.documentElement.dataset.theme=(function(){try{return localStorage.getItem('portfolio.theme')||'dark'}catch(e){return'dark'}})();</script>
-<link rel="stylesheet" href="css/styles.css?v=17">
+<link rel="stylesheet" href="css/styles.css?v=19">
 <link rel="stylesheet" href="css/modal.css?v=10">
 </head>
 <body>
@@ -71,14 +71,17 @@
   </div>
 </header>
 
-<!-- FLAGSHIP (rendered from products.json featured project) -->
+<!-- TIER 1 · FLAGSHIP (rendered from products.json tier:1 project) -->
 <section class="section wrap" id="flagship-section" style="padding-top:0;"></section>
 
-<!-- SELECTED WORK GRID -->
+<!-- TIER 2 · SUPPORTING (case study + interactive prototype) -->
+<section class="section wrap" id="supporting-section" style="padding-top:0;"></section>
+
+<!-- TIER 3 · ALSO BUILT (working apps, open in modal) -->
 <section class="section wrap" style="padding-top:0;">
   <div class="sec-head reveal">
-    <p class="eyebrow">Selected work</p>
-    <span class="count" id="work-count">Projects across lending, banking & AI</span>
+    <p class="eyebrow">Also built</p>
+    <span class="count" id="work-count">Working products across data, AI & delivery</span>
   </div>
   <div class="work-list reveal" id="work-list"></div>
 </section>
@@ -132,8 +135,8 @@
 
 <script src="js/reveal.js?v=11"></script>
 <script src="js/preview-data.js"></script>
-<script src="js/site-config.js?v=13"></script>
-<script src="js/site.js?v=14"></script>
+<script src="js/site-config.js?v=15"></script>
+<script src="js/site.js?v=15"></script>
 <script src="js/sections.js?v=1"></script>
 <script src="js/inline-editor.js?v=2"></script>
 <script src="js/theme.js?v=1"></script>

@@ -11,17 +11,12 @@
       .replace(/"/g, "&quot;");
   }
 
-  function isBrowserViewable(file) {
-    return /\.(pdf|svg|png|jpe?g|webp)$/i.test(file || "");
-  }
-
   function artifactCard(item) {
     var preview = item.preview
       ? '<div class="artifact-preview"><img src="' + esc(item.preview) + '" alt="Preview of ' + esc(item.title) + '"></div>'
       : "";
-    var open = isBrowserViewable(item.file);
-    var action = open ? "Open artifact" : "Download source";
-    var download = open ? ' target="_blank" rel="noopener"' : " download";
+    // Primary action keeps the visitor in the portfolio: the reader renders
+    // the artifact in-site. The source download becomes the secondary action.
     return '<article class="artifact-card' + (item.featured ? ' featured' : '') + (item.preview ? ' has-preview' : '') + '">' +
       preview +
       '<div class="artifact-meta"><span class="artifact-chip">' + esc(item.status) + '</span><span class="artifact-chip">' + esc(item.format) + '</span></div>' +
@@ -29,7 +24,10 @@
       '<p class="artifact-project eyebrow">' + esc(item.project) + '</p>' +
       '<p class="artifact-description">' + esc(item.description) + '</p>' +
       '<details class="artifact-proof"><summary>What this demonstrates</summary><p>' + esc(item.proof) + '</p></details>' +
-      '<div class="artifact-actions"><a class="artifact-link" href="' + esc(item.file) + '"' + download + '>' + action + ' →</a><span class="artifact-file-note mono-meta">' + esc((item.format || "").split("·")[0].trim()) + '</span></div>' +
+      '<div class="artifact-actions">' +
+        '<a class="artifact-link" href="reader.html?id=' + encodeURIComponent(item.id) + '">Read it here →</a>' +
+        '<a class="artifact-file-note mono-meta" href="' + esc(item.file) + '" download>Download ↓</a>' +
+      '</div>' +
       '</article>';
   }
 

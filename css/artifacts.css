@@ -161,3 +161,6 @@
 @media (prefers-reduced-motion: reduce) {
   .artifact-card { transition: none; }
 }
+
+/* Reader link states (download is the quiet secondary action) */
+.artifact-file-note:hover { color: var(--clay-deep); }

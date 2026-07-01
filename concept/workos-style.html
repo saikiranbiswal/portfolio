@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Concept · WorkOS-style Portfolio · Sai Kiran Biswal</title>
+<meta name="robots" content="noindex,nofollow">
+<link rel="icon" type="image/svg+xml" href="../assets/favicon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN CONCEPT — WorkOS-style system, portfolio content.
+   Tokens sampled from workos.com: indigo #6363F1, periwinkle
+   #B1B3F6, blue #558ADB, teal #23F0C3, navy #030520/#181B39.
+   Untitled Sans ≈ Inter substitute. IBM Plex Mono retained.
+   ============================================================ */
+:root{
+  --indigo:#6363F1; --indigo-deep:#4646d6; --peri:#B1B3F6;
+  --blue:#558ADB; --teal:#23F0C3; --magenta:#D272FF;
+  --navy:#030520; --navy-2:#181B39; --navy-3:#2B335A;
+  --ink:#1c2024; --slate:#758696; --slate-2:#8F96BD;
+  --bg:#ffffff; --bg-2:#fafafa; --line:#edeef0; --line-2:#e2e4e8;
+  --sans:'Inter',Arial,sans-serif;
+  --mono:'IBM Plex Mono','Andale Mono',monospace;
+  --maxw:1140px; --r:10px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-font-smoothing:antialiased}
+body{font-family:var(--sans);color:var(--ink);background:var(--bg);font-size:16px;line-height:1.6}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--maxw);margin:0 auto;padding-inline:clamp(20px,4vw,40px)}
+.kicker{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;color:var(--indigo)}
+.dark .kicker{color:var(--teal)}
+h1,h2,h3{letter-spacing:-0.03em;line-height:1.05;font-weight:600}
+.sec-label{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.sec-label::before{content:'';width:26px;height:2px;background:var(--indigo);border-radius:2px}
+.statement{font-size:clamp(28px,3.6vw,44px);max-width:20ch;margin-bottom:14px}
+.sub{color:var(--slate);font-size:17px;max-width:56ch;line-height:1.65}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;font-weight:600;font-size:15px;
+  background:var(--indigo);color:#fff;border-radius:8px;padding:12px 22px;
+  transition:background .2s,transform .2s,box-shadow .2s;box-shadow:0 1px 2px rgba(3,5,32,.08)}
+.btn:hover{background:var(--indigo-deep);transform:translateY(-1px);box-shadow:0 6px 16px rgba(99,99,241,.25)}
+.btn.ghost{background:#fff;color:var(--ink);border:1px solid var(--line-2);box-shadow:none}
+.btn.ghost:hover{border-color:var(--indigo);color:var(--indigo);background:#fff}
+.btn .ar{transition:transform .2s}
+.btn:hover .ar{transform:translateX(3px)}
+
+/* Nav */
+nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{max-width:var(--maxw);margin:0 auto;padding:14px clamp(20px,4vw,40px);display:flex;align-items:center;justify-content:space-between;gap:24px}
+.mark{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16.5px;letter-spacing:-.02em}
+.mark .dot{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,var(--indigo),var(--blue));
+  display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700}
+.nav-links{display:flex;align-items:center;gap:26px;font-size:14.5px;font-weight:500;color:var(--slate)}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{background:var(--indigo);color:#fff;padding:8px 16px;border-radius:7px;font-weight:600;font-size:14px}
+.nav-cta:hover{background:var(--indigo-deep);color:#fff}
+@media(max-width:760px){.nav-links{display:none}}
+
+/* Hero */
+.hero{padding:clamp(64px,9vw,120px) 0 clamp(40px,6vw,72px);text-align:center;
+  background:
+    radial-gradient(1200px 500px at 50% -10%, rgba(99,99,241,.08), transparent 60%),
+    radial-gradient(800px 400px at 85% 0%, rgba(35,240,195,.06), transparent 60%);}
+.pill{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;letter-spacing:.08em;
+  border:1px solid var(--line-2);background:#fff;border-radius:100px;padding:7px 14px;color:var(--slate);margin-bottom:26px}
+.pill b{color:var(--indigo);font-weight:500}
+.pill .pulse{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:pu 2.4s infinite}
+@keyframes pu{0%{box-shadow:0 0 0 0 rgba(35,240,195,.5)}70%{box-shadow:0 0 0 7px transparent}100%{box-shadow:0 0 0 0 transparent}}
+.hero h1{font-size:clamp(42px,6.4vw,76px);max-width:16ch;margin:0 auto 20px}
+.hero h1 em{font-style:normal;background:linear-gradient(100deg,var(--indigo),var(--blue) 60%,var(--magenta));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .sub{margin:0 auto 34px}
+.hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+/* Stats strip */
+.stats{display:flex;justify-content:center;gap:clamp(36px,7vw,90px);flex-wrap:wrap;
+  padding:30px 0;border-top:1px solid var(--line);margin-top:clamp(44px,6vw,72px)}
+.stat{text-align:center}
+.stat .n{font-size:clamp(30px,3.4vw,42px);font-weight:700;letter-spacing:-.03em;
+  background:linear-gradient(120deg,var(--indigo),var(--blue));-webkit-background-clip:text;background-clip:text;color:transparent}
+.stat .l{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--slate);margin-top:6px}
+
+/* Sections */
+section{padding:clamp(56px,8vw,104px) 0}
+.head-row{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:clamp(28px,4vw,44px)}
+
+/* Work cards */
+.work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.wcard{border:1px solid var(--line);border-radius:var(--r);background:#fff;overflow:hidden;display:flex;flex-direction:column;
+  transition:border-color .2s,transform .2s,box-shadow .2s}
+.wcard:hover{border-color:var(--peri);transform:translateY(-3px);box-shadow:0 12px 32px rgba(3,5,32,.08)}
+.wshot{aspect-ratio:16/10;background:var(--bg-2);border-bottom:1px solid var(--line);overflow:hidden}
+.wshot img{width:100%;height:100%;object-fit:cover;object-position:top center}
+.wbody{padding:22px;display:flex;flex-direction:column;flex:1}
+.wtag{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--indigo);margin-bottom:10px}
+.wbody h3{font-size:19px;margin-bottom:8px}
+.wbody p{color:var(--slate);font-size:14.5px;flex:1}
+.wlink{margin-top:16px;color:var(--indigo);font-weight:600;font-size:14px;display:inline-flex;gap:6px;align-items:center}
+.wcard:hover .wlink .ar{transform:translateX(3px)}
+.wlink .ar{transition:transform .2s}
+.wcard.feature{grid-column:1/-1;display:grid;grid-template-columns:1.05fr 1fr;align-items:center}
+.wcard.feature .wshot{aspect-ratio:auto;height:100%;border-bottom:0;border-left:1px solid var(--line);order:2}
+.wcard.feature .wbody{padding:clamp(26px,3.5vw,44px)}
+.wcard.feature h3{font-size:clamp(22px,2.6vw,30px)}
+.wcard.feature p{flex:0 1 auto;font-size:15.5px;max-width:52ch}
+.badge{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  background:rgba(99,99,241,.09);color:var(--indigo);border-radius:5px;padding:4px 9px;margin-right:6px}
+.badge.teal{background:rgba(35,240,195,.13);color:#0a9d7c}
+@media(max-width:900px){.work-grid{grid-template-columns:1fr}.wcard.feature{grid-template-columns:1fr}.wcard.feature .wshot{order:0;border-left:0;border-bottom:1px solid var(--line);aspect-ratio:16/9}}
+
+/* Evidence table-grid */
+.evi{background:var(--bg-2);border-block:1px solid var(--line)}
+.evi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.ecard{background:#fff;border:1px solid var(--line);border-radius:var(--r);padding:20px;
+  transition:border-color .2s,box-shadow .2s;display:flex;flex-direction:column}
+.ecard:hover{border-color:var(--peri);box-shadow:0 8px 24px rgba(3,5,32,.06)}
+.ecard .etype{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.ecard .etype span{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--slate)}
+.ecard .etype .fmt{color:var(--indigo);background:rgba(99,99,241,.08);border-radius:4px;padding:3px 7px}
+.ecard h4{font-size:15.5px;font-weight:600;letter-spacing:-.01em;margin-bottom:6px;line-height:1.35}
+.ecard p{font-size:13.5px;color:var(--slate);flex:1}
+.ecard .eread{margin-top:14px;font-size:13.5px;font-weight:600;color:var(--indigo)}
+@media(max-width:900px){.evi-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:620px){.evi-grid{grid-template-columns:1fr}}
+
+/* Dark band — principles */
+.dark{background:var(--navy);color:#fff;position:relative;overflow:hidden}
+.dark::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(900px 400px at 15% 0%,rgba(99,99,241,.25),transparent 55%),
+             radial-gradient(700px 380px at 90% 100%,rgba(85,138,219,.18),transparent 60%)}
+.dark .wrap{position:relative}
+.dark .statement{color:#fff}
+.dark .sub{color:var(--slate-2)}
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:rgba(177,179,246,.16);
+  border:1px solid rgba(177,179,246,.16);border-radius:var(--r);overflow:hidden;margin-top:40px}
+.pcell{background:var(--navy-2);padding:26px 24px}
+.pcell .pn{font-family:var(--mono);font-size:11px;color:var(--teal);letter-spacing:.1em}
+.pcell h4{font-size:16.5px;margin:12px 0 8px;color:#fff;letter-spacing:-.01em}
+.pcell p{font-size:13.5px;color:var(--slate-2);line-height:1.6}
+@media(max-width:900px){.pgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.pgrid{grid-template-columns:1fr}}
+
+/* CTA */
+.cta{text-align:center}
+.cta .statement{margin:14px auto}
+.cta .sub{margin:0 auto 30px}
+
+/* Footer */
+footer{background:var(--navy);color:var(--slate-2);padding:56px 0 32px;border-top:1px solid var(--navy-2)}
+.f-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:32px;margin-bottom:44px}
+.f-grid h5{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--slate-2);margin-bottom:14px}
+.f-grid a{display:block;font-size:14px;color:#c6c9e2;padding:4px 0}
+.f-grid a:hover{color:#fff}
+.f-base{border-top:1px solid var(--navy-2);padding-top:22px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;
+  font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:var(--slate-2)}
+@media(max-width:760px){.f-grid{grid-template-columns:1fr}}
+
+/* Concept ribbon */
+.ribbon{position:fixed;left:0;bottom:0;z-index:99;font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  text-transform:uppercase;background:var(--indigo);color:#fff;padding:7px 13px;border-top-right-radius:8px}
+</style>
+</head>
+<body>
+
+<a class="ribbon" href="../index.html">Design concept · not the live site</a>
+
+<nav>
+  <div class="nav-in">
+    <a class="mark" href="#top"><span class="dot">SK</span> Sai Kiran Biswal</a>
+    <div class="nav-links">
+      <a href="#work">Work</a>
+      <a href="#evidence">Evidence</a>
+      <a href="#about">About</a>
+      <a class="nav-cta" href="mailto:saikiran.biswal@outlook.com">Get in touch</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="pill"><span class="pulse"></span> <b>Open to lead PM roles</b> · Enterprise SaaS · Fintech · AI</div>
+    <h1>Enterprise products,<br>built <em>end to end.</em></h1>
+    <p class="sub">I'm a product manager who takes hard problems from discovery and domain modeling through AI design, architecture, and go-to-market — with working products to prove it.</p>
+    <div class="hero-ctas">
+      <a class="btn" href="#work">See the flagship <span class="ar">→</span></a>
+      <a class="btn ghost" href="../assets/resume.pdf">Résumé (PDF)</a>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="n">3</div><div class="l">Case studies</div></div>
+      <div class="stat"><div class="n">8</div><div class="l">Working products</div></div>
+      <div class="stat"><div class="n">7</div><div class="l">Years · fintech &amp; SaaS</div></div>
+    </div>
+  </div>
+</header>
+
+<!-- WORK -->
+<section id="work">
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <div class="sec-label"><span class="kicker">The work</span></div>
+        <h2 class="statement">Platforms, products, and proof.</h2>
+        <p class="sub">One flagship, two supporting case studies, and a bench of working apps — every claim backed by something you can open.</p>
+      </div>
+    </div>
+    <div class="work-grid">
+      <a class="wcard feature" href="../case-studies/collections-cloud.html">
+        <div class="wbody">
+          <div style="margin-bottom:12px;"><span class="badge">Flagship</span><span class="badge teal">AI</span><span class="badge teal">Fintech</span></div>
+          <h3>AI Collections Cloud</h3>
+          <p>An AI-native recovery platform for lenders — a collector copilot, recovery prediction, and next-best-action over a clean domain, data, and event architecture. Human approval on every high-risk action.</p>
+          <span class="wlink">Read the case study <span class="ar">→</span></span>
+        </div>
+        <div class="wshot"><img src="../assets/screenshots/collections-cloud-mq7ch4i4.png" alt="AI Collections Cloud"></div>
+      </a>
+      <a class="wcard" href="../case-studies/fastag.html">
+        <div class="wshot"><img src="../assets/screenshots/fastag-redesign.png" alt="FASTag Redesign"></div>
+        <div class="wbody">
+          <div class="wtag">GovTech · Mobility</div>
+          <h3>FASTag Redesign</h3>
+          <p>A national toll &amp; mobility trust layer — explainable deductions, disputes, annual-pass intelligence, fleet controls.</p>
+          <span class="wlink">Case study + prototype <span class="ar">→</span></span>
+        </div>
+      </a>
+      <a class="wcard" href="../case-studies/lending-os.html">
+        <div class="wshot"><img src="../assets/screenshots/lending-cloud-mq78bpbv.png" alt="Loan Origination System"></div>
+        <div class="wbody">
+          <div class="wtag">Lending · Platform</div>
+          <h3>Loan Origination System</h3>
+          <p>A guided, state-based origination platform — application to approval with fewer handoffs, on workflow state machines.</p>
+          <span class="wlink">Read the case study <span class="ar">→</span></span>
+        </div>
+      </a>
+      <a class="wcard" href="../project.html?id=synthesis">
+        <div class="wshot"><img src="../assets/screenshots/synthesis-mq78ih0i.png" alt="Synthesis"></div>
+        <div class="wbody">
+          <div class="wtag">Strategy · AI</div>
+          <h3>Synthesis Engine</h3>
+          <p>An offline decision-brief engine — raw inputs to strategic frameworks, implications, and a 30-60-90 plan.</p>
+          <span class="wlink">Open the product <span class="ar">→</span></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- EVIDENCE -->
+<section class="evi" id="evidence">
+  <div class="wrap">
+    <div class="head-row">
+      <div>
+        <div class="sec-label"><span class="kicker">Evidence library</span></div>
+        <h2 class="statement">The work behind the work.</h2>
+        <p class="sub">Strategy documents, decision tools, and delivery plans — each readable in the portfolio, each paired with the decision it supports.</p>
+      </div>
+      <a class="btn ghost" href="../artifacts.html">All 13 artifacts <span class="ar">→</span></a>
+    </div>
+    <div class="evi-grid">
+      <a class="ecard" href="../reader.html?id=collections-strategy-deck">
+        <div class="etype"><span>Strategy deck</span><span class="fmt">PDF · 11pp</span></div>
+        <h4>AI Collections Cloud — Product Strategy &amp; MVP</h4>
+        <p>Target operating model, North Star metrics, MVP scope, collector worklist prioritization, promise tracking.</p>
+        <span class="eread">Read it here →</span>
+      </a>
+      <a class="ecard" href="../reader.html?id=fastag-decision-memo">
+        <div class="etype"><span>Decision package</span><span class="fmt">DOCX</span></div>
+        <h4>FASTag — Decision Memo + Stakeholder Alignment</h4>
+        <p>One-page BLUF recommendation for a 90-day pilot: options, stakeholder map, kill criteria, 30/60/90.</p>
+        <span class="eread">Read it here →</span>
+      </a>
+      <a class="ecard" href="../reader.html?id=ai-forward-framework">
+        <div class="etype"><span>Operating model</span><span class="fmt">DOCX</span></div>
+        <h4>The AI Forward Framework</h4>
+        <p>A repeatable operating model for building, validating, and forward-deploying enterprise AI agents.</p>
+        <span class="eread">Read it here →</span>
+      </a>
+      <a class="ecard" href="../reader.html?id=collections-scorecard">
+        <div class="etype"><span>Decision tool</span><span class="fmt">XLSX · 5 sheets</span></div>
+        <h4>Collections Vendor Evaluation Scorecard</h4>
+        <p>Weighted, formula-backed vendor comparison across features, integrations, pricing, and support.</p>
+        <span class="eread">Read it here →</span>
+      </a>
+      <a class="ecard" href="../reader.html?id=fastag-roadmap-metrics-backlog">
+        <div class="etype"><span>Delivery plan</span><span class="fmt">XLSX</span></div>
+        <h4>FASTag — Roadmap, Metrics + Backlog</h4>
+        <p>Now/Next/Later roadmap, North Star with guardrails, RICE-scored backlog, risk register, experiment plan.</p>
+        <span class="eread">Read it here →</span>
+      </a>
+      <a class="ecard" href="../reader.html?id=collections-product-deck">
+        <div class="etype"><span>Product prototype</span><span class="fmt">PPTX</span></div>
+        <h4>Collections Cloud — Product Interface Deck</h4>
+        <p>The product experience in states: sign-in, portfolio context, work queues, operational controls.</p>
+        <span class="eread">Read it here →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT / PRINCIPLES (dark) -->
+<section class="dark" id="about">
+  <div class="wrap">
+    <div class="sec-label"><span class="kicker">How I work</span></div>
+    <h2 class="statement">From problem to platform, with principles that hold.</h2>
+    <p class="sub">Seven years across enterprise fintech and SaaS — business analysis to 0→1 platform ownership at Highradius and Intellect Design.</p>
+    <div class="pgrid">
+      <div class="pcell"><div class="pn">01</div><h4>Model the domain first</h4><p>Get the objects and lifecycle right and the screens, data, and AI fall into place.</p></div>
+      <div class="pcell"><div class="pn">02</div><h4>Earn the next feature</h4><p>Lead with the painkiller, prove value, then expand. Trust compounds; scope creep doesn't.</p></div>
+      <div class="pcell"><div class="pn">03</div><h4>AI is a product decision</h4><p>Use case, trust, evaluation, guardrails, and cost beat whichever model is trending.</p></div>
+      <div class="pcell"><div class="pn">04</div><h4>Tie it to a number</h4><p>A North Star metric and honest unit economics keep a roadmap defensible.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="wrap">
+    <span class="kicker">Let's talk</span>
+    <h2 class="statement" style="max-width:22ch;">Building something hard? I'd like to hear about it.</h2>
+    <p class="sub">Open to lead PM roles in enterprise AI and fintech — Pune / Bengaluru or remote.</p>
+    <a class="btn" href="mailto:saikiran.biswal@outlook.com">Get in touch <span class="ar">→</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="f-grid">
+      <div>
+        <a class="mark" style="color:#fff" href="#top"><span class="dot">SK</span> Sai Kiran Biswal</a>
+        <p style="font-size:13.5px;margin-top:12px;max-width:34ch;">Enterprise · AI Product — Pune / Bengaluru · Remote</p>
+      </div>
+      <div>
+        <h5>Navigate</h5>
+        <a href="#work">Work</a><a href="#evidence">Evidence</a><a href="#about">About</a>
+      </div>
+      <div>
+        <h5>Elsewhere</h5>
+        <a href="https://www.linkedin.com/in/sai-kiran-biswal" target="_blank" rel="noopener">/in/sai-kiran-biswal</a>
+        <a href="mailto:saikiran.biswal@outlook.com">saikiran.biswal@outlook.com</a>
+        <a href="../assets/resume.pdf">Résumé (PDF) ↓</a>
+      </div>
+    </div>
+    <div class="f-base">
+      <span>© 2026 Sai Kiran Biswal — design concept</span>
+      <span>Set in Inter · IBM Plex Mono</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

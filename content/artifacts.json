@@ -25,16 +25,10 @@
       "description": "This work frames FASTag as a toll and mobility account, with health diagnostics, explainable deductions, disputes, annual-pass intelligence, and fleet controls."
     },
     {
-      "id": "ai-framework",
-      "label": "AI Framework",
-      "title": "A repeatable operating model for enterprise agents",
-      "description": "The framework and PRD template connect domain semantics, decision logic, explainability, validation, iteration, and measurable proof of value."
-    },
-    {
       "id": "data-tools",
       "label": "Data tools",
       "title": "Inputs designed to test real product behavior",
-      "description": "Structured datasets, workflow diagrams, and delivery backlogs make the utilities and product systems testable beyond a polished demo."
+      "description": "Structured relational datasets make the data utilities testable against realistic volume and relationships, beyond a polished demo."
     }
   ],
   "artifacts": [
@@ -53,19 +47,6 @@
       "visible": true
     },
     {
-      "id": "collections-product-deck",
-      "title": "Collections Cloud, Product Interface Deck",
-      "project": "AI Collections Cloud",
-      "category": "collections",
-      "format": "PPTX · Editable",
-      "status": "Product prototype",
-      "description": "An editable product deck that captures the Collections Cloud experience, including sign-in, portfolio context, work queues, and operational controls.",
-      "proof": "Connects the product strategy to tangible interface states rather than a slide-only concept.",
-      "file": "assets/artifacts/files/ai-collections-cloud-product-deck.pptx",
-      "preview": "assets/artifacts/previews/collections-cloud-deck.png",
-      "visible": true
-    },
-    {
       "id": "collections-scorecard",
       "title": "Collections Management Vendor Evaluation Scorecard",
       "project": "AI Collections Cloud",
@@ -76,7 +57,8 @@
       "proof": "Demonstrates formula-backed evaluation, configurable vendor inputs, and a comparison dashboard for an enterprise buying decision.",
       "file": "assets/artifacts/files/collections-management-vendor-scorecard.xlsx",
       "preview": "assets/artifacts/previews/collections-scorecard-dashboard.png",
-      "visible": true
+      "visible": true,
+      "featured": true
     },
     {
       "id": "fastag-strategy-prd",
@@ -140,31 +122,6 @@
       "featured": true
     },
     {
-      "id": "ai-forward-framework",
-      "title": "The AI Forward Framework",
-      "project": "AI Agent Product System",
-      "category": "ai-framework",
-      "format": "DOCX · Operating model",
-      "status": "Framework",
-      "description": "A practical operating model for building, validating, and forward-deploying AI agents through production-quality data, a semantic layer, DESPASIDO, Algo Quotient, and measurable business value.",
-      "proof": "Makes the human role explicit: define the decision model, validate outputs, and shorten the theory-to-evidence loop.",
-      "file": "assets/artifacts/files/ai-forward-framework.docx",
-      "visible": true,
-      "featured": true
-    },
-    {
-      "id": "ai-forward-prd-template",
-      "title": "AI Forward Framework, Agent PRD Template",
-      "project": "AI Agent Product System",
-      "category": "ai-framework",
-      "format": "DOCX · Fillable template",
-      "status": "Reusable template",
-      "description": "A build-ready PRD template for KPIs, algorithm design, decision rules, confidence, edge cases, semantic definitions, DESPASIDO architecture, iteration records, and proof-of-value targets.",
-      "proof": "Turns the framework into a repeatable specification that teams can use for real agent initiatives.",
-      "file": "assets/artifacts/files/ai-forward-framework-prd-template.docx",
-      "visible": true
-    },
-    {
       "id": "universal-data-workbench-dataset",
       "title": "Universal Data Workbench, Relational Test Dataset",
       "project": "Data Utilities",
@@ -174,30 +131,6 @@
       "description": "A relational dataset spanning customers, products, sales, invoices, payments, and inventory for exercising profiling, joins, reconciliation, and dashboard workflows.",
       "proof": "Provides thousands of linked records so data products can be tested against realistic volume and relationships.",
       "file": "assets/artifacts/files/universal-data-workbench-test-dataset.xlsx",
-      "visible": true
-    },
-    {
-      "id": "work-story-workflow",
-      "title": "Work Story Knowledge Base Workflow",
-      "project": "Portfolio CMS",
-      "category": "data-tools",
-      "format": "SVG · Workflow diagram",
-      "status": "System design",
-      "description": "A source workflow for turning raw work evidence into reusable product stories, metrics, decisions, and portfolio-ready proof.",
-      "proof": "Shows how evidence is structured before it reaches the public portfolio.",
-      "file": "assets/artifacts/files/work-story-knowledge-base-workflow.svg",
-      "visible": true
-    },
-    {
-      "id": "product-cms-backlog",
-      "title": "Portfolio CMS, Product Backlog",
-      "project": "Portfolio CMS",
-      "category": "data-tools",
-      "format": "CSV · 34 backlog items",
-      "status": "Delivery artifact",
-      "description": "A structured backlog for evidence management, publishing workflows, product storytelling, governance, and CMS delivery.",
-      "proof": "Connects the current site to an explicit delivery system instead of treating it as an isolated design exercise.",
-      "file": "jira/product-cms-startup-backlog.csv",
       "visible": true
     }
   ]

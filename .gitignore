@@ -30,3 +30,11 @@ assets/one-pager.html
 assets/sai-kiran-biswal-brief.pdf
 Portfolio-Audit-Report.docx
 build_audit_report.py
+
+# Private artifacts — local only, never published (removed from site + history)
+assets/artifacts/files/ai-collections-cloud-product-deck.pptx
+assets/artifacts/files/ai-forward-framework.docx
+assets/artifacts/files/ai-forward-framework-prd-template.docx
+assets/artifacts/files/work-story-knowledge-base-workflow.svg
+assets/artifacts/previews/collections-cloud-deck.png
+jira/

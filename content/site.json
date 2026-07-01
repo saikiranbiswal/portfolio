@@ -36,12 +36,6 @@
       "visible": true
     },
     {
-      "id": "products",
-      "file": "products.html",
-      "title": "Work",
-      "visible": true
-    },
-    {
       "id": "artifacts",
       "file": "artifacts.html",
       "title": "Artifacts",

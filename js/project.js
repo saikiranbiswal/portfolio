@@ -222,7 +222,7 @@
             );
           }).join("") +
         "</div>" +
-        '<div class="p-reveal"><a class="btn btn-ghost" href="products.html">See all work <span class="arrow">→</span></a></div>' +
+        '<div class="p-reveal"><a class="btn btn-ghost" href="index.html#work">See all work <span class="arrow">→</span></a></div>' +
       "</section>"
     );
   }
@@ -310,7 +310,7 @@
             '<h1 class="p-title">That project has moved.</h1>' +
             '<p class="p-tagline">The link you followed points to a project that isn’t here anymore — it may have been renamed or retired.</p>' +
             '<div class="p-actions">' +
-              '<a class="btn" href="products.html">See all work <span class="arrow">→</span></a>' +
+              '<a class="btn" href="index.html#work">See all work <span class="arrow">→</span></a>' +
               '<a class="btn btn-ghost" href="index.html">Home <span class="arrow">→</span></a>' +
             '</div>' +
           '</header>';
@@ -336,6 +336,6 @@
   }).catch(function (err) {
     console.error("Project page failed to load:", err);
     var root = document.getElementById("project-root");
-    root.innerHTML = '<div class="p-loading mono-meta">could not load project, <a href="products.html">back to work</a></div>';
+    root.innerHTML = '<div class="p-loading mono-meta">could not load project, <a href="index.html#work">back to work</a></div>';
   });
 })();

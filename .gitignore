@@ -18,9 +18,15 @@ Thumbs.db
 .cms_server.log
 cms_server.py
 
+# Personal / internal material — never in the public repo (audit F-D1)
+MASTER.resume
+.cms/
+
 # Internal working files / deliverables — kept locally, not part of the public site
 Portfolio-Proposal.docx
 build_proposal.py
 assets/concept/
 assets/one-pager.html
 assets/sai-kiran-biswal-brief.pdf
+Portfolio-Audit-Report.docx
+build_audit_report.py

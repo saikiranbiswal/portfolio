@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /portfolio/admin.html
+
+Sitemap: https://saikiranbiswal.github.io/portfolio/sitemap.xml

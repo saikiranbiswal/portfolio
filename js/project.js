@@ -300,7 +300,22 @@
     var id = new URLSearchParams(location.search).get("id");
     var p = projects.find(function (x) { return x.id === id; });
     if (!p) {
-      if (id) { location.replace("products.html"); return; }
+      if (id) {
+        // Explicit not-found state (audit F-A1): a stale shared link should
+        // explain itself, not silently land somewhere else.
+        document.title = "Project not found · Sai Kiran Biswal";
+        document.getElementById("project-root").innerHTML =
+          '<header class="p-hero wrap">' +
+            '<p class="eyebrow">404 · Project</p>' +
+            '<h1 class="p-title">That project has moved.</h1>' +
+            '<p class="p-tagline">The link you followed points to a project that isn’t here anymore — it may have been renamed or retired.</p>' +
+            '<div class="p-actions">' +
+              '<a class="btn" href="products.html">See all work <span class="arrow">→</span></a>' +
+              '<a class="btn btn-ghost" href="index.html">Home <span class="arrow">→</span></a>' +
+            '</div>' +
+          '</header>';
+        return;
+      }
       p = projects[0];
     }
     var flag = findFlagship(labs, p.id);

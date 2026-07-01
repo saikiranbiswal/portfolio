@@ -11,7 +11,7 @@ window.SCFG = (function () {
   var SEED = {
     nav: [
       { label: "Home",    href: "index.html" },
-      { label: "Work",    href: "index.html#work" },
+      { label: "Work",    href: "products.html" },
       { label: "Artifacts", href: "artifacts.html" },
       { label: "About",   href: "about.html" },
       { label: "Contact", href: "contact.html" }
@@ -25,7 +25,7 @@ window.SCFG = (function () {
           heading: "Navigate",
           links: [
             { label: "Home",    href: "index.html" },
-            { label: "Work",    href: "index.html#work" },
+            { label: "Work",    href: "products.html" },
             { label: "Artifacts", href: "artifacts.html" },
             { label: "About",   href: "about.html" },
             { label: "Contact", href: "contact.html" }

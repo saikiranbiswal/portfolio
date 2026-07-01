@@ -12,7 +12,7 @@
       "label": "Home"
     },
     {
-      "href": "index.html#work",
+      "href": "products.html",
       "label": "Work"
     },
     {
@@ -70,7 +70,7 @@
             "label": "Home"
           },
           {
-            "href": "index.html#work",
+            "href": "products.html",
             "label": "Work"
           },
           {

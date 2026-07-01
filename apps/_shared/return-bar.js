@@ -5,7 +5,7 @@
   "use strict";
   if (window.self !== window.top) return;
   var a = document.createElement("a");
-  a.href = "../../index.html#work";
+  a.href = "../../products.html";
   a.textContent = "← Portfolio";
   a.setAttribute("aria-label", "Back to Sai Kiran Biswal's portfolio");
   a.style.cssText = [

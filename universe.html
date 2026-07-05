@@ -9,7 +9,6 @@
 <meta property="og:title" content="Saikiran Biswal · Product builder" />
 <meta property="og:description" content="Working products, platforms, and case studies, built end to end from discovery through AI architecture and go-to-market." />
 <meta property="og:url" content="https://saikiranbiswal.github.io/portfolio/" />
-<meta property="og:image" content="https://saikiranbiswal.github.io/portfolio/assets/screenshots/collections-cloud-mq7ch4i4.png" />
 <meta name="twitter:card" content="summary_large_image" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -100,6 +99,8 @@
   .pill.primary{background:rgba(232,163,61,.14);border-color:rgba(232,163,61,.5)}
   body.light .pill.primary{background:rgba(185,118,18,.10);border-color:rgba(185,118,18,.45)}
   .pill.primary:hover,.pill.primary:focus-visible{background:var(--amber);border-color:var(--amber);color:var(--amber-ink)}
+  .pill.static{cursor:default;color:var(--muted);background:transparent}
+  .pill.static:hover{background:transparent;color:var(--muted);border-color:var(--hair-2)}
 
   /* ============ TOP BAR ============ */
   #topbar{position:fixed;top:0;left:0;right:0;z-index:60;display:flex;align-items:center;justify-content:space-between;
@@ -330,7 +331,6 @@
       </nav>
       <div class="menu-block" id="about-block">
         <div class="mb-label">About</div>
-        <img class="menu-portrait" src="https://saikiranbiswal.github.io/portfolio/assets/about/portrait-mq78fxvi.png" alt="Saikiran Biswal" onerror="this.style.display='none'" />
         <p class="menu-bio">I build enterprise and AI products in lending, banking, and fintech, from the problem and business case through a clean domain model, an architecture engineering can ship, and a commercial model that holds up. This portfolio shows the public proof: live products, case studies, and artifacts.</p>
         <p class="menu-current">Public scope: <b>finished work, working demos, and product evidence</b></p>
         <div class="menu-btns">
@@ -361,100 +361,69 @@
   import * as THREE from 'three';
 
   /* ============================================================
-     RESOURCE BASE: every relative path in PROJECTS resolves
-     against the live GitHub Pages site, so images, apps, and
-     case studies load no matter where this file is opened from
-     (localhost, file://, or the deployed site itself).
-     ============================================================ */
-  const BASE='https://saikiranbiswal.github.io/portfolio/';
-  const abs=p=>/^(https?:)?\/\//.test(p)?p:new URL(p.replace(/^\.\//,''),BASE).href;
-
-  /* ============================================================
      DATA MODEL: the one constant that drives the entire site.
-     Add a project: append one entry + one 16:10 screenshot.
-     Ring spacing = 360 / PROJECTS.length (auto-respaced).
-     Omit `caseStudy` or `code` and the button hides gracefully.
+     The portfolio repo now keeps only this page, so projects use
+     generated in-page visuals and safe external links only.
+     Source paths name the sibling folders in the second brain.
      ============================================================ */
   const PROJECTS = [
     {
-      id:'collections-cloud', no:'№ 01', title:'AI Collections Cloud', tag:'AI · Fintech',
-      lede:'An AI-native recovery platform: collector copilot, recovery prediction, and next-best-action.',
-      about:'A recovery platform for lenders built AI-native from the ground up: a collector copilot, recovery-propensity prediction, and next-best-action, all sitting on a clean domain, data, and event architecture. Framed the use cases, designed for trust and evaluation, and priced the value.',
-      shot:'assets/screenshots/collections-cloud-mq7ch4i4.png',
-      app:'./apps/collections-cloud/', caseStudy:'case-studies/collections-cloud.html'
+      id:'delivery-control-tower', no:'№ 01', title:'Delivery Control Tower', tag:'AI · Delivery intelligence',
+      lede:'Messy delivery trackers in; health, risks, and executive summaries out.',
+      about:'A public, shipped delivery-intelligence platform built around a simple promise: turn fragmented project status into an operating picture leaders can use. The work spans extraction, fit-for-purpose scoring, risk narration, executive summaries, and a human-gated delivery workflow.',
+      source:'projects/delivery-control-tower/', accent:'#C14B2A',
+      live:'https://saikiranbiswal.github.io/delivery-control-tower/',
+      repo:'https://github.com/saikiranbiswal/delivery-control-tower'
     },
     {
-      id:'lending-cloud', no:'№ 02', title:'Loan Origination System', tag:'Lending · Platform',
-      lede:'A guided, state-based origination flow from application to approval, with fewer handoffs.',
-      about:'A loan-origination platform rebuilt as a configurable, state-based workflow: from application to approval with fewer handoffs, over explicit workflow state machines, EMI math, and deterministic demo data. The domain model came first; the screens followed.',
-      shot:'assets/screenshots/lending-cloud-mq78bpbv.png',
-      app:'./apps/lending-cloud/', caseStudy:'case-studies/lending-os.html'
+      id:'atlas', no:'№ 02', title:'Atlas', tag:'Agentic task management',
+      lede:'A Jira-like local task manager for owners, blockers, evidence, and delivery state.',
+      about:'Atlas is a local-first task-management system shaped around how work actually moves: owner, priority, blocker, evidence, and next action. The project proves the product surface, the domain model, and the delivery workflow for an agentic operating layer.',
+      source:'projects/task-management-system/', accent:'#6D5BD0',
+      repo:'https://github.com/saikiranbiswal/task-management-system'
     },
     {
-      id:'fastag-redesign', no:'№ 03', title:'FASTag Redesign', tag:'GovTech · Strategy',
-      lede:'A national toll and mobility trust layer: explainable deductions, disputes, fleet controls.',
-      about:'A problem-first strategy and PRD for a trusted national toll and mobility account: FASTag health, explainable deductions, disputes, annual-pass intelligence, fleet controls, and operator exceptions. Reframed a payments rail as a trust layer for a country.',
-      shot:'assets/screenshots/fastag-redesign.png',
-      app:'./apps/fastag/', caseStudy:'case-studies/fastag.html'
+      id:'collections-cloud', no:'№ 03', title:'AI Collections Cloud', tag:'Fintech · Recovery OS',
+      lede:'A collections platform with strategy simulation, collector guidance, and recovery evidence.',
+      about:'A working AR collections concept and artifact pack: portfolio risk, next-best-action, operating scorecards, and a strategy layer for recovery teams. It connects the prototype in `collections-cloud` with PM artifacts in `artefacts folder` and the workflow-orchestration work.',
+      source:'projects/collections-cloud/ + projects/artefacts folder/', accent:'#B97612'
     },
     {
-      id:'atlas', no:'№ 04', title:'Atlas', tag:'Workflow · Delivery',
-      lede:'A task-orchestration workspace that keeps owners, blockers, and evidence on one surface.',
-      about:'A task-orchestration workspace for planning initiatives, assigning owners, surfacing blockers, and filtering delivery work, with execution evidence kept close to the task. Built to make delivery legible without another status meeting.',
-      shot:'assets/screenshots/atlas-task-management.png',
-      app:'./apps/atlas/'
+      id:'workflow-orchestration', no:'№ 04', title:'Workflow Orchestration', tag:'Collections · Operations',
+      lede:'A collections orchestrator that turns accounts, actions, and outcomes into a managed system.',
+      about:'A collections workflow system and workbook artifact pack that demonstrates how recovery work can be routed, sequenced, and measured. It is the operating layer beside the collections strategy work: queues, decisions, metrics, and the evidence loop.',
+      source:'projects/workflow-orchestration/', accent:'#2F7D68'
     },
     {
-      id:'synthesis', no:'№ 05', title:'Synthesis', tag:'Strategy · Engine',
-      lede:'An offline brief engine turning raw inputs into frameworks and a 30-60-90 plan.',
-      about:'An offline decision-brief engine that turns raw inputs into strategic frameworks, implications, and a 30-60-90 action plan, with multi-format export. Everything runs in the browser, so the data never leaves the machine.',
-      shot:'assets/screenshots/synthesis-mq78ih0i.png',
-      app:'./apps/synthesis/'
+      id:'financial-model-generator', no:'№ 05', title:'modelgen', tag:'Finance · Compiler',
+      lede:'A driver-based financial model compiler with ModelSpec JSON as source of truth.',
+      about:'modelgen treats a financial model as a structured product rather than a hand-built spreadsheet. A ModelSpec JSON defines drivers, scenarios, and outputs, then the generator compiles the model so assumptions and financial logic stay explicit.',
+      source:'projects/financial-model-generator/', accent:'#4C6FFF'
     },
     {
-      id:'dashboard-studio', no:'№ 06', title:'Dashboard Studio', tag:'Data · Tools',
-      lede:'A drag-and-drop dashboard builder: KPI cards, charts, theming, all in-browser.',
-      about:'A drag-and-drop dashboard builder: KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser. A tool for turning a messy spreadsheet into a decision surface in minutes.',
-      shot:'assets/screenshots/dashboard-studio-mq78n3sv.png',
-      app:'./apps/dashboard-studio/'
+      id:'cx-saas-pm', no:'№ 06', title:'CX SaaS PM Case', tag:'Enterprise SaaS · CX',
+      lede:'A Medallia-like product case with RBAC, AI governance, and closed-loop workflows.',
+      about:'A CX platform case that moves beyond screens into operating design: workflow WF01-WF07, role-based access, AI governance, and closed-loop verification. It demonstrates enterprise product judgment: capability model, governance, and usable workflows.',
+      source:'projects/cx-saas-pm/', accent:'#D15F7E'
     },
     {
-      id:'neuralpath', no:'№ 07', title:'NeuralPath', tag:'AI · Learning',
-      lede:'A gamified AI-concepts app: quizzes, XP, streaks, and orchestration flows, level by level.',
-      about:'A gamified AI-learning app: concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time. Built to prove that a learning product can be a real product, not a slide deck with a quiz bolted on.',
-      shot:'assets/screenshots/neuralpath-mq78l565.png',
-      app:'./apps/neuralpath/'
+      id:'agent-factory', no:'№ 07', title:'Agent Factory', tag:'AI agents · GTM system',
+      lede:'A six-agent content-to-sales-call system with shared memory and governance.',
+      about:'Agent Factory is the planning and specification layer for a multi-agent business system: content generation, lead qualification, memory, routing, and sales-call conversion. It frames agents as productized workflows with boundaries, evidence, and escalation.',
+      source:'projects/agent-factory/', accent:'#8E5CF7'
+    },
+    {
+      id:'pm-bcg-skills', no:'№ 08', title:'PM + BCG Skills', tag:'Product craft · Strategy',
+      lede:'A reusable skill library for product, strategy, decision memos, discovery, and GTM.',
+      about:'The PM and BCG skill bundles are reusable operating knowledge, not one-off prompts: structured methods for problem framing, discovery, pricing, roadmaps, metrics, stakeholder alignment, competitive strategy, and executive-grade synthesis.',
+      source:'projects/pm-skills/ + projects/bcg-skills/', accent:'#3B82F6'
+    },
+    {
+      id:'second-brain', no:'№ 09', title:'Second Brain OS', tag:'Knowledge system · Agents',
+      lede:'A private operating system for projects, memory, publishing decisions, and agent loops.',
+      about:'The second brain is the source system behind this portfolio: LIBRARY as index, MEMORY as state, agents for curation and verification, and project folders as the real body of work. The public Universe is the showcase; the second brain is the operating system.',
+      source:'projects/claude-wiki/ + .agents/second-brain/', accent:'#111827'
     }
-    /* ---- TEMPLATE: copy, fill, drop a 16:10 screenshot in assets/screenshots ----
-    ,{
-      id:'unique-id', no:'№ 08', title:'Project Title', tag:'Two · Words',
-      lede:'One-sentence lede shown in the caption and detail panel.',
-      about:'~60-word paragraph: the problem, what you built, and why it matters.',
-      shot:'assets/screenshots/your-shot.png',
-      app:'https://link-to-live-app/',        // required: every project is live and clickable
-      caseStudy:'case-studies/your-study.html', // optional: omit to hide the button
-      code:'https://github.com/you/repo'         // optional: omit to hide the button
-    }
-    */
-  ];
-
-  /* Case studies: deep-dive write-ups, live in the portfolio repo */
-  const CASE_STUDIES=[
-    { title:'AI Collections Cloud', tag:'AI · Fintech', href:'case-studies/collections-cloud.html' },
-    { title:'Loan Origination System', tag:'Lending · Platform', href:'case-studies/lending-os.html' },
-    { title:'FASTag Redesign', tag:'GovTech · Strategy', href:'case-studies/fastag.html' }
-  ];
-
-  /* Evidence library: source artifacts, decks, models, scorecards, and datasets */
-  const ARTIFACTS=[
-    { title:'AI Collections Cloud: Strategy & MVP', meta:'PDF · Strategy deck', href:'case-studies/ai-collections-cloud-prd.pdf' },
-    { title:'Collections Vendor Evaluation Scorecard', meta:'XLSX · Decision tool', href:'assets/artifacts/files/collections-management-vendor-scorecard.xlsx' },
-    { title:'FASTag Redesign: Strategy + PRD', meta:'DOCX · Product strategy', href:'assets/artifacts/files/fastag-redesign-strategy-prd.docx' },
-    { title:'FASTag: UX Workflow + AI Agent Blueprint', meta:'DOCX · Experience design', href:'assets/artifacts/files/fastag-redesign-ux-ai-blueprint.docx' },
-    { title:'FASTag: Roadmap, Metrics + Backlog', meta:'XLSX · Delivery plan', href:'assets/artifacts/files/fastag-redesign-roadmap-metrics-backlog.xlsx' },
-    { title:'FASTag: Discovery + Experiment Plan', meta:'DOCX · Research', href:'assets/artifacts/files/fastag-redesign-discovery-experiment-plan.docx' },
-    { title:'FASTag: Decision Memo + Stakeholder Map', meta:'DOCX · Recommendation', href:'assets/artifacts/files/fastag-redesign-decision-memo.docx' },
-    { title:'Universal Data Workbench: Test Dataset', meta:'XLSX · Synthetic data', href:'assets/artifacts/files/universal-data-workbench-test-dataset.xlsx' }
   ];
 
   /* ============================================================
@@ -541,6 +510,55 @@
     capNo.textContent=p.no; capTitle.textContent=p.title; capTag.textContent=p.tag; capLede.textContent=p.lede;
   }
   setCaption(0);
+
+  const visualCache=new Map();
+  function wrapText(g,text,x,y,maxWidth,lineHeight,maxLines){
+    const words=text.split(/\s+/); let line='', lines=[];
+    words.forEach(word=>{
+      const test=line?line+' '+word:word;
+      if(g.measureText(test).width>maxWidth && line){ lines.push(line); line=word; }
+      else line=test;
+    });
+    if(line) lines.push(line);
+    lines.slice(0,maxLines).forEach((ln,i)=>g.fillText(ln,x,y+i*lineHeight));
+  }
+  function paintProjectVisual(g,W,H,p){
+    const accent=p.accent||'#B97612';
+    const bg=g.createLinearGradient(0,0,W,H);
+    bg.addColorStop(0,'#FBFAF5'); bg.addColorStop(.52,'#F0ECE2'); bg.addColorStop(1,'#DDD6C8');
+    g.fillStyle=bg; g.fillRect(0,0,W,H);
+    g.strokeStyle='rgba(28,26,22,.10)'; g.lineWidth=1;
+    for(let x=0;x<W;x+=72){ g.beginPath(); g.moveTo(x,0); g.lineTo(x,H); g.stroke(); }
+    for(let y=0;y<H;y+=72){ g.beginPath(); g.moveTo(0,y); g.lineTo(W,y); g.stroke(); }
+    g.fillStyle=accent; g.globalAlpha=.12; g.beginPath(); g.arc(W*.84,H*.18,W*.34,0,Math.PI*2); g.fill();
+    g.globalAlpha=.10; g.beginPath(); g.arc(W*.16,H*.86,W*.28,0,Math.PI*2); g.fill(); g.globalAlpha=1;
+
+    g.fillStyle='#171512'; g.font='600 34px Inter, Helvetica, Arial, sans-serif';
+    g.fillText(p.no.replace('№ ','No. '),58,70);
+    g.fillStyle=accent; g.font='500 24px Inter, Helvetica, Arial, sans-serif';
+    g.fillText(p.tag.toUpperCase(),58,116);
+    g.fillStyle='#171512'; g.font='600 80px Georgia, serif';
+    wrapText(g,p.title,58,232,W*.64,82,2);
+    g.fillStyle='rgba(23,21,18,.66)'; g.font='30px Inter, Helvetica, Arial, sans-serif';
+    wrapText(g,p.lede,62,420,W*.56,42,3);
+
+    const panelX=W*.66, panelY=H*.36, panelW=W*.27, panelH=H*.42;
+    g.fillStyle='rgba(255,255,255,.72)'; g.strokeStyle='rgba(23,21,18,.16)'; g.lineWidth=2;
+    g.beginPath(); g.roundRect(panelX,panelY,panelW,panelH,24); g.fill(); g.stroke();
+    g.fillStyle=accent; g.fillRect(panelX+30,panelY+42,panelW-60,10);
+    g.fillStyle='rgba(23,21,18,.18)';
+    [0,1,2,3].forEach(i=>g.fillRect(panelX+30,panelY+84+i*46,panelW-80-i*18,12));
+    g.fillStyle='#171512'; g.font='500 22px Inter, Helvetica, Arial, sans-serif';
+    wrapText(g,p.source,panelX+30,panelY+panelH-62,panelW-60,30,2);
+  }
+  function projectImage(p){
+    if(visualCache.has(p.id)) return visualCache.get(p.id);
+    const c=document.createElement('canvas'); c.width=1200; c.height=750;
+    paintProjectVisual(c.getContext('2d'),c.width,c.height,p);
+    const url=c.toDataURL('image/png');
+    visualCache.set(p.id,url);
+    return url;
+  }
 
   /* ============================================================
      THREE.JS SCENE
@@ -659,10 +677,7 @@
         if(ir>cr){ dh=H; dw=H*ir; dx=(W-dw)/2; dy=0; } else { dw=W; dh=W/ir; dx=0; dy=(H-dh)/2; }
         g.drawImage(img,dx,dy,dw,dh);
       } else {
-        g.fillStyle='#F4F2EC'; g.font='500 64px Georgia'; g.textAlign='center';
-        g.fillText(p.title,W/2,H/2-6);
-        g.fillStyle='rgba(244,242,236,.55)'; g.font='22px sans-serif';
-        g.fillText(p.tag,W/2,H/2+40);
+        paintProjectVisual(g,W,H,p);
       }
       g.restore();
       // two-tone bezel: outer dark seat + inner light highlight (reads premium on any bg)
@@ -693,11 +708,7 @@
       const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));
       glow.position.set(x,0,z); glow.scale.set(4.4,3.1,1);
       ring.add(glow); glowMeshes.push(glow);
-      // lazy-load screenshot from the live site, then composite it into the card
-      const im=new Image(); im.crossOrigin='anonymous';
-      im.onload=()=>{ mat.map=makeCardTexture(im,p); mat.needsUpdate=true; };
-      im.onerror=()=>{ /* keep title-card fallback already set */ };
-      im.src=abs(p.shot);
+      // Cards are generated in-page; no screenshot folders are required.
     });
 
     window.addEventListener('resize',onResize);
@@ -869,13 +880,13 @@
      DETAIL PANEL
      ============================================================ */
   const detail=$('#detail');
-  // portfolio-internal links open in the SAME tab (stay in the portfolio); only off-site links get a new tab
-  const isExternal=href=>{ try{ return new URL(href,location.href).origin!==location.origin && !href.startsWith(BASE); }catch(e){ return false; } };
   function linkPill(href,label,primary){
     const a=document.createElement('a'); a.className='pill'+(primary?' primary':'');
-    a.href=href; a.textContent=label;
-    if(isExternal(href)){ a.target='_blank'; a.rel='noopener'; }
+    a.href=href; a.textContent=label; a.target='_blank'; a.rel='noopener';
     return a;
+  }
+  function sourcePill(label){
+    const s=document.createElement('span'); s.className='pill static'; s.textContent=label; return s;
   }
   function openDetail(i){
     const p=PROJECTS[i]; currentIndex=i;
@@ -885,13 +896,13 @@
     const shot=detail.querySelector('.d-shot');
     shot.classList.add('shimmer'); shot.removeAttribute('src');
     shot.onload=()=>shot.classList.remove('shimmer');
-    shot.src=abs(p.shot); shot.alt=p.title+' screenshot';
+    shot.src=projectImage(p); shot.alt=p.title+' visual summary';
     detail.querySelector('.d-lede').textContent=p.lede;
     detail.querySelector('.d-about').textContent=p.about;
     const links=detail.querySelector('.d-links'); links.innerHTML='';
-    links.appendChild(linkPill(abs(p.app),'Open app ↗',true));
-    if(p.caseStudy) links.appendChild(linkPill(abs(p.caseStudy),'Case study →'));
-    if(p.code) links.appendChild(linkPill(abs(p.code),'Code ↗'));
+    if(p.live) links.appendChild(linkPill(p.live,'Open live ↗',true));
+    if(p.repo) links.appendChild(linkPill(p.repo,'Repository ↗',!p.live));
+    links.appendChild(sourcePill(p.source));
     const next=PROJECTS[(i+1)%N];
     detail.querySelector('#detail-next .nx-title').textContent=next.title;
     detail.querySelector('#detail-next').onclick=(ev)=>{ev.preventDefault(); openDetail((i+1)%N); detail.scrollTop=0;};
@@ -917,10 +928,10 @@
   const listItems=$('#list-items'), listPreview=$('#list-preview'), listPreviewImg=listPreview.querySelector('img');
   PROJECTS.forEach((p,i)=>{
     const el=document.createElement('div'); el.className='list-item'; el.setAttribute('role','link'); el.tabIndex=0;
-    el.innerHTML=`<span class="li-no">${p.no}</span><a class="li-title" href="${abs(p.app)}">${p.title}</a><span class="li-tag">${p.tag}</span>`;
+    el.innerHTML=`<span class="li-no">${p.no}</span><a class="li-title" href="#${p.id}">${p.title}</a><span class="li-tag">${p.tag}</span>`;
     el.addEventListener('click',(e)=>{e.preventDefault(); openDetail(i);});
     el.addEventListener('keydown',(e)=>{ if(e.key==='Enter'){e.preventDefault(); openDetail(i);} });
-    el.addEventListener('mouseenter',()=>{ listPreviewImg.src=abs(p.shot); listPreview.classList.add('show'); });
+    el.addEventListener('mouseenter',()=>{ listPreviewImg.src=projectImage(p); listPreview.classList.add('show'); });
     el.addEventListener('mouseleave',()=>{ listPreview.classList.remove('show'); });
     el.addEventListener('mousemove',(e)=>{ listPreview.style.left=e.clientX+150+'px'; listPreview.style.top=e.clientY+'px'; });
     listItems.appendChild(el);

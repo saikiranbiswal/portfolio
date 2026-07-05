@@ -4,6 +4,7 @@
 (function () {
   "use strict";
   if (window.self !== window.top) return;
+  if (new URLSearchParams(window.location.search).has("screenshot")) return;
   var a = document.createElement("a");
   a.href = "../../universe.html";
   a.textContent = "← Portfolio";

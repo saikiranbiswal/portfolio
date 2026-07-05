@@ -294,6 +294,17 @@ body.dark .rp-portrait-frame{box-shadow:0 34px 80px -30px rgba(0,0,0,.7)}
 a.rp-chip:hover{border-color:var(--sage-mid);color:var(--sage)}
 .rp-chip.hi{background:var(--sage-dim);border-color:var(--sage-mid);color:var(--sage)}
 .rp-chip.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.rp-creds{display:flex;flex-wrap:wrap;align-items:center;gap:9px 18px;margin-top:22px}
+.rp-cred{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;letter-spacing:.01em;color:var(--ink2)}
+.rp-cred::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sage-mid);flex:none}
+.rp-cred.key{color:var(--ink);font-weight:600}
+.rp-cred.key::before{background:var(--sage)}
+.rp-actions{display:flex;flex-wrap:wrap;gap:11px;margin-top:22px}
+.rp-btn{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;letter-spacing:.01em;padding:11px 20px;border-radius:12px;border:1px solid var(--hair);color:var(--ink);background:transparent;transition:.25s var(--ease)}
+.rp-btn svg{opacity:.85}
+.rp-btn:hover{border-color:var(--sage-mid);color:var(--sage);transform:translateY(-1px)}
+.rp-btn.primary{background:var(--sage);border-color:var(--sage);color:#fff}
+.rp-btn.primary:hover{color:#fff;filter:brightness(1.07);transform:translateY(-1px)}
 
 /* Social icon buttons (shared: résumé hero + menu) */
 .social-row{display:flex;gap:10px;align-items:center}
@@ -525,11 +536,14 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
       <div class="rp-hero-copy">
         <div class="rp-name">Sai Kiran<br>Biswal</div>
         <p class="rp-tagline">Enterprise product builder for lending, collections, digital banking, and AI-assisted operating systems.</p>
-        <div class="rp-chips">
-          <span class="rp-chip hi">CSPO®</span>
-          <span class="rp-chip">Pune / Bengaluru</span>
-          <a class="rp-chip primary" href="mailto:saikiran.biswal@outlook.com">Get in touch</a>
-          <a class="rp-chip" href="assets/resume.pdf" target="_blank" rel="noopener">Download résumé</a>
+        <div class="rp-creds">
+          <span class="rp-cred key">CSPO®</span>
+          <span class="rp-cred key">MBA · XIMB</span>
+          <span class="rp-cred loc">Pune / Bengaluru</span>
+        </div>
+        <div class="rp-actions">
+          <a class="rp-btn primary" href="mailto:saikiran.biswal@outlook.com"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>Get in touch</a>
+          <a class="rp-btn" href="assets/resume.pdf" target="_blank" rel="noopener"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 11 5 5 5-5"/><path d="M5 21h14"/></svg>Download résumé</a>
         </div>
         <div class="social-row rp-socials">
           <a class="social-ico" href="https://www.linkedin.com/in/sai-kiran-biswal" target="_blank" rel="noopener" aria-label="LinkedIn">

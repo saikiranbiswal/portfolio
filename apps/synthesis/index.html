@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Synthesis · Strategic Framework Engine</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,900&family=Spline+Sans:wght@400;500;600&display=swap');
+
+:root{
+  --ink:#10130f;
+  --paper:#f3efe6;
+  --paper-2:#ebe5d8;
+  --line:#d6cdb9;
+  --accent:#c4501f;
+  --accent-2:#1f5c4d;
+  --muted:#6b6557;
+  --card:#fbf9f3;
+  --ok:#1f5c4d;
+  --shadow:0 1px 0 rgba(16,19,15,.04),0 12px 30px -18px rgba(16,19,15,.4);
+  --r:14px;
+}
+[data-theme="dark"]{
+  --ink:#f0ece1;
+  --paper:#15170f;
+  --paper-2:#1d2016;
+  --line:#33372a;
+  --accent:#e8703f;
+  --accent-2:#5fb39d;
+  --muted:#9a9484;
+  --card:#1c1f15;
+  --shadow:0 1px 0 rgba(0,0,0,.2),0 18px 40px -22px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Spline Sans',system-ui,sans-serif;
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  transition:background .4s,color .4s;
+  background-image:radial-gradient(var(--line) .5px,transparent .5px);
+  background-size:22px 22px;
+}
+.wrap{max-width:1280px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+
+/* ---- Header ---- */
+header{
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:blur(12px);
+  background:color-mix(in srgb,var(--paper) 82%,transparent);
+  border-bottom:1px solid var(--line);
+}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 0}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--accent),var(--accent-2));
+  display:grid;place-items:center;color:#fff;font-family:'Fraunces';font-weight:900;font-size:22px;
+  box-shadow:var(--shadow);
+}
+.brand h1{font-family:'Fraunces';font-weight:600;font-size:20px;letter-spacing:-.02em}
+.brand .sub{font-size:11px;color:var(--muted);letter-spacing:.18em;text-transform:uppercase}
+.tools{display:flex;align-items:center;gap:10px}
+.pill{
+  font-size:12px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);
+  background:var(--card);display:flex;align-items:center;gap:7px;color:var(--muted);
+}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px color-mix(in srgb,var(--ok) 25%,transparent)}
+.iconbtn{
+  width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:var(--card);
+  cursor:pointer;display:grid;place-items:center;font-size:16px;color:var(--ink);transition:.2s
+}
+.iconbtn:hover{border-color:var(--accent);transform:translateY(-1px)}
+
+/* ---- Stepper ---- */
+.stepper{display:flex;gap:8px;padding:18px 0 6px;flex-wrap:wrap}
+.step{
+  display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted);
+  padding:7px 14px;border-radius:999px;border:1px solid transparent;cursor:pointer;transition:.2s
+}
+.step .n{
+  width:22px;height:22px;border-radius:50%;border:1.5px solid var(--line);
+  display:grid;place-items:center;font-size:11px;font-weight:600;flex:none
+}
+.step.active{color:var(--ink);border-color:var(--line);background:var(--card)}
+.step.active .n{background:var(--accent);border-color:var(--accent);color:#fff}
+.step.done .n{background:var(--accent-2);border-color:var(--accent-2);color:#fff}
+
+/* ---- Layout ---- */
+.grid{display:grid;grid-template-columns:280px 1fr;gap:24px;padding:18px 0 60px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.rail{display:flex;flex-direction:column;gap:18px}
+.panel{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);overflow:hidden
+}
+.panel h2{
+  font-family:'Fraunces';font-weight:500;font-size:14px;padding:14px 16px;border-bottom:1px solid var(--line);
+  letter-spacing:.01em;display:flex;align-items:center;justify-content:space-between
+}
+.panel .body{padding:12px}
+.fwk{
+  display:flex;align-items:flex-start;gap:11px;padding:11px;border-radius:10px;cursor:pointer;
+  border:1px solid transparent;transition:.18s;margin-bottom:4px
+}
+.fwk:hover{background:var(--paper-2)}
+.fwk.sel{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 7%,transparent)}
+.fwk .ic{font-size:18px;line-height:1.2;flex:none;margin-top:1px}
+.fwk .t{font-weight:600;font-size:13.5px}
+.fwk .d{font-size:11.5px;color:var(--muted);margin-top:1px}
+.tmpl-row{display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  font-size:12px;padding:6px 11px;border-radius:999px;border:1px solid var(--line);
+  background:var(--paper-2);cursor:pointer;transition:.18s
+}
+.chip:hover{border-color:var(--accent-2);color:var(--accent-2)}
+
+/* ---- Main ---- */
+.main{display:flex;flex-direction:column;gap:24px;min-width:0}
+.section{display:none;animation:fade .4s ease}
+.section.show{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* dropzone */
+.drop{
+  border:2px dashed var(--line);border-radius:var(--r);padding:42px 24px;text-align:center;
+  background:var(--card);cursor:pointer;transition:.25s;position:relative
+}
+.drop:hover,.drop.over{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 6%,transparent)}
+.drop .big{font-family:'Fraunces';font-size:22px;font-weight:500;margin-bottom:6px}
+.drop .sm{font-size:13px;color:var(--muted)}
+.drop .ic{font-size:34px;margin-bottom:12px;opacity:.8}
+.or{display:flex;align-items:center;gap:14px;color:var(--muted);font-size:12px;margin:18px 0}
+.or::before,.or::after{content:"";height:1px;background:var(--line);flex:1}
+textarea.paste{
+  width:100%;min-height:130px;border:1px solid var(--line);border-radius:10px;padding:13px;
+  font-family:'SF Mono',ui-monospace,monospace;font-size:12.5px;background:var(--paper-2);color:var(--ink);resize:vertical
+}
+textarea.paste:focus{outline:none;border-color:var(--accent)}
+.filemeta{
+  display:none;align-items:center;gap:12px;margin-top:14px;padding:12px 14px;border-radius:10px;
+  background:var(--paper-2);border:1px solid var(--line);font-size:13px
+}
+.filemeta.show{display:flex}
+.filemeta .fi{font-size:20px}
+.filemeta .nm{font-weight:600}
+.filemeta .mt{color:var(--muted);font-size:12px}
+.barfill{flex:1;height:6px;border-radius:6px;background:var(--line);overflow:hidden;margin:0 6px}
+.barfill i{display:block;height:100%;width:0;background:var(--accent-2);transition:width .3s}
+
+/* form */
+.formgrid{display:grid;gap:16px}
+.field label{font-size:12px;font-weight:600;display:block;margin-bottom:6px;letter-spacing:.01em}
+.field label small{font-weight:400;color:var(--muted);letter-spacing:0}
+.field textarea,.field input{
+  width:100%;border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:13.5px;
+  font-family:inherit;background:var(--paper-2);color:var(--ink);resize:vertical
+}
+.field textarea{min-height:74px}
+.field textarea:focus,.field input:focus{outline:none;border-color:var(--accent)}
+.quad{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:560px){.quad{grid-template-columns:1fr}}
+.quadcell{border:1px solid var(--line);border-radius:12px;padding:14px;background:var(--card)}
+.quadcell .qh{font-family:'Fraunces';font-size:14px;font-weight:600;margin-bottom:9px;display:flex;align-items:center;gap:8px}
+.qtag{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:600;letter-spacing:.04em}
+
+/* buttons */
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.btn{
+  font:inherit;font-size:13.5px;font-weight:600;padding:11px 20px;border-radius:10px;cursor:pointer;
+  border:1px solid var(--line);background:var(--card);color:var(--ink);transition:.18s;display:inline-flex;align-items:center;gap:8px
+}
+.btn:hover{transform:translateY(-1px);border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent}
+
+/* preview */
+.previewhead{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.previewhead h2{font-family:'Fraunces';font-weight:600;font-size:24px;letter-spacing:-.02em}
+#preview{
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,4vw,38px);
+  box-shadow:var(--shadow)
+}
+.docttl{font-family:'Fraunces';font-size:clamp(24px,4vw,34px);font-weight:600;letter-spacing:-.02em;line-height:1.1}
+.docmeta{font-size:12px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:8px 0 22px;border-bottom:1px solid var(--line);padding-bottom:16px}
+.exec{
+  background:var(--paper-2);border-left:3px solid var(--accent);border-radius:0 10px 10px 0;
+  padding:16px 18px;margin-bottom:26px;font-size:14px
+}
+.exec b{font-family:'Fraunces'}
+.matrix2{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.matrix2 .cell{padding:18px;border-right:1px solid var(--line);border-bottom:1px solid var(--line);min-height:120px}
+.matrix2 .cell:nth-child(2n){border-right:none}
+.matrix2 .cell:nth-last-child(-n+2){border-bottom:none}
+.cellh{font-family:'Fraunces';font-weight:600;font-size:15px;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.cell ul{list-style:none;font-size:13px}
+.cell li{padding:4px 0 4px 16px;position:relative;color:var(--ink)}
+.cell li::before{content:"›";position:absolute;left:0;color:var(--accent);font-weight:700}
+.blockh{font-family:'Fraunces';font-size:17px;font-weight:600;margin:24px 0 10px;display:flex;align-items:center;gap:9px}
+.force,.lay{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:10px;background:var(--paper-2)}
+.force .fh{display:flex;justify-content:space-between;align-items:center;font-weight:600;font-size:14px}
+.force .desc{font-size:13px;color:var(--muted);margin-top:5px}
+.meter{height:7px;border-radius:6px;background:var(--line);overflow:hidden;width:120px}
+.meter i{display:block;height:100%;background:var(--accent)}
+.pestel-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.recs{counter-reset:r;margin-top:8px}
+.recs .rec{display:flex;gap:13px;padding:12px 0;border-bottom:1px dashed var(--line)}
+.recs .rec:last-child{border-bottom:none}
+.recs .rec .num{counter-increment:r;font-family:'Fraunces';font-weight:700;color:var(--accent);font-size:18px;flex:none}
+.recs .rec .num::before{content:counter(r,decimal-leading-zero)}
+.action-grid{display:grid;grid-template-columns:1.4fr .7fr .7fr;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:12.5px}
+.action-grid>*{padding:10px 12px;border-bottom:1px solid var(--line)}.action-grid>*:nth-last-child(-n+3){border-bottom:none}
+.action-grid .ah{background:var(--paper-2);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.08em}
+.empty{text-align:center;padding:50px 20px;color:var(--muted)}
+.empty .ic{font-size:42px;opacity:.5;margin-bottom:14px}
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);
+  background:var(--ink);color:var(--paper);padding:12px 22px;border-radius:999px;font-size:13.5px;font-weight:500;
+  box-shadow:0 12px 30px -12px rgba(0,0,0,.5);opacity:0;transition:.3s;z-index:99
+}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.exportmenu{position:relative}
+.menu{
+  position:absolute;right:0;top:46px;background:var(--card);border:1px solid var(--line);border-radius:12px;
+  box-shadow:var(--shadow);padding:6px;min-width:180px;display:none;z-index:40
+}
+.menu.show{display:block}
+.menu button{
+  width:100%;text-align:left;padding:9px 12px;border:none;background:none;font:inherit;font-size:13px;
+  border-radius:8px;cursor:pointer;color:var(--ink);display:flex;align-items:center;gap:10px
+}
+.menu button:hover{background:var(--paper-2)}
+footer{text-align:center;font-size:12px;color:var(--muted);padding:30px 0;border-top:1px solid var(--line)}
+@media(max-width:640px){
+  .bar{align-items:flex-start}.tools .pill{display:none}.stepper{flex-wrap:nowrap;overflow-x:auto;padding-bottom:12px}
+  .step{white-space:nowrap}.panel .body{padding:14px}.matrix2{grid-template-columns:1fr}
+  .matrix2 .cell{border-right:none}.matrix2 .cell:nth-last-child(2){border-bottom:1px solid var(--line)}
+  .previewhead>div{width:100%}.previewhead .btn,.exportmenu{flex:1}.exportmenu .btn{width:100%}
+  .action-grid{grid-template-columns:1fr}.action-grid .ah{display:none}.action-grid>*{border-bottom:none}.action-grid .action{border-top:1px solid var(--line);font-weight:600}
+}
+@media print{
+  header,.rail,.stepper,.previewhead,footer,.toast{display:none!important}
+  body{background:#fff}.grid{display:block;padding:0}#preview{border:none;box-shadow:none;padding:0}
+  .section{display:none!important}.section.print{display:block!important}
+}
+</style>
+<link rel="stylesheet" href="../_shared/mobile.css">
+</head>
+<body>
+<header>
+  <div class="wrap bar">
+    <div class="brand">
+      <div class="logo">S</div>
+      <div>
+        <h1>Synthesis</h1>
+        <div class="sub">Strategic Framework Engine</div>
+      </div>
+    </div>
+    <div class="tools">
+      <span class="pill"><span class="dot"></span>Offline ready</span>
+      <button class="iconbtn" id="themeBtn" title="Toggle theme">◐</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="stepper">
+    <div class="step active" data-step="input"><span class="n">1</span>Input data</div>
+    <div class="step" data-step="configure"><span class="n">2</span>Configure</div>
+    <div class="step" data-step="preview"><span class="n">3</span>Preview &amp; Export</div>
+  </div>
+</div>
+
+<div class="wrap grid">
+  <!-- RAIL -->
+  <aside class="rail">
+    <div class="panel">
+      <h2>Framework</h2>
+      <div class="body" id="fwkList"></div>
+    </div>
+    <div class="panel">
+      <h2>Quick-start templates</h2>
+      <div class="body">
+        <div class="tmpl-row" id="tmplRow"></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- STEP 1 -->
+    <section class="section show" data-pane="input">
+      <div class="panel">
+        <h2>Import your data <small style="font-weight:400;color:var(--muted)">CSV · JSON · TSV · TXT</small></h2>
+        <div class="body">
+          <div class="drop" id="drop">
+            <div class="ic">⤓</div>
+            <div class="big">Drag &amp; drop a file here</div>
+            <div class="sm">or click to browse · large files stream in chunks</div>
+            <input type="file" id="fileInput" hidden accept=".csv,.tsv,.json,.txt">
+          </div>
+          <div class="filemeta" id="fileMeta">
+            <span class="fi">📄</span>
+            <div style="flex:1;min-width:0">
+              <div class="nm" id="fmName"> · </div>
+              <div class="mt" id="fmMeta"> · </div>
+            </div>
+            <div class="barfill"><i id="fmBar"></i></div>
+          </div>
+          <div class="or">or paste raw data / notes</div>
+          <textarea class="paste" id="pasteBox" placeholder="Paste CSV rows, JSON, or free-form notes. Lines become candidate bullet points for whichever framework you choose."></textarea>
+          <div class="btnrow">
+            <button class="btn primary" id="toConfigure">Continue to configure →</button>
+            <button class="btn ghost" id="loadSample">Load sample dataset</button>
+          </div>
+          <p style="font-size:12px;color:var(--muted);margin-top:14px">
+            Everything runs locally in your browser · no upload, no server, no network. Parsing is deterministic: structured files map to fields, and free text becomes editable bullet candidates.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2 -->
+    <section class="section" data-pane="configure">
+      <div class="panel">
+        <h2 id="cfgTitle">Configure analysis</h2>
+        <div class="body">
+          <div class="formgrid" id="formArea"></div>
+          <div class="btnrow">
+            <button class="btn ghost" data-goto="input">← Back</button>
+            <button class="btn primary" id="toPreview">Generate preview →</button>
+            <button class="btn ghost" id="autofill">Auto-fill from data</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3 -->
+    <section class="section" data-pane="preview">
+      <div class="previewhead">
+        <h2>Preview</h2>
+        <div style="display:flex;gap:10px">
+          <button class="btn ghost" data-goto="configure">← Edit</button>
+          <button class="btn ghost" id="copyBrief">Copy brief</button>
+          <div class="exportmenu">
+            <button class="btn primary" id="exportBtn">Export ▾</button>
+            <div class="menu" id="exportMenu">
+              <button data-exp="pdf">🖨️ &nbsp;PDF / Print</button>
+              <button data-exp="md">📝 &nbsp;Markdown (.md)</button>
+              <button data-exp="csv">📊 &nbsp;CSV (.csv)</button>
+              <button data-exp="json">🧬 &nbsp;JSON (.json)</button>
+              <button data-exp="html">🌐 &nbsp;Standalone HTML</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="preview">
+        <div class="empty"><div class="ic">◔</div>Fill in the configure step, then generate your preview.</div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer class="wrap">Synthesis · A fully-offline strategic analysis tool · No data leaves this device</footer>
+<div class="toast" id="toast"></div>
+
+<script>
+"use strict";
+
+/* ============ FRAMEWORK DEFINITIONS ============ */
+const FRAMEWORKS = {
+  swot:{ic:"⊞",name:"SWOT Analysis",desc:"Strengths · Weaknesses · Opportunities · Threats",
+    fields:[
+      {k:"strengths",label:"Strengths",hint:"Internal advantages",ph:"One per line",tag:"S",color:"var(--accent-2)"},
+      {k:"weaknesses",label:"Weaknesses",hint:"Internal limitations",ph:"One per line",tag:"W",color:"var(--accent)"},
+      {k:"opportunities",label:"Opportunities",hint:"External upside",ph:"One per line",tag:"O",color:"var(--accent-2)"},
+      {k:"threats",label:"Threats",hint:"External risks",ph:"One per line",tag:"T",color:"var(--accent)"}
+    ]},
+  porter:{ic:"⬠",name:"Porter's Five Forces",desc:"Competitive industry structure",
+    fields:[
+      {k:"rivalry",label:"Competitive Rivalry",hint:"intensity 1–10",force:true},
+      {k:"newentrants",label:"Threat of New Entrants",hint:"intensity 1–10",force:true},
+      {k:"substitutes",label:"Threat of Substitutes",hint:"intensity 1–10",force:true},
+      {k:"buyers",label:"Buyer Power",hint:"intensity 1–10",force:true},
+      {k:"suppliers",label:"Supplier Power",hint:"intensity 1–10",force:true}
+    ]},
+  pestel:{ic:"⬡",name:"PESTEL Analysis",desc:"Macro-environmental scan",
+    fields:[
+      {k:"political",label:"Political",hint:"policy, regulation, stability"},
+      {k:"economic",label:"Economic",hint:"growth, rates, demand"},
+      {k:"social",label:"Social",hint:"demographics, attitudes"},
+      {k:"technological",label:"Technological",hint:"innovation, automation"},
+      {k:"environmental",label:"Environmental",hint:"sustainability, climate"},
+      {k:"legal",label:"Legal",hint:"compliance, IP, labor"}
+    ]},
+  ansoff:{ic:"▦",name:"Ansoff Matrix",desc:"Product × Market growth strategy",
+    fields:[
+      {k:"penetration",label:"Market Penetration",hint:"Existing product · Existing market",tag:"Low risk",color:"var(--accent-2)"},
+      {k:"development_p",label:"Product Development",hint:"New product · Existing market",tag:"Med risk",color:"var(--accent)"},
+      {k:"development_m",label:"Market Development",hint:"Existing product · New market",tag:"Med risk",color:"var(--accent)"},
+      {k:"diversification",label:"Diversification",hint:"New product · New market",tag:"High risk",color:"var(--accent)"}
+    ]},
+  bcg:{ic:"◍",name:"BCG Growth-Share Matrix",desc:"Portfolio: growth × market share",
+    fields:[
+      {k:"stars",label:"Stars",hint:"High growth · High share",tag:"Invest",color:"var(--accent-2)"},
+      {k:"cows",label:"Cash Cows",hint:"Low growth · High share",tag:"Harvest",color:"var(--accent-2)"},
+      {k:"questions",label:"Question Marks",hint:"High growth · Low share",tag:"Selective",color:"var(--accent)"},
+      {k:"dogs",label:"Dogs",hint:"Low growth · Low share",tag:"Divest",color:"var(--accent)"}
+    ]},
+  valuechain:{ic:"⛓",name:"Value Chain Analysis",desc:"Primary & support activities",
+    fields:[
+      {k:"inbound",label:"Inbound Logistics",hint:"sourcing, receiving"},
+      {k:"operations",label:"Operations",hint:"production, assembly"},
+      {k:"outbound",label:"Outbound Logistics",hint:"distribution"},
+      {k:"marketing",label:"Marketing & Sales",hint:"promotion, pricing"},
+      {k:"service",label:"Service",hint:"support, retention"},
+      {k:"support",label:"Support Activities",hint:"HR, tech, procurement, infra"}
+    ]}
+};
+
+/* ============ TEMPLATES (sample data) ============ */
+const TEMPLATES={
+  swot:{title:"Market Entry · SWOT",data:{
+    strengths:"Strong brand recognition in core region\nProprietary supply-chain technology\nHealthy 38% gross margins\nExperienced leadership team",
+    weaknesses:"Limited international distribution\nHigh customer-acquisition cost\nSingle-product revenue concentration",
+    opportunities:"Emerging-market demand growing 14% YoY\nUntapped B2B segment\nPotential channel partnerships",
+    threats:"Two well-funded new entrants\nRegulatory tightening on data\nInput-cost inflation"}},
+  porter:{title:"Industry Structure · Five Forces",data:{
+    rivalry:"8 | Many comparable players competing aggressively on price",
+    newentrants:"6 | Moderate capital barriers but low switching costs",
+    substitutes:"5 | Adjacent solutions exist but lack feature parity",
+    buyers:"7 | Concentrated enterprise buyers negotiate hard",
+    suppliers:"4 | Multiple suppliers, commoditized inputs"}},
+  pestel:{title:"Macro Scan · PESTEL",data:{
+    political:"Trade policy shifting toward localization incentives",
+    economic:"Interest rates plateauing; consumer demand recovering",
+    social:"Rising preference for sustainable, transparent brands",
+    technological:"AI automation lowering ops cost 20–30%",
+    environmental:"Carbon-reporting mandates from FY2026",
+    legal:"New data-privacy regime increasing compliance load"}},
+  ansoff:{title:"Growth Strategy · Ansoff",data:{
+    penetration:"Loyalty program to lift repeat purchase\nBundle pricing to grow basket size",
+    development_p:"Launch premium tier for existing customers\nAdd subscription add-on",
+    development_m:"Enter two adjacent regional markets\nTarget the underserved SMB segment",
+    diversification:"Acquire complementary service line\nWhite-label platform for partners"}},
+  bcg:{title:"Portfolio Review · BCG",data:{
+    stars:"Flagship SaaS platform (42% growth)\nMobile app tier",
+    cows:"Legacy enterprise license (stable, high margin)",
+    questions:"New analytics module (uncertain traction)\nIntl. pilot",
+    dogs:"On-premise legacy hardware\nDiscontinued add-on"}},
+  valuechain:{title:"Value Chain Review",data:{
+    inbound:"Just-in-time component sourcing\nDual-supplier strategy",
+    operations:"Automated assembly, 99.2% yield",
+    outbound:"Regional fulfillment centers, 2-day delivery",
+    marketing:"Performance marketing + content engine",
+    service:"24/7 support, 4.6 CSAT",
+    support:"In-house R&D, cloud infra, lean procurement"}}
+};
+
+/* ============ STATE ============ */
+const state={fwk:"swot",raw:"",fileName:"",data:{},title:"",decision:""};
+const $=s=>document.querySelector(s);
+const $$=s=>[...document.querySelectorAll(s)];
+
+/* ============ RAIL RENDER ============ */
+function renderRail(){
+  $("#fwkList").innerHTML=Object.entries(FRAMEWORKS).map(([k,f])=>`
+    <div class="fwk ${k===state.fwk?'sel':''}" data-fwk="${k}">
+      <span class="ic">${f.ic}</span>
+      <div><div class="t">${f.name}</div><div class="d">${f.desc}</div></div>
+    </div>`).join("");
+  $$(".fwk").forEach(el=>el.onclick=()=>{state.fwk=el.dataset.fwk;state.data={};renderRail();buildForm();toast(FRAMEWORKS[state.fwk].name+" selected");});
+  $("#tmplRow").innerHTML=Object.entries(TEMPLATES).map(([k,t])=>`<span class="chip" data-tmpl="${k}">${FRAMEWORKS[k].ic} ${FRAMEWORKS[k].name.split(' ')[0]}</span>`).join("");
+  $$(".chip").forEach(el=>el.onclick=()=>loadTemplate(el.dataset.tmpl));
+}
+function loadTemplate(k){
+  state.fwk=k;state.data={...TEMPLATES[k].data};
+  renderRail();buildForm();goto("configure");toast("Template loaded · edit freely");
+}
+
+/* ============ FORM ============ */
+function buildForm(){
+  const f=FRAMEWORKS[state.fwk];
+  $("#cfgTitle").textContent="Configure · "+f.name;
+  $("#formArea").innerHTML=`<div class="quad">
+    <div class="field"><label>Analysis title <small>(used in exports)</small></label><input data-meta="title" value="${esc(state.title)}" placeholder="e.g. FY27 market-entry decision"></div>
+    <div class="field"><label>Decision question <small>(what this should resolve)</small></label><input data-meta="decision" value="${esc(state.decision)}" placeholder="e.g. Where should we invest first?"></div>
+  </div>`+f.fields.map(fl=>{
+    const v=state.data[fl.k]||"";
+    if(fl.force){
+      return `<div class="field"><label>${fl.label} <small>(${fl.hint})</small></label>
+        <input data-k="${fl.k}" value="${esc(v)}" placeholder="e.g. 7 | short rationale"></div>`;
+    }
+    return `<div class="field"><label>${fl.label} <small>(${fl.hint})</small></label>
+      <textarea data-k="${fl.k}" placeholder="${fl.ph||'One item per line'}">${esc(v)}</textarea></div>`;
+  }).join("");
+  $$("#formArea [data-k]").forEach(el=>el.oninput=()=>state.data[el.dataset.k]=el.value);
+  $$("#formArea [data-meta]").forEach(el=>el.oninput=()=>state[el.dataset.meta]=el.value);
+}
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+
+/* ============ AUTO-FILL (deterministic) ============ */
+function autofill(){
+  const lines=(state.raw||"").split(/\r?\n/).map(l=>l.trim()).filter(Boolean);
+  if(!lines.length){toast("No input data to map");return;}
+  const f=FRAMEWORKS[state.fwk];
+  // CSV/keyed: try header:value or first-column-as-bucket; else round-robin distribute
+  const fields=f.fields.map(x=>x.k);
+  const bucket={};fields.forEach(k=>bucket[k]=[]);
+  let matchedKeyed=false;
+  lines.forEach(line=>{
+    const m=line.split(/[:|,\t]/);
+    const head=(m[0]||"").toLowerCase().replace(/[^a-z]/g,"");
+    const hit=fields.find(k=>head.includes(k.slice(0,5))||FRAMEWORKS[state.fwk].fields.find(fl=>fl.k===k).label.toLowerCase().includes(head)&&head.length>2);
+    if(hit&&m.length>1){bucket[hit].push(m.slice(1).join(" ").trim());matchedKeyed=true;}
+  });
+  if(!matchedKeyed){lines.forEach((l,i)=>bucket[fields[i%fields.length]].push(l));}
+  fields.forEach(k=>{if(bucket[k].length)state.data[k]=bucket[k].join("\n");});
+  buildForm();toast(matchedKeyed?"Mapped by field labels":"Distributed across fields · refine as needed");
+}
+
+/* ============ PREVIEW RENDER ============ */
+function toList(v){return (v||"").split(/\r?\n/).map(s=>s.trim()).filter(Boolean);}
+function renderPreview(){
+  const f=FRAMEWORKS[state.fwk];const d=state.data;
+  const date=new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+  let body="";
+  const hasAny=f.fields.some(fl=>toList(d[fl.k]).length||(d[fl.k]||"").trim());
+  if(!hasAny){$("#preview").innerHTML='<div class="empty"><div class="ic">◔</div>No content yet · go back and fill in the fields.</div>';return;}
+
+  if(state.fwk==="swot"||state.fwk==="ansoff"||state.fwk==="bcg"){
+    body=`<div class="matrix2">`+f.fields.map(fl=>{
+      const items=toList(d[fl.k]);
+      const tag=fl.tag?`<span class="qtag" style="background:${fl.color};color:#fff">${fl.tag}</span>`:"";
+      return `<div class="cell"><div class="cellh">${fl.label} ${tag}</div>
+        <ul>${items.map(i=>`<li>${esc(i)}</li>`).join("")||'<li style="color:var(--muted)"> · </li>'}</ul></div>`;
+    }).join("")+`</div>`;
+  } else if(state.fwk==="porter"){
+    body=f.fields.map(fl=>{
+      const raw=(d[fl.k]||"").split(/[|:]/);
+      const score=Math.max(0,Math.min(10,parseFloat(raw[0])||0));
+      const desc=raw.slice(1).join(" ").trim()||raw[0]||"";
+      return `<div class="force"><div class="fh"><span>${fl.label}</span>
+        <span style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)">${score}/10
+        <span class="meter"><i style="width:${score*10}%"></i></span></span></div>
+        ${desc&&isNaN(parseFloat(raw[0])===false)?'':''}<div class="desc">${esc(desc)}</div></div>`;
+    }).join("");
+    const avg=(f.fields.reduce((a,fl)=>a+(parseFloat((d[fl.k]||"").split(/[|:]/)[0])||0),0)/5).toFixed(1);
+    body=`<div class="exec"><b>Industry attractiveness.</b> Mean force intensity is <b>${avg}/10</b> · ${avg>=7?'a structurally challenging industry where margins are pressured from multiple sides':avg>=4?'a moderately competitive industry with room for differentiated positioning':'a relatively attractive industry with favorable structural economics'}.</div>`+body;
+  } else { /* pestel, valuechain */
+    body=`<div class="pestel-grid">`+f.fields.map(fl=>{
+      const items=toList(d[fl.k]);
+      return `<div class="lay"><div class="cellh" style="font-size:14px">${fl.label}</div>
+        <ul style="list-style:none;font-size:13px">${items.map(i=>`<li style="padding:3px 0 3px 14px;position:relative"><span style="position:absolute;left:0;color:var(--accent)">›</span>${esc(i)}</li>`).join("")||'<li style="color:var(--muted)"> · </li>'}</ul></div>`;
+    }).join("")+`</div>`;
+  }
+
+  // synthesis recommendations (deterministic heuristics)
+  const recs=buildRecs(f,d);
+  const recHtml=recs.length?`<div class="blockh">⟶ Strategic implications</div><div class="recs">${recs.map(r=>`<div class="rec"><span class="num"></span><div>${esc(r)}</div></div>`).join("")}</div>`:"";
+  const actions=recs.slice(0,3);
+  const actionHtml=actions.length?`<div class="blockh">✓ 30-60-90 day action plan</div><div class="action-grid">
+    <div class="ah">Action</div><div class="ah">Owner</div><div class="ah">Timing</div>
+    ${actions.map((r,i)=>`<div class="action">${esc(r)}</div><div>${i===0?'Strategy lead':i===1?'Functional owner':'Executive sponsor'}</div><div>${[30,60,90][i]} days</div>`).join("")}</div>`:"";
+
+  const title=state.title||(TEMPLATES[state.fwk]&&Object.values(state.data).join("")===Object.values(TEMPLATES[state.fwk].data).join("")?TEMPLATES[state.fwk].title:f.name);
+
+  $("#preview").innerHTML=`
+    <div class="docttl">${esc(title)}</div>
+    <div class="docmeta">${f.name} · Generated ${date} · Synthesis Engine</div>
+    ${state.fwk!=="porter"?`<div class="exec"><b>${state.decision?'Decision question.':'Overview.'}</b> ${state.decision?esc(state.decision):`This ${f.name} captures ${f.fields.reduce((a,fl)=>a+toList(d[fl.k]).length,0)} data points across ${f.fields.length} dimensions, structured for executive review.`}</div>`:""}
+    ${body}
+    ${recHtml}${actionHtml}`;
+}
+
+function buildRecs(f,d){
+  const out=[];
+  if(state.fwk==="swot"){
+    const s=toList(d.strengths),o=toList(d.opportunities),w=toList(d.weaknesses),t=toList(d.threats);
+    if(s.length&&o.length)out.push(`Leverage "${s[0]}" to capture "${o[0]}" (SO offensive play).`);
+    if(w.length&&o.length)out.push(`Address "${w[0]}" to avoid forfeiting "${o[0]}" (WO improvement).`);
+    if(s.length&&t.length)out.push(`Use "${s[0]}" as a defensive moat against "${t[0]}" (ST defense).`);
+    if(w.length&&t.length)out.push(`"${w[0]}" combined with "${t[0]}" is a critical-risk pairing · mitigate first (WT survival).`);
+  } else if(state.fwk==="porter"){
+    const high=f.fields.filter(fl=>(parseFloat((d[fl.k]||"").split(/[|:]/)[0])||0)>=7);
+    high.forEach(fl=>out.push(`${fl.label} is high · prioritize strategy to neutralize this pressure.`));
+    if(!high.length)out.push("No single force dominates; pursue cost or differentiation leadership to widen the gap.");
+  } else if(state.fwk==="bcg"){
+    if(toList(d.stars).length)out.push("Fund Stars aggressively · they are tomorrow's Cash Cows.");
+    if(toList(d.cows).length)out.push("Harvest Cash Cows to finance Stars and selected Question Marks.");
+    if(toList(d.questions).length)out.push("Apply a build-or-divest test to each Question Mark within one cycle.");
+    if(toList(d.dogs).length)out.push("Divest or reposition Dogs to free capital and management attention.");
+  } else if(state.fwk==="ansoff"){
+    out.push("Sequence growth from lowest to highest risk: secure penetration before diversifying.");
+    if(toList(d.diversification).length)out.push("Stress-test diversification bets · they carry the highest failure rate.");
+  } else if(state.fwk==="pestel"){
+    out.push("Convert the highest-impact macro factors into explicit risk-register entries with owners.");
+    out.push("Re-scan quarterly; macro signals shift faster than internal strategy cycles.");
+  } else if(state.fwk==="valuechain"){
+    out.push("Identify the 1–2 activities that drive the most differentiation and protect them.");
+    out.push("Outsource or automate low-margin support activities to sharpen focus.");
+  }
+  return out.slice(0,5);
+}
+
+/* ============ EXPORTS ============ */
+function plainModel(){
+  const f=FRAMEWORKS[state.fwk];
+  return {title:state.title||f.name,decisionQuestion:state.decision,framework:f.name,generated:new Date().toISOString(),
+    sections:f.fields.map(fl=>({field:fl.label,key:fl.k,items:toList(state.data[fl.k]),raw:state.data[fl.k]||""})),
+    recommendations:buildRecs(f,state.data),
+    actionPlan:buildRecs(f,state.data).slice(0,3).map((action,i)=>({action,owner:i===0?"Strategy lead":i===1?"Functional owner":"Executive sponsor",timingDays:[30,60,90][i]}))};
+}
+function dl(name,content,type){
+  const b=new Blob([content],{type});const u=URL.createObjectURL(b);
+  const a=document.createElement("a");a.href=u;a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(u),1000);
+}
+function expJSON(){dl("synthesis.json",JSON.stringify(plainModel(),null,2),"application/json");toast("JSON exported");}
+function expCSV(){
+  const m=plainModel();let rows=[["Field","Item"]];
+  m.sections.forEach(s=>{if(s.items.length)s.items.forEach(i=>rows.push([s.field,i]));else rows.push([s.field,s.raw]);});
+  rows.push([]);rows.push(["Recommendation",""]);m.recommendations.forEach(r=>rows.push([r,""]));
+  const csv=rows.map(r=>r.map(c=>`"${(c||"").replace(/"/g,'""')}"`).join(",")).join("\n");
+  dl("synthesis.csv",csv,"text/csv");toast("CSV exported");
+}
+function expMD(){
+  const m=plainModel();let md=`# ${m.title}\n\n*${m.framework} · Generated ${new Date().toLocaleString()} · Synthesis Engine*\n\n`;
+  if(m.decisionQuestion)md+=`> Decision question: ${m.decisionQuestion}\n\n`;
+  m.sections.forEach(s=>{md+=`## ${s.field}\n\n`;if(s.items.length)s.items.forEach(i=>md+=`- ${i}\n`);else md+=`${s.raw||"_ · _"}\n`;md+="\n";});
+  if(m.recommendations.length){md+=`## Strategic Implications\n\n`;m.recommendations.forEach((r,i)=>md+=`${i+1}. ${r}\n`);}
+  if(m.actionPlan.length){md+=`\n## 30-60-90 Day Action Plan\n\n| Action | Owner | Timing |\n|---|---|---|\n`;m.actionPlan.forEach(a=>md+=`| ${a.action} | ${a.owner} | ${a.timingDays} days |\n`);}
+  dl("synthesis.md",md,"text/markdown");toast("Markdown exported");
+}
+function expHTML(){
+  const inner=$("#preview").innerHTML;
+  const html=`<!DOCTYPE html><html><head><meta charset="utf-8"><title>${FRAMEWORKS[state.fwk].name}</title>
+  <style>body{font-family:Georgia,serif;max-width:820px;margin:40px auto;padding:0 20px;color:#1a1a1a;line-height:1.6}
+  .docttl{font-size:30px;font-weight:700}.docmeta{color:#888;text-transform:uppercase;font-size:12px;letter-spacing:.1em;border-bottom:1px solid #ddd;padding-bottom:12px;margin-bottom:20px}
+  .matrix2{display:grid;grid-template-columns:1fr 1fr;border:1px solid #ddd}.cell{padding:16px;border:1px solid #eee}.cellh{font-weight:700;margin-bottom:8px}
+  ul{padding-left:18px}.exec{background:#f6f3ec;border-left:3px solid #c4501f;padding:14px;margin:16px 0}
+  .force,.lay{border:1px solid #ddd;padding:12px;margin:8px 0}.meter{display:none}.qtag{font-size:10px;padding:2px 7px;border-radius:10px;background:#c4501f;color:#fff}
+  .blockh{font-size:18px;font-weight:700;margin-top:24px}.recs .rec{padding:8px 0;border-bottom:1px dashed #ddd}.num{color:#c4501f;font-weight:700;margin-right:8px}.pestel-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}</style>
+  </head><body>${inner.replace(/<span class="num"><\/span>/g,(m=>'•'))}</body></html>`;
+  dl("synthesis.html",html,"text/html");toast("Standalone HTML exported");
+}
+
+/* ============ FILE HANDLING (large-file safe) ============ */
+function humanSize(b){return b<1024?b+" B":b<1048576?(b/1024).toFixed(1)+" KB":(b/1048576).toFixed(1)+" MB";}
+function readFile(file){
+  $("#fileMeta").classList.add("show");
+  $("#fmName").textContent=file.name;
+  $("#fmMeta").textContent=humanSize(file.size)+" · "+(file.type||"text");
+  state.fileName=file.name;
+  const CHUNK=2*1024*1024;let offset=0,acc="";
+  const cap=8*1024*1024; // keep first 8MB for parsing to stay responsive
+  const reader=new FileReader();
+  function next(){
+    if(offset>=file.size||acc.length>=cap){done();return;}
+    reader.readAsText(file.slice(offset,offset+CHUNK));
+  }
+  reader.onload=e=>{acc+=e.target.result;offset+=CHUNK;
+    $("#fmBar").style.width=Math.min(100,offset/file.size*100)+"%";
+    next();};
+  reader.onerror=()=>{toast("Could not read file");};
+  function done(){
+    $("#fmBar").style.width="100%";
+    state.raw=acc;$("#pasteBox").value=acc.slice(0,20000);
+    toast(file.size>cap?"Large file · first 8MB loaded for parsing":"File loaded");
+  }
+  next();
+}
+
+/* ============ NAV ============ */
+function goto(pane){
+  $$(".section").forEach(s=>s.classList.toggle("show",s.dataset.pane===pane));
+  const order=["input","configure","preview"];const idx=order.indexOf(pane);
+  $$(".step").forEach(st=>{const i=order.indexOf(st.dataset.step);
+    st.classList.toggle("active",i===idx);st.classList.toggle("done",i<idx);});
+  if(pane==="preview")renderPreview();
+  if(pane==="configure")buildForm();
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+/* ============ TOAST ============ */
+let tt;function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),2200);}
+
+/* ============ WIRING ============ */
+renderRail();buildForm();
+
+const drop=$("#drop"),fi=$("#fileInput");
+drop.onclick=()=>fi.click();
+fi.onchange=e=>{if(e.target.files[0])readFile(e.target.files[0]);};
+["dragenter","dragover"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add("over");}));
+["dragleave","drop"].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove("over");}));
+drop.addEventListener("drop",e=>{const f=e.dataTransfer.files[0];if(f)readFile(f);});
+$("#pasteBox").oninput=e=>state.raw=e.target.value;
+
+$("#toConfigure").onclick=()=>goto("configure");
+$("#toPreview").onclick=()=>goto("preview");
+$("#autofill").onclick=autofill;
+$("#loadSample").onclick=()=>loadTemplate(state.fwk);
+$$("[data-goto]").forEach(b=>b.onclick=()=>goto(b.dataset.goto));
+$$(".step").forEach(s=>s.onclick=()=>goto(s.dataset.step));
+
+const exMenu=$("#exportMenu");
+$("#exportBtn").onclick=e=>{e.stopPropagation();exMenu.classList.toggle("show");};
+document.onclick=()=>exMenu.classList.remove("show");
+$$("#exportMenu button").forEach(b=>b.onclick=()=>{
+  const t=b.dataset.exp;exMenu.classList.remove("show");
+  if(t==="pdf"){$("#preview").parentElement.classList.add("print");window.print();setTimeout(()=>$("#preview").parentElement.classList.remove("print"),500);}
+  else if(t==="md")expMD();else if(t==="csv")expCSV();else if(t==="json")expJSON();else if(t==="html")expHTML();
+});
+
+$("#themeBtn").onclick=()=>{
+  const cur=document.documentElement.getAttribute("data-theme");
+  document.documentElement.setAttribute("data-theme",cur==="dark"?"light":"dark");
+};
+$("#copyBrief").onclick=async()=>{
+  const m=plainModel();
+  const text=`${m.title}\n${m.decisionQuestion?`Decision: ${m.decisionQuestion}\n`:''}\nStrategic implications\n${m.recommendations.map((r,i)=>`${i+1}. ${r}`).join("\n")}\n\nAction plan\n${m.actionPlan.map(a=>`- ${a.action} · ${a.owner}, ${a.timingDays} days`).join("\n")}`;
+  try{await navigator.clipboard.writeText(text);toast("Executive brief copied");}catch(e){toast("Copy unavailable · export Markdown instead");}
+};
+// respect system theme on load
+if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)
+  document.documentElement.setAttribute("data-theme","dark");
+</script>
+<script src="../_shared/return-bar.js"></script>
+</body>
+</html>

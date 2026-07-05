@@ -1,0 +1,55 @@
+/* =========================================================
+   _shared/mobile.css — Phase 0 mobile baseline for apps/*
+   Linked from each app's <head> AFTER its own styles so these
+   win on small screens. Safe, universal rules only; per-app
+   layout (sidebar -> drawer, table -> cards) lands in later phases.
+   See ../../MOBILE_ROADMAP.md.
+   ========================================================= */
+
+/* --- Universal, all viewports: stop horizontal blow-out --- */
+html { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+img, svg, video { max-width: 100%; height: auto; }
+/* Canvas: cap width but leave height alone so Chart.js sizing isn't squished. */
+canvas { max-width: 100%; }
+
+/* Keyboard users should always be able to see where they are across every app. */
+:focus-visible {
+  outline: 3px solid #d4ff4f;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* --- Phone baseline --- */
+@media (max-width: 640px) {
+  /* No accidental sideways scroll of the whole page. */
+  html, body { max-width: 100%; overflow-x: hidden; }
+
+  /* iOS zooms the page when you focus an input < 16px. Stop that. */
+  input, select, textarea { font-size: 16px; }
+
+  /* Comfortable thumb targets. min-height keeps small icon buttons tappable
+     without forcing width on inline links. */
+  button, [role="button"], select, input[type="checkbox"], input[type="radio"] {
+    min-height: 44px;
+  }
+
+  /* Long tokens / code shouldn't force the viewport wider. */
+  pre, code { white-space: pre-wrap; word-break: break-word; }
+
+  /* Wide data tables become self-contained horizontal scrollers instead of
+     pushing the page out. (Full table -> card conversion is per-app, later.) */
+  table {
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

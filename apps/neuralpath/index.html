@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NeuralPath · AI Concepts Game</title>
+<style>
+  :root {
+    --bg: #0A0B14;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: #1e2d45;
+    --cyan: #00D4FF;
+    --cyan-dim: rgba(0,212,255,0.12);
+    --violet: #7C3AED;
+    --violet-dim: rgba(124,58,237,0.15);
+    --green: #10B981;
+    --green-dim: rgba(16,185,129,0.12);
+    --amber: #F59E0B;
+    --amber-dim: rgba(245,158,11,0.12);
+    --red: #EF4444;
+    --pink: #EC4899;
+    --text: #E2E8F0;
+    --text-muted: #64748B;
+    --text-dim: #94A3B8;
+    --radius: 12px;
+    --radius-lg: 20px;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+  button { cursor: pointer; border: none; background: none; font-family: inherit; }
+  
+  /* ─── SPLASH SCREEN ─── */
+  #splash {
+    position: fixed; inset: 0; z-index: 1000;
+    background: var(--bg);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 24px;
+    transition: opacity 0.6s ease;
+  }
+  #splash.hidden { opacity: 0; pointer-events: none; }
+  .splash-logo {
+    font-size: 3rem; font-weight: 900; letter-spacing: -2px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+  .splash-sub { color: var(--text-dim); font-size: 1.1rem; letter-spacing: 2px; text-transform: uppercase; }
+  .splash-loader {
+    width: 240px; height: 3px; background: var(--border); border-radius: 99px; overflow: hidden;
+  }
+  .splash-loader-fill {
+    height: 100%; background: linear-gradient(90deg, var(--cyan), var(--violet));
+    border-radius: 99px; animation: load 2.2s ease forwards;
+  }
+  @keyframes load { from { width: 0% } to { width: 100% } }
+  @keyframes pulse-glow {
+    0%,100% { filter: drop-shadow(0 0 20px rgba(0,212,255,0.5)); }
+    50% { filter: drop-shadow(0 0 40px rgba(124,58,237,0.7)); }
+  }
+
+  /* ─── APP SHELL ─── */
+  #app { display: none; flex-direction: column; min-height: 100vh; }
+  #app.visible { display: flex; }
+
+  /* ─── HEADER ─── */
+  .header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,11,20,0.95); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .header-logo { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .header-xp {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 99px; padding: 6px 14px;
+  }
+  .xp-icon { font-size: 1rem; }
+  .xp-val { font-size: 0.85rem; font-weight: 700; color: var(--amber); }
+  .xp-label { font-size: 0.7rem; color: var(--text-muted); }
+  .header-streak { display: flex; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 700; color: var(--red); }
+
+  /* ─── MAIN CONTENT ─── */
+  .main { flex: 1; padding-bottom: 80px; overflow-x: hidden; }
+
+  /* ─── BOTTOM NAV ─── */
+  .bottom-nav {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(17,24,39,0.98); backdrop-filter: blur(20px);
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-around;
+    padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+  }
+  .nav-btn {
+    display: flex; flex-direction: column; align-items: center; gap: 4px;
+    padding: 6px 16px; border-radius: var(--radius);
+    color: var(--text-muted); font-size: 0.65rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    transition: color 0.2s, background 0.2s;
+    min-width: 64px;
+  }
+  .nav-btn.active { color: var(--cyan); }
+  .nav-btn .nav-icon { font-size: 1.3rem; }
+
+  /* ─── SCREENS ─── */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ─── HOME SCREEN ─── */
+  .hero {
+    padding: 28px 20px 20px;
+    background: radial-gradient(ellipse at 20% 0%, rgba(0,212,255,0.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(124,58,237,0.08) 0%, transparent 60%);
+  }
+  .hero-greeting { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 4px; }
+  .hero-title { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; }
+  .hero-title span { background: linear-gradient(135deg, var(--cyan), var(--violet)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+  .progress-card {
+    margin: 16px 20px 0;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 18px;
+  }
+  .progress-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .progress-label { font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; }
+  .progress-pct { font-size: 1.2rem; font-weight: 800; color: var(--cyan); }
+  .progress-bar-track { height: 6px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--cyan), var(--violet)); border-radius: 99px; transition: width 1s ease; }
+  .progress-stats { display: flex; gap: 16px; margin-top: 12px; }
+  .progress-stat { flex: 1; text-align: center; }
+  .progress-stat-val { font-size: 1.1rem; font-weight: 800; }
+  .progress-stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 20px 12px;
+  }
+  .section-title { font-size: 1rem; font-weight: 700; }
+  .section-more { font-size: 0.8rem; color: var(--cyan); }
+
+  /* ─── CONCEPT CARDS (horizontal scroll) ─── */
+  .cards-scroll {
+    display: flex; gap: 14px;
+    padding: 0 20px 4px;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .cards-scroll::-webkit-scrollbar { display: none; }
+
+  .concept-card {
+    flex-shrink: 0; scroll-snap-align: start;
+    width: 200px; border-radius: var(--radius-lg);
+    background: var(--surface); border: 1px solid var(--border);
+    padding: 18px; cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .concept-card:active { transform: scale(0.97); }
+  .concept-card::before {
+    content: ''; position: absolute; inset: 0; opacity: 0;
+    background: radial-gradient(circle at 50% 0%, var(--card-accent,rgba(0,212,255,0.2)) 0%, transparent 70%);
+    transition: opacity 0.3s;
+  }
+  .concept-card.unlocked::before { opacity: 1; }
+  .concept-card.locked { opacity: 0.5; }
+  .concept-card-icon { font-size: 2rem; margin-bottom: 10px; }
+  .concept-card-tag {
+    display: inline-block; font-size: 0.65rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    padding: 3px 8px; border-radius: 99px; margin-bottom: 8px;
+    background: var(--card-accent-dim, var(--cyan-dim)); color: var(--card-accent-color, var(--cyan));
+  }
+  .concept-card-name { font-size: 1rem; font-weight: 800; line-height: 1.2; }
+  .concept-card-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
+  .concept-card-progress { margin-top: 12px; }
+  .concept-card-bar { height: 3px; background: var(--border); border-radius: 99px; overflow: hidden; }
+  .concept-card-bar-fill { height: 100%; border-radius: 99px; background: var(--card-accent-color, var(--cyan)); transition: width 0.8s; }
+  .concept-card-meta { display: flex; align-items: center; justify-content: space-between; margin-top: 6px; }
+  .concept-card-xp { font-size: 0.7rem; color: var(--amber); font-weight: 700; }
+  .concept-card-pct { font-size: 0.7rem; color: var(--text-muted); }
+  .lock-overlay { position: absolute; top: 12px; right: 12px; font-size: 1rem; }
+
+  /* ─── USE CASE ROWS ─── */
+  .usecase-list { padding: 0 20px; display: flex; flex-direction: column; gap: 12px; }
+  .usecase-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px;
+    cursor: pointer; display: flex; align-items: center; gap: 14px;
+    transition: border-color 0.2s, transform 0.15s;
+    position: relative; overflow: hidden;
+  }
+  .usecase-card:active { transform: scale(0.98); }
+  .usecase-card.completed { border-color: rgba(16,185,129,0.4); }
+  .usecase-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; flex-shrink: 0;
+  }
+  .usecase-info { flex: 1; min-width: 0; }
+  .usecase-name { font-size: 0.95rem; font-weight: 700; }
+  .usecase-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .usecase-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 6px; }
+  .usecase-tag {
+    font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 2px 7px; border-radius: 99px; background: var(--cyan-dim); color: var(--cyan);
+  }
+  .usecase-arrow { font-size: 1.2rem; color: var(--text-muted); flex-shrink: 0; }
+  .completed-badge { font-size: 0.8rem; flex-shrink: 0; }
+
+  /* ─── LEARN SCREEN ─── */
+  .learn-grid { padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .module-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 20px; cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+    position: relative; overflow: hidden;
+  }
+  .module-card:active { transform: scale(0.98); }
+  .module-card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .module-card-icon { font-size: 2.4rem; }
+  .module-card-badge {
+    display: flex; align-items: center; gap: 4px;
+    font-size: 0.65rem; font-weight: 700; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 99px;
+  }
+  .badge-beginner { background: var(--green-dim); color: var(--green); }
+  .badge-intermediate { background: var(--amber-dim); color: var(--amber); }
+  .badge-advanced { background: rgba(239,68,68,0.12); color: var(--red); }
+  .module-card-title { font-size: 1.1rem; font-weight: 800; margin-top: 10px; }
+  .module-card-desc { font-size: 0.8rem; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
+  .module-card-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+  .module-topics { display: flex; gap: 6px; flex-wrap: wrap; }
+  .module-topic-chip {
+    font-size: 0.62rem; font-weight: 600; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 99px; background: var(--border); color: var(--text-muted);
+  }
+  .module-xp { font-size: 0.75rem; font-weight: 700; color: var(--amber); }
+  .module-lock { position: absolute; top: 16px; right: 16px; font-size: 1.2rem; opacity: 0.4; }
+
+  /* ─── QUIZ SCREEN ─── */
+  #quizOverlay {
+    background:
+      radial-gradient(circle at 15% 0%, rgba(0,212,255,0.18), transparent 34%),
+      radial-gradient(circle at 85% 18%, rgba(124,58,237,0.22), transparent 36%),
+      #080b16;
+  }
+  #quizOverlay .detail-header {
+    background: rgba(8,11,22,0.88);
+    border-bottom-color: rgba(148,163,184,0.22);
+  }
+  #quizOverlay .detail-back {
+    width: 38px; height: 38px; border-radius: 50%;
+    display: grid; place-items: center;
+    color: var(--text); background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.13);
+  }
+  .quiz-container {
+    width: 100%; max-width: 720px; margin: 0 auto;
+    padding: clamp(24px,5vw,48px) 20px 56px;
+  }
+  .quiz-stage {
+    background: linear-gradient(145deg, rgba(30,41,59,0.98), rgba(15,23,42,0.98));
+    border: 1px solid rgba(148,163,184,0.28);
+    border-radius: 24px; padding: clamp(22px,5vw,38px);
+    box-shadow: 0 28px 80px rgba(0,0,0,0.48), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  }
+  .quiz-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+  .quiz-title { font-size: 0.75rem; font-weight: 800; color: var(--cyan); text-transform: uppercase; letter-spacing: 1.2px; }
+  .quiz-qcount {
+    font-size: 0.76rem; font-weight: 800; color: #cbd5e1;
+    border: 1px solid rgba(148,163,184,0.25); background: rgba(255,255,255,0.05);
+    padding: 5px 10px; border-radius: 99px;
+  }
+  .quiz-progress-bar { height: 7px; background: rgba(148,163,184,0.18); border-radius: 99px; margin-bottom: 28px; overflow: hidden; }
+  .quiz-progress-fill {
+    height: 100%; background: linear-gradient(90deg, var(--cyan), #818cf8, var(--violet));
+    border-radius: 99px; transition: width 0.4s; box-shadow: 0 0 18px rgba(0,212,255,0.55);
+  }
+  .quiz-kicker { color: #94a3b8; font-size: 0.72rem; font-weight: 800; letter-spacing: 1.3px; text-transform: uppercase; margin-bottom: 10px; }
+  .quiz-question { color: #f8fafc; font-size: clamp(1.3rem,4vw,1.7rem); font-weight: 800; line-height: 1.35; letter-spacing: -0.02em; margin-bottom: 26px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-option {
+    width: 100%; min-height: 62px; padding: 13px 16px; border-radius: 14px;
+    border: 1px solid rgba(148,163,184,0.34); background: rgba(255,255,255,0.07);
+    color: #e2e8f0; font-size: 0.94rem; font-weight: 600; text-align: left; cursor: pointer;
+    transition: border-color 0.2s, background 0.2s, transform 0.2s, box-shadow 0.2s;
+    line-height: 1.45; display: flex; align-items: center; gap: 13px;
+  }
+  .quiz-option-key {
+    width: 32px; height: 32px; flex: 0 0 32px; border-radius: 9px;
+    display: grid; place-items: center; color: #cbd5e1; background: rgba(148,163,184,0.13);
+    border: 1px solid rgba(148,163,184,0.28); font-size: 0.75rem; font-weight: 900;
+  }
+  .quiz-option:hover:not(:disabled), .quiz-option:focus-visible:not(:disabled) {
+    border-color: var(--cyan); background: rgba(0,212,255,0.11);
+    box-shadow: 0 0 0 3px rgba(0,212,255,0.09); outline: none; transform: translateY(-1px);
+  }
+  .quiz-option:active:not(:disabled) { transform: scale(0.99); }
+  .quiz-option.selected { border-color: var(--cyan); background: rgba(0,212,255,0.14); }
+  .quiz-option.correct { border-color: #34d399; background: rgba(16,185,129,0.16); color: #d1fae5; }
+  .quiz-option.correct .quiz-option-key { color: #d1fae5; border-color: #34d399; background: rgba(16,185,129,0.3); }
+  .quiz-option.wrong { border-color: #fb7185; background: rgba(239,68,68,0.16); color: #ffe4e6; }
+  .quiz-option.wrong .quiz-option-key { color: #ffe4e6; border-color: #fb7185; background: rgba(239,68,68,0.3); }
+  .quiz-option:disabled { cursor: default; opacity: 0.62; }
+  .quiz-option.correct:disabled, .quiz-option.wrong:disabled { opacity: 1; }
+  .quiz-feedback {
+    margin-top: 18px; padding: 16px 18px; border-radius: 14px;
+    font-size: 0.88rem; font-weight: 600; line-height: 1.55; display: none;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: rgba(16,185,129,0.15); border: 1px solid rgba(52,211,153,0.5); color: #d1fae5; }
+  .quiz-feedback.wrong { background: rgba(239,68,68,0.14); border: 1px solid rgba(251,113,133,0.5); color: #ffe4e6; }
+  .quiz-next-btn {
+    width: 100%; margin-top: 18px; padding: 17px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    color: #fff; font-size: 1rem; font-weight: 700;
+    border-radius: 14px; display: none;
+    transition: opacity 0.2s, transform 0.2s; box-shadow: 0 14px 32px rgba(0,212,255,0.18);
+  }
+  .quiz-next-btn:hover { transform: translateY(-1px); }
+  .quiz-next-btn.show { display: block; }
+  .quiz-result { text-align: center; }
+  .quiz-result-score {
+    width: 132px; height: 132px; margin: 4px auto 18px; border-radius: 50%;
+    display: grid; place-items: center; color: #f8fafc; font-size: 2rem; font-weight: 900;
+    background: radial-gradient(circle, rgba(124,58,237,0.34), rgba(0,212,255,0.1));
+    border: 1px solid rgba(129,140,248,0.65); box-shadow: 0 0 45px rgba(124,58,237,0.25);
+  }
+  .quiz-result-meta { color: #cbd5e1; font-size: 0.9rem; margin-bottom: 8px; }
+  .quiz-retry-btn {
+    width: 100%; max-width: 280px; margin: 10px auto 0; padding: 14px;
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(148,163,184,0.34);
+    border-radius: var(--radius); color: #f8fafc; font-size: 0.9rem; font-weight: 700;
+  }
+  @media (max-width: 520px) {
+    .quiz-container { padding: 18px 12px 40px; }
+    .quiz-stage { border-radius: 18px; padding: 20px 15px; }
+    .quiz-option { padding: 12px; font-size: 0.88rem; gap: 10px; }
+  }
+
+  /* ─── ORCHESTRATION / USE CASE VIEWER ─── */
+  .orch-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+    display: none; flex-direction: column;
+    overflow-y: auto;
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  .orch-overlay.show { display: flex; }
+  .orch-header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(10,11,20,0.97); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .orch-title { font-size: 1rem; font-weight: 800; }
+  .orch-close { font-size: 1.4rem; color: var(--text-muted); padding: 4px; }
+  .orch-body { flex: 1; padding: 20px; }
+  .orch-intro {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius-lg); padding: 20px; margin-bottom: 24px;
+  }
+  .orch-intro-title { font-size: 1.2rem; font-weight: 800; margin-bottom: 6px; }
+  .orch-intro-desc { font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; }
+  .orch-play-btn {
+    width: 100%; margin-top: 16px; padding: 14px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    color: #fff; font-size: 0.95rem; font-weight: 700;
+    border-radius: var(--radius); transition: opacity 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .orch-play-btn:disabled { opacity: 0.5; }
+
+  /* Flow diagram */
+  .flow-diagram { margin-bottom: 24px; }
+  .flow-step {
+    display: flex; gap: 14px; align-items: flex-start;
+    margin-bottom: 8px; position: relative;
+  }
+  .flow-step-line {
+    position: absolute; left: 23px; top: 48px; bottom: -8px; width: 2px;
+    background: var(--border); z-index: 0;
+  }
+  .flow-step:last-child .flow-step-line { display: none; }
+  .flow-node {
+    width: 46px; height: 46px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; border: 2px solid var(--border);
+    background: var(--surface); position: relative; z-index: 1;
+    transition: border-color 0.4s, box-shadow 0.4s, background 0.4s;
+  }
+  .flow-node.active {
+    border-color: var(--cyan);
+    box-shadow: 0 0 20px rgba(0,212,255,0.4);
+    background: var(--cyan-dim);
+  }
+  .flow-node.done {
+    border-color: var(--green);
+    box-shadow: 0 0 16px rgba(16,185,129,0.3);
+    background: var(--green-dim);
+  }
+  .flow-content {
+    flex: 1; background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px;
+    transition: border-color 0.4s, background 0.4s;
+  }
+  .flow-content.active { border-color: rgba(0,212,255,0.5); background: var(--cyan-dim); }
+  .flow-content.done { border-color: rgba(16,185,129,0.3); }
+  .flow-step-name { font-size: 0.9rem; font-weight: 700; }
+  .flow-step-role {
+    display: inline-block; font-size: 0.65rem; font-weight: 700;
+    text-transform: uppercase; padding: 2px 7px; border-radius: 99px;
+    background: var(--violet-dim); color: var(--violet);
+    margin: 4px 0;
+  }
+  .flow-step-desc { font-size: 0.78rem; color: var(--text-muted); line-height: 1.5; }
+  .flow-step-data {
+    margin-top: 8px; padding: 8px; border-radius: 8px;
+    background: rgba(0,0,0,0.3); font-size: 0.72rem;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--cyan); display: none;
+  }
+  .flow-step-data.show { display: block; }
+  .flow-connector { display: flex; align-items: center; gap: 6px; padding: 4px 0 4px 58px; }
+  .flow-connector-line { flex: 1; height: 1px; background: var(--border); }
+  .flow-connector-label { font-size: 0.65rem; color: var(--text-muted); }
+
+  .orch-result {
+    display: none; padding: 20px; border-radius: var(--radius-lg);
+    background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(0,212,255,0.05));
+    border: 1px solid rgba(16,185,129,0.3);
+  }
+  .orch-result.show { display: block; }
+  .orch-result-title { font-size: 1.1rem; font-weight: 800; color: var(--green); margin-bottom: 8px; }
+  .orch-result-body { font-size: 0.85rem; color: var(--text-dim); line-height: 1.6; }
+  .orch-xp-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--amber-dim); color: var(--amber);
+    padding: 8px 16px; border-radius: 99px;
+    font-size: 0.9rem; font-weight: 700; margin-top: 14px;
+  }
+
+  /* ─── CONCEPT DETAIL ─── */
+  .detail-overlay {
+    position: fixed; inset: 0; z-index: 200;
+    background: var(--bg); overflow-y: auto;
+    display: none; flex-direction: column;
+  }
+  .detail-overlay.show { display: flex; }
+  .detail-header {
+    position: sticky; top: 0; z-index: 10;
+    background: rgba(10,11,20,0.97); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .detail-back { font-size: 1.4rem; color: var(--text-muted); }
+  .detail-header-title { font-size: 1rem; font-weight: 700; flex: 1; }
+  .detail-xp-pill {
+    font-size: 0.75rem; font-weight: 700; color: var(--amber);
+    background: var(--amber-dim); padding: 4px 10px; border-radius: 99px;
+  }
+  .detail-hero {
+    padding: 28px 20px 20px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.15) 0%, transparent 70%);
+    text-align: center;
+  }
+  .detail-icon { font-size: 4rem; margin-bottom: 12px; }
+  .detail-name { font-size: 1.8rem; font-weight: 900; letter-spacing: -0.5px; }
+  .detail-full-name { font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
+  .detail-badge {
+    display: inline-block; margin-top: 12px; padding: 5px 14px;
+    border-radius: 99px; font-size: 0.75rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+  }
+  .detail-body { padding: 0 20px 20px; }
+  .detail-section { margin-bottom: 24px; }
+  .detail-section-title {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-muted); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .detail-section-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+  .detail-text { font-size: 0.9rem; color: var(--text-dim); line-height: 1.7; }
+  .detail-text strong { color: var(--text); font-weight: 700; }
+  .detail-text em { color: var(--cyan); font-style: normal; font-weight: 600; }
+
+  .analogy-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin-top: 10px;
+    border-left: 3px solid var(--amber);
+  }
+  .analogy-title { font-size: 0.75rem; font-weight: 700; color: var(--amber); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 6px; }
+  .analogy-text { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
+
+  .how-it-works-steps { display: flex; flex-direction: column; gap: 10px; }
+  .how-step {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px;
+  }
+  .how-step-num {
+    width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--cyan), var(--violet)); color: #fff;
+  }
+  .how-step-text { font-size: 0.85rem; color: var(--text-dim); line-height: 1.5; }
+  .how-step-text strong { color: var(--text); }
+
+  .key-terms-grid { display: flex; flex-direction: column; gap: 8px; }
+  .term-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 12px;
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .term-icon { font-size: 1.2rem; flex-shrink: 0; }
+  .term-name { font-size: 0.85rem; font-weight: 700; }
+  .term-def { font-size: 0.78rem; color: var(--text-muted); margin-top: 2px; line-height: 1.4; }
+
+  .start-quiz-btn {
+    width: 100%; padding: 18px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    color: #fff; font-size: 1rem; font-weight: 700;
+    border-radius: var(--radius-lg); letter-spacing: 0.3px;
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    margin-top: 8px;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .start-quiz-btn:active { transform: scale(0.98); }
+
+  /* ─── GLOSSARY SCREEN ─── */
+  .glossary-search-wrap { padding: 16px 20px; }
+  .glossary-search {
+    width: 100%; padding: 12px 16px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); color: var(--text); font-size: 0.9rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .glossary-search:focus { border-color: var(--cyan); }
+  .glossary-search::placeholder { color: var(--text-muted); }
+  .glossary-filters { display: flex; gap: 8px; padding: 0 20px 16px; overflow-x: auto; scrollbar-width: none; }
+  .glossary-filters::-webkit-scrollbar { display: none; }
+  .filter-chip {
+    flex-shrink: 0; padding: 6px 14px; border-radius: 99px;
+    font-size: 0.75rem; font-weight: 700; border: 1px solid var(--border);
+    color: var(--text-muted); background: var(--surface);
+    transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .filter-chip.active { background: var(--cyan-dim); border-color: var(--cyan); color: var(--cyan); }
+  .glossary-list { padding: 0 20px; display: flex; flex-direction: column; gap: 8px; }
+  .glossary-item {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px; cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .glossary-item:active { border-color: var(--cyan); }
+  .glossary-item-header { display: flex; align-items: center; gap: 10px; }
+  .glossary-item-icon { font-size: 1.2rem; }
+  .glossary-item-name { font-size: 0.95rem; font-weight: 700; flex: 1; }
+  .glossary-item-cat {
+    font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 99px;
+  }
+  .glossary-item-def { font-size: 0.8rem; color: var(--text-muted); margin-top: 6px; line-height: 1.4; }
+
+  /* ─── PROFILE SCREEN ─── */
+  .profile-hero {
+    padding: 28px 20px;
+    background: radial-gradient(ellipse at 50% 0%, rgba(124,58,237,0.2) 0%, transparent 70%);
+    text-align: center;
+  }
+  .profile-avatar {
+    width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 12px;
+    background: linear-gradient(135deg, var(--cyan), var(--violet));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem;
+  }
+  .profile-name { font-size: 1.3rem; font-weight: 800; }
+  .profile-level { font-size: 0.85rem; color: var(--cyan); margin-top: 4px; font-weight: 600; }
+  .profile-xp-bar { margin: 16px auto; max-width: 240px; }
+  .profile-xp-labels { display: flex; justify-content: space-between; font-size: 0.72rem; color: var(--text-muted); margin-bottom: 6px; }
+  .profile-stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; padding: 0 20px 20px; }
+  .profile-stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px; text-align: center;
+  }
+  .profile-stat-val { font-size: 1.3rem; font-weight: 800; }
+  .profile-stat-label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 4px; }
+  .badges-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; padding: 0 20px 20px; }
+  .badge-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .badge-card.earned { border-color: rgba(0,212,255,0.3); }
+  .badge-card.locked-badge { opacity: 0.4; }
+  .badge-icon { font-size: 1.8rem; margin-bottom: 6px; }
+  .badge-name { font-size: 0.7rem; font-weight: 700; line-height: 1.3; }
+  .badge-earned { position: absolute; top: 6px; right: 6px; font-size: 0.7rem; }
+
+  /* ─── TOAST ─── */
+  .toast {
+    position: fixed; bottom: 90px; left: 50%; transform: translateX(-50%) translateY(20px);
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 12px 20px;
+    display: flex; align-items: center; gap: 10px;
+    font-size: 0.85rem; font-weight: 600;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    z-index: 999; opacity: 0; transition: all 0.3s;
+    white-space: nowrap; max-width: calc(100vw - 40px);
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast-icon { font-size: 1.2rem; }
+
+  /* ─── XP POPUP ─── */
+  .xp-popup {
+    position: fixed; top: 70px; right: 20px; z-index: 999;
+    background: linear-gradient(135deg, var(--amber), #F97316);
+    color: #fff; font-size: 1rem; font-weight: 800;
+    padding: 10px 18px; border-radius: 99px;
+    box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+    opacity: 0; transform: translateY(-10px);
+    transition: all 0.3s;
+    pointer-events: none;
+  }
+  .xp-popup.show { opacity: 1; transform: translateY(0); }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in-up { animation: fadeInUp 0.4s ease both; }
+  @keyframes ripple {
+    from { transform: scale(0); opacity: 0.5; }
+    to { transform: scale(3); opacity: 0; }
+  }
+  .pulse-ring {
+    animation: pulse-ring 1.5s ease-in-out infinite;
+  }
+  @keyframes pulse-ring {
+    0% { box-shadow: 0 0 0 0 rgba(0,212,255,0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(0,212,255,0); }
+    100% { box-shadow: 0 0 0 0 rgba(0,212,255,0); }
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (min-width: 640px) {
+    .learn-grid { display: grid; grid-template-columns: repeat(2,1fr); }
+    .badges-grid { grid-template-columns: repeat(4,1fr); }
+    .profile-stats-grid { grid-template-columns: repeat(6,1fr); }
+  }
+  @media (min-width: 900px) {
+    .main { max-width: 720px; margin: 0 auto; }
+    .bottom-nav { max-width: 720px; left: 50%; transform: translateX(-50%); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+    .orch-body { max-width: 640px; margin: 0 auto; }
+    .detail-body { max-width: 640px; margin: 0 auto; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ─── SPLASH ─── -->
+<div id="splash">
+  <div class="splash-logo">NeuralPath</div>
+  <div class="splash-sub">Learn AI. Play the game.</div>
+  <div class="splash-loader"><div class="splash-loader-fill"></div></div>
+</div>
+
+<!-- ─── APP ─── -->
+<div id="app">
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header-logo">⚡ NeuralPath</div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div class="header-streak">🔥 <span id="streakVal">3</span></div>
+      <div class="header-xp">
+        <span class="xp-icon">⭐</span>
+        <span class="xp-val" id="headerXP">240</span>
+        <span class="xp-label">XP</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ── HOME SCREEN ── -->
+    <div id="screen-home" class="screen active">
+      <div class="hero">
+        <div class="hero-greeting">Welcome back, Explorer 👋</div>
+        <div class="hero-title">Master <span>AI Concepts</span><br>One Level at a Time</div>
+      </div>
+
+      <!-- Progress -->
+      <div class="progress-card">
+        <div class="progress-card-top">
+          <span class="progress-label">Your Journey</span>
+          <span class="progress-pct" id="progressPct">38%</span>
+        </div>
+        <div class="progress-bar-track">
+          <div class="progress-bar-fill" id="progressBar" style="width:38%"></div>
+        </div>
+        <div class="progress-stats">
+          <div class="progress-stat">
+            <div class="progress-stat-val" style="color:var(--cyan)" id="statConcepts">5</div>
+            <div class="progress-stat-label">Concepts</div>
+          </div>
+          <div class="progress-stat">
+            <div class="progress-stat-val" style="color:var(--green)" id="statQuizzes">8</div>
+            <div class="progress-stat-label">Quizzes</div>
+          </div>
+          <div class="progress-stat">
+            <div class="progress-stat-val" style="color:var(--amber)" id="statXP">240</div>
+            <div class="progress-stat-label">Total XP</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Featured Concepts -->
+      <div class="section-header">
+        <div class="section-title">🧠 Core Concepts</div>
+        <div class="section-more" onclick="switchScreen('learn')">See all →</div>
+      </div>
+      <div class="cards-scroll" id="conceptCardsScroll"></div>
+
+      <!-- Use Cases -->
+      <div class="section-header">
+        <div class="section-title">🚀 Live Orchestrations</div>
+      </div>
+      <div class="usecase-list" id="usecaseList"></div>
+
+      <div style="height:8px"></div>
+    </div>
+
+    <!-- ── LEARN SCREEN ── -->
+    <div id="screen-learn" class="screen">
+      <div class="hero" style="padding-bottom:8px">
+        <div class="hero-title">Learning <span>Path</span></div>
+        <div style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">13 concepts across 4 modules</div>
+      </div>
+      <div class="learn-grid" id="learnGrid"></div>
+    </div>
+
+    <!-- ── GLOSSARY SCREEN ── -->
+    <div id="screen-glossary" class="screen">
+      <div class="hero" style="padding-bottom:8px">
+        <div class="hero-title">AI <span>Glossary</span></div>
+        <div style="color:var(--text-muted);font-size:0.85rem;margin-top:4px">Quick reference for every term</div>
+      </div>
+      <div class="glossary-search-wrap">
+        <input class="glossary-search" id="glossarySearch" type="text" placeholder="🔍  Search terms..." oninput="filterGlossary()">
+      </div>
+      <div class="glossary-filters" id="glossaryFilters"></div>
+      <div class="glossary-list" id="glossaryList"></div>
+    </div>
+
+    <!-- ── PROFILE SCREEN ── -->
+    <div id="screen-profile" class="screen">
+      <div class="profile-hero">
+        <div class="profile-avatar">🧑‍💻</div>
+        <div class="profile-name">AI Explorer</div>
+        <div class="profile-level" id="profileLevel">Level 3 · Apprentice</div>
+        <div class="profile-xp-bar">
+          <div class="profile-xp-labels">
+            <span id="profileXPCurr">240 XP</span>
+            <span id="profileXPNext">400 XP</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="profileXPBar" style="width:60%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="profile-stats-grid">
+        <div class="profile-stat-card">
+          <div class="profile-stat-val" style="color:var(--cyan)" id="pStatConcepts">5</div>
+          <div class="profile-stat-label">Learned</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-val" style="color:var(--green)" id="pStatQuizzes">8</div>
+          <div class="profile-stat-label">Quizzes</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-val" style="color:var(--amber)" id="pStatXP">240</div>
+          <div class="profile-stat-label">XP</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-val" style="color:var(--red)">🔥3</div>
+          <div class="profile-stat-label">Streak</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-val" style="color:var(--violet)" id="pStatOrch">2</div>
+          <div class="profile-stat-label">Flows</div>
+        </div>
+        <div class="profile-stat-card">
+          <div class="profile-stat-val" style="color:var(--pink)" id="pStatBadges">3</div>
+          <div class="profile-stat-label">Badges</div>
+        </div>
+      </div>
+      <div class="section-header" style="padding-top:0">
+        <div class="section-title">🏆 Achievements</div>
+      </div>
+      <div class="badges-grid" id="badgesGrid"></div>
+      <div style="height:8px"></div>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="switchScreen('home')" id="nav-home">
+      <span class="nav-icon">🏠</span>Home
+    </button>
+    <button class="nav-btn" onclick="switchScreen('learn')" id="nav-learn">
+      <span class="nav-icon">📚</span>Learn
+    </button>
+    <button class="nav-btn" onclick="switchScreen('glossary')" id="nav-glossary">
+      <span class="nav-icon">📖</span>Glossary
+    </button>
+    <button class="nav-btn" onclick="switchScreen('profile')" id="nav-profile">
+      <span class="nav-icon">👤</span>Profile
+    </button>
+  </nav>
+</div>
+
+<!-- ─── CONCEPT DETAIL OVERLAY ─── -->
+<div id="detailOverlay" class="detail-overlay">
+  <div class="detail-header">
+    <button class="detail-back" onclick="closeDetail()">←</button>
+    <div class="detail-header-title" id="detailHeaderTitle">Concept</div>
+    <div class="detail-xp-pill" id="detailXpPill">+30 XP</div>
+  </div>
+  <div id="detailContent"></div>
+</div>
+
+<!-- ─── ORCHESTRATION OVERLAY ─── -->
+<div id="orchOverlay" class="orch-overlay">
+  <div class="orch-header">
+    <button class="orch-close" onclick="closeOrch()">←</button>
+    <div class="orch-title" id="orchTitle">Orchestration</div>
+    <div style="width:28px"></div>
+  </div>
+  <div class="orch-body" id="orchBody"></div>
+</div>
+
+<!-- ─── QUIZ OVERLAY ─── -->
+<div id="quizOverlay" class="detail-overlay" style="z-index:300">
+  <div class="detail-header">
+    <button class="detail-back" onclick="closeQuiz()">←</button>
+    <div class="detail-header-title" id="quizConceptName">Quiz</div>
+    <div class="detail-xp-pill" id="quizXpPill">+50 XP</div>
+  </div>
+  <div class="quiz-container" id="quizContainer"></div>
+</div>
+
+<!-- ─── TOAST & XP POPUP ─── -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">🎉</span>
+  <span id="toastMsg">Achievement unlocked!</span>
+</div>
+<div class="xp-popup" id="xpPopup">+0 XP</div>
+
+<script>
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
+const STATE = {
+  xp: 240,
+  streak: 3,
+  conceptsLearned: 5,
+  quizzesDone: 8,
+  orchDone: 2,
+  badgesEarned: ['first_concept','rag_master','agent_builder'],
+  completedOrch: [],
+  level: 3,
+  glossaryFilter: 'all'
+};
+
+// ═══════════════════════════════════════════════════════
+// DATA · CONCEPTS
+// ═══════════════════════════════════════════════════════
+const CONCEPTS = [
+  {
+    id: 'llm',
+    icon: '🧠',
+    name: 'LLM',
+    fullName: 'Large Language Models',
+    tag: 'Foundation',
+    tagColor: 'var(--cyan)', tagDim: 'var(--cyan-dim)',
+    cardAccent: 'rgba(0,212,255,0.2)',
+    xp: 30, progress: 100,
+    level: 'beginner',
+    summary: 'The brain of modern AI · trained on massive text data to understand and generate human language.',
+    what: `A <strong>Large Language Model (LLM)</strong> is a type of AI trained on enormous amounts of text data · books, websites, code, and more. It learns the statistical patterns of language and can predict what text should come next given a prompt.\n\nModern LLMs like <em>GPT-4</em>, <em>Claude</em>, <em>Gemini</em>, and <em>LLaMA</em> have billions of parameters (adjustable weights) and are trained using a technique called <em>self-supervised learning</em>. They don't just complete sentences · they reason, write code, translate, summarize, and more.`,
+    analogy: 'Think of an LLM like an incredibly well-read scholar who has absorbed every book in a massive library. When you ask it a question, it draws on all that reading to compose a thoughtful reply · but it synthesizes, rather than quotes directly.',
+    howItWorks: [
+      { title: 'Tokenization', desc: 'Input text is split into tokens (chunks of characters).' },
+      { title: 'Embedding', desc: 'Each token becomes a vector in high-dimensional space.' },
+      { title: 'Transformer Attention', desc: 'Self-attention layers compute relationships between all tokens.' },
+      { title: 'Prediction', desc: 'The model outputs probability scores over the vocabulary and samples the next token.' },
+      { title: 'Autoregressive Generation', desc: 'Steps 1–4 repeat, generating one token at a time until a stop condition.' }
+    ],
+    terms: [
+      { icon: '🎯', name: 'Token', def: 'A unit of text (roughly 4 chars). Models process tokens, not raw characters.' },
+      { icon: '📐', name: 'Parameters', def: 'Learned weights in the neural network. GPT-4 has ~1.8T parameters.' },
+      { icon: '🌡️', name: 'Temperature', def: 'Controls randomness. Low temp = deterministic; high temp = creative.' },
+      { icon: '🪟', name: 'Context Window', def: 'Max tokens the model can process at once. Ranges from 8K to 1M+ tokens.' }
+    ],
+    quiz: [
+      {
+        q: 'What does "LLM" stand for?',
+        options: ['Large Logic Machine','Large Language Model','Linear Learning Module','Language Logic Matrix'],
+        answer: 1,
+        feedback: 'LLM stands for Large Language Model · trained on billions of text tokens to understand and generate language.'
+      },
+      {
+        q: 'What is a "context window" in an LLM?',
+        options: ['The GUI window of the chat app','The max tokens the model can process at once','The training dataset size','The physical memory of the GPU'],
+        answer: 1,
+        feedback: 'The context window is the maximum amount of text (measured in tokens) the model can see and reason about in a single call.'
+      },
+      {
+        q: 'What controls how "creative" or "random" LLM outputs are?',
+        options: ['Top-P sampling','The context window','Temperature','Tokenization'],
+        answer: 2,
+        feedback: 'Temperature controls randomness. Low values make outputs more deterministic; high values introduce more variety.'
+      }
+    ]
+  },
+  {
+    id: 'rag',
+    icon: '📚',
+    name: 'RAG',
+    fullName: 'Retrieval-Augmented Generation',
+    tag: 'Architecture',
+    tagColor: 'var(--violet)', tagDim: 'var(--violet-dim)',
+    cardAccent: 'rgba(124,58,237,0.2)',
+    xp: 40, progress: 80,
+    level: 'intermediate',
+    summary: 'Give your LLM a library card. RAG lets models search real data before answering.',
+    what: `<strong>Retrieval-Augmented Generation (RAG)</strong> is a pattern that grounds LLM outputs in external, up-to-date data. Instead of relying only on training data, the model first <em>retrieves</em> relevant documents from a knowledge base, then <em>generates</em> an answer using that retrieved context.\n\nRAG solves two key LLM problems: <strong>hallucination</strong> (making things up) and <strong>knowledge cutoffs</strong> (not knowing recent events). It's the backbone of enterprise AI assistants, support bots, and document QA systems.`,
+    analogy: 'Imagine asking a consultant a complex question. Instead of guessing, they pull up the relevant files from a cabinet, read them, then give you a well-informed answer. RAG is exactly that · the LLM consults its "filing cabinet" before responding.',
+    howItWorks: [
+      { title: 'User Query', desc: 'The user asks a question.' },
+      { title: 'Query Embedding', desc: 'The query is converted into a vector using an embedding model.' },
+      { title: 'Vector Search', desc: 'The vector DB finds the most semantically similar document chunks.' },
+      { title: 'Context Injection', desc: 'Retrieved chunks are inserted into the LLM prompt as context.' },
+      { title: 'Grounded Generation', desc: 'The LLM answers using both its training AND the retrieved context.' }
+    ],
+    terms: [
+      { icon: '🔢', name: 'Embedding', def: 'A numeric vector representation of text that captures semantic meaning.' },
+      { icon: '🗄️', name: 'Vector DB', def: 'A database optimized for similarity search on embeddings. E.g. Pinecone, Weaviate.' },
+      { icon: '🧩', name: 'Chunking', def: 'Breaking documents into smaller segments for more precise retrieval.' },
+      { icon: '🎯', name: 'Semantic Search', def: 'Finding content by meaning, not just keyword matching.' }
+    ],
+    quiz: [
+      {
+        q: 'What problem does RAG primarily solve for LLMs?',
+        options: ['Slow inference speed','Hallucination and outdated knowledge','High API cost','Too many parameters'],
+        answer: 1,
+        feedback: 'RAG grounds LLM responses in real, retrieved data · dramatically reducing hallucination and enabling access to current information beyond the training cutoff.'
+      },
+      {
+        q: 'In RAG, what converts a user query into a searchable format?',
+        options: ['A tokenizer','A fine-tuned model','An embedding model','A graph database'],
+        answer: 2,
+        feedback: 'An embedding model converts the query into a dense vector. This vector is then compared against stored document vectors using similarity search.'
+      },
+      {
+        q: 'What is "chunking" in the context of RAG?',
+        options: ['Deleting unused tokens','Splitting documents into smaller segments for retrieval','Compressing the model weights','Batching API requests'],
+        answer: 1,
+        feedback: 'Chunking splits large documents into smaller, focused segments so the retrieval step can fetch the most relevant piece of information, not entire documents.'
+      }
+    ]
+  },
+  {
+    id: 'mcp',
+    icon: '🔌',
+    name: 'MCP',
+    fullName: 'Model Context Protocol',
+    tag: 'Protocol',
+    tagColor: 'var(--green)', tagDim: 'var(--green-dim)',
+    cardAccent: 'rgba(16,185,129,0.2)',
+    xp: 50, progress: 60,
+    level: 'intermediate',
+    summary: "The USB-C of AI. MCP is a universal protocol connecting LLMs to tools, APIs, and data sources.",
+    what: `<strong>Model Context Protocol (MCP)</strong> is an open standard developed by Anthropic that defines how AI models connect to external tools and data sources. Think of it as a universal adapter · instead of every app building custom integrations, MCP provides a single, standardized interface.\n\nWith MCP, an LLM can <em>call tools</em> (search the web, run code, query a database), <em>read resources</em> (files, APIs, live data), and <em>receive prompts</em> · all through a consistent, secure protocol. Claude, for instance, uses MCP to connect to services like Google Drive, Slack, and GitHub.`,
+    analogy: 'Before USB-C, you needed a different cable for every device. MCP is the USB-C of AI integrations · one standard that works everywhere, so developers build once and connect to everything.',
+    howItWorks: [
+      { title: 'MCP Client (the AI)', desc: 'The LLM or agent that wants to use external capabilities.' },
+      { title: 'MCP Server', desc: 'A lightweight service that exposes tools, resources, or prompts via the protocol.' },
+      { title: 'Tool Discovery', desc: 'The client asks the server: "What can you do?" Server responds with a list of tools & schemas.' },
+      { title: 'Tool Call', desc: 'The LLM invokes a tool by name with structured arguments (e.g., search("AI news")).' },
+      { title: 'Result Return', desc: 'The MCP server executes the action and returns the result back to the LLM context.' }
+    ],
+    terms: [
+      { icon: '🛠️', name: 'Tool', def: 'A callable function exposed by an MCP server (e.g., web_search, read_file).' },
+      { icon: '📦', name: 'Resource', def: 'Static or dynamic data an MCP server can serve to the model.' },
+      { icon: '📋', name: 'Prompt Template', def: 'Pre-built prompt patterns an MCP server can inject into the model context.' },
+      { icon: '🔐', name: 'OAuth', def: 'Auth mechanism used by MCP to securely connect to third-party services.' }
+    ],
+    quiz: [
+      {
+        q: 'Who developed the Model Context Protocol (MCP)?',
+        options: ['OpenAI','Google DeepMind','Anthropic','Meta AI'],
+        answer: 2,
+        feedback: 'MCP was developed by Anthropic as an open standard for connecting AI models to external tools and data sources.'
+      },
+      {
+        q: 'What is the best analogy for MCP?',
+        options: ['A programming language','The USB-C of AI integrations','A type of neural network','A training dataset'],
+        answer: 1,
+        feedback: 'MCP is like USB-C · a universal standard so AI models can connect to any tool or service without custom integration work.'
+      },
+      {
+        q: 'In MCP, what is a "tool"?',
+        options: ['A physical device','A callable function exposed by an MCP server','A type of LLM','A training technique'],
+        answer: 1,
+        feedback: 'In MCP, a "tool" is a function that the LLM can invoke · like web_search, read_file, or create_calendar_event. The MCP server executes it and returns results.'
+      }
+    ]
+  },
+  {
+    id: 'agents',
+    icon: '🤖',
+    name: 'AI Agents',
+    fullName: 'Autonomous AI Agents',
+    tag: 'Architecture',
+    tagColor: 'var(--amber)', tagDim: 'var(--amber-dim)',
+    cardAccent: 'rgba(245,158,11,0.2)',
+    xp: 60, progress: 40,
+    level: 'intermediate',
+    summary: 'LLMs that think, plan, and act in loops · autonomously completing multi-step tasks.',
+    what: `An <strong>AI Agent</strong> is an LLM equipped with tools, memory, and a feedback loop that lets it take actions autonomously to complete goals. Unlike a simple chatbot that answers one question, an agent <em>plans</em> a sequence of steps, <em>executes</em> actions (via MCP tools), <em>observes</em> results, and <em>replans</em> as needed · all without human intervention at each step.\n\nPopular agent frameworks include <em>LangChain</em>, <em>AutoGen</em>, <em>CrewAI</em>, and <em>Claude's native tool use</em>. Agents power use cases like autonomous research, code execution, and multi-step workflows.`,
+    analogy: 'A regular LLM is like asking an expert a question. An AI Agent is like hiring that expert as a full-time employee · they receive a goal, break it into tasks, use their tools, check their work, and iterate until the job is done.',
+    howItWorks: [
+      { title: 'Goal Setting', desc: 'User gives the agent a high-level goal (e.g., "Research competitors and draft a report").' },
+      { title: 'Planning', desc: 'Agent uses the LLM to decompose the goal into subtasks.' },
+      { title: 'Tool Execution', desc: 'Agent calls tools (web search, code interpreter, file I/O) via MCP.' },
+      { title: 'Observation', desc: 'Results are fed back into the agent\'s context.' },
+      { title: 'Replanning / Completion', desc: 'Agent decides: continue planning, call another tool, or return the final answer.' }
+    ],
+    terms: [
+      { icon: '🔄', name: 'ReAct Loop', def: 'Reason + Act loop: the agent alternates between reasoning and taking actions.' },
+      { icon: '🧠', name: 'Memory', def: 'Short-term (context window) or long-term (vector DB) storage for the agent.' },
+      { icon: '🪢', name: 'Orchestrator', def: 'The component that manages which agent does what in a multi-agent system.' },
+      { icon: '⛓️', name: 'Chain', def: 'A sequence of LLM calls where each output feeds the next step.' }
+    ],
+    quiz: [
+      {
+        q: 'What distinguishes an AI Agent from a standard LLM chatbot?',
+        options: ['Agents are faster','Agents autonomously plan, act, and iterate to complete multi-step goals','Agents use a different architecture','Agents never use tools'],
+        answer: 1,
+        feedback: 'The key difference is autonomy and multi-step execution. Agents use a plan→act→observe→replan loop, while chatbots answer one question at a time.'
+      },
+      {
+        q: 'What is the "ReAct" pattern in AI agents?',
+        options: ['A JavaScript library','React framework for AI','Reason + Act · alternating reasoning and tool use','A real-time communication protocol'],
+        answer: 2,
+        feedback: 'ReAct (Reason + Act) is a prompting pattern where the agent explicitly reasons about what to do next before taking an action, improving reliability.'
+      },
+      {
+        q: 'Which component manages multiple agents working together?',
+        options: ['A tokenizer','An orchestrator','The embedding model','The vector database'],
+        answer: 1,
+        feedback: 'An orchestrator coordinates multiple specialized agents, routing tasks to the right agent and aggregating results · like a project manager for AI workers.'
+      }
+    ]
+  },
+  {
+    id: 'prompting',
+    icon: '✍️',
+    name: 'Prompt Eng.',
+    fullName: 'Prompt Engineering',
+    tag: 'Skill',
+    tagColor: 'var(--pink)', tagDim: 'rgba(236,72,153,0.12)',
+    cardAccent: 'rgba(236,72,153,0.2)',
+    xp: 35, progress: 100,
+    level: 'beginner',
+    summary: 'The art of talking to AI. How you frame your request dramatically changes the output.',
+    what: `<strong>Prompt Engineering</strong> is the discipline of crafting inputs to AI models to elicit the best possible outputs. Since LLMs are sensitive to how questions are phrased, the structure, context, and framing of a prompt can dramatically affect quality, accuracy, and format of responses.\n\nKey techniques include <em>zero-shot prompting</em>, <em>few-shot prompting</em>, <em>chain-of-thought (CoT)</em>, <em>role prompting</em>, and <em>structured output formatting</em>. Prompt engineering is both an art and a science · and remains highly valuable even as models improve.`,
+    analogy: 'Imagine giving directions to someone. "Go somewhere good for dinner" vs. "Take the third left, walk 200m to the Italian restaurant on the corner." The more precise and contextual your instruction, the better the result. Prompts work the same way.',
+    howItWorks: [
+      { title: 'Define the Role', desc: 'Tell the model who it is: "You are a senior data analyst..."' },
+      { title: 'Provide Context', desc: 'Give background information the model needs to answer well.' },
+      { title: 'Be Specific', desc: 'State exactly what format, length, and style you want.' },
+      { title: 'Use Few-Shot Examples', desc: 'Show 2–3 examples of ideal input→output pairs.' },
+      { title: 'Chain Your Thinking', desc: 'Ask the model to "think step by step" for complex reasoning.' }
+    ],
+    terms: [
+      { icon: '0️⃣', name: 'Zero-Shot', def: 'Prompting without any examples. Just the task description.' },
+      { icon: '🔢', name: 'Few-Shot', def: 'Providing 2–5 examples so the model learns the pattern from context.' },
+      { icon: '🔗', name: 'Chain-of-Thought', def: 'Asking the model to reason step-by-step before giving a final answer.' },
+      { icon: '🎭', name: 'Role Prompting', def: 'Assigning a persona: "Act as a senior engineer reviewing this code."' }
+    ],
+    quiz: [
+      {
+        q: 'What does "few-shot prompting" mean?',
+        options: ['Sending multiple API requests','Providing example input-output pairs in the prompt','Using a small model','Reducing the context window'],
+        answer: 1,
+        feedback: 'Few-shot prompting means including 2–5 examples in the prompt to show the model the desired pattern before asking it to perform the task itself.'
+      },
+      {
+        q: 'Which technique asks the model to "think step by step" before answering?',
+        options: ['Role Prompting','Zero-Shot','Chain-of-Thought','Temperature Tuning'],
+        answer: 2,
+        feedback: 'Chain-of-Thought (CoT) prompting encourages the model to explicitly reason through a problem step by step, which dramatically improves performance on complex tasks.'
+      }
+    ]
+  },
+  {
+    id: 'multiagent',
+    icon: '🪢',
+    name: 'Multi-Agent',
+    fullName: 'Multi-Agent Systems',
+    tag: 'Advanced',
+    tagColor: 'var(--red)', tagDim: 'rgba(239,68,68,0.12)',
+    cardAccent: 'rgba(239,68,68,0.2)',
+    xp: 70, progress: 20,
+    level: 'advanced',
+    summary: 'Teams of specialized AI agents collaborating on complex tasks · the future of AI systems.',
+    what: `A <strong>Multi-Agent System</strong> is an architecture where multiple specialized AI agents collaborate to solve complex problems. Each agent has a specific role (researcher, coder, critic, executor), and an orchestrator routes tasks between them.\n\nThis mirrors how teams work: instead of one generalist trying to do everything, specialized agents handle their domain and pass results along. Systems like <em>AutoGen</em>, <em>CrewAI</em>, and <em>Claude's multi-agent workflows</em> enable building sophisticated pipelines where agents check each other's work, parallelize tasks, and handle errors gracefully.`,
+    analogy: 'A film production: the director (orchestrator) coordinates the scriptwriter (writer agent), cinematographer (image agent), editor (refiner agent), and sound engineer (audio agent). Each specialist does their best work, and the director weaves it together.',
+    howItWorks: [
+      { title: 'Task Decomposition', desc: 'Orchestrator breaks a complex goal into subtasks for each specialist agent.' },
+      { title: 'Agent Routing', desc: 'Tasks are dispatched to the right agent based on capability.' },
+      { title: 'Parallel Execution', desc: 'Independent subtasks run simultaneously, reducing total time.' },
+      { title: 'Result Aggregation', desc: 'Outputs from agents are collected, reviewed, and merged.' },
+      { title: 'Critique Loop', desc: 'A critic agent reviews outputs and sends feedback for refinement.' }
+    ],
+    terms: [
+      { icon: '🎬', name: 'Orchestrator', def: 'The master agent that plans and coordinates all specialist agents.' },
+      { icon: '🔬', name: 'Specialist Agent', def: 'An agent optimized for a narrow task (research, coding, QA, etc.).' },
+      { icon: '🔁', name: 'Feedback Loop', def: 'One agent reviewing another\'s output and suggesting improvements.' },
+      { icon: '⚡', name: 'Parallelism', def: 'Running multiple independent agents simultaneously to save time.' }
+    ],
+    quiz: [
+      {
+        q: 'What is the main advantage of a multi-agent system over a single agent?',
+        options: ['Lower cost','Specialization and parallel execution of complex tasks','Simpler architecture','Smaller context window needed'],
+        answer: 1,
+        feedback: 'Multi-agent systems excel at complex tasks by assigning work to specialized agents that run in parallel and check each other\'s work, far exceeding what a single generalist can do.'
+      },
+      {
+        q: 'What does an "orchestrator agent" do?',
+        options: ['Generates images','Runs code directly','Plans and coordinates other specialist agents','Manages the vector database'],
+        answer: 2,
+        feedback: 'The orchestrator is the director of the team · it breaks down the goal, assigns tasks to specialist agents, and aggregates their outputs into a final result.'
+      }
+    ]
+  },
+  {
+    id: 'finetuning',
+    icon: '🎯',
+    name: 'Fine-Tuning',
+    fullName: 'Model Fine-Tuning',
+    tag: 'Training',
+    tagColor: 'var(--cyan)', tagDim: 'var(--cyan-dim)',
+    cardAccent: 'rgba(0,212,255,0.2)',
+    xp: 55, progress: 0,
+    level: 'intermediate',
+    summary: 'Teaching an existing LLM new domain-specific tricks with your own training data.',
+    what: `<strong>Fine-Tuning</strong> is the process of taking a pre-trained LLM and continuing its training on a smaller, domain-specific dataset. This adapts the model's behavior to a specific task, tone, style, or knowledge domain without training from scratch.\n\nFine-tuning is used to create <em>medical AI assistants</em>, <em>legal document analyzers</em>, <em>domain-specific coding models</em>, and more. Modern techniques like <em>LoRA</em> (Low-Rank Adaptation) and <em>QLoRA</em> make fine-tuning accessible even on consumer hardware.`,
+    analogy: 'A general-practice doctor has broad medical training. A cardiologist went through the same med school, then spent years specializing in hearts. Fine-tuning is that specialization · the base model is med school, fine-tuning is the residency.',
+    howItWorks: [
+      { title: 'Start with Base Model', desc: 'Use a pre-trained LLM as the foundation (GPT, Llama, Mistral, etc.).' },
+      { title: 'Prepare Dataset', desc: 'Curate domain-specific examples in instruction-response format.' },
+      { title: 'Apply LoRA/QLoRA', desc: 'Inject low-rank adapter matrices to efficiently update only a subset of weights.' },
+      { title: 'Train', desc: 'Run supervised training on your dataset with a low learning rate.' },
+      { title: 'Evaluate & Deploy', desc: 'Test on held-out examples and deploy the adapted model.' }
+    ],
+    terms: [
+      { icon: '📊', name: 'LoRA', def: 'Low-Rank Adaptation · a method to fine-tune LLMs efficiently by training small adapter matrices.' },
+      { icon: '🗂️', name: 'RLHF', def: 'Reinforcement Learning from Human Feedback · used to align models with human preferences.' },
+      { icon: '📝', name: 'Instruction Tuning', def: 'Training on instruction→response pairs to make models better at following directions.' },
+      { icon: '🔧', name: 'Adapter', def: 'Small, trainable modules inserted into the model to enable parameter-efficient fine-tuning.' }
+    ],
+    quiz: [
+      {
+        q: 'What is the main purpose of fine-tuning an LLM?',
+        options: ['Making it run faster','Adapting a pre-trained model to a specific domain or task','Reducing its parameter count','Replacing RAG'],
+        answer: 1,
+        feedback: 'Fine-tuning adapts a general-purpose LLM to perform better on specific tasks or domains, like medical diagnosis or legal document analysis.'
+      },
+      {
+        q: 'What does LoRA stand for?',
+        options: ['Language Optimization and Retrieval Architecture','Low-Rank Adaptation','Large Output Reduction Algorithm','Learned Output Representation Approach'],
+        answer: 1,
+        feedback: 'LoRA (Low-Rank Adaptation) is a parameter-efficient fine-tuning technique that trains small adapter matrices instead of updating all model weights, making fine-tuning much faster and cheaper.'
+      }
+    ]
+  },
+  {
+    id: 'vectordb',
+    icon: '🗄️',
+    name: 'Vector DB',
+    fullName: 'Vector Databases',
+    tag: 'Infrastructure',
+    tagColor: 'var(--violet)', tagDim: 'var(--violet-dim)',
+    cardAccent: 'rgba(124,58,237,0.2)',
+    xp: 40, progress: 0,
+    level: 'intermediate',
+    summary: 'AI\'s long-term memory · databases that store and search by meaning, not exact keywords.',
+    what: `A <strong>Vector Database</strong> is a specialized database designed to store, index, and search <em>vector embeddings</em> · the numeric representations of text, images, or other data. Unlike traditional SQL databases that match exact values, vector DBs find items by semantic similarity.\n\nThey're the storage backbone of RAG systems and AI long-term memory. Popular options include <em>Pinecone</em>, <em>Weaviate</em>, <em>Qdrant</em>, <em>Chroma</em>, and <em>pgvector</em> (PostgreSQL extension).`,
+    analogy: 'A traditional database is like a filing cabinet with labels. A vector database is like a concept map · "find everything near this idea." You don\'t need exact keywords; it finds semantically related content.',
+    howItWorks: [
+      { title: 'Embed Content', desc: 'Convert documents/images into embedding vectors using an embedding model.' },
+      { title: 'Store Vectors', desc: 'Index vectors in the vector DB alongside metadata (source, date, category).' },
+      { title: 'Embed Query', desc: 'Convert the user\'s search query into a vector using the same embedding model.' },
+      { title: 'Similarity Search', desc: 'Find the nearest vectors using ANN (Approximate Nearest Neighbors) algorithms.' },
+      { title: 'Return Results', desc: 'Return the top-k most similar documents with their metadata.' }
+    ],
+    terms: [
+      { icon: '📏', name: 'Cosine Similarity', def: 'Measures the angle between two vectors · high similarity means similar meaning.' },
+      { icon: '🔍', name: 'ANN', def: 'Approximate Nearest Neighbors · fast algorithm to find similar vectors at scale.' },
+      { icon: '🏷️', name: 'Metadata Filtering', def: 'Combining vector search with traditional filters (date, category, author).' },
+      { icon: '📦', name: 'Namespace', def: 'Logical partition in a vector DB to separate different knowledge bases.' }
+    ],
+    quiz: [
+      {
+        q: 'How is a vector database different from a traditional SQL database?',
+        options: ['Vector DBs are faster','Vector DBs search by semantic similarity, not exact matches','Vector DBs store more data','Vector DBs are always cloud-based'],
+        answer: 1,
+        feedback: 'Vector databases use similarity search on embeddings to find semantically related content, while SQL databases match exact field values. This makes vector DBs ideal for AI and natural language search.'
+      },
+      {
+        q: 'What algorithm do vector databases typically use for fast similarity search?',
+        options: ['Binary Search','SQL JOIN','ANN (Approximate Nearest Neighbors)','PageRank'],
+        answer: 2,
+        feedback: 'ANN (Approximate Nearest Neighbors) algorithms like HNSW and IVF allow vector databases to search millions of vectors in milliseconds by trading a small accuracy loss for huge speed gains.'
+      }
+    ]
+  }
+];
+
+// ═══════════════════════════════════════════════════════
+// DATA · USE CASES / ORCHESTRATIONS
+// ═══════════════════════════════════════════════════════
+const USECASES = [
+  {
+    id: 'customer_support_rag',
+    icon: '💬',
+    iconBg: 'var(--cyan-dim)',
+    name: 'Smart Customer Support Bot',
+    desc: 'RAG + LLM answering product questions from a knowledge base',
+    tags: ['RAG','LLM','Vector DB'],
+    xp: 80,
+    intro: `A company wants to automate customer support. Instead of an LLM making up answers, they use RAG to ground responses in their actual product documentation. Watch how a customer question travels through the entire system.`,
+    scenario: 'Customer asks: "How do I reset my 2FA on the Enterprise plan?"',
+    steps: [
+      {
+        node: '👤',
+        name: 'User Query',
+        role: 'Input',
+        desc: 'Customer types a question in the support chat widget.',
+        data: '→ "How do I reset my 2FA on the Enterprise plan?"',
+        delay: 0
+      },
+      {
+        node: '🔢',
+        name: 'Embedding Service',
+        role: 'Preprocessing',
+        desc: 'Query is sent to an embedding model (e.g., text-embedding-3-small) to create a 1536-dimensional vector.',
+        data: '→ [0.021, -0.143, 0.887, ... 1536 dims]',
+        delay: 1200
+      },
+      {
+        node: '🗄️',
+        name: 'Vector DB Search',
+        role: 'Retrieval',
+        desc: 'The query vector is compared against all stored documentation chunks using cosine similarity. Top 3 chunks retrieved.',
+        data: '→ Chunk 42: "Enterprise 2FA Reset Guide" (0.94)\n→ Chunk 18: "Account Security Settings" (0.87)\n→ Chunk 91: "Admin Panel Overview" (0.81)',
+        delay: 2400
+      },
+      {
+        node: '📋',
+        name: 'Context Assembly',
+        role: 'Orchestration',
+        desc: 'Retrieved chunks are formatted into a structured context block and prepended to the LLM prompt.',
+        data: '→ System: "Answer based on: [Doc chunk 42, 18, 91]"\n→ User: "How do I reset my 2FA on the Enterprise plan?"',
+        delay: 3600
+      },
+      {
+        node: '🧠',
+        name: 'LLM Generation',
+        role: 'Generation',
+        desc: 'LLM reads the context + question and generates a grounded, accurate response. No hallucination · everything comes from the docs.',
+        data: '→ "To reset 2FA on Enterprise: Go to Admin Panel → Security → 2FA Management. Select the user, click Reset, and they\'ll receive an email to re-enroll..."',
+        delay: 4800
+      },
+      {
+        node: '✅',
+        name: 'Response Delivery',
+        role: 'Output',
+        desc: 'The grounded response is returned to the customer with source citations. The full interaction is logged for QA.',
+        data: '→ Response shown to user + "Source: Enterprise Security Guide v3.2"',
+        delay: 6000
+      }
+    ],
+    result: `The customer gets a precise, accurate answer sourced directly from the official documentation · no hallucination, no guessing. The RAG pipeline reduced incorrect responses by 94% compared to a standalone LLM.`
+  },
+  {
+    id: 'mcp_agent_workflow',
+    icon: '🤖',
+    iconBg: 'var(--violet-dim)',
+    name: 'AI Research Agent (MCP)',
+    desc: 'An AI agent using MCP tools to research, analyze, and draft a report',
+    tags: ['AI Agent','MCP','Multi-step'],
+    xp: 100,
+    intro: `A product manager asks an AI agent to "research our top 3 competitors and summarize their pricing." The agent autonomously plans, searches the web, analyzes data, and produces a structured report · all through MCP tool calls.`,
+    scenario: 'PM says: "Research competitors Acme, Brex, and Ramp · summarize their pricing models."',
+    steps: [
+      {
+        node: '📝',
+        name: 'Goal Receipt',
+        role: 'Orchestrator',
+        desc: 'The AI agent receives the high-level goal and uses LLM reasoning to decompose it into a plan.',
+        data: '→ Plan: [1] Search Acme pricing, [2] Search Brex pricing, [3] Search Ramp pricing, [4] Analyze, [5] Draft report',
+        delay: 0
+      },
+      {
+        node: '🔌',
+        name: 'MCP Tool Discovery',
+        role: 'MCP Client',
+        desc: 'Agent queries the MCP server: "What tools do you have?" Server responds with available tools and their schemas.',
+        data: '→ Available: web_search(query), read_url(url), create_doc(title, content)',
+        delay: 1000
+      },
+      {
+        node: '🔍',
+        name: 'Tool Call: web_search',
+        role: 'Execution',
+        desc: 'Agent calls web_search 3 times (can run in parallel) to find competitor pricing pages.',
+        data: '→ web_search("Acme Corp pricing 2024") → [results]\n→ web_search("Brex pricing plans") → [results]\n→ web_search("Ramp pricing model") → [results]',
+        delay: 2000
+      },
+      {
+        node: '📄',
+        name: 'Tool Call: read_url',
+        role: 'Execution',
+        desc: 'Agent fetches the actual content of the top result for each competitor to get detailed pricing info.',
+        data: '→ read_url("acme.com/pricing") → "Starter: $0, Pro: $49/mo, Enterprise: Custom"\n→ read_url("brex.com/plans") → ...',
+        delay: 3200
+      },
+      {
+        node: '🧠',
+        name: 'LLM Analysis',
+        role: 'Reasoning',
+        desc: 'All retrieved content is fed back to the LLM. It synthesizes, compares, and structures the competitive analysis.',
+        data: '→ Reasoning: "Acme is freemium, Brex is usage-based, Ramp is flat-rate + premium add-ons. Ramp is most aggressive on enterprise..."\n→ Draft table: [Company | Model | Entry Price | Enterprise]',
+        delay: 4400
+      },
+      {
+        node: '📊',
+        name: 'Tool Call: create_doc',
+        role: 'Output',
+        desc: 'Agent uses MCP to create the final document, formatted with headers, a comparison table, and strategic notes.',
+        data: '→ create_doc("Competitor Pricing Analysis", "# Q4 2024 Competitive Pricing\\n\\n| Company | Model |...")\n→ Doc created: /reports/competitor-pricing-q4.md',
+        delay: 5600
+      }
+    ],
+    result: `In under 30 seconds, the agent autonomously researched 3 competitors, extracted pricing data, synthesized comparisons, and created a formatted document · saving the PM 2–3 hours of manual research. This is the power of agents + MCP.`
+  },
+  {
+    id: 'multiagent_content',
+    icon: '✍️',
+    iconBg: 'var(--green-dim)',
+    name: 'Multi-Agent Content Pipeline',
+    desc: 'A team of specialized agents researching, writing, and reviewing content',
+    tags: ['Multi-Agent','Orchestrator','Critic Loop'],
+    xp: 120,
+    intro: `A marketing team wants to publish a technical blog post. Instead of one agent doing everything, a multi-agent system is used: a Research Agent, a Writing Agent, and a Critic Agent · all coordinated by an Orchestrator.`,
+    scenario: 'Topic: "How RAG transforms enterprise AI · a technical explainer for CTOs"',
+    steps: [
+      {
+        node: '🎬',
+        name: 'Orchestrator: Task Brief',
+        role: 'Orchestrator',
+        desc: 'The orchestrator receives the brief and assigns roles. It creates subtasks for each specialist agent with clear handoff contracts.',
+        data: '→ Task A → Research Agent: "Find 5 key RAG insights for CTOs"\n→ Task B → Writer Agent: "Draft 800-word post using Research output"\n→ Task C → Critic Agent: "Review draft for accuracy & tone"',
+        delay: 0
+      },
+      {
+        node: '🔬',
+        name: 'Research Agent',
+        role: 'Specialist Agent',
+        desc: 'Research Agent searches for technical RAG content, enterprise case studies, and authoritative sources. Returns structured findings.',
+        data: '→ Finding 1: "RAG reduces hallucination by 72% in enterprise pilots (2024 study)"\n→ Finding 2: "99% of Fortune 500 AI projects cite data freshness as #1 challenge"\n→ Finding 3: "Top vector DBs: Pinecone (scale), Chroma (local), pgvector (SQL teams)"',
+        delay: 1400
+      },
+      {
+        node: '✍️',
+        name: 'Writer Agent',
+        role: 'Specialist Agent',
+        desc: 'Writer Agent receives research findings and drafts a structured blog post: intro, 3 sections, key stats, and a CTA.',
+        data: '→ Draft created: 847 words\n→ Structure: Intro → Problem (hallucination) → Solution (RAG) → Architecture → CTA\n→ Readability score: Grade 11',
+        delay: 2800
+      },
+      {
+        node: '🔍',
+        name: 'Critic Agent',
+        role: 'Quality Gate',
+        desc: 'The Critic Agent reads the draft and scores it across 5 dimensions: accuracy, clarity, CTO-fit, SEO, and actionability. Returns annotated feedback.',
+        data: '→ Accuracy: 9/10 ✓\n→ Clarity: 7/10 · "Section 2 too technical for CTO audience"\n→ CTO-fit: 6/10 · "Missing business ROI framing"\n→ Verdict: REVISE → send back to Writer',
+        delay: 4200
+      },
+      {
+        node: '✍️',
+        name: 'Writer Agent: Revision',
+        role: 'Specialist Agent',
+        desc: 'Writer Agent receives critic feedback and revises. Section 2 simplified, ROI stats added, executive framing improved.',
+        data: '→ Revision delta: 3 paragraphs updated\n→ New CTO-fit score (projected): 9/10\n→ Added: "Companies using RAG report 40% reduction in support costs"',
+        delay: 5600
+      },
+      {
+        node: '✅',
+        name: 'Orchestrator: Final Publish',
+        role: 'Orchestrator',
+        desc: 'Orchestrator receives the revised draft, confirms all quality gates are passed, and publishes via CMS tool.',
+        data: '→ All scores ≥ 8/10 ✓\n→ Published to CMS: "how-rag-transforms-enterprise-ai.md"\n→ Total agent turns: 9 | Total time: ~45s',
+        delay: 7000
+      }
+    ],
+    result: `The multi-agent pipeline produced a publication-ready, CTO-tailored technical blog post in ~45 seconds with built-in quality control · tasks that would take a human team 4–6 hours. The critic loop ensured the final output met professional standards.`
+  },
+  {
+    id: 'llm_finetuning',
+    icon: '🎯',
+    iconBg: 'var(--amber-dim)',
+    name: 'Domain Fine-Tuning Pipeline',
+    desc: 'Fine-tuning an LLM on legal documents to create a specialized legal assistant',
+    tags: ['Fine-Tuning','LoRA','Training'],
+    xp: 90,
+    intro: `A law firm wants a model that understands their specific contract formats and firm style. They fine-tune an open-source LLM on their own contract data using LoRA, creating a specialized legal assistant.`,
+    scenario: 'Input: 2,400 annotated legal contracts → Output: LexBot, a firm-specific contract assistant',
+    steps: [
+      {
+        node: '📁',
+        name: 'Dataset Curation',
+        role: 'Data Pipeline',
+        desc: 'Legal team annotates 2,400 contracts with instruction-response pairs: "Summarize clause 3" → [ideal summary].',
+        data: '→ 2,400 samples in JSONL format\n→ Format: {"instruction": "...", "input": "[contract text]", "output": "[ideal answer]"}\n→ Split: 2,160 train / 240 eval',
+        delay: 0
+      },
+      {
+        node: '🧠',
+        name: 'Base Model Selection',
+        role: 'Setup',
+        desc: 'Team selects Llama-3-8B-Instruct as the base model · open source, strong instruction following, fits on a single A100.',
+        data: '→ Base: meta-llama/Llama-3-8B-Instruct\n→ Parameters: 8B\n→ License: Llama 3 Community (commercial use OK)',
+        delay: 1200
+      },
+      {
+        node: '🔧',
+        name: 'LoRA Configuration',
+        role: 'Fine-Tuning',
+        desc: 'Instead of updating all 8B weights, LoRA injects small trainable adapter matrices (rank=16) into the attention layers.',
+        data: '→ Trainable params: 41M (0.5% of total)\n→ LoRA rank: 16, alpha: 32\n→ Target modules: q_proj, v_proj, k_proj\n→ Memory: 24GB GPU RAM',
+        delay: 2400
+      },
+      {
+        node: '⚙️',
+        name: 'Training Run',
+        role: 'Training',
+        desc: 'Model trains for 3 epochs on the curated dataset. Loss decreases from 1.8 → 0.3. Training time: ~4 hours on A100.',
+        data: '→ Epoch 1: loss=1.82 | Epoch 2: loss=0.71 | Epoch 3: loss=0.31\n→ Eval accuracy: 91.4%\n→ Checkpoint saved every 500 steps',
+        delay: 3600
+      },
+      {
+        node: '📊',
+        name: 'Evaluation',
+        role: 'Validation',
+        desc: 'Fine-tuned model vs. base model evaluated on 20 held-out legal tasks: clause extraction, risk flagging, and summarization.',
+        data: '→ Base Llama-3-8B: 61% accuracy on legal tasks\n→ Fine-tuned LexBot: 91% accuracy\n→ Hallucination rate: 8% → 1.2%\n→ Style match: 94%',
+        delay: 4800
+      },
+      {
+        node: '🚀',
+        name: 'Deployment',
+        role: 'Production',
+        desc: 'LexBot deployed via vLLM with 4-bit quantization. Integrated into the firm\'s document management system via MCP.',
+        data: '→ Serving: vLLM + GGUF 4-bit quantized\n→ Latency: 180ms avg\n→ Integration: MCP server → document management\n→ Status: ✅ Live in production',
+        delay: 6000
+      }
+    ],
+    result: `LexBot achieved 91% accuracy on firm-specific tasks vs. 61% for the base model · a 49% relative improvement. Hallucination dropped from 8% to 1.2%. Fine-tuning gave the firm a model that truly "speaks their language."`,
+  }
+];
+
+// ═══════════════════════════════════════════════════════
+// DATA · GLOSSARY
+// ═══════════════════════════════════════════════════════
+const GLOSSARY = [
+  { icon: '🧠', name: 'LLM', cat: 'Core', catColor: 'var(--cyan)', catBg: 'var(--cyan-dim)', def: 'Large Language Model · a neural network trained on massive text data to understand and generate language.' },
+  { icon: '📚', name: 'RAG', cat: 'Architecture', catColor: 'var(--violet)', catBg: 'var(--violet-dim)', def: 'Retrieval-Augmented Generation · grounding LLM outputs by first retrieving relevant external documents.' },
+  { icon: '🔌', name: 'MCP', cat: 'Protocol', catColor: 'var(--green)', catBg: 'var(--green-dim)', def: 'Model Context Protocol · open standard for connecting LLMs to tools, APIs, and data sources.' },
+  { icon: '🤖', name: 'AI Agent', cat: 'Architecture', catColor: 'var(--violet)', catBg: 'var(--violet-dim)', def: 'An LLM with tools and a feedback loop that autonomously plans and executes multi-step tasks.' },
+  { icon: '🔢', name: 'Embedding', cat: 'Core', catColor: 'var(--cyan)', catBg: 'var(--cyan-dim)', def: 'A dense numeric vector that encodes the semantic meaning of text, images, or other data.' },
+  { icon: '🗄️', name: 'Vector DB', cat: 'Infrastructure', catColor: 'var(--amber)', catBg: 'var(--amber-dim)', def: 'A database optimized for storing and searching vector embeddings using similarity algorithms.' },
+  { icon: '🌡️', name: 'Temperature', cat: 'Core', catColor: 'var(--cyan)', catBg: 'var(--cyan-dim)', def: 'A hyperparameter controlling LLM output randomness. Low = deterministic, High = creative.' },
+  { icon: '🪟', name: 'Context Window', cat: 'Core', catColor: 'var(--cyan)', catBg: 'var(--cyan-dim)', def: 'The maximum number of tokens an LLM can process in a single call.' },
+  { icon: '🔗', name: 'Chain-of-Thought', cat: 'Prompting', catColor: 'var(--pink)', catBg: 'rgba(236,72,153,0.12)', def: 'A prompting technique asking the model to reason step-by-step before giving a final answer.' },
+  { icon: '🎯', name: 'Fine-Tuning', cat: 'Training', catColor: 'var(--red)', catBg: 'rgba(239,68,68,0.12)', def: 'Adapting a pre-trained model on domain-specific data to improve performance on targeted tasks.' },
+  { icon: '📊', name: 'LoRA', cat: 'Training', catColor: 'var(--red)', catBg: 'rgba(239,68,68,0.12)', def: 'Low-Rank Adaptation · efficient fine-tuning by training small adapter matrices instead of all weights.' },
+  { icon: '🔄', name: 'ReAct', cat: 'Architecture', catColor: 'var(--violet)', catBg: 'var(--violet-dim)', def: 'Reason + Act · an agent pattern alternating between reasoning steps and tool-use actions.' },
+  { icon: '🪢', name: 'Orchestrator', cat: 'Architecture', catColor: 'var(--violet)', catBg: 'var(--violet-dim)', def: 'The master agent or component that plans, coordinates, and routes tasks to specialist agents.' },
+  { icon: '🧩', name: 'Chunking', cat: 'RAG', catColor: 'var(--violet)', catBg: 'var(--violet-dim)', def: 'Splitting large documents into smaller segments for more precise embedding and retrieval.' },
+  { icon: '🎭', name: 'Role Prompting', cat: 'Prompting', catColor: 'var(--pink)', catBg: 'rgba(236,72,153,0.12)', def: 'Assigning a persona to the LLM in the system prompt: "You are a senior data analyst..."' },
+  { icon: '⚖️', name: 'RLHF', cat: 'Training', catColor: 'var(--red)', catBg: 'rgba(239,68,68,0.12)', def: 'Reinforcement Learning from Human Feedback · aligning LLMs with human preferences via reward modeling.' },
+  { icon: '🔍', name: 'Semantic Search', cat: 'RAG', catColor: 'var(--violet)', catBg: 'var(--violet-dim)', def: 'Searching by meaning rather than exact keywords, using embedding similarity.' },
+  { icon: '⚡', name: 'Inference', cat: 'Core', catColor: 'var(--cyan)', catBg: 'var(--cyan-dim)', def: 'Running a trained model to generate outputs · as opposed to training the model.' },
+  { icon: '🛠️', name: 'Tool Use', cat: 'Protocol', catColor: 'var(--green)', catBg: 'var(--green-dim)', def: 'The ability of an LLM to call external functions/APIs to retrieve or act on information.' },
+  { icon: '📏', name: 'Cosine Similarity', cat: 'Infrastructure', catColor: 'var(--amber)', catBg: 'var(--amber-dim)', def: 'A metric measuring similarity between two vectors · used in vector DB search.' },
+  { icon: '0️⃣', name: 'Zero-Shot', cat: 'Prompting', catColor: 'var(--pink)', catBg: 'rgba(236,72,153,0.12)', def: 'Prompting an LLM without any examples · just the task description.' },
+  { icon: '🔢', name: 'Few-Shot', cat: 'Prompting', catColor: 'var(--pink)', catBg: 'rgba(236,72,153,0.12)', def: 'Prompting with 2–5 examples to show the model the desired pattern.' },
+  { icon: '🪄', name: 'System Prompt', cat: 'Core', catColor: 'var(--cyan)', catBg: 'var(--cyan-dim)', def: 'A privileged instruction block that sets the model\'s persona, rules, and context before user input.' },
+  { icon: '📡', name: 'Streaming', cat: 'Infrastructure', catColor: 'var(--amber)', catBg: 'var(--amber-dim)', def: 'Returning LLM tokens as they are generated rather than waiting for the full response.' },
+  { icon: '🌐', name: 'Transformer', cat: 'Core', catColor: 'var(--cyan)', catBg: 'var(--cyan-dim)', def: 'The neural network architecture underlying all modern LLMs, based on the self-attention mechanism.' }
+];
+
+// ═══════════════════════════════════════════════════════
+// DATA · BADGES
+// ═══════════════════════════════════════════════════════
+const BADGES = [
+  { id: 'first_concept', icon: '🌱', name: 'First Steps', desc: 'Learned first concept' },
+  { id: 'rag_master', icon: '📚', name: 'RAG Master', desc: 'Completed RAG module' },
+  { id: 'agent_builder', icon: '🤖', name: 'Agent Builder', desc: 'Finished Agents module' },
+  { id: 'quiz_ace', icon: '🎯', name: 'Quiz Ace', desc: 'Scored 100% on a quiz' },
+  { id: 'speed_learner', icon: '⚡', name: 'Speed Learner', desc: 'Completed 3 concepts in one session' },
+  { id: 'flow_watcher', icon: '🌊', name: 'Flow Watcher', desc: 'Completed 3 orchestrations' },
+  { id: 'mcp_wizard', icon: '🔌', name: 'MCP Wizard', desc: 'Mastered MCP protocol' },
+  { id: 'glossary_guru', icon: '📖', name: 'Glossary Guru', desc: 'Searched 10 glossary terms' },
+  { id: 'ai_graduate', icon: '🎓', name: 'AI Graduate', desc: 'Completed all concepts' }
+];
+
+// ═══════════════════════════════════════════════════════
+// QUIZ STATE
+// ═══════════════════════════════════════════════════════
+let quizState = { concept: null, qIndex: 0, correct: 0, answered: false };
+
+// ═══════════════════════════════════════════════════════
+// UTILITIES
+// ═══════════════════════════════════════════════════════
+function showToast(msg, icon = '🎉') {
+  const t = document.getElementById('toast');
+  const m = document.getElementById('toastMsg');
+  const i = document.getElementById('toastIcon');
+  m.textContent = msg; i.textContent = icon;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function showXP(amount) {
+  const p = document.getElementById('xpPopup');
+  p.textContent = `+${amount} XP`;
+  p.classList.add('show');
+  setTimeout(() => p.classList.remove('show'), 1800);
+}
+
+function addXP(amount, msg = null) {
+  STATE.xp += amount;
+  showXP(amount);
+  document.getElementById('headerXP').textContent = STATE.xp;
+  document.getElementById('statXP').textContent = STATE.xp;
+  document.getElementById('pStatXP').textContent = STATE.xp;
+  document.getElementById('profileXPCurr').textContent = STATE.xp + ' XP';
+  if (msg) setTimeout(() => showToast(msg), 600);
+}
+
+function updateProgress() {
+  const total = CONCEPTS.length;
+  const done = CONCEPTS.filter(c => c.progress === 100).length;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('statConcepts').textContent = done;
+  document.getElementById('pStatConcepts').textContent = done;
+}
+
+// ═══════════════════════════════════════════════════════
+// SCREEN NAVIGATION
+// ═══════════════════════════════════════════════════════
+function switchScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
+  if (name === 'glossary') renderGlossary();
+  if (name === 'profile') renderProfile();
+  if (name === 'learn') renderLearn();
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER · HOME
+// ═══════════════════════════════════════════════════════
+function renderHome() {
+  // Concept cards
+  const scroll = document.getElementById('conceptCardsScroll');
+  scroll.innerHTML = CONCEPTS.slice(0, 6).map(c => `
+    <div class="concept-card" style="--card-accent:${c.cardAccent};--card-accent-dim:${c.tagDim};--card-accent-color:${c.tagColor}"
+         onclick="openDetail('${c.id}')">
+      <div class="concept-card-icon">${c.icon}</div>
+      <div class="concept-card-tag">${c.tag}</div>
+      <div class="concept-card-name">${c.name}</div>
+      <div class="concept-card-desc">${c.summary}</div>
+      <div class="concept-card-progress">
+        <div class="concept-card-bar"><div class="concept-card-bar-fill" style="width:${c.progress}%"></div></div>
+        <div class="concept-card-meta">
+          <span class="concept-card-xp">+${c.xp} XP</span>
+          <span class="concept-card-pct">${c.progress}%</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  // Use cases
+  const ucList = document.getElementById('usecaseList');
+  ucList.innerHTML = USECASES.map(uc => `
+    <div class="usecase-card ${STATE.completedOrch.includes(uc.id) ? 'completed' : ''}"
+         onclick="openOrch('${uc.id}')">
+      <div class="usecase-icon" style="background:${uc.iconBg}">${uc.icon}</div>
+      <div class="usecase-info">
+        <div class="usecase-name">${uc.name}</div>
+        <div class="usecase-desc">${uc.desc}</div>
+        <div class="usecase-tags">${uc.tags.map(t => `<span class="usecase-tag">${t}</span>`).join('')}</div>
+      </div>
+      ${STATE.completedOrch.includes(uc.id) ? '<div class="completed-badge">✅</div>' : '<div class="usecase-arrow">▶</div>'}
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// RENDER · LEARN
+// ═══════════════════════════════════════════════════════
+function renderLearn() {
+  const grid = document.getElementById('learnGrid');
+  grid.innerHTML = CONCEPTS.map(c => `
+    <div class="module-card" onclick="openDetail('${c.id}')">
+      <div class="module-card-header">
+        <span class="module-card-icon">${c.icon}</span>
+        <span class="module-card-badge badge-${c.level}">${c.level.charAt(0).toUpperCase()+c.level.slice(1)}</span>
+      </div>
+      <div class="module-card-title">${c.name} <span style="font-weight:400;color:var(--text-muted);font-size:0.85rem">· ${c.fullName}</span></div>
+      <div class="module-card-desc">${c.summary}</div>
+      <div class="module-card-footer">
+        <div class="module-topics">
+          ${c.terms.slice(0,3).map(t => `<span class="module-topic-chip">${t.name}</span>`).join('')}
+        </div>
+        <span class="module-xp">+${c.xp} XP</span>
+      </div>
+      ${c.progress > 0 ? `<div style="margin-top:10px"><div class="concept-card-bar"><div class="concept-card-bar-fill" style="width:${c.progress}%;background:${c.tagColor}"></div></div></div>` : ''}
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════════════════
+// CONCEPT DETAIL
+// ═══════════════════════════════════════════════════════
+function openDetail(id) {
+  const c = CONCEPTS.find(x => x.id === id);
+  if (!c) return;
+  document.getElementById('detailHeaderTitle').textContent = c.name;
+  document.getElementById('detailXpPill').textContent = `+${c.xp} XP`;
+
+  const content = document.getElementById('detailContent');
+  content.innerHTML = `
+    <div class="detail-hero">
+      <div class="detail-icon">${c.icon}</div>
+      <div class="detail-name">${c.name}</div>
+      <div class="detail-full-name">${c.fullName}</div>
+      <span class="detail-badge" style="background:${c.tagDim};color:${c.tagColor}">${c.tag} · ${c.level.charAt(0).toUpperCase()+c.level.slice(1)}</span>
+    </div>
+    <div class="detail-body">
+
+      <div class="detail-section">
+        <div class="detail-section-title">What is it?</div>
+        <div class="detail-text">${c.what.replace(/\n/g,'<br>')}</div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Real-world analogy</div>
+        <div class="analogy-card">
+          <div class="analogy-title">🎯 Think of it this way</div>
+          <div class="analogy-text">${c.analogy}</div>
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">How it works</div>
+        <div class="how-it-works-steps">
+          ${c.howItWorks.map((s, i) => `
+            <div class="how-step">
+              <div class="how-step-num">${i+1}</div>
+              <div class="how-step-text"><strong>${s.title}</strong> · ${s.desc}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <div class="detail-section">
+        <div class="detail-section-title">Key terms</div>
+        <div class="key-terms-grid">
+          ${c.terms.map(t => `
+            <div class="term-card">
+              <div class="term-icon">${t.icon}</div>
+              <div>
+                <div class="term-name">${t.name}</div>
+                <div class="term-def">${t.def}</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+
+      <button class="start-quiz-btn" onclick="startQuiz('${c.id}')">
+        🧩 Test Your Knowledge · ${c.quiz.length} Questions
+      </button>
+      <div style="height:8px"></div>
+    </div>
+  `;
+
+  // Mark concept as partially learned
+  if (c.progress < 50) {
+    c.progress = 50;
+    addXP(Math.floor(c.xp / 3), `Started learning ${c.name}!`);
+  }
+
+  document.getElementById('detailOverlay').classList.add('show');
+  document.getElementById('detailOverlay').scrollTop = 0;
+}
+
+function closeDetail() {
+  document.getElementById('detailOverlay').classList.remove('show');
+  updateProgress();
+  renderHome();
+}
+
+// ═══════════════════════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════════════════════
+function startQuiz(conceptId) {
+  const c = CONCEPTS.find(x => x.id === conceptId);
+  if (!c) return;
+  quizState = { concept: c, qIndex: 0, correct: 0, answered: false };
+  document.getElementById('quizConceptName').textContent = c.name + ' Quiz';
+  document.getElementById('quizXpPill').textContent = `+${c.xp} XP`;
+  renderQuizQuestion();
+  document.getElementById('quizOverlay').classList.add('show');
+  document.getElementById('quizOverlay').scrollTop = 0;
+}
+
+function renderQuizQuestion() {
+  const { concept, qIndex } = quizState;
+  const q = concept.quiz[qIndex];
+  const total = concept.quiz.length;
+  const pct = ((qIndex + 1) / total) * 100;
+
+  document.getElementById('quizContainer').innerHTML = `
+    <div class="quiz-stage">
+      <div class="quiz-header">
+        <div class="quiz-title">${concept.name} knowledge check</div>
+        <div class="quiz-qcount">Question ${qIndex+1} of ${total}</div>
+      </div>
+      <div class="quiz-progress-bar" aria-label="Quiz progress">
+        <div class="quiz-progress-fill" style="width:${pct}%"></div>
+      </div>
+      <div class="quiz-kicker">Choose the best answer</div>
+      <div class="quiz-question">${q.q}</div>
+      <div class="quiz-options">
+        ${q.options.map((opt, i) => `
+          <button class="quiz-option" onclick="answerQuiz(${i})">
+            <span class="quiz-option-key">${String.fromCharCode(65 + i)}</span>
+            <span>${opt}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="quizFeedback"></div>
+      <button class="quiz-next-btn" id="quizNextBtn" onclick="nextQuizQuestion()">
+        ${qIndex + 1 < total ? 'Next Question →' : 'See Results 🎉'}
+      </button>
+    </div>
+  `;
+  quizState.answered = false;
+}
+
+function answerQuiz(selected) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = quizState.concept.quiz[quizState.qIndex];
+  const opts = document.querySelectorAll('.quiz-option');
+  const feedback = document.getElementById('quizFeedback');
+  const nextBtn = document.getElementById('quizNextBtn');
+
+  opts.forEach(o => o.disabled = true);
+  opts[selected].classList.add('selected');
+  opts[q.answer].classList.add('correct');
+
+  if (selected === q.answer) {
+    quizState.correct++;
+    feedback.textContent = '✅ Correct! ' + q.feedback;
+    feedback.className = 'quiz-feedback show correct';
+    addXP(15);
+  } else {
+    opts[selected].classList.add('wrong');
+    feedback.textContent = '❌ Not quite. ' + q.feedback;
+    feedback.className = 'quiz-feedback show wrong';
+  }
+
+  nextBtn.classList.add('show');
+}
+
+function nextQuizQuestion() {
+  quizState.qIndex++;
+  if (quizState.qIndex >= quizState.concept.quiz.length) {
+    showQuizResult();
+  } else {
+    renderQuizQuestion();
+  }
+}
+
+function showQuizResult() {
+  const { concept, correct } = quizState;
+  const total = concept.quiz.length;
+  const pct = Math.round((correct / total) * 100);
+  const bonusXP = pct === 100 ? concept.xp : Math.floor(concept.xp * correct / total);
+
+  // Mark concept complete if passed
+  if (pct >= 60) {
+    concept.progress = 100;
+    STATE.quizzesDone++;
+    document.getElementById('statQuizzes').textContent = STATE.quizzesDone;
+  }
+
+  addXP(bonusXP, pct === 100 ? '🎯 Perfect score! Quiz Ace!' : `Completed ${concept.name} quiz!`);
+
+  const stars = pct === 100 ? '⭐⭐⭐' : pct >= 60 ? '⭐⭐' : '⭐';
+
+  document.getElementById('quizContainer').innerHTML = `
+    <div class="quiz-stage quiz-result">
+      <div style="font-size:4rem;margin-bottom:16px">${pct === 100 ? '🏆' : pct >= 60 ? '🎉' : '💪'}</div>
+      <div class="quiz-result-score">${pct}%</div>
+      <div style="font-size:1.5rem;margin-bottom:16px">${stars}</div>
+      <div class="quiz-result-meta">${correct} / ${total} correct</div>
+      ${pct >= 60 ? `<div style="color:var(--green);font-size:0.85rem;margin-bottom:20px">✅ ${concept.name} mastered!</div>` : `<div style="color:var(--amber);font-size:0.85rem;margin-bottom:20px">Keep practicing · you've got this!</div>`}
+      <div style="background:var(--amber-dim);color:var(--amber);padding:12px 20px;border-radius:99px;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:1rem;margin-bottom:28px">
+        ⭐ +${bonusXP} XP earned
+      </div>
+      <button class="start-quiz-btn" onclick="closeQuiz()" style="max-width:280px;margin:0 auto">
+        Back to ${concept.name} →
+      </button>
+      ${pct < 100 ? `<button class="quiz-retry-btn" onclick="startQuiz('${concept.id}')">
+        🔄 Retry Quiz
+      </button>` : ''}
+    </div>
+  `;
+}
+
+function closeQuiz() {
+  document.getElementById('quizOverlay').classList.remove('show');
+  updateProgress();
+  renderHome();
+  renderLearn();
+}
+
+// ═══════════════════════════════════════════════════════
+// ORCHESTRATION
+// ═══════════════════════════════════════════════════════
+let orchTimers = [];
+
+function openOrch(id) {
+  const uc = USECASES.find(x => x.id === id);
+  if (!uc) return;
+  orchTimers.forEach(clearTimeout);
+  orchTimers = [];
+
+  document.getElementById('orchTitle').textContent = uc.name;
+  const body = document.getElementById('orchBody');
+
+  body.innerHTML = `
+    <div class="orch-intro fade-in-up">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div style="width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:${uc.iconBg}">${uc.icon}</div>
+        <div>
+          <div class="orch-intro-title">${uc.name}</div>
+          <div style="font-size:0.75rem;color:var(--text-muted)">${uc.tags.map(t=>`<span style="background:var(--border);padding:2px 7px;border-radius:99px;font-size:0.65rem;font-weight:700;margin-right:4px">${t}</span>`).join('')}</div>
+        </div>
+      </div>
+      <div class="orch-intro-desc">${uc.intro}</div>
+      <div style="margin-top:12px;padding:12px;background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:8px;font-size:0.82rem;color:var(--text-dim)">
+        <strong style="color:var(--cyan)">📍 Scenario:</strong> ${uc.scenario}
+      </div>
+      <button class="orch-play-btn" id="orchPlayBtn" onclick="runOrch('${id}')">
+        ▶ Run Orchestration
+      </button>
+    </div>
+
+    <div class="flow-diagram" id="flowDiagram">
+      ${uc.steps.map((step, i) => `
+        <div class="flow-step" id="fstep-${i}">
+          <div class="flow-step-line"></div>
+          <div class="flow-node" id="fnode-${i}">${step.node}</div>
+          <div class="flow-content" id="fcontent-${i}">
+            <div class="flow-step-name">${step.name}</div>
+            <span class="flow-step-role">${step.role}</span>
+            <div class="flow-step-desc">${step.desc}</div>
+            <div class="flow-step-data" id="fdata-${i}">${step.data}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="orch-result" id="orchResult">
+      <div class="orch-result-title">✅ Orchestration Complete</div>
+      <div class="orch-result-body">${uc.result}</div>
+      <div class="orch-xp-badge">⭐ +${uc.xp} XP earned</div>
+    </div>
+
+    <div style="height:20px"></div>
+  `;
+
+  document.getElementById('orchOverlay').classList.add('show');
+  document.getElementById('orchOverlay').scrollTop = 0;
+}
+
+function runOrch(id) {
+  const uc = USECASES.find(x => x.id === id);
+  if (!uc) return;
+  const btn = document.getElementById('orchPlayBtn');
+  if (btn) btn.disabled = true;
+
+  uc.steps.forEach((step, i) => {
+    const t = setTimeout(() => {
+      // Deactivate all previous
+      if (i > 0) {
+        const prevNode = document.getElementById(`fnode-${i-1}`);
+        const prevContent = document.getElementById(`fcontent-${i-1}`);
+        if (prevNode) { prevNode.classList.remove('active'); prevNode.classList.add('done'); }
+        if (prevContent) { prevContent.classList.remove('active'); prevContent.classList.add('done'); }
+      }
+      const node = document.getElementById(`fnode-${i}`);
+      const content = document.getElementById(`fcontent-${i}`);
+      const data = document.getElementById(`fdata-${i}`);
+      if (node) node.classList.add('active');
+      if (content) content.classList.add('active');
+      if (data) data.classList.add('show');
+
+      // Auto-scroll to keep current step visible
+      const orchOverlay = document.getElementById('orchOverlay');
+      const stepEl = document.getElementById(`fstep-${i}`);
+      if (stepEl) {
+        setTimeout(() => stepEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+      }
+
+      // Finalize last step
+      if (i === uc.steps.length - 1) {
+        setTimeout(() => {
+          const lastNode = document.getElementById(`fnode-${i}`);
+          const lastContent = document.getElementById(`fcontent-${i}`);
+          if (lastNode) { lastNode.classList.remove('active'); lastNode.classList.add('done'); }
+          if (lastContent) { lastContent.classList.remove('active'); lastContent.classList.add('done'); }
+
+          const result = document.getElementById('orchResult');
+          if (result) {
+            result.classList.add('show');
+            result.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+
+          // Award XP
+          if (!STATE.completedOrch.includes(id)) {
+            STATE.completedOrch.push(id);
+            STATE.orchDone++;
+            document.getElementById('pStatOrch').textContent = STATE.orchDone;
+            addXP(uc.xp, `🚀 Flow complete: ${uc.name}!`);
+          }
+          renderHome();
+        }, 1200);
+      }
+    }, step.delay);
+    orchTimers.push(t);
+  });
+}
+
+function closeOrch() {
+  orchTimers.forEach(clearTimeout);
+  orchTimers = [];
+  document.getElementById('orchOverlay').classList.remove('show');
+}
+
+// ═══════════════════════════════════════════════════════
+// GLOSSARY
+// ═══════════════════════════════════════════════════════
+const GLOSSARY_CATS = ['all', 'Core', 'Architecture', 'Protocol', 'Infrastructure', 'Prompting', 'RAG', 'Training'];
+
+function renderGlossary() {
+  // Filters
+  const filters = document.getElementById('glossaryFilters');
+  if (filters.innerHTML === '') {
+    filters.innerHTML = GLOSSARY_CATS.map(cat => `
+      <button class="filter-chip ${cat === 'all' ? 'active' : ''}" onclick="setGlossaryFilter('${cat}')">${cat === 'all' ? 'All' : cat}</button>
+    `).join('');
+  }
+  filterGlossary();
+}
+
+function setGlossaryFilter(cat) {
+  STATE.glossaryFilter = cat;
+  document.querySelectorAll('.filter-chip').forEach(b => {
+    b.classList.toggle('active', b.textContent === (cat === 'all' ? 'All' : cat));
+  });
+  filterGlossary();
+}
+
+function filterGlossary() {
+  const search = document.getElementById('glossarySearch').value.toLowerCase();
+  const cat = STATE.glossaryFilter;
+  const filtered = GLOSSARY.filter(g => {
+    const matchesCat = cat === 'all' || g.cat === cat;
+    const matchesSearch = !search || g.name.toLowerCase().includes(search) || g.def.toLowerCase().includes(search);
+    return matchesCat && matchesSearch;
+  });
+
+  document.getElementById('glossaryList').innerHTML = filtered.map(g => `
+    <div class="glossary-item" onclick="openGlossaryDetail('${g.name}')">
+      <div class="glossary-item-header">
+        <span class="glossary-item-icon">${g.icon}</span>
+        <span class="glossary-item-name">${g.name}</span>
+        <span class="glossary-item-cat" style="background:${g.catBg};color:${g.catColor}">${g.cat}</span>
+      </div>
+      <div class="glossary-item-def">${g.def}</div>
+    </div>
+  `).join('') || '<div style="padding:40px;text-align:center;color:var(--text-muted)">No terms found</div>';
+}
+
+function openGlossaryDetail(name) {
+  const concept = CONCEPTS.find(c => c.name === name || c.fullName.includes(name));
+  if (concept) { openDetail(concept.id); return; }
+  const g = GLOSSARY.find(x => x.name === name);
+  if (!g) return;
+  showToast(`${g.icon} ${g.name}: ${g.def.substring(0, 60)}...`, g.icon);
+}
+
+// ═══════════════════════════════════════════════════════
+// PROFILE
+// ═══════════════════════════════════════════════════════
+function renderProfile() {
+  const level = Math.floor(STATE.xp / 100) + 1;
+  const nextXP = level * 100;
+  const pct = Math.min(100, Math.round((STATE.xp / nextXP) * 100));
+  const levels = ['', 'Novice', 'Learner', 'Apprentice', 'Practitioner', 'Expert', 'Master', 'Architect', 'Guru', 'Legend'];
+  const levelName = levels[Math.min(level, levels.length - 1)] || 'Grand Master';
+
+  document.getElementById('profileLevel').textContent = `Level ${level} · ${levelName}`;
+  document.getElementById('profileXPNext').textContent = nextXP + ' XP';
+  document.getElementById('profileXPBar').style.width = pct + '%';
+
+  // Badges
+  const grid = document.getElementById('badgesGrid');
+  grid.innerHTML = BADGES.map(b => {
+    const earned = STATE.badgesEarned.includes(b.id);
+    return `
+      <div class="badge-card ${earned ? 'earned' : 'locked-badge'}">
+        <div class="badge-icon">${b.icon}</div>
+        <div class="badge-name">${b.name}</div>
+        ${earned ? '<div class="badge-earned">✅</div>' : '<div class="badge-earned" style="opacity:0.3">🔒</div>'}
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('pStatBadges').textContent = STATE.badgesEarned.length;
+}
+
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
+window.addEventListener('load', () => {
+  setTimeout(() => {
+    document.getElementById('splash').classList.add('hidden');
+    document.getElementById('app').classList.add('visible');
+    renderHome();
+    updateProgress();
+    setTimeout(() => showToast('Welcome to NeuralPath! 🚀 Start learning AI.', '⚡'), 800);
+  }, 2400);
+});
+</script>
+<script src="../_shared/return-bar.js"></script>
+</body>
+</html>

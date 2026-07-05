@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FASTag Trust Layer · Interactive Prototype · Sai Kiran Biswal</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <style>
+    :root {
+      --bg: #f3efe7;
+      --bg-2: #ece6da;
+      --panel: rgba(255,255,255,.92);
+      --panel-2: #ffffff;
+      --text: #1c1815;
+      --muted: #6f675b;
+      --line: #d8d0c1;
+      --line-soft: #e4ddd0;
+      --accent: #b85c38;
+      --accent-2: #a34e2d;
+      --accent-soft: #f6ece4;
+      --danger: #b42318;
+      --warn: #b54708;
+      --good: #027a48;
+      --ink-2: #46556f;
+      --shadow: 0 20px 60px rgba(28, 24, 21, .10);
+      --chip: #f6ece4;
+      --soft: #faf8f3;
+      --card-grad: linear-gradient(135deg, rgba(184,92,56,.12), rgba(70,85,111,.08));
+      --serif: 'Newsreader', Georgia, serif;
+      --sans: 'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    html[data-theme="dark"] {
+      --bg: #070b14;
+      --bg-2: #0c1320;
+      --panel: rgba(16, 26, 43, .82);
+      --panel-2: #101a2b;
+      --text: #f4f1ea;
+      --muted: #9ba7b8;
+      --line: #243149;
+      --line-soft: #19243a;
+      --accent: #e0936a;
+      --accent-2: #d4794f;
+      --accent-soft: rgba(224,147,106,.12);
+      --danger: #fb7185;
+      --warn: #f59e0b;
+      --good: #34d399;
+      --ink-2: #93a4c4;
+      --shadow: 0 24px 80px rgba(0, 0, 0, .42);
+      --chip: rgba(224,147,106,.13);
+      --soft: rgba(255,255,255,.035);
+      --card-grad: linear-gradient(135deg, rgba(224,147,106,.16), rgba(96,128,196,.08));
+    }
+    @import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap');
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; font-family: var(--sans); background:
+      radial-gradient(circle at top left, rgba(224,147,106,.12), transparent 32%),
+      radial-gradient(circle at 82% -4%, rgba(96,128,196,.10), transparent 30%), var(--bg); color: var(--text); }
+    a { color: inherit; }
+    .shell { display: grid; grid-template-columns: 286px minmax(0,1fr); min-height: 100vh; }
+    .sidebar { position: sticky; top: 0; height: 100vh; padding: 22px; border-right: 1px solid var(--line); background: linear-gradient(180deg, var(--panel), transparent); backdrop-filter: blur(16px); overflow: auto; }
+    .back-link { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; color: var(--muted); text-decoration: none; margin-bottom: 18px; transition: .18s; }
+    .back-link:hover { color: var(--accent); }
+    .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+    .logo { width: 44px; height: 44px; border-radius: 13px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); box-shadow: 0 10px 26px rgba(184,92,56,.28); display: grid; place-items: center; color: #fff; font-weight: 800; font-family: var(--mono); }
+    .brand h1 { font-size: 15px; margin: 0; line-height: 1.15; letter-spacing: -.01em; }
+    .brand p { margin: 4px 0 0; font-size: 11.5px; color: var(--muted); }
+    .nav { display: grid; gap: 8px; margin: 20px 0; }
+    .nav button, .scenario button, .ghost, .primary, .secondary, select, input { border: 1px solid var(--line); border-radius: 13px; padding: 11px 13px; color: var(--text); background: var(--soft); cursor: pointer; font: inherit; transition: .18s ease; }
+    .nav button { text-align: left; display: flex; justify-content: space-between; align-items: center; font-weight: 600; font-size: 13.5px; }
+    .nav button.active, .nav button:hover, .scenario button:hover { background: var(--chip); border-color: var(--accent); transform: translateY(-1px); }
+    .nav button.active { box-shadow: inset 2px 0 0 var(--accent); }
+    .nav .pill { font-size: 10.5px; padding: 2px 8px; border-radius: 999px; background: var(--chip); color: var(--accent); font-family: var(--mono); font-weight: 500; }
+    .side-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; margin: 22px 0 10px; color: var(--muted); }
+    .scenario { display: grid; gap: 8px; }
+    .scenario button { width: 100%; text-align: left; font-size: 12.5px; }
+    .main { padding: 26px clamp(18px,3vw,34px); overflow: hidden; }
+    .topbar { display: flex; justify-content: space-between; align-items: flex-end; gap: 14px; margin-bottom: 22px; }
+    .title h2 { margin: 0; font-family: var(--serif); font-weight: 500; font-size: clamp(26px, 3.2vw, 42px); letter-spacing: -0.02em; line-height: 1.02; }
+    .title h2 em { font-style: italic; color: var(--accent); }
+    .title p { margin: 8px 0 0; color: var(--muted); max-width: 760px; font-size: 14px; }
+    .actions { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+    .primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; border: 0; font-weight: 700; }
+    .secondary { background: var(--chip); color: var(--accent); border-color: color-mix(in srgb, var(--accent) 35%, transparent); font-weight: 700; }
+    .ghost { background: transparent; }
+    .primary:hover, .secondary:hover, .ghost:hover { transform: translateY(-1px); }
+    .grid { display: grid; grid-template-columns: 1.25fr .75fr; gap: 16px; align-items: start; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .panel { border: 1px solid var(--line); border-radius: 22px; background: var(--panel); box-shadow: var(--shadow); overflow: hidden; }
+    .panel.pad { padding: 18px; }
+    .panel-title { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 18px 18px 0; }
+    .panel-title h3 { margin: 0; font-size: 16px; letter-spacing: -.01em; }
+    .panel-title p { margin: 4px 0 0; color: var(--muted); font-size: 12.5px; }
+    .card { border: 1px solid var(--line); border-radius: 16px; padding: 14px; background: var(--soft); }
+    .big-status { background: var(--card-grad); padding: 18px; border-bottom: 1px solid var(--line); display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 12px; align-items: center; }
+    .vehicle { display: flex; gap: 12px; align-items: center; }
+    .vehicle-icon { width: 52px; height: 52px; border-radius: 16px; background: color-mix(in srgb, var(--accent) 16%, transparent); border: 1px solid var(--line); display: grid; place-items: center; font-size: 24px; }
+    .vehicle h3 { margin: 0; font-size: 20px; letter-spacing: -.01em; }
+    .vehicle p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+    .status-badge { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border-radius: 999px; background: rgba(52,211,153,.14); color: var(--good); font-weight: 700; font-size: 13px; }
+    .status-badge.warn { background: rgba(245,158,11,.14); color: var(--warn); }
+    .status-badge.danger { background: rgba(251,113,133,.14); color: var(--danger); }
+    .kpis { padding: 14px; display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; }
+    .kpi { border: 1px solid var(--line); border-radius: 15px; padding: 14px; background: var(--panel-2); }
+    .kpi span { display: block; color: var(--muted); font-size: 11.5px; font-family: var(--mono); letter-spacing: .03em; }
+    .kpi b { display: block; margin-top: 6px; font-size: 23px; font-family: var(--serif); font-weight: 500; }
+    .kpi small { display: block; margin-top: 4px; color: var(--muted); font-size: 11.5px; }
+    .section { display: none; animation: enter .28s ease; }
+    .section.active { display: block; }
+    @keyframes enter { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .timeline { padding: 16px 18px 18px; display: grid; gap: 12px; }
+    .txn { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 12px; align-items: center; padding: 13px; border: 1px solid var(--line); border-radius: 15px; background: var(--soft); cursor: pointer; transition: .15s; }
+    .txn:hover { border-color: var(--accent); transform: translateX(2px); }
+    .dot { width: 11px; height: 11px; border-radius: 999px; background: var(--good); box-shadow: 0 0 0 4px rgba(52,211,153,.13); }
+    .dot.warn { background: var(--warn); box-shadow: 0 0 0 4px rgba(245,158,11,.13); }
+    .dot.danger { background: var(--danger); box-shadow: 0 0 0 4px rgba(251,113,133,.13); }
+    .txn h4 { margin: 0; font-size: 14px; }
+    .txn p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .amount { font-weight: 700; font-family: var(--mono); }
+    .diag { padding: 16px; display: grid; gap: 10px; }
+    .check { display: grid; grid-template-columns: auto minmax(0,1fr) auto; gap: 10px; align-items: center; padding: 11px; border-radius: 13px; background: var(--soft); border: 1px solid var(--line); }
+    .check .ok { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 9px; background: rgba(52,211,153,.16); color: var(--good); font-weight: 700; }
+    .check.bad .ok, .check.danger .ok { background: rgba(251,113,133,.16); color: var(--danger); }
+    .check.warn .ok { background: rgba(245,158,11,.16); color: var(--warn); }
+    .check h4 { margin: 0; font-size: 13px; }
+    .check p { margin: 3px 0 0; font-size: 12px; color: var(--muted); }
+    .copilot { padding: 16px; border-top: 1px solid var(--line); background: linear-gradient(180deg, transparent, var(--accent-soft)); }
+    .copilot-label { font-family: var(--mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); margin: 0 0 8px; display: flex; align-items: center; gap: 7px; }
+    .copilot .bubble { padding: 14px; border-radius: 16px; background: var(--panel-2); border: 1px solid var(--line); font-size: 13px; line-height: 1.55; }
+    .form { display: grid; gap: 12px; padding: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    label { display: grid; gap: 6px; font-size: 11.5px; color: var(--muted); font-family: var(--mono); }
+    select, input { width: 100%; cursor: text; background: var(--panel-2); }
+    select { cursor: pointer; }
+    .result { border: 1px solid var(--line); border-radius: 16px; padding: 15px; background: var(--card-grad); }
+    .result h4 { margin: 0 0 8px; font-size: 14px; }
+    .result p { margin: 5px 0; color: var(--muted); font-size: 13px; }
+    .wizard { padding: 16px; display: grid; gap: 12px; }
+    .steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+    .step { padding: 10px; border-radius: 12px; border: 1px solid var(--line); background: var(--soft); color: var(--muted); font-size: 11.5px; text-align: center; }
+    .step.active { background: var(--chip); color: var(--accent); border-color: var(--accent); font-weight: 700; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0 8px; padding: 0 16px 16px; }
+    th { color: var(--muted); font-size: 11px; font-weight: 600; text-align: left; padding: 0 10px; font-family: var(--mono); letter-spacing: .04em; text-transform: uppercase; }
+    td { padding: 12px 10px; background: var(--soft); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); font-size: 13px; }
+    td:first-child { border-left: 1px solid var(--line); border-radius: 13px 0 0 13px; font-weight: 600; }
+    td:last-child { border-right: 1px solid var(--line); border-radius: 0 13px 13px 0; }
+    .tag { display: inline-flex; padding: 5px 9px; border-radius: 999px; background: var(--chip); color: var(--accent); font-size: 11px; font-weight: 700; }
+    .tag.warn { background: rgba(245,158,11,.14); color: var(--warn); }
+    .tag.danger { background: rgba(251,113,133,.14); color: var(--danger); }
+    .hidden-state { max-height: 230px; overflow: auto; padding: 14px; margin: 0 16px 16px; border-radius: 14px; background: #03060d; color: #cdd6e4; font-family: var(--mono); font-size: 11px; border: 1px solid var(--line); white-space: pre-wrap; }
+    .governance { margin-top: 18px; }
+    .governance b { font-size: 13px; }
+    .governance p { margin: 8px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+    @media (max-width: 1120px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { position: relative; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      .nav { grid-auto-flow: column; grid-template-columns: none; overflow-x: auto; padding-bottom: 4px; }
+      .nav button { min-width: 165px; }
+      .grid, .grid-3, .grid-4, .kpis { grid-template-columns: 1fr; }
+      .topbar { flex-direction: column; align-items: flex-start; }
+      .actions { justify-content: flex-start; }
+      .steps { grid-template-columns: 1fr 1fr; }
+      table { display: block; overflow-x: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) { * { animation-duration: .001ms !important; transition-duration: .05ms !important; } }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="back-link" href="../../universe.html">← Portfolio</a>
+      <div class="brand">
+        <div class="logo">FT</div>
+        <div><h1>FASTag Trust Layer</h1><p>National Toll &amp; Mobility Account</p></div>
+      </div>
+      <div class="nav" id="nav">
+        <button class="active" data-tab="citizen">Citizen Account <span class="pill">MVP</span></button>
+        <button data-tab="fleet">Fleet Control <span class="pill">B2B</span></button>
+        <button data-tab="operator">Operator Console <span class="pill">Ops</span></button>
+        <button data-tab="metrics">Pilot Metrics <span class="pill">PM</span></button>
+      </div>
+      <p class="side-label">Test scenarios</p>
+      <div class="scenario">
+        <button onclick="setScenario('healthy')">✅ Healthy commute</button>
+        <button onclick="setScenario('kyc')">⚠️ KYC incomplete warning</button>
+        <button onclick="setScenario('wrong')">🧾 Wrong deduction dispute</button>
+        <button onclick="setScenario('fleet')">🚚 Fleet risk spike</button>
+        <button onclick="setScenario('operator')">🏁 Operator duplicate read</button>
+      </div>
+      <div style="margin-top:20px" class="card governance">
+        <b>Autonomy rule</b>
+        <p>AI suggests, drafts, and diagnoses. Refund rejection, penalty, fraud marking, and blacklisting require human or governed-rule approval.</p>
+      </div>
+    </aside>
+    <main class="main">
+      <div class="topbar">
+        <div class="title"><h2>FASTag as a <em>toll operating system</em></h2><p>One vehicle identity, an explainable toll ledger, annual-pass clarity, dispute resolution, fleet controls, and operator exception intelligence.</p></div>
+        <div class="actions">
+          <button class="secondary" onclick="runDemo()">Run guided demo</button>
+          <button class="ghost" onclick="toggleTheme()">Toggle theme</button>
+        </div>
+      </div>
+
+      <section id="citizen" class="section active">
+        <div class="grid">
+          <div class="panel">
+            <div class="big-status">
+              <div class="vehicle"><div class="vehicle-icon">🚙</div><div><h3 id="vehicleNo">TS09 AB 4567</h3><p id="vehicleLine">Private car · Issuer: HDFC Bank · FASTag linked</p></div></div>
+              <div><span id="healthBadge" class="status-badge">● Active</span></div>
+            </div>
+            <div class="kpis">
+              <div class="kpi"><span>Balance</span><b id="balance">₹820</b><small>Auto top-up on</small></div>
+              <div class="kpi"><span>KYC</span><b id="kyc">Complete</b><small>Verified with issuer</small></div>
+              <div class="kpi"><span>Annual Pass</span><b id="pass">143</b><small>trips left</small></div>
+              <div class="kpi"><span>Readiness</span><b id="ready">98%</b><small>for planned route</small></div>
+            </div>
+            <div class="panel-title"><div><h3>Recent toll ledger</h3><p>Every charge explains plaza, source, pass/wallet use, and dispute eligibility.</p></div><button class="secondary" onclick="startDispute()">Raise dispute</button></div>
+            <div class="timeline" id="timeline"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-title"><div><h3>Toll Health diagnostic</h3><p>A root-cause tree replaces generic inactive / blacklisted errors.</p></div></div>
+            <div class="diag" id="diagnostic"></div>
+            <div class="copilot"><p class="copilot-label">● TollTrust Copilot</p><div class="bubble" id="copilot">Your vehicle is ready. Balance is enough for your most common route and the annual pass is active.</div></div>
+          </div>
+        </div>
+        <div class="grid" style="margin-top:16px">
+          <div class="panel">
+            <div class="panel-title"><div><h3>Trip and pass optimizer</h3><p>Plan tolls before travel. See whether pass or wallet is expected to apply.</p></div></div>
+            <div class="form">
+              <div class="form-row">
+                <label>Route<select id="route"><option value="hyd-vij">Hyderabad → Vijayawada</option><option value="blr-mys">Bengaluru → Mysuru</option><option value="bbsr-puri">Bhubaneswar → Puri</option><option value="del-jpr">Delhi → Jaipur</option></select></label>
+                <label>Expected trips / month<input id="trips" type="number" min="1" max="80" value="12" /></label>
+              </div>
+              <button class="primary" onclick="calculateRoute()">Calculate toll plan</button>
+              <div class="result" id="routeResult"><h4>Route estimate</h4><p>Select a route and calculate to see toll estimate, recharge gap, and annual-pass recommendation.</p></div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-title"><div><h3>Dispute wizard</h3><p>Wrong deduction, duplicate deduction, no travel, wrong class, or pass not applied.</p></div></div>
+            <div class="wizard">
+              <div class="steps"><div class="step active" id="s1">1. Select issue</div><div class="step" id="s2">2. Evidence</div><div class="step" id="s3">3. Submit</div><div class="step" id="s4">4. Track</div></div>
+              <div id="wizardText" class="result"><h4>No open dispute</h4><p>Click "Raise dispute" or choose the wrong-deduction scenario.</p></div>
+              <div class="actions" style="justify-content:flex-start"><button class="secondary" onclick="advanceDispute()">Advance step</button><button class="ghost" onclick="resetDispute()">Reset</button></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="fleet" class="section">
+        <div class="grid-4">
+          <div class="kpi"><span>Vehicles</span><b id="fleetVehicles">128</b><small>12 corridors</small></div>
+          <div class="kpi"><span>At risk</span><b id="fleetRisk">9</b><small>low balance / KYC / blocked</small></div>
+          <div class="kpi"><span>Monthly toll spend</span><b>₹18.6L</b><small>+8% vs last month</small></div>
+          <div class="kpi"><span>Open disputes</span><b id="fleetDisputes">23</b><small>₹42,900 at stake</small></div>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-title"><div><h3>Fleet vehicle health</h3><p>Built for Indian SME fleets: prevent truck stoppage before it reaches the toll lane.</p></div><button class="primary" onclick="bulkFix()">Bulk fix selected</button></div>
+          <table><thead><tr><th>Vehicle</th><th>Route</th><th>Status</th><th>Balance</th><th>Issue</th><th>Action</th></tr></thead><tbody id="fleetTable"></tbody></table>
+        </div>
+      </section>
+
+      <section id="operator" class="section">
+        <div class="grid">
+          <div class="panel">
+            <div class="panel-title"><div><h3>Operator exception queue</h3><p>Failed reads, duplicate reads, class mismatch, and ANPR mismatch become governed workflows.</p></div><button class="secondary" onclick="resolveTopException()">Resolve top item</button></div>
+            <table><thead><tr><th>Event</th><th>Lane</th><th>Signal</th><th>AI recommendation</th><th>Autonomy</th></tr></thead><tbody id="operatorTable"></tbody></table>
+          </div>
+          <div class="panel pad">
+            <h3 style="margin-top:0">Lane health</h3>
+            <div class="grid-3">
+              <div class="kpi"><span>Read success</span><b id="readSuccess">97.4%</b><small>today</small></div>
+              <div class="kpi"><span>Exceptions</span><b id="exceptions">31</b><small>needs review</small></div>
+              <div class="kpi"><span>Duplicate risk</span><b id="dupRisk">Low</b><small>last 2h</small></div>
+            </div>
+            <div class="result" style="margin-top:14px"><h4>Human intervention rules</h4><p>Penalty, blacklist, fraud flag, and refund rejection require human or rule-governed approval. AI only recommends, with evidence and confidence.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="metrics" class="section">
+        <div class="panel pad">
+          <h3 style="margin-top:0">Pilot success dashboard</h3>
+          <div class="grid-4">
+            <div class="kpi"><span>North Star</span><b id="northStar">92.1%</b><small>crossings without intervention</small></div>
+            <div class="kpi"><span>Diagnosis coverage</span><b id="diagCoverage">81%</b><small>target ≥ 80%</small></div>
+            <div class="kpi"><span>Dispute creation</span><b id="disputeTime">48s</b><small>target &lt; 60s</small></div>
+            <div class="kpi"><span>Manual load</span><b id="manualLoad">-24%</b><small>vs baseline</small></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px">
+          <div class="panel-title"><div><h3>Operating-model state</h3><p>Hidden-state preview for engineering and product QA.</p></div><button class="ghost" onclick="refreshState()">Refresh state</button></div>
+          <pre class="hidden-state" id="statePreview"></pre>
+        </div>
+      </section>
+    </main>
+  </div>
+
+<script>
+const app = {
+  scenario:'healthy', disputeStep:0, theme:'dark',
+  transactions:[
+    {plaza:'Panthangi Toll Plaza', route:'Hyderabad → Vijayawada', amount:'₹95', status:'Pass applied', type:'ok'},
+    {plaza:'Choutuppal Toll Plaza', route:'NH65', amount:'₹70', status:'Wallet charged', type:'ok'},
+    {plaza:'Korlapahad Toll Plaza', route:'NH65', amount:'₹120', status:'Wallet charged', type:'ok'}
+  ],
+  fleet:[
+    ['TS08 TR 9912','HYD → VJA','Warning','₹120','Low balance','Recharge ₹2,000'],
+    ['AP31 TN 6641','VJA → VSKP','Blocked','₹880','KYC incomplete','Send issuer link'],
+    ['KA05 AB 3301','BLR → MYS','Active','₹2,420','None','No action'],
+    ['TS11 GH 8810','HYD → NGP','Warning','₹310','Duplicate tag risk','Verify vehicle'],
+    ['OD02 BY 7744','BBSR → Puri','Active','₹1,130','None','No action']
+  ],
+  exceptions:[
+    ['Duplicate deduction pair','Lane 4','Same VRN, amount, 42 sec apart','Draft reversal dispute','Approve'],
+    ['Class mismatch','Lane 2','LCV charged as MAV','Route to operator review','Human review'],
+    ['ANPR mismatch','Lane 6','Tag read differs from plate','Hold and verify evidence','Human review'],
+    ['Failed read','Lane 1','RFID timeout, plate confident','Allow rule-based fallback','Auto with audit']
+  ]
+};
+function $(id){return document.getElementById(id)}
+function setTab(tab){document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));$(tab).classList.add('active');document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab));refreshState();}
+document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+function toggleTheme(){const root=document.documentElement; const dark=root.getAttribute('data-theme')==='dark'; root.setAttribute('data-theme', dark?'light':'dark'); app.theme=dark?'light':'dark'; refreshState();}
+function renderTransactions(){ $('timeline').innerHTML = app.transactions.map((t,i)=>`<div class="txn" onclick="selectTransaction(${i})"><div class="dot ${t.type==='warn'?'warn':t.type==='danger'?'danger':''}"></div><div><h4>${t.plaza}</h4><p>${t.route} · ${t.status}</p></div><div class="amount">${t.amount}</div></div>`).join(''); }
+function renderDiagnostic(items){ $('diagnostic').innerHTML=items.map(x=>`<div class="check ${x.type||''}"><div class="ok">${x.icon}</div><div><h4>${x.title}</h4><p>${x.text}</p></div><span class="tag ${x.type||''}">${x.action}</span></div>`).join(''); }
+function renderFleet(){ $('fleetTable').innerHTML=app.fleet.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td><span class="tag ${r[2]==='Blocked'?'danger':r[2]==='Warning'?'warn':''}">${r[2]}</span></td><td>${r[3]}</td><td>${r[4]}</td><td>${r[5]}</td></tr>`).join(''); }
+function renderOperator(){ $('operatorTable').innerHTML=app.exceptions.map((r,i)=>`<tr><td>${r[0]}</td><td>${r[1]}</td><td>${r[2]}</td><td>${r[3]}</td><td><span class="tag ${r[4].includes('Human')?'danger':r[4].includes('Approve')?'warn':''}">${r[4]}</span></td></tr>`).join(''); }
+function baseDiagnostics(){ return [
+  {icon:'✓',title:'Balance',text:'Enough balance for common corridor and fallback charge.',action:'OK'},
+  {icon:'✓',title:'KYC',text:'Issuer KYC is complete and verified.',action:'OK'},
+  {icon:'✓',title:'Vehicle link',text:'One active FASTag is linked to this VRN.',action:'OK'},
+  {icon:'✓',title:'Annual Pass',text:'143 trips left; valid for eligible NH tolls.',action:'OK'}
+];}
+function setScenario(s){ app.scenario=s; if(s==='healthy'){
+  $('healthBadge').className='status-badge'; $('healthBadge').innerText='● Active'; $('balance').innerText='₹820'; $('kyc').innerText='Complete'; $('ready').innerText='98%'; $('copilot').innerText='Your vehicle is ready. Balance is enough for your most common route and the annual pass is active.'; app.transactions=[{plaza:'Panthangi Toll Plaza', route:'Hyderabad → Vijayawada', amount:'₹95', status:'Pass applied', type:'ok'},{plaza:'Choutuppal Toll Plaza', route:'NH65', amount:'₹70', status:'Wallet charged', type:'ok'},{plaza:'Korlapahad Toll Plaza', route:'NH65', amount:'₹120', status:'Wallet charged', type:'ok'}]; renderDiagnostic(baseDiagnostics()); setTab('citizen');
+ } else if(s==='kyc'){
+  $('healthBadge').className='status-badge warn'; $('healthBadge').innerText='● Warning'; $('balance').innerText='₹820'; $('kyc').innerText='Incomplete'; $('ready').innerText='54%'; $('copilot').innerText='Balance is fine, but issuer KYC is incomplete. This can cause deactivation or blacklisting. The fix needs issuer confirmation, not AI automation.'; renderDiagnostic([{icon:'✓',title:'Balance',text:'Balance is sufficient.',action:'OK'},{icon:'!',title:'KYC',text:'Issuer reports a missing KYC document.',action:'Fix now',type:'warn'},{icon:'✓',title:'Vehicle link',text:'One active FASTag linked.',action:'OK'},{icon:'!',title:'Travel risk',text:'May fail if the issuer blocks the tag before crossing.',action:'High',type:'warn'}]); setTab('citizen');
+ } else if(s==='wrong'){
+  $('healthBadge').className='status-badge warn'; $('healthBadge').innerText='● Review'; app.transactions=[{plaza:'Panthangi Toll Plaza', route:'Hyderabad → Vijayawada', amount:'₹95', status:'Pass applied', type:'ok'},{plaza:'Choutuppal Toll Plaza', route:'NH65', amount:'₹70', status:'Possible duplicate', type:'danger'},{plaza:'Choutuppal Toll Plaza', route:'NH65', amount:'₹70', status:'Possible duplicate', type:'danger'}]; $('copilot').innerText='I found two near-identical toll events 42 seconds apart. I can draft a dispute with evidence, but you must approve submission.'; renderDiagnostic(baseDiagnostics().concat([{icon:'!',title:'Duplicate deduction signal',text:'Same plaza, amount, and vehicle within 60 seconds.',action:'Draft dispute',type:'danger'}])); startDispute(); setTab('citizen');
+ } else if(s==='fleet'){
+  $('fleetRisk').innerText='17'; $('fleetDisputes').innerText='31'; setTab('fleet');
+ } else if(s==='operator'){
+  $('readSuccess').innerText='94.1%'; $('exceptions').innerText='58'; $('dupRisk').innerText='High'; setTab('operator');
+ } renderTransactions(); renderFleet(); renderOperator(); refreshState(); }
+function selectTransaction(i){ const t=app.transactions[i]; $('wizardText').innerHTML=`<h4>${t.plaza}</h4><p>${t.amount} · ${t.status}. Evidence available: tag read, plaza timestamp, vehicle class, pass/wallet source.</p>`; }
+function calculateRoute(){ const route=$('route').value; const trips=Number($('trips').value||1); const map={ 'hyd-vij':{name:'Hyderabad → Vijayawada', toll:285}, 'blr-mys':{name:'Bengaluru → Mysuru', toll:165}, 'bbsr-puri':{name:'Bhubaneswar → Puri', toll:90}, 'del-jpr':{name:'Delhi → Jaipur', toll:360} }; const r=map[route]; const monthly=r.toll*trips; const passValue=3075; const rec=monthly*12>passValue?'Annual pass likely worth evaluating':'Pay-per-use likely enough'; const gap=Math.max(0,r.toll-820); $('routeResult').innerHTML=`<h4>${r.name}</h4><p>Estimated one-way toll: <b>₹${r.toll}</b>. Monthly estimate: <b>₹${monthly.toLocaleString('en-IN')}</b>.</p><p>Recharge gap today: <b>₹${gap}</b>. Recommendation: <b>${rec}</b>.</p><p>Assumption: prototype toll values are placeholders. Production should use official toll plaza / rate feeds.</p>`; refreshState(); }
+function startDispute(){ app.disputeStep=1; updateWizard(); }
+function advanceDispute(){ app.disputeStep = Math.min(4, app.disputeStep+1); updateWizard(); }
+function resetDispute(){ app.disputeStep=0; updateWizard(); }
+function updateWizard(){ [1,2,3,4].forEach(n=>$('s'+n).classList.toggle('active', app.disputeStep===n)); const copy=[
+  '<h4>No open dispute</h4><p>Click "Raise dispute" or choose the wrong-deduction scenario.</p>',
+  '<h4>Step 1: Select issue</h4><p>Suggested issue: duplicate deduction. The user must confirm before submission.</p>',
+  '<h4>Step 2: Evidence pack</h4><p>Auto-attached: plaza ID, timestamp pair, same VRN, same amount, 42-second gap, pass/wallet source.</p>',
+  '<h4>Step 3: Submit</h4><p>Draft complaint is ready. AI can draft, but user approval is required.</p>',
+  '<h4>Step 4: Track</h4><p>Ticket submitted. Status: under review. Owner: issuer / acquirer workflow. SLA visible to the user.</p>'
+ ]; $('wizardText').innerHTML=copy[app.disputeStep]; refreshState(); }
+function bulkFix(){ $('fleetRisk').innerText='5'; $('fleetTable').querySelectorAll('tr').forEach((tr,i)=>{ if(i<2) tr.style.opacity=.45; }); refreshState(); }
+function resolveTopException(){ app.exceptions.shift(); renderOperator(); $('exceptions').innerText=String(Math.max(0, Number($('exceptions').innerText)-1)); refreshState(); }
+function runDemo(){ const seq=['healthy','kyc','wrong','fleet','operator']; let i=0; const run=()=>{setScenario(seq[i++]); if(i<seq.length) setTimeout(run, 1300);}; run(); }
+function refreshState(){ $('statePreview').innerText=JSON.stringify(app,null,2); }
+renderTransactions(); renderDiagnostic(baseDiagnostics()); renderFleet(); renderOperator(); calculateRoute(); refreshState();
+</script>
+<script src="../_shared/return-bar.js"></script>
+</body>
+</html>

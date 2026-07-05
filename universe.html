@@ -119,18 +119,42 @@
   .topbar-right{display:flex;align-items:center;gap:12px}
 
   /* ============ CAPTION ============ */
-  #caption{position:fixed;left:50%;bottom:40px;bottom:max(40px,calc(env(safe-area-inset-bottom) + 32px));transform:translateX(-50%);z-index:40;
-    text-align:center;width:min(720px,90vw);pointer-events:none;transition:opacity .5s var(--ease);
-    padding:22px 30px 18px;border-radius:20px}
-  body.light #caption{background:radial-gradient(80% 90% at 50% 60%, rgba(247,245,239,.86), rgba(247,245,239,0) 75%)}
-  body.dark #caption{background:radial-gradient(80% 90% at 50% 60%, rgba(5,7,15,.7), rgba(5,7,15,0) 75%)}
-  #caption .cap-no{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
-  #caption .cap-title{font-family:var(--serif);font-weight:500;font-size:clamp(28px,5vw,50px);line-height:1.02;letter-spacing:-.02em}
-  #caption .cap-tag{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
-  #caption .cap-lede{font-family:var(--serif);font-weight:400;font-size:clamp(15px,1.6vw,18px);color:var(--soft);line-height:1.4;max-width:560px;margin:0 auto}
-  #caption .cap-hint{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:18px}
-  #caption.fade{opacity:0}
-  @media (max-width:600px){#caption{bottom:96px}}
+  /* caption is now a screen-reader-only live region; the deck card carries the visible text */
+  #caption{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;padding:0;margin:-1px}
+
+  /* ============ SWIPE DECK ============ */
+  #deck{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;
+    width:min(430px,90vw);height:min(660px,82vh);pointer-events:none}
+  .deck-card{position:absolute;inset:0;pointer-events:auto;cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none;
+    display:flex;flex-direction:column;border-radius:26px;overflow:hidden;
+    background:var(--card,#fff);border:1px solid var(--hair-2);
+    box-shadow:0 30px 80px -20px rgba(0,0,0,.45),0 8px 24px -12px rgba(0,0,0,.3);
+    transition:transform .5s var(--ease),opacity .5s var(--ease);will-change:transform,opacity}
+  body.dark .deck-card{background:#0e1220;border-color:rgba(255,255,255,.09);
+    box-shadow:0 34px 90px -20px rgba(0,0,0,.75),0 0 0 1px rgba(255,255,255,.03)}
+  .deck-card.dragging{transition:none;cursor:grabbing}
+  .deck-card.is-behind{transform:scale(.9) translateY(20px);opacity:.5;z-index:1}
+  .deck-card.is-front{z-index:2}
+  .deck-card.is-front.entering{transform:scale(.9) translateY(20px);opacity:.5}
+  .dk-media{position:relative;flex:1 1 auto;min-height:0;overflow:hidden;
+    background:linear-gradient(150deg,var(--accent,#888),color-mix(in srgb,var(--accent,#888) 40%,#0b0e18))}
+  .dk-shot{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s var(--ease)}
+  .deck-card.loaded .dk-shot{opacity:1}
+  .dk-shimmer{position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(255,255,255,.14) 50%,transparent 70%);
+    background-size:200% 100%;animation:sh 1.4s infinite}
+  .deck-card.loaded .dk-shimmer{display:none}
+  .dk-body{flex:0 0 auto;padding:20px 24px 22px;background:var(--card,#fff)}
+  body.dark .dk-body{background:#0e1220}
+  .dk-no{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);margin-bottom:8px}
+  .dk-title{font-family:var(--serif);font-weight:500;font-size:clamp(22px,4.5vw,30px);line-height:1.05;letter-spacing:-.02em;color:var(--ink)}
+  .dk-tag{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:10px 0 8px}
+  .dk-lede{font-family:var(--serif);font-weight:400;font-size:14.5px;line-height:1.45;color:var(--soft);
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .dk-hint{display:flex;justify-content:space-between;gap:10px;margin-top:16px;
+    font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint)}
+  .dk-open{color:var(--amber)}
+  #deck.hidden{display:none}
+  @media (max-width:600px){#deck{height:78vh;width:92vw}}
 
   /* ============ MUTE ============ */
   #mute-btn{position:fixed;right:24px;bottom:24px;bottom:max(24px,env(safe-area-inset-bottom));z-index:60;
@@ -209,6 +233,21 @@
   .mb-all{margin-top:16px;font-size:12px;padding:9px 16px}
   .menu-portrait{width:min(280px,100%);aspect-ratio:1.08/1;border-radius:16px;object-fit:cover;object-position:center 42%;border:1px solid var(--hair);margin-bottom:22px;display:block}
   .menu-bio{font-size:15px;line-height:1.65;color:var(--soft);margin-bottom:20px}
+  /* About actions + Contact icons (menu redesign) */
+  .about-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:4px}
+  .mbtn{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;letter-spacing:.01em;
+    padding:11px 18px;border-radius:100px;border:1px solid var(--hair-2);color:var(--ink);
+    background:transparent;cursor:pointer;transition:background .2s var(--ease),border-color .2s var(--ease),transform .2s var(--ease)}
+  .mbtn:hover{border-color:var(--amber);color:var(--amber);transform:translateY(-1px)}
+  .mbtn.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+  .mbtn.primary:hover{background:var(--amber);border-color:var(--amber);color:#1c1815}
+  .contact-row{display:flex;gap:12px;margin-bottom:16px}
+  .cico{width:46px;height:46px;border-radius:100px;border:1px solid var(--hair-2);display:flex;align-items:center;justify-content:center;
+    color:var(--muted);transition:color .2s var(--ease),border-color .2s var(--ease),transform .25s var(--ease),background .2s var(--ease)}
+  .cico:hover{color:var(--amber);border-color:var(--amber);transform:translateY(-2px)}
+  .contact-email{font-size:15px;font-weight:500;color:var(--ink);display:inline-flex;align-items:center;gap:9px;transition:color .2s var(--ease)}
+  .contact-email:hover{color:var(--amber)}
+  .contact-email svg{color:var(--faint)}
   .menu-current{font-size:12px;letter-spacing:.04em;color:var(--muted);margin-bottom:26px}
   .menu-current b{color:var(--ink);font-weight:600}
   .menu-chips{display:flex;flex-wrap:wrap;gap:10px}
@@ -229,6 +268,102 @@
     .list-wrap{padding:110px 20px 90px}
     .menu-inner{padding:80px 26px 40px}
   }
+
+  /* ============ 3D MENU + PERSONAL PANEL ============ */
+  #menu-panel{transform:perspective(1700px) translateX(100%) rotateY(26deg);transform-origin:right center;
+    box-shadow:-46px 0 100px rgba(0,0,0,.30)}
+  #menu-panel.open{transform:perspective(1700px) translateX(0) rotateY(0)}
+  .menu-inner{perspective:1300px;perspective-origin:72% 38%}
+  .menu-inner > *{transition:transform .6s var(--ease),opacity .55s var(--ease);opacity:0;transform:translateZ(-50px) translateX(26px)}
+  #menu-panel.open .menu-inner > *{opacity:1;transform:translateZ(0) translateX(0)}
+  #menu-panel.open .menu-hero{transition-delay:.05s}
+  #menu-panel.open .menu-nav{transition-delay:.11s}
+  #menu-panel.open #about-block{transition-delay:.17s}
+  #menu-panel.open #resume-block{transition-delay:.23s}
+  #menu-panel.open #contact-block{transition-delay:.29s}
+  #menu-panel.open .menu-foot{transition-delay:.35s}
+  .menu-nav,.menu-nav a,.menu-block,.menu-hero,.resume-card{transform-style:preserve-3d}
+  .menu-nav a:hover{transform:translateX(8px) translateZ(38px)}
+
+  .menu-hero{margin-bottom:32px}
+  .menu-portrait{transition:transform .55s var(--ease),box-shadow .55s var(--ease);box-shadow:0 26px 60px rgba(0,0,0,.22)}
+  .menu-hero:hover .menu-portrait{transform:translateZ(60px) rotateY(-8deg) rotateX(4deg)}
+  .menu-name{font-family:var(--serif);font-weight:500;font-size:30px;letter-spacing:-.02em;margin-top:22px;line-height:1.04}
+  .menu-role{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--amber);margin-top:10px}
+
+  /* ============ RÉSUMÉ PAGE (timeline) ============ */
+  #resume-page{position:fixed;inset:0;z-index:120;overflow-y:auto;background:var(--space-0);
+    opacity:0;transform:translateY(16px);pointer-events:none;transition:opacity .5s var(--ease),transform .5s var(--ease)}
+  #resume-page.open{opacity:1;transform:translateY(0);pointer-events:auto}
+  .rp-wrap{max-width:940px;margin:0 auto;padding:92px 32px 120px}
+  #resume-page .d-close{position:fixed;top:22px;right:26px;width:44px;height:44px;border-radius:999px;border:1px solid var(--hair);
+    display:flex;align-items:center;justify-content:center;color:var(--muted);background:var(--chrome-bg);backdrop-filter:blur(8px);transition:.25s;z-index:5}
+  #resume-page .d-close:hover{color:var(--ink);border-color:var(--hair-2);transform:rotate(90deg)}
+  .rp-hero{display:grid;grid-template-columns:auto 1fr;gap:34px;align-items:center;padding-bottom:36px;border-bottom:1px solid var(--hair)}
+  .rp-photo{width:154px;height:154px;border-radius:20px;object-fit:cover;object-position:center 36%;border:1px solid var(--hair);box-shadow:0 24px 56px rgba(0,0,0,.20)}
+  .rp-name{font-family:var(--serif);font-weight:500;font-size:clamp(32px,5vw,52px);line-height:1;letter-spacing:-.025em}
+  .rp-title{font-size:13px;letter-spacing:.03em;color:var(--soft);margin-top:14px;line-height:1.55;max-width:580px}
+  .rp-meta{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px;align-items:center}
+  .rp-chip{font-size:12px;border:1px solid var(--hair);border-radius:999px;padding:7px 14px;color:var(--soft);transition:.25s var(--ease)}
+  a.rp-chip:hover{border-color:var(--amber);color:var(--amber)}
+  .rp-chip.primary{background:rgba(185,118,18,.10);border-color:rgba(185,118,18,.42);color:var(--amber)}
+  .rp-section{margin-top:54px}
+  .rp-lab{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);margin-bottom:24px}
+  .rp-summary{font-family:var(--serif);font-weight:400;font-size:clamp(18px,2.4vw,25px);line-height:1.42;letter-spacing:-.01em;color:var(--ink);max-width:770px}
+  .rp-timeline{position:relative;margin-left:7px}
+  .rp-timeline::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1px;background:var(--hair)}
+  .tl-item{position:relative;padding-left:40px}
+  .tl-item::before{content:'';position:absolute;left:0;top:22px;width:15px;height:15px;border-radius:999px;border:2px solid var(--amber);background:var(--space-0);transition:.3s var(--ease)}
+  .tl-item.open::before{background:var(--amber);box-shadow:0 0 0 5px rgba(185,118,18,.14)}
+  .tl-head{width:100%;text-align:left;display:flex;justify-content:space-between;gap:18px;align-items:baseline;padding:15px 0;cursor:pointer}
+  .tl-role{display:block;font-size:17px;font-weight:600;color:var(--ink);line-height:1.32}
+  .tl-org{display:block;font-size:13.5px;color:var(--amber);margin-top:5px;letter-spacing:.01em}
+  .tl-right{display:flex;align-items:center;gap:14px;flex:none}
+  .tl-dates{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+  .tl-ico{width:20px;height:20px;flex:none;position:relative;color:var(--muted);transition:color .3s}
+  .tl-ico::before,.tl-ico::after{content:'';position:absolute;left:50%;top:50%;background:currentColor}
+  .tl-ico::before{width:9px;height:1.6px;transform:translate(-50%,-50%)}
+  .tl-ico::after{width:1.6px;height:9px;transform:translate(-50%,-50%);transition:opacity .3s}
+  .tl-item.open .tl-ico{color:var(--amber)}
+  .tl-item.open .tl-ico::after{opacity:0}
+  .tl-body{max-height:0;overflow:hidden;opacity:0;transition:max-height .55s var(--ease),opacity .45s var(--ease)}
+  .tl-item.open .tl-body{max-height:560px;opacity:1}
+  .tl-body ul{list-style:none;padding:4px 0 24px}
+  .tl-body li{position:relative;padding-left:18px;font-size:14px;line-height:1.62;color:var(--soft);margin-bottom:10px}
+  .tl-body li::before{content:'';position:absolute;left:2px;top:9px;width:5px;height:5px;border-radius:999px;background:var(--amber);opacity:.55}
+  .rp-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px 44px}
+  .rp-skill b{display:block;font-size:12px;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);margin-bottom:6px}
+  .rp-skill p{font-size:13.5px;line-height:1.6;color:var(--soft);margin-bottom:20px}
+  .rp-edu{display:flex;flex-direction:column}
+  .rp-edu .ee{border-top:1px solid var(--hair);padding:16px 0}
+  .rp-edu .ee:first-child{border-top:none}
+  .rp-edu .ee b{font-size:15px;font-weight:600}
+  .rp-edu .ee .ee-sub{font-size:12px;color:var(--faint);letter-spacing:.05em;margin-top:3px}
+  .rp-edu .ee p{font-size:13.5px;color:var(--soft);margin-top:6px;line-height:1.55}
+  @media(max-width:640px){
+    .rp-hero{grid-template-columns:1fr;gap:22px}
+    .rp-photo{width:118px;height:118px}
+    .rp-grid{grid-template-columns:1fr}
+    .rp-wrap{padding:84px 20px 92px}
+    .tl-head{flex-direction:column;gap:8px}
+  }
+
+  .contact-acc{display:flex;flex-direction:column}
+  .ca-item{border-top:1px solid var(--hair)}
+  .ca-item:first-child{border-top:none}
+  .ca-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 0;
+    font-size:15px;font-weight:500;color:var(--ink);text-align:left;transition:color .2s}
+  .ca-head:hover{color:var(--amber)}
+  .ca-ico{width:22px;height:22px;flex:none;border:1px solid var(--hair);border-radius:999px;position:relative;color:var(--muted);transition:.3s var(--ease)}
+  .ca-ico::before,.ca-ico::after{content:'';position:absolute;background:currentColor;left:50%;top:50%}
+  .ca-ico::before{width:9px;height:1.6px;transform:translate(-50%,-50%)}
+  .ca-ico::after{width:1.6px;height:9px;transform:translate(-50%,-50%);transition:opacity .3s}
+  .ca-item.open .ca-ico{border-color:var(--amber);color:var(--amber);transform:rotate(90deg)}
+  .ca-item.open .ca-ico::after{opacity:0}
+  .ca-body{max-height:0;overflow:hidden;opacity:0;transition:max-height .42s var(--ease),opacity .42s var(--ease),padding .42s var(--ease)}
+  .ca-item.open .ca-body{max-height:180px;opacity:1;padding-bottom:16px}
+  .ca-body a{color:var(--amber);font-size:14px;word-break:break-all}
+  .ca-body p{font-size:12.5px;line-height:1.55;color:var(--muted);margin-top:6px}
 </style>
 </head>
 <body class="light">
@@ -257,7 +392,7 @@
     <a class="glyph" href="#" id="home-glyph">Saikiran Biswal<small>Product builder</small></a>
     <div class="topbar-right">
       <div class="view-toggle" role="group" aria-label="View mode">
-        <button id="mode-orbit" aria-pressed="true">Orbit</button>
+        <button id="mode-orbit" aria-pressed="true">Cards</button>
         <button id="mode-list" aria-pressed="false">List</button>
       </div>
       <button id="theme-btn" aria-label="Toggle dark mode" title="Toggle theme">
@@ -268,14 +403,16 @@
     </div>
   </header>
 
-  <!-- CAPTION -->
+  <!-- CAPTION (screen-reader live region; visual content lives in the deck card) -->
   <div id="caption" aria-live="polite">
     <div class="cap-no"></div>
     <div class="cap-title"></div>
     <div class="cap-tag"></div>
     <div class="cap-lede"></div>
-    <div class="cap-hint">scroll or drag · click to open</div>
   </div>
+
+  <!-- SWIPE DECK -->
+  <div id="deck" aria-label="Project deck"></div>
 
   <!-- MUTE -->
   <button id="mute-btn" aria-label="Toggle sound">
@@ -325,32 +462,161 @@
     </button>
     <div class="menu-inner">
       <nav class="menu-nav">
-        <a href="#" id="nav-works">Works</a>
+        <a href="#" id="nav-works">Work</a>
         <a href="#about-block" id="nav-about">About</a>
         <a href="#contact-block" id="nav-contact">Contact</a>
       </nav>
       <div class="menu-block" id="about-block">
         <div class="mb-label">About</div>
         <p class="menu-bio">I build enterprise and AI products in lending, banking, and fintech, from the problem and business case through a clean domain model, an architecture engineering can ship, and a commercial model that holds up. This portfolio shows the public proof: live products, case studies, and artifacts.</p>
-        <p class="menu-current">Public scope: <b>finished work, working demos, and product evidence</b></p>
-        <div class="menu-btns">
-          <a class="pill" href="https://github.com/saikiranbiswal" target="_blank" rel="noopener">View GitHub</a>
-          <a class="pill" href="mailto:saikiran.biswal@outlook.com">Email</a>
+        <div class="about-actions">
+          <button class="mbtn primary" id="nav-resume" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
+            View résumé
+          </button>
+          <a class="mbtn" href="assets/resume.pdf" download="Saikiran-Biswal-Resume.pdf">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download PDF
+          </a>
         </div>
       </div>
       <div class="menu-block" id="contact-block">
         <div class="mb-label">Contact</div>
-        <div class="menu-chips">
-          <a class="chip" href="https://github.com/saikiranbiswal" target="_blank" rel="noopener">github</a>
-          <a class="chip" href="https://www.linkedin.com/in/sai-kiran-biswal" target="_blank" rel="noopener">linkedin</a>
-          <a class="chip" href="mailto:saikiran.biswal@outlook.com">email</a>
+        <div class="contact-row">
+          <a class="cico" href="mailto:saikiran.biswal@outlook.com" aria-label="Email Saikiran Biswal">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          </a>
+          <a class="cico" href="https://www.linkedin.com/in/sai-kiran-biswal" target="_blank" rel="noopener" aria-label="LinkedIn profile">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5zM3 9h4v12H3zM9 9h3.8v1.7h.05c.53-1 1.83-2.05 3.77-2.05 4.03 0 4.78 2.65 4.78 6.1V21h-4v-5.4c0-1.29-.02-2.95-1.8-2.95-1.8 0-2.08 1.4-2.08 2.85V21H9z"/></svg>
+          </a>
+          <a class="cico" href="https://github.com/saikiranbiswal" target="_blank" rel="noopener" aria-label="GitHub profile">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.58 2 12.25c0 4.53 2.87 8.37 6.85 9.73.5.1.68-.22.68-.49 0-.24-.01-.87-.01-1.71-2.78.62-3.37-1.37-3.37-1.37-.46-1.19-1.11-1.5-1.11-1.5-.9-.64.07-.62.07-.62 1 .07 1.53 1.05 1.53 1.05.89 1.56 2.34 1.11 2.91.85.09-.66.35-1.11.63-1.37-2.22-.26-4.56-1.14-4.56-5.05 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.3.1-2.71 0 0 .84-.28 2.75 1.05a9.3 9.3 0 0 1 5 0c1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.45.1 2.71.64.72 1.03 1.63 1.03 2.75 0 3.92-2.34 4.79-4.57 5.04.36.32.68.94.68 1.9 0 1.37-.01 2.47-.01 2.81 0 .27.18.6.69.49A10.02 10.02 0 0 0 22 12.25C22 6.58 17.52 2 12 2z"/></svg>
+          </a>
         </div>
+        <a class="contact-email" href="mailto:saikiran.biswal@outlook.com">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+          saikiran.biswal@outlook.com
+        </a>
       </div>
       <div class="menu-foot">
-        © <span id="year"></span> Saikiran Biswal<br/>Designed and built with AI assistance.
+        © <span id="year"></span> Saikiran Biswal
       </div>
     </div>
   </aside>
+
+  <!-- ============ RÉSUMÉ PAGE ============ -->
+  <div id="resume-page" role="dialog" aria-modal="true" aria-label="Résumé">
+    <button class="d-close" id="resume-close" aria-label="Close résumé">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+    </button>
+    <div class="rp-wrap">
+      <header class="rp-hero">
+        <img class="rp-photo" src="assets/about/portrait-mq78fxvi.png" alt="Saikiran Biswal" loading="lazy"/>
+        <div>
+          <div class="rp-name">Sai Kiran Biswal</div>
+          <p class="rp-title">Enterprise SaaS Product &amp; Solution Consultant, CSPO® · CX · Digital Banking · I2C/AR Automation · MBA (XIMB)</p>
+          <div class="rp-meta">
+            <span class="rp-chip">Pune / Bengaluru</span>
+            <a class="rp-chip" href="mailto:saikiran.biswal@outlook.com">saikiran.biswal@outlook.com</a>
+            <a class="rp-chip" href="https://www.linkedin.com/in/sai-kiran-biswal" target="_blank" rel="noopener">linkedin ↗</a>
+            <a class="rp-chip primary" href="assets/resume.pdf" target="_blank" rel="noopener">Download PDF ↗</a>
+          </div>
+        </div>
+      </header>
+
+      <section class="rp-section">
+        <div class="rp-lab">Professional summary</div>
+        <p class="rp-summary">Enterprise SaaS Product &amp; Solution Consultant with ~5 years across CX, digital banking and finance-automation SaaS, and an MBA from XIMB. I translate complex client workflows into configurable product scope, solution designs and delivery-ready roadmaps, from discovery through enterprise rollout in multi-stakeholder environments.</p>
+      </section>
+
+      <section class="rp-section">
+        <div class="rp-lab">Experience · click any role to expand</div>
+        <div class="rp-timeline" id="tl-experience">
+          <div class="tl-item">
+            <button class="tl-head" type="button"><span><span class="tl-role">Consultant · Collections Cloud, Solution Design &amp; Product Alignment</span><span class="tl-org">HighRadius</span></span><span class="tl-right"><span class="tl-dates">Jun 2025 – Present</span><span class="tl-ico" aria-hidden="true"></span></span></button>
+            <div class="tl-body"><ul>
+              <li>Defined epics, user stories and acceptance criteria for I2C workflow changes across enterprise Collections Cloud programs.</li>
+              <li>Authored PRDs and user stories for Collections Cloud workflows across cash application, dispute management and dunning automation.</li>
+              <li>Ran discovery with AR managers and collections analysts, shaping Collections Cloud features shipped across enterprise accounts.</li>
+              <li>Aligned engineering, QA and finance stakeholders in a complex post-merger I2C rollout, resolving data, integration and sign-off blockers.</li>
+            </ul></div>
+          </div>
+          <div class="tl-item">
+            <button class="tl-head" type="button"><span><span class="tl-role">Product Manager · Digital Banking SaaS &amp; Solution Architecture</span><span class="tl-org">Intellect Design Arena</span></span><span class="tl-right"><span class="tl-dates">May 2024 – Jan 2025</span><span class="tl-ico" aria-hidden="true"></span></span></button>
+            <div class="tl-body"><ul>
+              <li>Owned backlog and product scope for onboarding, family banking and loan-origination workflows on a configurable digital banking platform.</li>
+              <li>Translated RFP responses and client requirements into banking-SaaS solution designs and delivery roadmaps across enterprise and mid-market accounts.</li>
+              <li>Led client discovery across 3–4 enterprise and 6–7 mid-market banking accounts, validating requirements and product-fit gaps.</li>
+              <li>Guided 12 consultants across ~10 banking-SaaS projects, aligning delivery scope, MVP trade-offs and platform roadmap decisions.</li>
+            </ul></div>
+          </div>
+          <div class="tl-item">
+            <button class="tl-head" type="button"><span><span class="tl-role">Business Consultant (Intern) · Digital Banking Transformation</span><span class="tl-org">Tata Consultancy Services</span></span><span class="tl-right"><span class="tl-dates">Apr – Jun 2023</span><span class="tl-ico" aria-hidden="true"></span></span></button>
+            <div class="tl-body"><ul>
+              <li>Mapped current- and future-state banking workflows and contributed BRD inputs for a retail &amp; corporate banking transformation.</li>
+            </ul></div>
+          </div>
+          <div class="tl-item">
+            <button class="tl-head" type="button"><span><span class="tl-role">Senior Business Analyst · CX SaaS &amp; Customer 360</span><span class="tl-org">Etech Global Services</span></span><span class="tl-right"><span class="tl-dates">Dec 2020 – May 2022</span><span class="tl-ico" aria-hidden="true"></span></span></button>
+            <div class="tl-body"><ul>
+              <li>Built Customer 360 analytics to surface product-friction patterns and support prioritization across enterprise CX accounts.</li>
+              <li>Designed VoC and journey-analytics programs to close feedback loops, analyze drop-offs and prioritize CX workflow improvements.</li>
+            </ul></div>
+          </div>
+          <div class="tl-item">
+            <button class="tl-head" type="button"><span><span class="tl-role">Business Analyst · Digital Banking / Workflow Automation</span><span class="tl-org">DIATOZ</span></span><span class="tl-right"><span class="tl-dates">Oct 2019 – Dec 2020</span><span class="tl-ico" aria-hidden="true"></span></span></button>
+            <div class="tl-body"><ul>
+              <li>Built BDD-based regression coverage for banking onboarding, transaction and servicing workflows with scheduled stakeholder reporting.</li>
+            </ul></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="rp-section">
+        <div class="rp-lab">Key projects</div>
+        <div class="rp-timeline" id="tl-projects">
+          <div class="tl-item">
+            <button class="tl-head" type="button"><span><span class="tl-role">Post-Merger Invoice-to-Cash Transformation · Fortune 500 OEM Distributor</span><span class="tl-org">Collections Cloud</span></span><span class="tl-right"><span class="tl-ico" aria-hidden="true"></span></span></button>
+            <div class="tl-body"><ul>
+              <li>Led delivery for a post-merger I2C transformation across 300+ branches and 19 ERP instances, from current-state assessment to production handover.</li>
+              <li>Redesigned collections, dispute and cash-application workflows for a fragmented multi-entity AR environment lacking a consistent process.</li>
+              <li>Program delivered ~35% lower cost-to-collect and ~6-day DSO improvement against the pre-transformation baseline.</li>
+              <li>Shipped Customer Legal Entity Tagging (reduced AR misclassification, no ERP change), Email Inbox 2.0, and Auto PTP / Draft / Send cadences.</li>
+            </ul></div>
+          </div>
+          <div class="tl-item">
+            <button class="tl-head" type="button"><span><span class="tl-role">STP Onboarding &amp; Loan-Origination Journeys · Retail &amp; SME Banking</span><span class="tl-org">Intellect DEP</span></span><span class="tl-right"><span class="tl-ico" aria-hidden="true"></span></span></button>
+            <div class="tl-body"><ul>
+              <li>Designed retail and SME loan-origination journeys across application states, decision triggers and integration handoffs (web + mobile).</li>
+              <li>Defined STP onboarding architecture across KYC, document capture, decisioning, exception states and fallback paths.</li>
+              <li>Operationalized configurable workflow orchestration with engineering and business teams across regulated banking markets.</li>
+            </ul></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="rp-section">
+        <div class="rp-lab">Skills &amp; expertise</div>
+        <div class="rp-grid">
+          <div class="rp-skill"><b>Product &amp; Solution</b><p>Product discovery · PRDs &amp; user stories · roadmap prioritization · solution architecture · backlog grooming · UAT</p></div>
+          <div class="rp-skill"><b>Domain Workflows</b><p>I2C · AR automation · collections lifecycle · digital banking (onboarding, lending) · Customer 360 · VoC / journey analytics</p></div>
+          <div class="rp-skill"><b>Commercial Solutioning</b><p>RFP responses · account solutioning · client workshops · solution design</p></div>
+          <div class="rp-skill"><b>Systems &amp; Integrations</b><p>ERP integrations · data mapping · workflow orchestration · configurable SaaS · exception handling</p></div>
+          <div class="rp-skill"><b>Delivery &amp; Tools</b><p>Agile / Scrum · CSPO® · stakeholder management · release readiness · JIRA · Confluence · Azure DevOps · SQL · Power BI</p></div>
+        </div>
+      </section>
+
+      <section class="rp-section">
+        <div class="rp-lab">Education, certifications &amp; achievements</div>
+        <div class="rp-edu">
+          <div class="ee"><b>MBA, Business Management</b><div class="ee-sub">Xavier Institute of Management Bhubaneswar (XIMB) · 2022–2024</div></div>
+          <div class="ee"><b>B.Tech</b><div class="ee-sub">Veer Surendra Sai University of Technology (VSSUT), Burla · 2014–2018</div></div>
+          <div class="ee"><b>Certifications</b><p>CSPO® (Scrum Alliance) · Lean Six Sigma Black Belt (KPMG) · Product Management Essentials (Product Space)</p></div>
+          <div class="ee"><b>Achievements</b><p>National Finalist · Flipkart Wired (2022) &amp; Hero MotoCorp Strategy Challenge (2023) · Core Member, Constrat (Consulting &amp; Strategy), XIMB</p></div>
+        </div>
+      </section>
+    </div>
+  </div>
 
   <!-- ============ IMPORT MAP + THREE.JS ============ -->
   <script type="importmap">
@@ -368,69 +634,81 @@
      ============================================================ */
   const PROJECTS = [
     {
-      id:'delivery-control-tower', no:'№ 01', title:'Delivery Control Tower', tag:'AI · Delivery intelligence',
-      lede:'Messy delivery trackers in; health, risks, and executive summaries out.',
-      about:'A public, shipped delivery-intelligence platform built around a simple promise: turn fragmented project status into an operating picture leaders can use. The work spans extraction, fit-for-purpose scoring, risk narration, executive summaries, and a human-gated delivery workflow.',
-      source:'projects/delivery-control-tower/', accent:'#C14B2A',
-      live:'https://saikiranbiswal.github.io/delivery-control-tower/',
-      repo:'https://github.com/saikiranbiswal/delivery-control-tower'
+      id:'lending-cloud', no:'№ 01', title:'Enterprise Lending Cloud', tag:'Fintech · Loan origination',
+      lede:'A loan-origination and servicing operations workspace: applications, underwriting, disbursal, and collections in one command centre.',
+      about:'An end-to-end lending operations workspace covering the full loan lifecycle: a command centre with a risk-ordered work queue, application intake, credit decisions and underwriting, active-loan servicing, collections, customers, portfolio insights, and controls & audit. It shows enterprise product judgment for a regulated lending domain: the origination system, not a mockup.',
+      source:'apps/lending-cloud/', accent:'#2C4BFF',
+      live:'apps/lending-cloud/index.html'
     },
     {
-      id:'atlas', no:'№ 02', title:'Atlas', tag:'Agentic task management',
-      lede:'A Jira-like local task manager for owners, blockers, evidence, and delivery state.',
-      about:'Atlas is a local-first task-management system shaped around how work actually moves: owner, priority, blocker, evidence, and next action. The project proves the product surface, the domain model, and the delivery workflow for an agentic operating layer.',
-      source:'projects/task-management-system/', accent:'#6D5BD0',
-      repo:'https://github.com/saikiranbiswal/task-management-system'
+      id:'collections-cloud', no:'№ 02', title:'AI Collections Cloud', tag:'Fintech · Recovery OS',
+      lede:'A collections operations surface: portfolio risk, next-best-action, collector guidance, and recovery evidence.',
+      about:'A working AR collections operations app: prioritised recovery queues, portfolio risk, next-best-action guidance, and operating scorecards for recovery teams. It turns collections strategy into a usable daily workspace rather than a static deck.',
+      source:'apps/collections-cloud/', accent:'#B97612',
+      live:'apps/collections-cloud/index.html'
     },
     {
-      id:'collections-cloud', no:'№ 03', title:'AI Collections Cloud', tag:'Fintech · Recovery OS',
-      lede:'A collections platform with strategy simulation, collector guidance, and recovery evidence.',
-      about:'A working AR collections concept and artifact pack: portfolio risk, next-best-action, operating scorecards, and a strategy layer for recovery teams. It connects the prototype in `collections-cloud` with PM artifacts in `artefacts folder` and the workflow-orchestration work.',
-      source:'projects/collections-cloud/ + projects/artefacts folder/', accent:'#B97612'
+      id:'atlas', no:'№ 03', title:'Atlas', tag:'Agentic task management',
+      lede:'A platform delivery board built around how work actually moves: owner, priority, blocker, evidence, next action.',
+      about:'Atlas is a delivery board / task-management surface shaped around real delivery state: owner, priority, blocker, evidence, and next action. It proves the product surface and domain model for an agentic operating layer.',
+      source:'apps/atlas/', accent:'#6D5BD0',
+      live:'apps/atlas/index.html'
     },
     {
-      id:'workflow-orchestration', no:'№ 04', title:'Workflow Orchestration', tag:'Collections · Operations',
-      lede:'A collections orchestrator that turns accounts, actions, and outcomes into a managed system.',
-      about:'A collections workflow system and workbook artifact pack that demonstrates how recovery work can be routed, sequenced, and measured. It is the operating layer beside the collections strategy work: queues, decisions, metrics, and the evidence loop.',
-      source:'projects/workflow-orchestration/', accent:'#2F7D68'
+      id:'dashboard-studio', no:'№ 04', title:'Dashboard Studio', tag:'Data · No-code BI',
+      lede:'Import a spreadsheet, then drag widgets onto a canvas or drop columns directly to build a live dashboard.',
+      about:'A no-code dashboard builder that runs entirely in the browser: import xlsx/xls/csv/json, then compose a live dashboard by dragging widgets onto a canvas and dropping columns directly. It shows product thinking for self-serve analytics.',
+      source:'apps/dashboard-studio/', accent:'#0E9F6E',
+      live:'apps/dashboard-studio/index.html'
     },
     {
-      id:'financial-model-generator', no:'№ 05', title:'modelgen', tag:'Finance · Compiler',
-      lede:'A driver-based financial model compiler with ModelSpec JSON as source of truth.',
-      about:'modelgen treats a financial model as a structured product rather than a hand-built spreadsheet. A ModelSpec JSON defines drivers, scenarios, and outputs, then the generator compiles the model so assumptions and financial logic stay explicit.',
-      source:'projects/financial-model-generator/', accent:'#4C6FFF'
+      id:'excel-merger', no:'№ 05', title:'Excel Merger', tag:'Data · In-browser tool',
+      lede:'Merge sheets, fill gaps, generate data, and export, 100% in-browser, nothing leaves the machine.',
+      about:'A privacy-first data utility that runs entirely in the browser: merge multiple spreadsheets, fill gaps, generate test data, and export. A focused, shippable tool that solves a real recurring operations pain without a backend.',
+      source:'apps/excel-merger/', accent:'#1F9D55',
+      live:'apps/excel-merger/index.html'
     },
     {
-      id:'cx-saas-pm', no:'№ 06', title:'CX SaaS PM Case', tag:'Enterprise SaaS · CX',
-      lede:'A Medallia-like product case with RBAC, AI governance, and closed-loop workflows.',
-      about:'A CX platform case that moves beyond screens into operating design: workflow WF01-WF07, role-based access, AI governance, and closed-loop verification. It demonstrates enterprise product judgment: capability model, governance, and usable workflows.',
-      source:'projects/cx-saas-pm/', accent:'#D15F7E'
+      id:'excel-transformer', no:'№ 06', title:'Excel Transformer', tag:'Data · In-browser tool',
+      lede:'Drop, rename, filter, and export tabular data, runs entirely in your browser.',
+      about:'A companion in-browser data tool for reshaping tabular data: drop a file, rename and filter columns, and export a clean result. No upload, no backend; the transformation runs client-side.',
+      source:'apps/excel-transformer/', accent:'#38A169',
+      live:'apps/excel-transformer/index.html'
     },
     {
-      id:'agent-factory', no:'№ 07', title:'Agent Factory', tag:'AI agents · GTM system',
-      lede:'A six-agent content-to-sales-call system with shared memory and governance.',
-      about:'Agent Factory is the planning and specification layer for a multi-agent business system: content generation, lead qualification, memory, routing, and sales-call conversion. It frames agents as productized workflows with boundaries, evidence, and escalation.',
-      source:'projects/agent-factory/', accent:'#8E5CF7'
+      id:'fastag', no:'№ 07', title:'FASTag Trust Layer', tag:'Fintech · Product case',
+      lede:'A redesign and trust-layer concept for FASTag: an interactive product case, not a slide.',
+      about:'An interactive FASTag redesign and trust-layer case: it walks the problem, the product decisions, and a working prototype surface. Demonstrates end-to-end product judgment on a mass-scale Indian fintech rail.',
+      source:'apps/fastag/', accent:'#DD6B20',
+      live:'apps/fastag/index.html'
     },
     {
-      id:'pm-bcg-skills', no:'№ 08', title:'PM + BCG Skills', tag:'Product craft · Strategy',
-      lede:'A reusable skill library for product, strategy, decision memos, discovery, and GTM.',
-      about:'The PM and BCG skill bundles are reusable operating knowledge, not one-off prompts: structured methods for problem framing, discovery, pricing, roadmaps, metrics, stakeholder alignment, competitive strategy, and executive-grade synthesis.',
-      source:'projects/pm-skills/ + projects/bcg-skills/', accent:'#3B82F6'
+      id:'synthesis', no:'№ 08', title:'Synthesis', tag:'Strategy · Framework engine',
+      lede:'A strategic framework engine: pick a framework, work a decision through it, and produce a structured output.',
+      about:'Synthesis is an interactive strategic-framework engine: choose a framework and drive a decision through its structure to a usable output. It packages consulting-grade thinking into a working tool.',
+      source:'apps/synthesis/', accent:'#805AD5',
+      live:'apps/synthesis/index.html'
     },
     {
-      id:'second-brain', no:'№ 09', title:'Second Brain OS', tag:'Knowledge system · Agents',
-      lede:'A private operating system for projects, memory, publishing decisions, and agent loops.',
-      about:'The second brain is the source system behind this portfolio: LIBRARY as index, MEMORY as state, agents for curation and verification, and project folders as the real body of work. The public Universe is the showcase; the second brain is the operating system.',
-      source:'projects/claude-wiki/ + .agents/second-brain/', accent:'#111827'
+      id:'neuralpath', no:'№ 09', title:'NeuralPath', tag:'AI · Interactive concept',
+      lede:'An interactive game that teaches core AI concepts through play.',
+      about:'NeuralPath is a playable, interactive way to learn core AI concepts: a self-contained front-end experience that shows range beyond enterprise tooling into learning design.',
+      source:'apps/neuralpath/', accent:'#3182CE',
+      live:'apps/neuralpath/index.html'
     }
   ];
 
   /* ============================================================
-     SOUND SYSTEM: Web Audio synthesis, no files.
+     SOUND SYSTEM · "Interstellar Vibe": Hans-Zimmer register,
+     pure Web Audio synthesis, no files.
+       • tick   → the film's clock tick-tock (two detuned wooden pulses)
+       • chord  → slow church-organ swell (A-minor, long attack)
+       • whoosh → low, long "wormhole" filtered-noise sweep
+       • drone  → faint sub-bass organ pad that lives under the scene
      ============================================================ */
   const Sound = (() => {
     let ctx=null, master=null, muted=false, ready=false;
+    let droneGain=null, droneNodes=null, tock=false;
     function init(startMuted){
       muted = !!startMuted;
       try{
@@ -438,6 +716,9 @@
         master = ctx.createGain();
         master.gain.value = 0.5;
         master.connect(ctx.destination);
+        droneGain = ctx.createGain();
+        droneGain.gain.value = 0.0001;
+        droneGain.connect(master);
         ready = true;
       }catch(e){ ready=false; }
     }
@@ -455,28 +736,75 @@
       o.connect(g); g.connect(dest||master);
       env(g,t,a,d,peak); o.start(t); o.stop(t+a+d+0.05);
     }
+    // sub-bass organ pad: a slow, detuned A-minor drone that breathes
+    function startDrone(){
+      if(!ready || droneNodes) return;
+      const lp=ctx.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=420; lp.Q.value=0.6;
+      lp.connect(droneGain);
+      const voices=[55,55.25,82.41,110].map((f,i)=>{
+        const o=ctx.createOscillator(); o.type=i<2?'sine':'triangle'; o.frequency.value=f;
+        const g=ctx.createGain(); g.gain.value=i===3?0.18:0.5;
+        o.connect(g); g.connect(lp); o.start(); return o;
+      });
+      droneNodes=voices;
+      // gentle amplitude breathing via an LFO on droneGain
+      const lfo=ctx.createOscillator(); lfo.frequency.value=0.06;
+      const lfoG=ctx.createGain(); lfoG.gain.value=0.012;
+      lfo.connect(lfoG); lfoG.connect(droneGain.gain); lfo.start();
+      droneNodes.push(lfo);
+    }
+    function fadeDrone(on){
+      if(!ready||!droneGain) return;
+      const t=ctx.currentTime;
+      droneGain.gain.cancelScheduledValues(t);
+      droneGain.gain.setValueAtTime(Math.max(droneGain.gain.value,0.0001),t);
+      droneGain.gain.exponentialRampToValueAtTime(on?0.035:0.0001, t+ (on?2.4:0.8));
+    }
     return {
       init, resume,
-      setMuted(m){ muted=m; },
+      setMuted(m){ muted=m; fadeDrone(!m); },
       isMuted(){ return muted; },
-      tick(){ tone(1900,'sine',0.005,0.05,0.05); },
-      pluck(){ if(!ready||muted)return; tone(392,'triangle',0.01,0.5,0.14); setTimeout(()=>tone(587,'triangle',0.01,0.4,0.09),40); },
+      startDrone(){ startDrone(); if(!muted) fadeDrone(true); },
+      // clock tick-tock: two short detuned wooden pulses that alternate
+      tick(){
+        if(!ready||muted)return;
+        const t=ctx.currentTime, f=tock?150:184; tock=!tock;
+        const o=ctx.createOscillator(); o.type='sine'; o.frequency.value=f;
+        const g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
+        g.gain.exponentialRampToValueAtTime(0.09,t+0.002);
+        g.gain.exponentialRampToValueAtTime(0.0001,t+0.05);
+        o.connect(g); g.connect(master); o.start(t); o.stop(t+0.06);
+        // mechanical click edge
+        const nb=ctx.createBuffer(1,ctx.sampleRate*0.02,ctx.sampleRate);
+        const nd=nb.getChannelData(0); for(let i=0;i<nd.length;i++) nd[i]=(Math.random()*2-1);
+        const ns=ctx.createBufferSource(); ns.buffer=nb;
+        const hp=ctx.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=2600;
+        const ng=ctx.createGain(); ng.gain.setValueAtTime(0.05,t); ng.gain.exponentialRampToValueAtTime(0.0001,t+0.02);
+        ns.connect(hp); hp.connect(ng); ng.connect(master); ns.start(t); ns.stop(t+0.03);
+      },
+      pluck(){ if(!ready||muted)return; tone(146.8,'triangle',0.02,0.7,0.12); setTimeout(()=>tone(220,'sine',0.03,0.6,0.07),50); },
+      // wormhole transition: low, long bandpass-swept noise
       whoosh(){
         if(!ready||muted)return;
-        const t=ctx.currentTime, dur=0.7;
+        const t=ctx.currentTime, dur=1.1;
         const buf=ctx.createBuffer(1,ctx.sampleRate*dur,ctx.sampleRate);
         const data=buf.getChannelData(0);
         for(let i=0;i<data.length;i++) data[i]=(Math.random()*2-1);
         const src=ctx.createBufferSource(); src.buffer=buf;
-        const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.frequency.value=520; bp.Q.value=0.8;
+        const bp=ctx.createBiquadFilter(); bp.type='bandpass'; bp.Q.value=1.2;
+        bp.frequency.setValueAtTime(110,t);
+        bp.frequency.exponentialRampToValueAtTime(420,t+dur*0.7);
+        bp.frequency.exponentialRampToValueAtTime(160,t+dur);
         const g=ctx.createGain(); g.gain.setValueAtTime(0.0001,t);
-        g.gain.exponentialRampToValueAtTime(0.10,t+0.12);
+        g.gain.exponentialRampToValueAtTime(0.09,t+0.2);
         g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
         src.connect(bp); bp.connect(g); g.connect(master); src.start(t); src.stop(t+dur);
       },
+      // organ swell: stacked A-minor partials with a long attack
       chord(){
         if(!ready||muted)return;
-        [261.6,329.6,392.0].forEach((f,i)=> setTimeout(()=>tone(f,'sine',0.06,1.4,0.09),i*90));
+        [110,130.8,164.8,220,329.6].forEach((f,i)=>
+          setTimeout(()=>tone(f,i<3?'sine':'triangle',0.8,2.6,i<3?0.09:0.05),i*70));
       }
     };
   })();
@@ -565,12 +893,15 @@
      ============================================================ */
   let renderer, scene, camera, ring, cardMeshes=[], glowMeshes=[], shadowMeshes=[], raf=null, running=false;
   let starLayers=[], nebSprites=[];
+  let latticeGroup=null, latticeLines=[], latticeNodes=null;
   const CW_G=2.72, CH_G=1.70; // card width/height in world units
 
   /* ---- THEME ---- */
   const SCENE_THEMES={
-    dark:{ fog:0x05070F, fogD:0.05, stars:[[0xF4F2EC,.9],[0xbfc6ff,.7],[0xE8A33D,.85]], neb:0.20, briFloor:0.46 },
-    light:{ fog:0xF5F2E9, fogD:0.04, stars:[[0x7A7398,.35],[0x9A92C2,.28],[0xB97612,.55]], neb:0.09, briFloor:0.60 }
+    dark:{ fog:0x05070F, fogD:0.05, stars:[[0xF4F2EC,.9]], neb:0.20, briFloor:0.46,
+           lat:0xF4F2EC, latOp:0.11, node:0xE8A33D, nodeOp:0.60 },
+    light:{ fog:0xF5F2E9, fogD:0.04, stars:[[0x7A7398,.34]], neb:0.09, briFloor:0.60,
+           lat:0x1C1A16, latOp:0.10, node:0xB97612, nodeOp:0.52 }
   };
   let theme=(localStorage.getItem('universe-theme')||'light');
   function applySceneTheme(){
@@ -583,6 +914,10 @@
       s.material.blending=blend; s.material.needsUpdate=true; });
     nebSprites.forEach(sp=>{ sp.material.opacity=t.neb; sp.material.blending=blend; sp.material.needsUpdate=true; });
     glowMeshes.forEach(g=>{ g.material.blending=blend; g.material.needsUpdate=true; });
+    latticeLines.forEach(ln=>{ ln.material.color.setHex(t.lat); ln.material.opacity=t.latOp*ln.userData.depthFade;
+      ln.material.needsUpdate=true; });
+    if(latticeNodes){ latticeNodes.material.color.setHex(t.node); latticeNodes.material.opacity=t.nodeOp;
+      latticeNodes.material.blending=blend; latticeNodes.material.needsUpdate=true; }
   }
   function setTheme(t){
     theme=t; localStorage.setItem('universe-theme',t);
@@ -631,6 +966,41 @@
     return new THREE.CanvasTexture(c);
   }
 
+  // geometric line lattice: parallel grid planes receding into fog + amber intersection nodes
+  function buildLattice(){
+    const grp=new THREE.Group();
+    const size=52, div=26, half=size/2, step=size/div;
+    const seg=[];
+    for(let i=0;i<=div;i++){
+      const p=-half+i*step;
+      seg.push(-half,p,0, half,p,0);   // horizontal
+      seg.push(p,-half,0, p,half,0);   // vertical
+    }
+    const gGeo=new THREE.BufferGeometry();
+    gGeo.setAttribute('position',new THREE.Float32BufferAttribute(seg,3));
+    latticeLines=[];
+    const depths=[-9,-14,-20,-27];
+    depths.forEach((z,idx)=>{
+      const mat=new THREE.LineBasicMaterial({transparent:true,depthWrite:false});
+      const ln=new THREE.LineSegments(gGeo,mat);
+      ln.position.z=z; ln.userData.depthFade=1-idx*0.22;
+      grp.add(ln); latticeLines.push(ln);
+    });
+    // amber nodes at a sparse subset of intersections on the front plane
+    const npts=[];
+    for(let i=0;i<=div;i+=2) for(let j=0;j<=div;j+=2){
+      if((i+j)%4!==0) continue;
+      npts.push(-half+i*step,-half+j*step,-9.02);
+    }
+    const nGeo=new THREE.BufferGeometry();
+    nGeo.setAttribute('position',new THREE.Float32BufferAttribute(npts,3));
+    latticeNodes=new THREE.Points(nGeo,new THREE.PointsMaterial({
+      size:0.12,map:starTexture(),transparent:true,depthWrite:false,sizeAttenuation:true}));
+    grp.add(latticeNodes);
+    grp.position.y=0.5;
+    return grp;
+  }
+
   function initScene(){
     renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
     renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
@@ -640,20 +1010,14 @@
     camera=new THREE.PerspectiveCamera(50,window.innerWidth/window.innerHeight,0.1,100);
     zBase=camZ(); camera.position.set(0,0,zBase);
 
-    // star shells (kept for theme restyling)
-    starLayers=[buildStars(2600,60,0.06,0xF4F2EC,0.9),
-                buildStars(1400,40,0.045,0xbfc6ff,0.7),
-                buildStars(90,50,0.12,0xE8A33D,0.85)];
+    // faint depth dust (single sparse layer; the lattice is the hero backdrop)
+    starLayers=[buildStars(600,72,0.05,0x7A7398,0.5)];
     starLayers.forEach(s=>scene.add(s));
-
-    // nebula planes (large soft additive sprites)
-    const nebTex=radialTexture('rgba(124,96,220,0.55)','rgba(70,54,150,0)');
-    const nebMat=new THREE.SpriteMaterial({map:nebTex,transparent:true,opacity:0.22,depthWrite:false,blending:THREE.AdditiveBlending});
     nebSprites=[];
-    [[-3,1,-6,14],[4,-2,-8,18],[0,2,-11,22]].forEach(([x,y,z,s])=>{
-      const sp=new THREE.Sprite(nebMat.clone()); sp.position.set(x,y,z); sp.scale.set(s,s,1);
-      scene.add(sp); nebSprites.push(sp);
-    });
+
+    // geometric line lattice backdrop
+    latticeGroup=buildLattice();
+    scene.add(latticeGroup);
     applySceneTheme();
 
     // ring + cards
@@ -688,12 +1052,18 @@
       return tex;
     }
 
-    PROJECTS.forEach((p,i)=>{
+    // NOTE: the rotating 3D card ring is retired in favour of the DOM swipe deck.
+    // The scene now renders only the ambient starfield + lattice backdrop.
+    if(false) PROJECTS.forEach((p,i)=>{
       const ang=i*STEP;
       const x=Math.sin(ang)*RADIUS, z=Math.cos(ang)*RADIUS;
       // opaque card: alphaTest keeps rounded corners crisp AND writes depth (correct sorting)
       const mat=new THREE.MeshBasicMaterial({color:0xffffff,map:makeCardTexture(null,p),
         transparent:true,alphaTest:0.5,side:THREE.DoubleSide});
+      // load the real product screenshot and swap it into the device frame when ready
+      (()=>{ const im=new Image();
+        im.onload=()=>{ const tx=makeCardTexture(im,p); if(mat.map) mat.map.dispose(); mat.map=tx; mat.needsUpdate=true; };
+        im.src='assets/screenshots/'+p.id+'.png'; })();
       const geo=new THREE.PlaneGeometry(CW,CH);
       const mesh=new THREE.Mesh(geo,mat);
       mesh.position.set(x,0,z);
@@ -774,7 +1144,7 @@
     // rotation physics: inertia while spinning, then ease to a target step
     if(!dragging){
       if(Math.abs(velocity)>0.0003){
-        curRotation += velocity; velocity *= 0.94;
+        curRotation += velocity; velocity *= 0.90;
         targetRotation = Math.round(curRotation/STEP)*STEP; // snap target = nearest card
       } else {
         velocity=0;
@@ -815,6 +1185,14 @@
       glowMeshes[i].scale.set(4.4*sc,3.1*sc,1);
     });
 
+    // lattice: slow living drift + gentle parallax + faint counter-rotation to the ring
+    if(latticeGroup){
+      const tm=performance.now()*0.00006;
+      latticeGroup.rotation.z = Math.sin(tm)*0.05;
+      latticeGroup.position.x = Math.sin(tm*1.3)*0.6 + pointer.x*0.4;
+      latticeGroup.position.y = 0.5 + Math.cos(tm*0.9)*0.4 - pointer.y*0.3;
+    }
+
     // camera parallax easing
     camera.position.x += (camTarget.x-camera.position.x)*0.04;
     camera.position.y += (camTarget.y-camera.position.y)*0.04;
@@ -827,53 +1205,116 @@
   function startLoop(){ if(!running){ running=true; document.body.dataset.scene='running'; tick(); } }
   function stopLoop(){ running=false; document.body.dataset.scene='paused'; if(raf) cancelAnimationFrame(raf); raf=null; }
 
-  /* ---- interactions: scroll / drag / keys ---- */
-  function goToIndex(i){
-    const base=-i*STEP;
-    const k=Math.round((curRotation-base)/(Math.PI*2)); // shortest-path equivalent angle
-    targetRotation=base+k*Math.PI*2;
-    velocity=0;
+  /* ============================================================
+     SWIPE DECK — vertical social-feed of project cards.
+     Swipe up → next, swipe down → previous, infinite loop.
+     Tap the focused card → open its full case study.
+     ============================================================ */
+  const deckEl=$('#deck');
+  let deckIndex=0, deckBusy=false;
+
+  function makeDeckCard(i){
+    const p=PROJECTS[i];
+    const card=document.createElement('article');
+    card.className='deck-card'; card.style.setProperty('--accent',p.accent);
+    card.innerHTML=
+      '<div class="dk-media"><span class="dk-shimmer"></span></div>'+
+      '<div class="dk-body">'+
+        '<div class="dk-no">'+p.no+'</div>'+
+        '<div class="dk-title">'+p.title+'</div>'+
+        '<div class="dk-tag">'+p.tag+'</div>'+
+        '<p class="dk-lede">'+p.lede+'</p>'+
+        '<div class="dk-hint"><span class="dk-open">Tap to open</span><span class="dk-swipe">Swipe up for next ↑</span></div>'+
+      '</div>';
+    const media=card.querySelector('.dk-media');
+    const img=new Image(); img.className='dk-shot'; img.alt=p.title+' preview';
+    img.onload=()=>{ card.classList.add('loaded'); };
+    img.onerror=()=>{ img.onerror=null; img.src=projectImage(p); };
+    img.src='assets/screenshots/'+p.id+'.png';
+    media.appendChild(img);
+    return card;
   }
 
+  function renderDeck(){
+    if(!deckEl) return;
+    deckEl.innerHTML='';
+    const behind=makeDeckCard((deckIndex+1)%N); behind.classList.add('is-behind');
+    const front=makeDeckCard(deckIndex); front.classList.add('is-front','entering');
+    deckEl.appendChild(behind); deckEl.appendChild(front);
+    // ease the new front card up from the behind position
+    requestAnimationFrame(()=>requestAnimationFrame(()=>front.classList.remove('entering')));
+    currentIndex=deckIndex; setCaption(deckIndex);
+    document.querySelectorAll('#list-items .list-item').forEach((el,i)=>el.classList.toggle('is-front',i===deckIndex));
+    bindFront(front);
+  }
+
+  function advance(step){
+    if(deckBusy) return; deckBusy=true;
+    const up=step>0;                         // next flies up, previous flies down
+    const front=deckEl.querySelector('.is-front');
+    if(front){
+      front.style.transition='transform .42s cubic-bezier(.36,0,.1,1),opacity .42s';
+      front.style.transform='translateY('+(up?-1:1)*window.innerHeight+'px) rotate('+(up?-5:5)+'deg)';
+      front.style.opacity='0';
+    }
+    Sound.tick(); Sound.whoosh();
+    setTimeout(()=>{ deckIndex=(deckIndex+step+N)%N; renderDeck(); deckBusy=false; }, 300);
+  }
+
+  function bindFront(card){
+    let sy=0,sx=0,dy=0,dx=0,drag=false,moved=false,st=0;
+    card.addEventListener('pointerdown',e=>{
+      if(deckBusy) return;
+      drag=true; moved=false; sy=e.clientY; sx=e.clientX; dy=dx=0; st=performance.now();
+      try{card.setPointerCapture(e.pointerId);}catch(_){}
+      card.classList.add('dragging');
+    });
+    card.addEventListener('pointermove',e=>{
+      if(!drag) return;
+      dy=e.clientY-sy; dx=e.clientX-sx;
+      if(Math.abs(dy)>5||Math.abs(dx)>5) moved=true;
+      card.style.transform='translateY('+dy+'px) translateX('+dx*0.22+'px) rotate('+dx*0.02+'deg)';
+      card.style.opacity=String(Math.max(0.35,1-Math.abs(dy)/520));
+      const behind=deckEl.querySelector('.is-behind');
+      if(behind){ const k=Math.min(1,Math.abs(dy)/170);
+        behind.style.transform='scale('+(0.9+0.1*k)+') translateY('+(20-20*k)+'px)';
+        behind.style.opacity=String(0.45+0.55*k); }
+    });
+    function release(e){
+      if(!drag) return; drag=false; card.classList.remove('dragging');
+      try{card.releasePointerCapture(e.pointerId);}catch(_){}
+      const dt=Math.max(1,performance.now()-st), fast=Math.abs(dy)/dt>0.5;
+      if(!moved){ openDetail(deckIndex); return; }                 // tap → open
+      if(Math.abs(dy)>90 || (fast && Math.abs(dy)>34)){ advance(dy<0?1:-1); }
+      else { springBack(card); }
+    }
+    card.addEventListener('pointerup',release);
+    card.addEventListener('pointercancel',release);
+  }
+
+  function springBack(card){
+    card.style.transition='transform .38s cubic-bezier(.2,.85,.25,1),opacity .3s';
+    card.style.transform=''; card.style.opacity='1';
+    const behind=deckEl.querySelector('.is-behind');
+    if(behind){ behind.style.transition='transform .38s,opacity .3s'; behind.style.transform=''; behind.style.opacity=''; }
+    setTimeout(()=>{ if(card){card.style.transition='';} },400);
+  }
+
+  // wheel / trackpad → feed navigation
+  let wheelLock=false;
   window.addEventListener('wheel',(e)=>{
-    if(mode!=='orbit'||detailOpen) return;
-    velocity += (e.deltaY>0?1:-1)*STEP*0.06;
+    if(mode!=='orbit'||detailOpen||menuOpen||resumeOpen) return;
+    if(wheelLock||Math.abs(e.deltaY)<8) return;
+    wheelLock=true; setTimeout(()=>wheelLock=false,440);
+    advance(e.deltaY>0?1:-1);
   },{passive:true});
 
-  canvas.addEventListener('pointerdown',(e)=>{
-    if(mode!=='orbit'||detailOpen) return;
-    dragging=true; lastX=e.clientX; velocity=0; canvas.setPointerCapture(e.pointerId);
-  });
-  canvas.addEventListener('pointermove',(e)=>{
-    if(!dragging) return;
-    const dx=e.clientX-lastX; lastX=e.clientX;
-    curRotation += dx*0.006; velocity=dx*0.006;
-  });
-  function endDrag(e){ if(dragging){ dragging=false; try{canvas.releasePointerCapture(e.pointerId);}catch(_){}} }
-  canvas.addEventListener('pointerup',endDrag);
-  canvas.addEventListener('pointercancel',endDrag);
-
-  // click front card → open; side card → rotate to front
-  let downX=0,downY=0;
-  canvas.addEventListener('pointerdown',e=>{downX=e.clientX;downY=e.clientY;});
-  canvas.addEventListener('pointerup',(e)=>{
-    if(mode!=='orbit'||detailOpen) return;
-    if(Math.abs(e.clientX-downX)>6||Math.abs(e.clientY-downY)>6) return; // was a drag
-    ndc.set((e.clientX/innerWidth)*2-1,-(e.clientY/innerHeight)*2+1);
-    raycaster.setFromCamera(ndc,camera);
-    const hits=raycaster.intersectObjects(cardMeshes);
-    if(hits.length){
-      const idx=hits[0].object.userData.index;
-      if(idx===frontIndex()) openDetail(idx); else goToIndex(idx);
-    }
-  });
-
   window.addEventListener('keydown',(e)=>{
-    if(e.key==='Escape'){ if(detailOpen) closeDetail(); else if(menuOpen) closeMenu(); return; }
-    if(mode!=='orbit'||detailOpen||menuOpen) return;
-    if(e.key==='ArrowRight'){ goToIndex((frontIndex()+1)%N); }
-    else if(e.key==='ArrowLeft'){ goToIndex((frontIndex()-1+N)%N); }
-    else if(e.key==='Enter'){ openDetail(frontIndex()); }
+    if(e.key==='Escape'){ if(resumeOpen) closeResume(); else if(detailOpen) closeDetail(); else if(menuOpen) closeMenu(); return; }
+    if(mode!=='orbit'||detailOpen||menuOpen||resumeOpen) return;
+    if(e.key==='ArrowUp'||e.key==='ArrowRight'){ e.preventDefault(); advance(1); }
+    else if(e.key==='ArrowDown'||e.key==='ArrowLeft'){ e.preventDefault(); advance(-1); }
+    else if(e.key==='Enter'||e.key===' '){ e.preventDefault(); openDetail(deckIndex); }
   });
 
   /* ============================================================
@@ -896,13 +1337,13 @@
     const shot=detail.querySelector('.d-shot');
     shot.classList.add('shimmer'); shot.removeAttribute('src');
     shot.onload=()=>shot.classList.remove('shimmer');
-    shot.src=projectImage(p); shot.alt=p.title+' visual summary';
+    shot.onerror=()=>{ shot.onerror=null; shot.src=projectImage(p); };
+    shot.src='assets/screenshots/'+p.id+'.png'; shot.alt=p.title+' product screenshot';
     detail.querySelector('.d-lede').textContent=p.lede;
     detail.querySelector('.d-about').textContent=p.about;
     const links=detail.querySelector('.d-links'); links.innerHTML='';
     if(p.live) links.appendChild(linkPill(p.live,'Open live ↗',true));
     if(p.repo) links.appendChild(linkPill(p.repo,'Repository ↗',!p.live));
-    links.appendChild(sourcePill(p.source));
     const next=PROJECTS[(i+1)%N];
     detail.querySelector('#detail-next .nx-title').textContent=next.title;
     detail.querySelector('#detail-next').onclick=(ev)=>{ev.preventDefault(); openDetail((i+1)%N); detail.scrollTop=0;};
@@ -944,8 +1385,8 @@
     $('#mode-orbit').setAttribute('aria-pressed',orbitOn);
     $('#mode-list').setAttribute('aria-pressed',!orbitOn);
     listview.classList.toggle('show',!orbitOn);
-    caption.style.display=orbitOn?'':'none';
     canvas.style.display=orbitOn?'':'none';
+    if(deckEl) deckEl.classList.toggle('hidden',!orbitOn);
     if(orbitOn){ if(renderer && !menuOpen && !document.hidden) startLoop(); }
     else stopLoop();
     Sound.whoosh();
@@ -971,7 +1412,45 @@
   $('#nav-works').addEventListener('click',(e)=>{e.preventDefault(); closeMenu(); if(mode!=='orbit')setMode('orbit');});
   $('#home-glyph').addEventListener('click',(e)=>{e.preventDefault(); if(menuOpen)closeMenu(); if(detailOpen)closeDetail(); if(mode!=='orbit')setMode('orbit');});
   $('#nav-about').addEventListener('click',(e)=>{e.preventDefault(); $('#about-block').scrollIntoView({behavior:'smooth'});});
+  $('#nav-resume').addEventListener('click',(e)=>{e.preventDefault(); openResume();});
   $('#nav-contact').addEventListener('click',(e)=>{e.preventDefault(); $('#contact-block').scrollIntoView({behavior:'smooth'});});
+
+  /* contextual contact: clicking a contact reveals only that contact's context */
+  document.querySelectorAll('#contact-acc .ca-head').forEach((head)=>{
+    head.addEventListener('click',()=>{
+      const item=head.parentElement, wasOpen=item.classList.contains('open');
+      document.querySelectorAll('#contact-acc .ca-item.open').forEach(i=>i.classList.remove('open'));
+      if(!wasOpen){ item.classList.add('open'); Sound.tick(); }
+    });
+  });
+
+  /* ============ RÉSUMÉ PAGE (timeline) ============ */
+  const resumePage=$('#resume-page');
+  let resumeOpen=false;
+  function openResume(){
+    resumeOpen=true; resumePage.classList.add('open');
+    document.body.style.overflow='hidden';
+    if(menuOpen) closeMenu();
+    if(detailOpen) closeDetail();
+    resumePage.scrollTop=0;
+    Sound.pluck(); stopLoop();
+    $('#resume-close').focus();
+  }
+  function closeResume(){
+    resumeOpen=false; resumePage.classList.remove('open');
+    document.body.style.overflow='';
+    Sound.whoosh();
+    if(mode==='orbit' && !menuOpen && !detailOpen && !document.hidden) startLoop();
+  }
+  $('#resume-close').addEventListener('click',closeResume);
+  document.querySelectorAll('#resume-page .tl-head').forEach((head)=>{
+    head.addEventListener('click',()=>{
+      const item=head.parentElement, willOpen=!item.classList.contains('open');
+      item.classList.toggle('open');
+      if(willOpen) Sound.tick();
+    });
+  });
+  document.querySelector('#tl-experience .tl-item')?.classList.add('open');
 
   /* ============================================================
      MUTE
@@ -982,7 +1461,7 @@
 
   const muteBtn=$('#mute-btn');
   function reflectMute(){ muteBtn.classList.toggle('muted',Sound.isMuted()); }
-  muteBtn.addEventListener('click',()=>{ Sound.setMuted(!Sound.isMuted()); reflectMute(); if(!Sound.isMuted()){Sound.resume();Sound.tick();} });
+  muteBtn.addEventListener('click',()=>{ Sound.setMuted(!Sound.isMuted()); reflectMute(); if(!Sound.isMuted()){Sound.resume();Sound.startDrone();Sound.tick();} });
 
   /* ============================================================
      ENTRY GATE -> boot
@@ -990,10 +1469,16 @@
   let booted=false;
   function boot(withSound){
     if(booted) return; booted=true;
-    Sound.init(!withSound); reflectMute();
-    if(withSound){ Sound.resume(); Sound.chord(); setTimeout(()=>Sound.whoosh(),120); }
+    try{ sessionStorage.setItem('u-entered','1'); }catch(e){}
+    // audio must NEVER be able to block the UI from booting
+    try{
+      Sound.init(!withSound); reflectMute();
+      if(withSound){ Sound.resume(); Sound.chord(); Sound.startDrone(); setTimeout(()=>{try{Sound.whoosh();}catch(e){}},120); }
+    }catch(e){ console.warn('audio init failed (continuing silently)',e); }
     gate.classList.add('dismiss');
     setTimeout(()=>{ gate.style.display='none'; },1150);
+
+    renderDeck(); // build the swipe deck (DOM, independent of WebGL)
 
     if(forceList){
       // auto-fallback: never init WebGL
@@ -1013,6 +1498,9 @@
   }
   $('#enter-sound').addEventListener('click',()=>boot(true));
   $('#enter-silent').addEventListener('click',()=>boot(false));
+
+  // returning from a live app → skip the entry gate, land straight on the deck
+  try{ if(sessionStorage.getItem('u-entered')){ gate.style.display='none'; boot(false); } }catch(e){}
 
   // visibility → pause loop
   document.addEventListener('visibilitychange',()=>{

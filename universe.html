@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Saikiran Biswal · Product builder — live products, end to end</title>
-<meta name="description" content="Saikiran Biswal builds enterprise AI and fintech products end to end. A 3D showcase of working products, platforms, and case studies — problem to proof." />
+<title>Saikiran Biswal · Product builder, live products end to end</title>
+<meta name="description" content="Saikiran Biswal builds enterprise AI and fintech products end to end. A 3D showcase of working products, platforms, and case studies, from problem to proof." />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="Saikiran Biswal · Product builder" />
-<meta property="og:description" content="Working products, platforms, and case studies — built end to end, from discovery through AI architecture and go-to-market." />
+<meta property="og:description" content="Working products, platforms, and case studies, built end to end from discovery through AI architecture and go-to-market." />
 <meta property="og:url" content="https://saikiranbiswal.github.io/portfolio/" />
 <meta property="og:image" content="https://saikiranbiswal.github.io/portfolio/assets/screenshots/collections-cloud-mq7ch4i4.png" />
 <meta name="twitter:card" content="summary_large_image" />
@@ -27,8 +27,8 @@
     --soft:rgba(244,242,236,.75);
     --amber:#E8A33D;
     --hair:rgba(244,242,236,.12); --hair-2:rgba(244,242,236,.20);
-    --veil-a:rgba(5,7,15,.82); --veil-b:rgba(5,7,15,.94);
-    --panel-a:#0B0E1A; --panel-b:#070912;
+    --veil-a:#0B0E1A; --veil-b:#05070F;
+    --panel-a:#0F1320; --panel-b:#090C16;
     --chrome-bg:rgba(11,14,26,.4);
     --amber-ink:#1a1206;
   }
@@ -39,8 +39,8 @@
     --soft:rgba(28,26,22,.75);
     --amber:#B97612;
     --hair:rgba(28,26,22,.14); --hair-2:rgba(28,26,22,.28);
-    --veil-a:rgba(247,245,239,.88); --veil-b:rgba(247,245,239,.97);
-    --panel-a:#FBFAF5; --panel-b:#F2EFE6;
+    --veil-a:#FBFAF5; --veil-b:#F1EEE4;
+    --panel-a:#FFFFFF; --panel-b:#F4F1E8;
     --chrome-bg:rgba(247,245,239,.55);
     --amber-ink:#FFF8EC;
   }
@@ -118,8 +118,11 @@
   .topbar-right{display:flex;align-items:center;gap:12px}
 
   /* ============ CAPTION ============ */
-  #caption{position:fixed;left:50%;bottom:48px;bottom:max(48px,calc(env(safe-area-inset-bottom) + 40px));transform:translateX(-50%);z-index:40;
-    text-align:center;width:min(680px,88vw);pointer-events:none;transition:opacity .5s var(--ease)}
+  #caption{position:fixed;left:50%;bottom:40px;bottom:max(40px,calc(env(safe-area-inset-bottom) + 32px));transform:translateX(-50%);z-index:40;
+    text-align:center;width:min(720px,90vw);pointer-events:none;transition:opacity .5s var(--ease);
+    padding:22px 30px 18px;border-radius:20px}
+  body.light #caption{background:radial-gradient(80% 90% at 50% 60%, rgba(247,245,239,.86), rgba(247,245,239,0) 75%)}
+  body.dark #caption{background:radial-gradient(80% 90% at 50% 60%, rgba(5,7,15,.7), rgba(5,7,15,0) 75%)}
   #caption .cap-no{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--amber);margin-bottom:10px}
   #caption .cap-title{font-family:var(--serif);font-weight:500;font-size:clamp(28px,5vw,50px);line-height:1.02;letter-spacing:-.02em}
   #caption .cap-tag{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
@@ -139,7 +142,7 @@
 
   /* ============ DETAIL PANEL ============ */
   #detail{position:fixed;inset:0;z-index:100;overflow-y:auto;
-    background:linear-gradient(180deg,var(--veil-a),var(--veil-b));backdrop-filter:blur(14px);
+    background:linear-gradient(180deg,var(--veil-a),var(--veil-b));
     opacity:0;transform:translateY(24px);pointer-events:none;transition:opacity .5s var(--ease),transform .55s var(--ease)}
   #detail.open{opacity:1;transform:translateY(0);pointer-events:auto}
   .detail-wrap{max-width:920px;margin:0 auto;padding:96px 32px 120px}
@@ -196,7 +199,14 @@
   .menu-nav a:hover{color:var(--amber);transform:translateX(6px)}
   .menu-block{border-top:1px solid var(--hair);padding-top:26px;margin-top:8px}
   .menu-block .mb-label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:14px}
-  .menu-portrait{width:76px;height:76px;border-radius:12px;object-fit:cover;border:1px solid var(--hair);margin-bottom:20px}
+  .menu-linklist{display:flex;flex-direction:column}
+  .menu-linklist a{display:flex;flex-direction:column;gap:3px;padding:12px 0;border-top:1px solid var(--hair);transition:color .2s var(--ease),padding-left .25s var(--ease)}
+  .menu-linklist a:first-child{border-top:none}
+  .menu-linklist a:hover{color:var(--amber);padding-left:6px}
+  .menu-linklist .ml-title{font-size:15px;font-weight:500;line-height:1.25}
+  .menu-linklist .ml-meta{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--faint)}
+  .mb-all{margin-top:16px;font-size:12px;padding:9px 16px}
+  .menu-portrait{width:min(280px,100%);aspect-ratio:1.08/1;border-radius:16px;object-fit:cover;object-position:center 42%;border:1px solid var(--hair);margin-bottom:22px;display:block}
   .menu-bio{font-size:15px;line-height:1.65;color:var(--soft);margin-bottom:20px}
   .menu-current{font-size:12px;letter-spacing:.04em;color:var(--muted);margin-bottom:26px}
   .menu-current b{color:var(--ink);font-weight:600}
@@ -221,7 +231,7 @@
 </style>
 </head>
 <body class="light">
-  <h1 class="sr-only">Saikiran Biswal — product builder. A 3D showcase of live products, platforms, and case studies.</h1>
+  <h1 class="sr-only">Saikiran Biswal, product builder. A 3D showcase of live products, platforms, and case studies.</h1>
 
   <div id="bg-gradient"></div>
   <canvas id="scene-canvas" aria-hidden="true"></canvas>
@@ -300,13 +310,13 @@
   <section id="listview">
     <div class="list-wrap">
       <div class="list-eyebrow">Selected work</div>
-      <p class="list-lead">Working products, platforms, and case studies — built end to end, from discovery through domain modeling, AI design, and go-to-market.</p>
+      <p class="list-lead">Working products, platforms, and case studies, built end to end from discovery through domain modeling, AI design, and go-to-market.</p>
       <div id="list-items"></div>
     </div>
   </section>
   <div id="list-preview"><img alt="" /></div>
 
-  <!-- MENU / ABOUT -->
+  <!-- MENU -->
   <div id="menu-overlay"></div>
   <aside id="menu-panel" role="dialog" aria-modal="true" aria-label="Menu">
     <button id="menu-close" aria-label="Close menu">
@@ -316,21 +326,20 @@
       <nav class="menu-nav">
         <a href="#" id="nav-works">Works</a>
         <a href="#about-block" id="nav-about">About</a>
-        <a href="https://saikiranbiswal.github.io/portfolio/assets/resume.pdf" target="_blank" rel="noopener">Résumé</a>
-        <a href="mailto:saikiran.biswal@outlook.com">Contact</a>
+        <a href="#contact-block" id="nav-contact">Contact</a>
       </nav>
       <div class="menu-block" id="about-block">
         <div class="mb-label">About</div>
         <img class="menu-portrait" src="https://saikiranbiswal.github.io/portfolio/assets/about/portrait-mq78fxvi.png" alt="Saikiran Biswal" onerror="this.style.display='none'" />
-        <p class="menu-bio">I build enterprise and AI products in lending, banking, and fintech — from the problem and business case through a clean domain model, an architecture engineering can ship, and a commercial model that holds up. I care about products that move a number, not artifacts that sit in a deck.</p>
-        <p class="menu-current">Currently: <b>Product Owner, Collections Cloud @ HighRadius</b></p>
+        <p class="menu-bio">I build enterprise and AI products in lending, banking, and fintech, from the problem and business case through a clean domain model, an architecture engineering can ship, and a commercial model that holds up. This portfolio shows the public proof: live products, case studies, and artifacts.</p>
+        <p class="menu-current">Public scope: <b>finished work, working demos, and product evidence</b></p>
         <div class="menu-btns">
-          <a class="pill" href="https://saikiranbiswal.github.io/portfolio/assets/resume.pdf" target="_blank" rel="noopener">View résumé</a>
-          <a class="pill" href="https://saikiranbiswal.github.io/portfolio/assets/resume.pdf" download>Download PDF</a>
+          <a class="pill" href="https://github.com/saikiranbiswal" target="_blank" rel="noopener">View GitHub</a>
+          <a class="pill" href="mailto:saikiran.biswal@outlook.com">Email</a>
         </div>
       </div>
-      <div class="menu-block">
-        <div class="mb-label">Elsewhere</div>
+      <div class="menu-block" id="contact-block">
+        <div class="mb-label">Contact</div>
         <div class="menu-chips">
           <a class="chip" href="https://github.com/saikiranbiswal" target="_blank" rel="noopener">github</a>
           <a class="chip" href="https://www.linkedin.com/in/sai-kiran-biswal" target="_blank" rel="noopener">linkedin</a>
@@ -352,7 +361,7 @@
   import * as THREE from 'three';
 
   /* ============================================================
-     RESOURCE BASE — every relative path in PROJECTS resolves
+     RESOURCE BASE: every relative path in PROJECTS resolves
      against the live GitHub Pages site, so images, apps, and
      case studies load no matter where this file is opened from
      (localhost, file://, or the deployed site itself).
@@ -361,7 +370,7 @@
   const abs=p=>/^(https?:)?\/\//.test(p)?p:new URL(p.replace(/^\.\//,''),BASE).href;
 
   /* ============================================================
-     DATA MODEL — the one constant that drives the entire site.
+     DATA MODEL: the one constant that drives the entire site.
      Add a project: append one entry + one 16:10 screenshot.
      Ring spacing = 360 / PROJECTS.length (auto-respaced).
      Omit `caseStudy` or `code` and the button hides gracefully.
@@ -369,21 +378,21 @@
   const PROJECTS = [
     {
       id:'collections-cloud', no:'№ 01', title:'AI Collections Cloud', tag:'AI · Fintech',
-      lede:'An AI-native recovery platform — collector copilot, recovery prediction, and next-best-action.',
+      lede:'An AI-native recovery platform: collector copilot, recovery prediction, and next-best-action.',
       about:'A recovery platform for lenders built AI-native from the ground up: a collector copilot, recovery-propensity prediction, and next-best-action, all sitting on a clean domain, data, and event architecture. Framed the use cases, designed for trust and evaluation, and priced the value.',
       shot:'assets/screenshots/collections-cloud-mq7ch4i4.png',
       app:'./apps/collections-cloud/', caseStudy:'case-studies/collections-cloud.html'
     },
     {
       id:'lending-cloud', no:'№ 02', title:'Loan Origination System', tag:'Lending · Platform',
-      lede:'A guided, state-based origination flow from application to approval — with fewer handoffs.',
+      lede:'A guided, state-based origination flow from application to approval, with fewer handoffs.',
       about:'A loan-origination platform rebuilt as a configurable, state-based workflow: from application to approval with fewer handoffs, over explicit workflow state machines, EMI math, and deterministic demo data. The domain model came first; the screens followed.',
       shot:'assets/screenshots/lending-cloud-mq78bpbv.png',
       app:'./apps/lending-cloud/', caseStudy:'case-studies/lending-os.html'
     },
     {
       id:'fastag-redesign', no:'№ 03', title:'FASTag Redesign', tag:'GovTech · Strategy',
-      lede:'A national toll & mobility trust layer — explainable deductions, disputes, fleet controls.',
+      lede:'A national toll and mobility trust layer: explainable deductions, disputes, fleet controls.',
       about:'A problem-first strategy and PRD for a trusted national toll and mobility account: FASTag health, explainable deductions, disputes, annual-pass intelligence, fleet controls, and operator exceptions. Reframed a payments rail as a trust layer for a country.',
       shot:'assets/screenshots/fastag-redesign.png',
       app:'./apps/fastag/', caseStudy:'case-studies/fastag.html'
@@ -391,27 +400,27 @@
     {
       id:'atlas', no:'№ 04', title:'Atlas', tag:'Workflow · Delivery',
       lede:'A task-orchestration workspace that keeps owners, blockers, and evidence on one surface.',
-      about:'A task-orchestration workspace for planning initiatives, assigning owners, surfacing blockers, and filtering delivery work — with execution evidence kept close to the task. Built to make delivery legible without another status meeting.',
+      about:'A task-orchestration workspace for planning initiatives, assigning owners, surfacing blockers, and filtering delivery work, with execution evidence kept close to the task. Built to make delivery legible without another status meeting.',
       shot:'assets/screenshots/atlas-task-management.png',
       app:'./apps/atlas/'
     },
     {
       id:'synthesis', no:'№ 05', title:'Synthesis', tag:'Strategy · Engine',
       lede:'An offline brief engine turning raw inputs into frameworks and a 30-60-90 plan.',
-      about:'An offline decision-brief engine that turns raw inputs into strategic frameworks, implications, and a 30-60-90 action plan, with multi-format export. Everything runs in the browser — the data never leaves the machine.',
+      about:'An offline decision-brief engine that turns raw inputs into strategic frameworks, implications, and a 30-60-90 action plan, with multi-format export. Everything runs in the browser, so the data never leaves the machine.',
       shot:'assets/screenshots/synthesis-mq78ih0i.png',
       app:'./apps/synthesis/'
     },
     {
       id:'dashboard-studio', no:'№ 06', title:'Dashboard Studio', tag:'Data · Tools',
-      lede:'A drag-and-drop dashboard builder — KPI cards, charts, theming, all in-browser.',
+      lede:'A drag-and-drop dashboard builder: KPI cards, charts, theming, all in-browser.',
       about:'A drag-and-drop dashboard builder: KPI cards, charts, data profiling, theming, and export, with data that never leaves the browser. A tool for turning a messy spreadsheet into a decision surface in minutes.',
       shot:'assets/screenshots/dashboard-studio-mq78n3sv.png',
       app:'./apps/dashboard-studio/'
     },
     {
       id:'neuralpath', no:'№ 07', title:'NeuralPath', tag:'AI · Learning',
-      lede:'A gamified AI-concepts app — quizzes, XP, streaks, and orchestration flows, level by level.',
+      lede:'A gamified AI-concepts app: quizzes, XP, streaks, and orchestration flows, level by level.',
       about:'A gamified AI-learning app: concepts, quizzes, XP, streaks, and orchestration flows that teach AI one level at a time. Built to prove that a learning product can be a real product, not a slide deck with a quiz bolted on.',
       shot:'assets/screenshots/neuralpath-mq78l565.png',
       app:'./apps/neuralpath/'
@@ -422,15 +431,34 @@
       lede:'One-sentence lede shown in the caption and detail panel.',
       about:'~60-word paragraph: the problem, what you built, and why it matters.',
       shot:'assets/screenshots/your-shot.png',
-      app:'https://link-to-live-app/',        // required — every project is live & clickable
-      caseStudy:'case-studies/your-study.html', // optional — omit to hide the button
-      code:'https://github.com/you/repo'         // optional — omit to hide the button
+      app:'https://link-to-live-app/',        // required: every project is live and clickable
+      caseStudy:'case-studies/your-study.html', // optional: omit to hide the button
+      code:'https://github.com/you/repo'         // optional: omit to hide the button
     }
     */
   ];
 
+  /* Case studies: deep-dive write-ups, live in the portfolio repo */
+  const CASE_STUDIES=[
+    { title:'AI Collections Cloud', tag:'AI · Fintech', href:'case-studies/collections-cloud.html' },
+    { title:'Loan Origination System', tag:'Lending · Platform', href:'case-studies/lending-os.html' },
+    { title:'FASTag Redesign', tag:'GovTech · Strategy', href:'case-studies/fastag.html' }
+  ];
+
+  /* Evidence library: source artifacts, decks, models, scorecards, and datasets */
+  const ARTIFACTS=[
+    { title:'AI Collections Cloud: Strategy & MVP', meta:'PDF · Strategy deck', href:'case-studies/ai-collections-cloud-prd.pdf' },
+    { title:'Collections Vendor Evaluation Scorecard', meta:'XLSX · Decision tool', href:'assets/artifacts/files/collections-management-vendor-scorecard.xlsx' },
+    { title:'FASTag Redesign: Strategy + PRD', meta:'DOCX · Product strategy', href:'assets/artifacts/files/fastag-redesign-strategy-prd.docx' },
+    { title:'FASTag: UX Workflow + AI Agent Blueprint', meta:'DOCX · Experience design', href:'assets/artifacts/files/fastag-redesign-ux-ai-blueprint.docx' },
+    { title:'FASTag: Roadmap, Metrics + Backlog', meta:'XLSX · Delivery plan', href:'assets/artifacts/files/fastag-redesign-roadmap-metrics-backlog.xlsx' },
+    { title:'FASTag: Discovery + Experiment Plan', meta:'DOCX · Research', href:'assets/artifacts/files/fastag-redesign-discovery-experiment-plan.docx' },
+    { title:'FASTag: Decision Memo + Stakeholder Map', meta:'DOCX · Recommendation', href:'assets/artifacts/files/fastag-redesign-decision-memo.docx' },
+    { title:'Universal Data Workbench: Test Dataset', meta:'XLSX · Synthetic data', href:'assets/artifacts/files/universal-data-workbench-test-dataset.xlsx' }
+  ];
+
   /* ============================================================
-     SOUND SYSTEM — Web Audio synthesis, no files.
+     SOUND SYSTEM: Web Audio synthesis, no files.
      ============================================================ */
   const Sound = (() => {
     let ctx=null, master=null, muted=false, ready=false;
@@ -517,20 +545,21 @@
   /* ============================================================
      THREE.JS SCENE
      ============================================================ */
-  let renderer, scene, camera, ring, cardMeshes=[], glowMeshes=[], raf=null, running=false;
+  let renderer, scene, camera, ring, cardMeshes=[], glowMeshes=[], shadowMeshes=[], raf=null, running=false;
   let starLayers=[], nebSprites=[];
+  const CW_G=2.72, CH_G=1.70; // card width/height in world units
 
   /* ---- THEME ---- */
   const SCENE_THEMES={
-    dark:{ fog:0x05070F, fogD:0.055, stars:[[0xF4F2EC,.9],[0xbfc6ff,.7],[0xE8A33D,.85]], neb:0.22, briFloor:0.32 },
-    light:{ fog:0xF5F2E9, fogD:0.045, stars:[[0x7A7398,.35],[0x9A92C2,.28],[0xB97612,.55]], neb:0.10, briFloor:0.62 }
+    dark:{ fog:0x05070F, fogD:0.05, stars:[[0xF4F2EC,.9],[0xbfc6ff,.7],[0xE8A33D,.85]], neb:0.20, briFloor:0.46 },
+    light:{ fog:0xF5F2E9, fogD:0.04, stars:[[0x7A7398,.35],[0x9A92C2,.28],[0xB97612,.55]], neb:0.09, briFloor:0.60 }
   };
   let theme=(localStorage.getItem('universe-theme')||'light');
   function applySceneTheme(){
     if(!scene) return;
     const t=SCENE_THEMES[theme];
     scene.fog.color.setHex(t.fog); scene.fog.density=t.fogD;
-    // additive blending glows on dark but washes out on light — use normal there
+    // additive blending glows on dark but washes out on light, so use normal there
     const blend=(theme==='dark')?THREE.AdditiveBlending:THREE.NormalBlending;
     starLayers.forEach((s,i)=>{ s.material.color.setHex(t.stars[i][0]); s.material.opacity=t.stars[i][1];
       s.material.blending=blend; s.material.needsUpdate=true; });
@@ -611,41 +640,64 @@
 
     // ring + cards
     ring=new THREE.Group(); scene.add(ring);
-    const RADIUS=4.4;
+    const RADIUS=4.4, CW=CW_G, CH=CH_G;
     const glowTex=radialTexture('rgba(232,163,61,0.9)','rgba(232,163,61,0)');
+    const shadowTex=radialTexture('rgba(0,0,0,0.55)','rgba(0,0,0,0)');
+    const maxAniso=renderer.capabilities.getMaxAnisotropy();
+
+    // composite a screenshot into a solid rounded "device card" with a bezel and no translucency
+    function makeCardTexture(img,p){
+      const W=1000, H=625, r=40;
+      const c=document.createElement('canvas'); c.width=W; c.height=H;
+      const g=c.getContext('2d');
+      const rr=(x,y,w,h,rad)=>{g.beginPath();g.moveTo(x+rad,y);g.arcTo(x+w,y,x+w,y+h,rad);g.arcTo(x+w,y+h,x,y+h,rad);g.arcTo(x,y+h,x,y,rad);g.arcTo(x,y,x+w,y,rad);g.closePath();};
+      // solid backing so no starfield ever shows through
+      g.save(); rr(0,0,W,H,r); g.clip();
+      g.fillStyle='#0C0F1A'; g.fillRect(0,0,W,H);
+      if(img){
+        const ir=img.width/img.height, cr=W/H; let dw,dh,dx,dy;
+        if(ir>cr){ dh=H; dw=H*ir; dx=(W-dw)/2; dy=0; } else { dw=W; dh=W/ir; dx=0; dy=(H-dh)/2; }
+        g.drawImage(img,dx,dy,dw,dh);
+      } else {
+        g.fillStyle='#F4F2EC'; g.font='500 64px Georgia'; g.textAlign='center';
+        g.fillText(p.title,W/2,H/2-6);
+        g.fillStyle='rgba(244,242,236,.55)'; g.font='22px sans-serif';
+        g.fillText(p.tag,W/2,H/2+40);
+      }
+      g.restore();
+      // two-tone bezel: outer dark seat + inner light highlight (reads premium on any bg)
+      g.lineWidth=6; g.strokeStyle='rgba(0,0,0,0.35)'; rr(3,3,W-6,H-6,r-2); g.stroke();
+      g.lineWidth=2; g.strokeStyle='rgba(255,255,255,0.16)'; rr(7,7,W-14,H-14,r-5); g.stroke();
+      const tex=new THREE.CanvasTexture(c); tex.colorSpace=THREE.SRGBColorSpace;
+      tex.anisotropy=maxAniso; tex.needsUpdate=true;
+      return tex;
+    }
+
     PROJECTS.forEach((p,i)=>{
       const ang=i*STEP;
       const x=Math.sin(ang)*RADIUS, z=Math.cos(ang)*RADIUS;
-      // placeholder material until texture loads
-      const mat=new THREE.MeshBasicMaterial({color:0x141826,transparent:true,side:THREE.DoubleSide});
-      const geo=new THREE.PlaneGeometry(2.6,1.625);
+      // opaque card: alphaTest keeps rounded corners crisp AND writes depth (correct sorting)
+      const mat=new THREE.MeshBasicMaterial({color:0xffffff,map:makeCardTexture(null,p),
+        transparent:true,alphaTest:0.5,side:THREE.DoubleSide});
+      const geo=new THREE.PlaneGeometry(CW,CH);
       const mesh=new THREE.Mesh(geo,mat);
       mesh.position.set(x,0,z);
       mesh.rotation.y=ang;              // face outward (front card faces camera)
       mesh.userData={index:i,baseY:0,phase:Math.random()*Math.PI*2};
       ring.add(mesh); cardMeshes.push(mesh);
-      // amber glow behind
+      // soft drop shadow behind → cards feel like solid panels above the scene
+      const shadow=new THREE.Sprite(new THREE.SpriteMaterial({map:shadowTex,transparent:true,opacity:0,depthWrite:false}));
+      shadow.position.set(x,-0.32,z); shadow.scale.set(CW*1.5,CH*1.55,1);
+      ring.add(shadow); shadowMeshes.push(shadow);
+      // amber elevation glow behind the front card
       const glow=new THREE.Sprite(new THREE.SpriteMaterial({map:glowTex,transparent:true,opacity:0,depthWrite:false,blending:THREE.AdditiveBlending}));
-      glow.position.set(x,0,z); glow.scale.set(4.2,3.0,1);
+      glow.position.set(x,0,z); glow.scale.set(4.4,3.1,1);
       ring.add(glow); glowMeshes.push(glow);
-      // lazy-load texture from the live site; on failure render a title card
-      const loader=new THREE.TextureLoader(); loader.setCrossOrigin('anonymous');
-      loader.load(abs(p.shot),(tex)=>{
-        tex.colorSpace=THREE.SRGBColorSpace;
-        mat.map=tex; mat.color.set(0xffffff); mat.needsUpdate=true;
-      },undefined,()=>{
-        // fallback: draw the project title so the card is never blank
-        const c=document.createElement('canvas'); c.width=640; c.height=400;
-        const g=c.getContext('2d');
-        g.fillStyle='#141826'; g.fillRect(0,0,640,400);
-        g.strokeStyle='rgba(232,163,61,.5)'; g.strokeRect(10,10,620,380);
-        g.fillStyle='#F4F2EC'; g.font='500 44px Georgia'; g.textAlign='center';
-        g.fillText(p.title,320,190);
-        g.fillStyle='rgba(244,242,236,.55)'; g.font='16px sans-serif';
-        g.fillText(p.tag,320,235);
-        const tex=new THREE.CanvasTexture(c);
-        mat.map=tex; mat.color.set(0xffffff); mat.needsUpdate=true;
-      });
+      // lazy-load screenshot from the live site, then composite it into the card
+      const im=new Image(); im.crossOrigin='anonymous';
+      im.onload=()=>{ mat.map=makeCardTexture(im,p); mat.needsUpdate=true; };
+      im.onerror=()=>{ /* keep title-card fallback already set */ };
+      im.src=abs(p.shot);
     });
 
     window.addEventListener('resize',onResize);
@@ -655,9 +707,9 @@
   // pull camera back on narrow/portrait viewports so the front card doesn't swamp the caption
   function camZ(){
     const w=window.innerWidth;
-    if(w<600) return 11.5;
-    if(w<960) return 9;
-    return 7;
+    if(w<600) return 12;
+    if(w<960) return 9.4;
+    return 8;
   }
   function onResize(){
     if(!renderer) return;
@@ -735,16 +787,21 @@
       const front=Math.max(0,facing);
       const isHover=(i===hoverIndex);
       const floor=SCENE_THEMES[theme].briFloor;
-      const bri=floor+(1-floor)*Math.pow(front,2)+(isHover?0.2:0);
-      if(m.material.map) m.material.color.setScalar(Math.min(1,bri));
-      m.material.opacity=0.5+0.5*front;
+      // depth via dimming only, cards stay fully opaque with no see-through
+      const bri=floor+(1-floor)*Math.pow(front,1.6)+(isHover?0.14:0);
+      m.material.color.setScalar(Math.min(1,bri));
       // float / bob + hover lift
-      m.position.y=Math.sin(t*0.8+m.userData.phase)*0.06 + (isHover?0.12:0);
+      m.position.y=Math.sin(t*0.8+m.userData.phase)*0.05 + (isHover?0.12:0);
       const sc=(i===f?1.06:1)+(isHover?0.04:0);
       m.scale.set(sc,sc,1);
+      // drop shadow tracks the card, strongest for the front card
+      shadowMeshes[i].position.y=m.position.y-0.32;
+      shadowMeshes[i].material.opacity=(0.10+0.32*Math.pow(front,2))*(theme==='light'?0.7:1);
+      shadowMeshes[i].scale.set(CW_G*1.5*sc,CH_G*1.55*sc,1);
+      // amber elevation glow on the front card
       glowMeshes[i].position.y=m.position.y;
-      glowMeshes[i].material.opacity=Math.pow(front,3)*(theme==='light'?0.28:0.5);
-      glowMeshes[i].scale.setScalar(1); glowMeshes[i].scale.set(4.2*sc,3.0*sc,1);
+      glowMeshes[i].material.opacity=Math.pow(front,3)*(theme==='light'?0.22:0.5);
+      glowMeshes[i].scale.set(4.4*sc,3.1*sc,1);
     });
 
     // camera parallax easing
@@ -756,8 +813,8 @@
     renderer.render(scene,camera);
   }
 
-  function startLoop(){ if(!running){ running=true; tick(); } }
-  function stopLoop(){ running=false; if(raf) cancelAnimationFrame(raf); raf=null; }
+  function startLoop(){ if(!running){ running=true; document.body.dataset.scene='running'; tick(); } }
+  function stopLoop(){ running=false; document.body.dataset.scene='paused'; if(raf) cancelAnimationFrame(raf); raf=null; }
 
   /* ---- interactions: scroll / drag / keys ---- */
   function goToIndex(i){
@@ -812,10 +869,12 @@
      DETAIL PANEL
      ============================================================ */
   const detail=$('#detail');
+  // portfolio-internal links open in the SAME tab (stay in the portfolio); only off-site links get a new tab
+  const isExternal=href=>{ try{ return new URL(href,location.href).origin!==location.origin && !href.startsWith(BASE); }catch(e){ return false; } };
   function linkPill(href,label,primary){
     const a=document.createElement('a'); a.className='pill'+(primary?' primary':'');
     a.href=href; a.textContent=label;
-    a.target='_blank'; a.rel='noopener';
+    if(isExternal(href)){ a.target='_blank'; a.rel='noopener'; }
     return a;
   }
   function openDetail(i){
@@ -848,7 +907,7 @@
     document.body.style.overflow='';
     caption.classList.remove('fade');
     Sound.whoosh();
-    if(mode==='orbit' && !document.hidden) startLoop();
+    if(mode==='orbit' && !menuOpen && !document.hidden) startLoop();
   }
   $('#detail-close').addEventListener('click',closeDetail);
 
@@ -876,7 +935,7 @@
     listview.classList.toggle('show',!orbitOn);
     caption.style.display=orbitOn?'':'none';
     canvas.style.display=orbitOn?'':'none';
-    if(orbitOn){ if(renderer && !document.hidden) startLoop(); }
+    if(orbitOn){ if(renderer && !menuOpen && !document.hidden) startLoop(); }
     else stopLoop();
     Sound.whoosh();
   }
@@ -887,13 +946,21 @@
      MENU
      ============================================================ */
   const menuPanel=$('#menu-panel'), menuOverlay=$('#menu-overlay');
-  function openMenu(){ menuPanel.classList.add('open'); menuOverlay.classList.add('open'); menuOpen=true; }
-  function closeMenu(){ menuPanel.classList.remove('open'); menuOverlay.classList.remove('open'); menuOpen=false; }
+  function openMenu(){
+    menuPanel.classList.add('open'); menuOverlay.classList.add('open'); menuOpen=true;
+    stopLoop();
+  }
+  function closeMenu(){
+    menuPanel.classList.remove('open'); menuOverlay.classList.remove('open'); menuOpen=false;
+    if(mode==='orbit' && !detailOpen && !document.hidden) startLoop();
+  }
   $('#menu-btn').addEventListener('click',openMenu);
   $('#menu-close').addEventListener('click',closeMenu);
   menuOverlay.addEventListener('click',closeMenu);
   $('#nav-works').addEventListener('click',(e)=>{e.preventDefault(); closeMenu(); if(mode!=='orbit')setMode('orbit');});
-  $('#home-glyph').addEventListener('click',(e)=>{e.preventDefault(); if(detailOpen)closeDetail(); if(mode!=='orbit')setMode('orbit');});
+  $('#home-glyph').addEventListener('click',(e)=>{e.preventDefault(); if(menuOpen)closeMenu(); if(detailOpen)closeDetail(); if(mode!=='orbit')setMode('orbit');});
+  $('#nav-about').addEventListener('click',(e)=>{e.preventDefault(); $('#about-block').scrollIntoView({behavior:'smooth'});});
+  $('#nav-contact').addEventListener('click',(e)=>{e.preventDefault(); $('#contact-block').scrollIntoView({behavior:'smooth'});});
 
   /* ============================================================
      MUTE
@@ -907,7 +974,7 @@
   muteBtn.addEventListener('click',()=>{ Sound.setMuted(!Sound.isMuted()); reflectMute(); if(!Sound.isMuted()){Sound.resume();Sound.tick();} });
 
   /* ============================================================
-     ENTRY GATE → boot
+     ENTRY GATE -> boot
      ============================================================ */
   let booted=false;
   function boot(withSound){
@@ -939,7 +1006,7 @@
   // visibility → pause loop
   document.addEventListener('visibilitychange',()=>{
     if(document.hidden) stopLoop();
-    else if(mode==='orbit' && !detailOpen && renderer) startLoop();
+    else if(mode==='orbit' && !detailOpen && !menuOpen && renderer) startLoop();
   });
 
   // if reduced-motion/no-webgl, hint the gate copy

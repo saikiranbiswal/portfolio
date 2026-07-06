@@ -788,10 +788,13 @@ const Sound = (() => {
       ctx=new(window.AudioContext||window.webkitAudioContext)();
       master=ctx.createGain(); master.gain.value=0.5; master.connect(ctx.destination);
       droneGain=ctx.createGain(); droneGain.gain.value=0.0001; droneGain.connect(master);
+      // iOS unlock: play a silent buffer within the user gesture so the
+      // audio hardware routing opens up before any real tones are scheduled.
+      try{const b=ctx.createBuffer(1,1,22050),s=ctx.createBufferSource();s.buffer=b;s.connect(ctx.destination);s.start(0);}catch(e){}
       ready=true;
     }catch(e){ready=false;}
   }
-  function resume(){if(ctx&&ctx.state==='suspended')ctx.resume();}
+  function resume(){return ctx?ctx.resume().catch(()=>{}):Promise.resolve();}
   function env(g,t,a,d,peak){g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(peak,t+a);g.gain.exponentialRampToValueAtTime(0.0001,t+a+d);}
   function tone(freq,type,a,d,peak,dest){
     if(!ready||muted)return;
@@ -1296,7 +1299,7 @@ setTheme(theme);
 $('#theme-btn').addEventListener('click',()=>setTheme(theme==='light'?'dark':'light'));
 const muteBtn=$('#mute-btn');
 function reflectMute(){muteBtn.classList.toggle('muted',Sound.isMuted());}
-muteBtn.addEventListener('click',()=>{Sound.setMuted(!Sound.isMuted());reflectMute();if(!Sound.isMuted()){Sound.resume();Sound.startDrone();Sound.tick();}});
+muteBtn.addEventListener('click',()=>{Sound.setMuted(!Sound.isMuted());reflectMute();if(!Sound.isMuted()){Sound.resume().then(()=>{Sound.startDrone();Sound.tick();});}});
 
 /* ============================================================
    ENTRY GATE → BOOT
@@ -1307,7 +1310,7 @@ function boot(withSound){
   try{sessionStorage.setItem('u-entered','1');}catch(e){}
   try{
     Sound.init(!withSound);reflectMute();
-    if(withSound){Sound.resume();Sound.chord();Sound.startDrone();setTimeout(()=>{try{Sound.whoosh();}catch(e){}},120);}
+    if(withSound){Sound.resume().then(()=>{Sound.chord();Sound.startDrone();setTimeout(()=>{try{Sound.whoosh();}catch(e){}},120);});}
   }catch(e){console.warn('audio init failed',e);}
   gate.classList.add('dismiss');
   setTimeout(()=>gate.style.display='none',1150);

@@ -781,7 +781,7 @@ const PROJECTS = [
    ============================================================ */
 const Sound = (() => {
   let ctx=null, master=null, muted=false, ready=false;
-  let droneGain=null, droneNodes=null, tock=false;
+  let tock=false, swipeStep=0;
   function init(startMuted){
     muted=!!startMuted;
     try{
@@ -792,7 +792,6 @@ const Sound = (() => {
       comp.threshold.value=-18;comp.knee.value=12;comp.ratio.value=6;comp.attack.value=0.004;comp.release.value=0.24;
       comp.connect(ctx.destination);
       master=ctx.createGain(); master.gain.value=0.9; master.connect(comp);
-      droneGain=ctx.createGain(); droneGain.gain.value=0.0001; droneGain.connect(master);
       // Mobile resilience: contexts get suspended/interrupted (backgrounding,
       // calls, route changes) and never come back without an explicit resume.
       const kick=()=>{if(ctx&&ctx.state!=='running'&&!muted)ctx.resume().catch(()=>{});};
@@ -812,29 +811,10 @@ const Sound = (() => {
     o.type=type;o.frequency.value=freq;o.connect(g);g.connect(dest||master);
     env(g,t,a,d,peak);o.start(t);o.stop(t+a+d+0.05);
   }
-  function startDrone(){
-    if(!ready||droneNodes)return;
-    const lp=ctx.createBiquadFilter();lp.type='lowpass';lp.frequency.value=420;lp.Q.value=0.6;lp.connect(droneGain);
-    const voices=[55,55.25,82.41,110].map((f,i)=>{
-      const o=ctx.createOscillator();o.type=i<2?'sine':'triangle';o.frequency.value=f;
-      const g=ctx.createGain();g.gain.value=i===3?0.18:0.5;o.connect(g);g.connect(lp);o.start();return o;
-    });
-    droneNodes=voices;
-    const lfo=ctx.createOscillator();lfo.frequency.value=0.06;
-    const lfoG=ctx.createGain();lfoG.gain.value=0.03;lfo.connect(lfoG);lfoG.connect(droneGain.gain);lfo.start();
-    droneNodes.push(lfo);
-  }
-  function fadeDrone(on){
-    if(!ready||!droneGain)return;
-    const t=ctx.currentTime;droneGain.gain.cancelScheduledValues(t);
-    droneGain.gain.setValueAtTime(Math.max(droneGain.gain.value,0.0001),t);
-    droneGain.gain.exponentialRampToValueAtTime(on?0.10:0.0001,t+(on?2.4:0.8));
-  }
   return {
     init,resume,
-    setMuted(m){muted=m;fadeDrone(!m);},
+    setMuted(m){muted=m;},
     isMuted(){return muted;},
-    startDrone(){startDrone();if(!muted)fadeDrone(true);},
     tick(){
       if(!ready||muted)return;
       const t=ctx.currentTime,f=tock?150:184;tock=!tock;
@@ -844,20 +824,19 @@ const Sound = (() => {
       o.connect(g);g.connect(master);o.start(t);o.stop(t+0.06);
     },
     pluck(){if(!ready||muted)return;tone(146.8,'triangle',0.02,0.7,0.28);setTimeout(()=>tone(220,'sine',0.03,0.6,0.16),50);},
-    whoosh(){
+    // Soothing swipe feedback: two soft sine plucks walking a pentatonic
+    // scale so consecutive swipes vary; direction sets the interval's rise/fall.
+    swipe(dir){
       if(!ready||muted)return;
-      const t=ctx.currentTime,dur=1.0;
-      const buf=ctx.createBuffer(1,ctx.sampleRate*dur,ctx.sampleRate);
-      const data=buf.getChannelData(0);for(let i=0;i<data.length;i++)data[i]=(Math.random()*2-1);
-      const src=ctx.createBufferSource();src.buffer=buf;
-      const bp=ctx.createBiquadFilter();bp.type='bandpass';bp.Q.value=1.2;
-      bp.frequency.setValueAtTime(110,t);bp.frequency.exponentialRampToValueAtTime(420,t+dur*0.7);bp.frequency.exponentialRampToValueAtTime(160,t+dur);
-      const g=ctx.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.exponentialRampToValueAtTime(0.20,t+0.2);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
-      src.connect(bp);bp.connect(g);g.connect(master);src.start(t);src.stop(t+dur);
+      const scale=[196,220,246.9,293.7,329.6];
+      const base=scale[swipeStep%scale.length];swipeStep++;
+      const second=dir>0?base*1.5:base*0.75;
+      tone(base,'sine',0.02,0.55,0.22);
+      setTimeout(()=>tone(second,'sine',0.03,0.5,0.13),70);
     },
     chord(){
       if(!ready||muted)return;
-      [110,130.8,164.8,220,329.6].forEach((f,i)=>setTimeout(()=>tone(f,i<3?'sine':'triangle',0.8,2.6,i<3?0.22:0.12),i*70));
+      [110,130.8,164.8,220,329.6].forEach((f,i)=>setTimeout(()=>tone(f,i<3?'sine':'triangle',0.8,1.6,i<3?0.15:0.08),i*70));
     }
   };
 })();
@@ -1112,7 +1091,7 @@ function advance(step){
     front.style.transform='translateY('+(up?-1:1)*window.innerHeight+'px) rotate('+(up?-5:5)+'deg)';
     front.style.opacity='0';
   }
-  Sound.tick();Sound.whoosh();
+  Sound.swipe(step);
   setTimeout(()=>{deckIndex=(deckIndex+step+N)%N;renderDeck();deckBusy=false;},300);
 }
 
@@ -1203,7 +1182,7 @@ function openDetail(i){
 function closeDetail(){
   detail.classList.remove('open');detailOpen=false;
   if(!menuOpen&&!resumeOpen)document.body.style.overflow='';
-  Sound.whoosh();
+  Sound.tick();
   if(mode==='orbit'&&!menuOpen&&!resumeOpen&&!document.hidden)startLoop();
 }
 $('#detail-close').addEventListener('click',closeDetail);
@@ -1232,7 +1211,7 @@ function setMode(m){
   canvas.style.display=orbitOn?'':'none';
   if(deckEl)deckEl.classList.toggle('hidden',!orbitOn);
   if(orbitOn){if(renderer&&!menuOpen&&!document.hidden)startLoop();}else stopLoop();
-  Sound.whoosh();
+  Sound.tick();
 }
 $('#mode-orbit').addEventListener('click',()=>setMode('orbit'));
 $('#mode-list').addEventListener('click',()=>setMode('list'));
@@ -1281,7 +1260,7 @@ function openResume(){
 }
 function closeResume(){
   resumeOpen=false;resumePage.classList.remove('open');
-  document.body.style.overflow='';Sound.whoosh();
+  document.body.style.overflow='';Sound.tick();
   if(mode==='orbit'&&!menuOpen&&!detailOpen&&!document.hidden)startLoop();
 }
 $('#resume-close').addEventListener('click',closeResume);
@@ -1309,7 +1288,7 @@ setTheme(theme);
 $('#theme-btn').addEventListener('click',()=>setTheme(theme==='light'?'dark':'light'));
 const muteBtn=$('#mute-btn');
 function reflectMute(){muteBtn.classList.toggle('muted',Sound.isMuted());}
-muteBtn.addEventListener('click',()=>{Sound.setMuted(!Sound.isMuted());reflectMute();if(!Sound.isMuted()){Sound.resume().then(()=>{Sound.startDrone();Sound.tick();});}});
+muteBtn.addEventListener('click',()=>{Sound.setMuted(!Sound.isMuted());reflectMute();if(!Sound.isMuted()){Sound.resume().then(()=>Sound.tick());}});
 
 /* ============================================================
    ENTRY GATE → BOOT
@@ -1320,7 +1299,7 @@ function boot(withSound){
   try{sessionStorage.setItem('u-entered','1');}catch(e){}
   try{
     Sound.init(!withSound);reflectMute();
-    if(withSound){Sound.resume().then(()=>{Sound.chord();Sound.startDrone();setTimeout(()=>{try{Sound.whoosh();}catch(e){}},120);});}
+    if(withSound){Sound.resume().then(()=>Sound.chord());}
   }catch(e){console.warn('audio init failed',e);}
   gate.classList.add('dismiss');
   setTimeout(()=>gate.style.display='none',1150);

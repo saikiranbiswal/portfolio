@@ -1152,9 +1152,11 @@ const detail=$('#detail');
 function linkPill(href,label,primary){
   const a=document.createElement('a');a.className='pill'+(primary?' primary':'');
   a.href=href;a.textContent=label;
-  // Always open in a new tab so the portfolio page (and its live AudioContext)
-  // is never unloaded; the return-bar in the app tab still works as before.
-  a.target='_blank';a.rel='noopener';
+  // In-app prototypes open in the same tab (return-bar brings you back);
+  // external links open in a new tab. Sound survives the round-trip because
+  // the entry choice is persisted (u-sound) and restored on return.
+  if(href.startsWith('apps/'))a.target='_self';
+  else{a.target='_blank';a.rel='noopener';}
   return a;
 }
 function openDetail(i){

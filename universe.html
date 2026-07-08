@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<title>Saikiran Biswal · Product builder, end to end</title>
-<meta name="description" content="Saikiran Biswal builds enterprise AI and fintech products end to end — from problem to proof. A showcase of live working products."/>
+<title>Saikiran Biswal · Product generalist</title>
+<meta name="description" content="Saikiran Biswal, product generalist — enterprise workflow automation, built end to end from problem to proof. A showcase of live working products."/>
 <meta property="og:type" content="website"/>
-<meta property="og:title" content="Saikiran Biswal · Product builder"/>
+<meta property="og:title" content="Saikiran Biswal · Product generalist"/>
 <meta property="og:description" content="Working products, platforms, and case studies, built end to end from discovery through AI architecture and go-to-market."/>
 <meta property="og:url" content="https://saikiranbiswal.github.io/portfolio/"/>
 <meta name="twitter:card" content="summary_large_image"/>
@@ -413,7 +413,7 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
 </style>
 </head>
 <body class="light">
-<h1 class="sr-only">Saikiran Biswal, enterprise product builder. A showcase of live products, platforms, and case studies.</h1>
+<h1 class="sr-only">Saikiran Biswal, product generalist in enterprise workflow automation. A showcase of live products, platforms, and case studies.</h1>
 <div id="bg-gradient"></div>
 <canvas id="scene-canvas" aria-hidden="true"></canvas>
 <div id="cursor" aria-hidden="true"></div>
@@ -421,11 +421,11 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
 <!-- ENTRY GATE -->
 <div id="gate">
   <div class="g-inner">
-    <div class="g-eyebrow">Enterprise · AI · Fintech</div>
+    <div class="g-eyebrow">Enterprise · AI · Automation</div>
     <h1 class="g-name">Sai<em>kiran</em><br>Biswal</h1>
-    <p class="g-pos">Product builder &mdash; live products, end to end</p>
+    <p class="g-pos">Product generalist &mdash; live products, end to end</p>
     <div class="g-rule"></div>
-    <p class="g-domain">Lending · Collections · Digital Banking · Strategy</p>
+    <p class="g-domain">Enterprise Workflow Automation</p>
     <div class="g-buttons">
       <button class="pill primary" id="enter-sound">Enter with sound</button>
       <button class="pill" id="enter-silent">Enter in silence</button>
@@ -435,7 +435,7 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
 
 <!-- TOP BAR -->
 <header id="topbar">
-  <a class="glyph" href="#" id="home-glyph">Saikiran Biswal<small>Product builder</small></a>
+  <a class="glyph" href="#" id="home-glyph">Saikiran Biswal<small>Product generalist</small></a>
   <div class="topbar-right">
     <div class="view-toggle" role="group" aria-label="View mode">
       <button id="mode-orbit" aria-pressed="true">Cards</button>
@@ -535,7 +535,7 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
     <header class="rp-hero">
       <div class="rp-hero-copy">
         <div class="rp-name">Sai Kiran<br>Biswal</div>
-        <p class="rp-tagline">Enterprise product builder for lending, collections, digital banking, and AI-assisted operating systems.</p>
+        <p class="rp-tagline">Product generalist &mdash; enterprise workflow automation, built end to end.</p>
         <div class="rp-creds">
           <span class="rp-cred key">CSPO®</span>
           <span class="rp-cred key">MBA · XIMB</span>
@@ -567,7 +567,7 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
       <div class="rp-timeline" id="tl-experience">
         <div class="tl-item open">
           <button class="tl-head" type="button">
-            <span><span class="tl-role">Product Owner · Collections Cloud, Solution Design &amp; Product Alignment</span><span class="tl-org">HighRadius</span></span>
+            <span><span class="tl-role">Product Consultant · Collections Cloud, Solution Design &amp; Product Alignment</span><span class="tl-org">HighRadius</span></span>
             <span class="tl-right"><span class="tl-dates">Jun 2025 – Present</span><span class="tl-ico" aria-hidden="true"></span></span>
           </button>
           <div class="tl-body"><ul>
@@ -1223,11 +1223,13 @@ const menuPanel=$('#menu-panel'),menuOverlay=$('#menu-overlay');
 function openMenu(){
   menuPanel.classList.add('open');menuOverlay.classList.add('open');menuOpen=true;
   document.body.style.overflow='hidden';
+  Sound.tick();
   stopLoop();$('#menu-close').focus();
 }
 function closeMenu(){
   menuPanel.classList.remove('open');menuOverlay.classList.remove('open');menuOpen=false;
   if(!detailOpen&&!resumeOpen)document.body.style.overflow='';
+  Sound.tick();
   if(mode==='orbit'&&!detailOpen&&!resumeOpen&&!document.hidden)startLoop();
 }
 $('#menu-btn').addEventListener('click',openMenu);

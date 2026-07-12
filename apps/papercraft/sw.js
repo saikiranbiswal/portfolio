@@ -1,1 +1,12 @@
-if(!self.define){let e,s={};const n=(n,i)=>(n=new URL(n+".js",i).href,s[n]||new Promise(s=>{if("document"in self){const e=document.createElement("script");e.src=n,e.onload=s,document.head.appendChild(e)}else e=n,importScripts(n),s()}).then(()=>{let e=s[n];if(!e)throw new Error(`Module ${n} didn’t register its module`);return e}));self.define=(i,r)=>{const a=e||("document"in self?document.currentScript.src:"")||location.href;if(s[a])return;let o={};const l=e=>n(e,a),t={module:{uri:a},exports:o,require:l};s[a]=Promise.all(i.map(e=>t[e]||l(e))).then(e=>(r(...e),o))}}define(["./workbox-dcde9eb3"],function(e){"use strict";self.skipWaiting(),e.clientsClaim(),e.precacheAndRoute([{url:"registerSW.js",revision:"3fae25f80aa193c15cd48bc2400b6439"},{url:"index.html",revision:"02e671381763aa42b5d7f78baaa2b939"},{url:"icon-512.png",revision:"a60818a92a6abb6008e0a86a15bd3d57"},{url:"icon-192.png",revision:"d900386f1ec0753300ea5dba4a517ab2"},{url:"favicon.svg",revision:"009a9e41e47449f8220ddb67475921df"},{url:"assets/pdf.worker.min-yatZIOMy.mjs",revision:null},{url:"assets/mupdf.worker-D784CPz1.js",revision:null},{url:"assets/mupdf-DEO_ebcN.js",revision:null},{url:"assets/index-CSe5myZV.css",revision:null},{url:"assets/index-Bn9nmk8F.js",revision:null},{url:"assets/__vite-browser-external-9wXp6ZBx.js",revision:null},{url:"favicon.svg",revision:"009a9e41e47449f8220ddb67475921df"},{url:"icon-192.png",revision:"d900386f1ec0753300ea5dba4a517ab2"},{url:"icon-512.png",revision:"a60818a92a6abb6008e0a86a15bd3d57"},{url:"manifest.webmanifest",revision:"17dcb764e15bf430916dc5613df54930"}],{}),e.cleanupOutdatedCaches(),e.registerRoute(new e.NavigationRoute(e.createHandlerBoundToURL("index.html"))),e.registerRoute(/mupdf-wasm.*\.wasm$/,new e.CacheFirst({cacheName:"mupdf-wasm",plugins:[new e.ExpirationPlugin({maxEntries:2})]}),"GET"),e.registerRoute(/cmaps\//,new e.CacheFirst({cacheName:"pdfjs-cmaps",plugins:[]}),"GET")});
+self.addEventListener('install',event=>{self.skipWaiting();});
+self.addEventListener('activate',event=>{
+  event.waitUntil((async()=>{
+    try{
+      const keys=await caches.keys();
+      await Promise.all(keys.filter(key=>key.includes('papercraft')||key.includes('mupdf-wasm')||key.includes('pdfjs-cmaps')).map(key=>caches.delete(key)));
+      await self.registration.unregister();
+      const clients=await self.clients.matchAll({type:'window',includeUncontrolled:true});
+      for(const client of clients){client.navigate(client.url);}
+    }catch(error){console.warn('Papercraft service-worker cleanup failed:',error);}
+  })());
+});

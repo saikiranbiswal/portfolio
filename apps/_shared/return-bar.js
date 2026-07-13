@@ -5,6 +5,9 @@
   "use strict";
   if (window.self !== window.top) return;
   if (new URLSearchParams(window.location.search).has("screenshot")) return;
+  /* Installed PWA (home-screen) visits get no pill: the app is the product there. */
+  if (window.matchMedia && window.matchMedia("(display-mode: standalone), (display-mode: fullscreen), (display-mode: minimal-ui)").matches) return;
+  if (navigator.standalone) return;
   var a = document.createElement("a");
   a.href = "../../universe.html";
   a.textContent = "← Portfolio";

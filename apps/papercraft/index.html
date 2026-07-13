@@ -27,7 +27,7 @@
       error.textContent='';retry.style.display='none';
       try{
         if(typeof DecompressionStream==='undefined') throw new Error('This browser does not support the required decompression API. Please use a current version of Chrome, Edge, Firefox, or Safari.');
-        const response=await fetch('./app-v4.gz.b64?v=5',{cache:'no-store'});
+        const response=await fetch('./app-v4.gz.b64?v=6',{cache:'no-store'});
         if(!response.ok) throw new Error('Papercraft could not be loaded from GitHub Pages.');
         const base64=(await response.text()).trim();
         const binary=Uint8Array.from(atob(base64),character=>character.charCodeAt(0));

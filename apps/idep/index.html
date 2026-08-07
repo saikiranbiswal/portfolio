@@ -82,14 +82,13 @@ a{color:inherit}
 </head>
 <body>
   <style>
-    .back-to-portfolio{position:fixed;right:18px;bottom:18px;z-index:210;display:inline-flex;align-items:center;gap:7px;
-      padding:9px 15px;border-radius:99px;background:rgba(255,255,255,.94);color:#15242E;border:1px solid rgba(15,35,50,.14);
-      font:700 11px/1 'Inter',system-ui,sans-serif;letter-spacing:.02em;text-decoration:none;
-      box-shadow:0 6px 22px rgba(15,35,50,.16);backdrop-filter:saturate(140%) blur(8px);transition:transform .18s ease,box-shadow .18s ease}
-    .back-to-portfolio:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(15,35,50,.22)}
-    @media(max-width:640px){.back-to-portfolio{right:12px;bottom:12px;padding:8px 13px;font-size:10px}}
+    .back-to-portfolio{flex:none;display:inline-flex;align-items:center;gap:7px;padding:9px 14px;border-radius:99px;
+      background:#15242E;color:#FFF;border:1px solid #15242E;text-decoration:none;white-space:nowrap;
+      font:700 11px/1 'Inter',system-ui,sans-serif;letter-spacing:.02em;transition:background .18s ease}
+    .back-to-portfolio:hover{background:#25404F;border-color:#25404F}
+    .back-to-portfolio .btp-arrow{font-size:13px;line-height:1}
+    @media(max-width:900px){.back-to-portfolio{padding:9px 11px}.back-to-portfolio .btp-label{display:none}}
   </style>
-  <a class="back-to-portfolio" href="../../universe.html">← Back to portfolio</a>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
       <div class="brand">
@@ -111,6 +110,7 @@ a{color:inherit}
 
     <header class="topbar">
       <div class="topbar-left">
+        <a class="back-to-portfolio" href="../../universe.html" aria-label="Back to portfolio"><span class="btp-arrow">←</span><span class="btp-label">Back to portfolio</span></a>
         <button class="menu-btn" id="menuBtn" aria-label="Open navigation">☰</button>
         <div class="page-heading"><h1 id="topbarTitle">Retail Banking</h1><p id="topbarSubtitle">Customer experience backed by canonical data and APIs</p></div>
       </div>

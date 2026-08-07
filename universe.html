@@ -303,6 +303,7 @@ body.dark .rp-portrait-frame{box-shadow:0 34px 80px -30px rgba(0,0,0,.7)}
 a.rp-chip:hover{border-color:var(--sage-mid);color:var(--sage)}
 .rp-chip.hi{background:var(--sage-dim);border-color:var(--sage-mid);color:var(--sage)}
 .rp-chip.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.rp-summary{font-size:clamp(14px,1.6vw,15.5px);color:var(--ink2);margin-top:20px;line-height:1.6;max-width:660px;opacity:.9}
 .rp-creds{display:flex;flex-wrap:wrap;align-items:center;gap:9px 18px;margin-top:22px}
 .rp-cred{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;letter-spacing:.01em;color:var(--ink2)}
 .rp-cred::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sage-mid);flex:none}
@@ -545,6 +546,7 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
       <div class="rp-hero-copy">
         <div class="rp-name">Sai Kiran<br>Biswal</div>
         <p class="rp-tagline">Product Manager · Enterprise SaaS &amp; AI Workflow Automation</p>
+        <p class="rp-summary">Product Manager with 5+ years across B2B SaaS in finance automation, digital banking and CX platforms, and an MBA from XIMB. I own product scope end to end: discovery, PRDs, roadmap prioritization and release, including AI agent workflows with human-in-the-loop and fallback design, in multi-stakeholder enterprise environments.</p>
         <div class="rp-creds">
           <span class="rp-cred key">CSPO®</span>
           <span class="rp-cred key">MBA · XIMB</span>
@@ -580,10 +582,10 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
             <span class="tl-right"><span class="tl-dates">Jun 2025 – Present</span><span class="tl-ico" aria-hidden="true"></span></span>
           </button>
           <div class="tl-body"><ul>
-            <li>Led the SDLC for the Auto Promise-to-Pay &amp; Auto Draft AI agents, automating promise-to-pay email processing for enterprise Collections Cloud (Account Receivables) at a 70% automation success rate, with every unresolved case surfacing its reason and routing to collections analyst.</li>
+            <li>Owned product scope for the Auto Promise-to-Pay and Auto Draft AI agents in enterprise Collections Cloud (Accounts Receivable), setting the autonomy boundary and escalation design so every unresolved case surfaces its reason and routes to a collections analyst; shipped at a 70% automation success rate.</li>
+            <li>Owned the workflow-redesign layer of a Fortune 500 post-merger invoice-to-cash transformation (300+ branches), making scope and sequencing calls across the redesign; program delivered 35% lower cost-to-collect and a 6-day DSO improvement against the pre-transformation baseline.</li>
             <li>Authored FSDs defining REST API endpoints, JSON payloads, S2T data mappings (full and delta loads for Customer Master and AR Activity) and error-remediation protocols across Microsoft Dynamics 365, Oracle Cloud AR and HighRadius via MuleSoft and Azure Service Bus.</li>
             <li>Led SIT and UAT validating multi-system workflows, approval state transitions for DG and HRC, credit hold and release triggers, and end-to-end API and SFTP transmissions across 19 ERP instances.</li>
-            <li>Owned the workflow-redesign layer of a Fortune 500 post-merger invoice-to-cash transformation (300+ branches); program delivered 35% lower cost-to-collect and a 6-day DSO improvement against the pre-transformation baseline.</li>
           </ul></div>
         </div>
         <div class="tl-item">
@@ -593,6 +595,7 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
           </button>
           <div class="tl-body"><ul>
             <li>Shipped Salesforce inbound and outbound sales-pipeline automation to production, automating 5 lead-to-order stages into PRDs, user stories and CRM data-validation rules and removing manual handoffs from lead capture to order.</li>
+            <li>Led data-automation work across CRM and sales data sources, defining data mapping, validation and reporting so pipeline analytics stayed accurate and actionable.</li>
           </ul></div>
         </div>
         <div class="tl-item">
@@ -601,8 +604,8 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
             <span class="tl-right"><span class="tl-dates">May 2024 – Jan 2025</span><span class="tl-ico" aria-hidden="true"></span></span>
           </button>
           <div class="tl-body"><ul>
-            <li>Owned backlog and product scope for customer onboarding, retail banking and loan-origination workflows on event-driven MACH.ai Digital Engagement Platform (iDEP) serving retail and corporate front and back office.</li>
-            <li>Designed KYC and STP onboarding journeys decisioning, exception states and fallback paths routing ambiguous cases to reviewers with context.</li>
+            <li>Owned backlog and product scope for customer onboarding, retail banking and loan-origination workflows on the event-driven MACH.ai Digital Engagement Platform (iDEP) serving retail and corporate front and back office.</li>
+            <li>Designed KYC and STP onboarding journeys: decisioning, exception states and fallback paths routing ambiguous cases to reviewers with context.</li>
             <li>Drove backlog and roadmap decisions across 2 concurrent retail banking transformation engagements, guiding delivery squads on scope and MVP trade-offs and making fit-gap calls that protected deal value and platform margin.</li>
           </ul></div>
         </div>
@@ -612,7 +615,7 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
             <span class="tl-right"><span class="tl-dates">Apr – Jun 2023</span><span class="tl-ico" aria-hidden="true"></span></span>
           </button>
           <div class="tl-body"><ul>
-            <li>Mapped current- and future-state banking workflows and contributed BRD inputs for a retail &amp; corporate banking transformation.</li>
+            <li>Mapped current-state and future-state banking workflows and contributed BRD inputs for a retail and corporate banking transformation.</li>
           </ul></div>
         </div>
         <div class="tl-item">
@@ -683,12 +686,12 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
     <section class="rp-section">
       <div class="rp-section-label">Skills &amp; expertise</div>
       <div class="skills-grid" id="skills-grid">
-        <div class="skill-item"><b>Product &amp; Solution</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="90"></div></div><p>Discovery · PRDs · roadmap prioritisation · solution architecture · backlog grooming · UAT</p></div>
-        <div class="skill-item"><b>Domain Workflows</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="92"></div></div><p>I2C · AR automation · collections lifecycle · digital banking · KYC journeys · Customer 360</p></div>
-        <div class="skill-item"><b>Commercial Solutioning</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="82"></div></div><p>RFP responses · account solutioning · client workshops · solution design · pre-sales</p></div>
-        <div class="skill-item"><b>Systems &amp; Integrations</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="80"></div></div><p>ERP integrations · data mapping · workflow orchestration · configurable SaaS · exception handling</p></div>
-        <div class="skill-item"><b>AI &amp; Product Tooling</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="75"></div></div><p>Agentic workflows · AI-assisted product systems · second-brain tooling · LLM-backed automation</p></div>
-        <div class="skill-item"><b>Delivery &amp; Tools</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="85"></div></div><p>Agile / Scrum · CSPO® · stakeholder management · Jira · Confluence · SQL · Power BI</p></div>
+        <div class="skill-item"><b>Product</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="90"></div></div><p>Product Discovery · PRDs &amp; User Stories · Roadmap Prioritization · Backlog Grooming · UAT · Agile</p></div>
+        <div class="skill-item"><b>AI Product</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="75"></div></div><p>AI Agent Workflows · Human-in-the-Loop &amp; Fallback Design · Automation Success Metrics · AI-Assisted PRD Workflows &amp; Prototypes</p></div>
+        <div class="skill-item"><b>Domain Workflows</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="92"></div></div><p>Invoice-to-Cash Automation · Collections · Digital Banking (Onboarding, Channels, KYC) · Customer 360 &amp; Journey Analytics</p></div>
+        <div class="skill-item"><b>Commercial Solutioning</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="82"></div></div><p>RFP Responses · Solution Architecture · Client Workshops · Solution Design</p></div>
+        <div class="skill-item"><b>APIs &amp; Integrations</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="80"></div></div><p>REST · JSON · Functional Specification (FSD) Authoring · S2T Data Mapping · MuleSoft · Azure Service Bus</p></div>
+        <div class="skill-item"><b>Delivery &amp; Tools</b><div class="skill-bar-wrap"><div class="skill-bar" data-w="85"></div></div><p>Agile · CSPO® · Stakeholder Management · Release Readiness · JIRA · Confluence · Azure DevOps · SQL</p></div>
       </div>
     </section>
 
@@ -696,14 +699,20 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
       <div class="rp-section-label">Education &amp; credentials</div>
       <div class="edu-grid">
         <div class="ee"><b>MBA, Business Management</b><div class="ee-sub">Xavier Institute of Management Bhubaneswar (XIMB) · 2022–2024</div></div>
-        <div class="ee"><b>B.Tech, Engineering</b><div class="ee-sub">Veer Surendra Sai University of Technology (VSSUT), Burla · 2014–2018</div></div>
+        <div class="ee"><b>B.Tech</b><div class="ee-sub">Veer Surendra Sai University of Technology (VSSUT), Burla · 2014–2018</div></div>
         <div class="ee"><b>Certifications</b>
           <ul class="ee-list">
             <li><span class="ee-cert">CSPO®</span><span class="ee-cert-by">Scrum Alliance</span></li>
-            <li><span class="ee-cert">AI Fluency: Framework &amp; Foundations</span><span class="ee-cert-by">Anthropic Education</span></li>
-            <li><span class="ee-cert">Green Belt, Lean Six Sigma</span><span class="ee-cert-by">KPMG</span></li>
-            <li><span class="ee-cert">Forward Program</span><span class="ee-cert-by">McKinsey &amp; Company</span></li>
-            <li><span class="ee-cert">Product Management Essentials</span><span class="ee-cert-by">Product Space</span></li>
+            <li><span class="ee-cert">AI Fluency: Framework &amp; Foundations</span><span class="ee-cert-by">Anthropic Academy</span></li>
+            <li><span class="ee-cert">AI for Product Owners</span><span class="ee-cert-by">Scrum Alliance</span></li>
+            <li><span class="ee-cert">Claude for Work</span><span class="ee-cert-by">Anthropic Academy</span></li>
+            <li><span class="ee-cert">Lean Six Sigma Black Belt</span><span class="ee-cert-by">KPMG</span></li>
+          </ul>
+        </div>
+        <div class="ee"><b>Achievements</b>
+          <ul class="ee-list">
+            <li><span class="ee-cert">National Semi Finalist</span><span class="ee-cert-by">TVS Credit &amp; Hero MotoCorp Strategy Challenges · 2023</span></li>
+            <li><span class="ee-cert">Member, Consulting &amp; Strategy</span><span class="ee-cert-by">XIMB</span></li>
           </ul>
         </div>
       </div>

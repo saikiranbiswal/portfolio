@@ -81,6 +81,15 @@ a{color:inherit}
 </style>
 </head>
 <body>
+  <style>
+    .back-to-portfolio{position:fixed;right:18px;bottom:18px;z-index:210;display:inline-flex;align-items:center;gap:7px;
+      padding:9px 15px;border-radius:99px;background:rgba(255,255,255,.94);color:#15242E;border:1px solid rgba(15,35,50,.14);
+      font:700 11px/1 'Inter',system-ui,sans-serif;letter-spacing:.02em;text-decoration:none;
+      box-shadow:0 6px 22px rgba(15,35,50,.16);backdrop-filter:saturate(140%) blur(8px);transition:transform .18s ease,box-shadow .18s ease}
+    .back-to-portfolio:hover{transform:translateY(-1px);box-shadow:0 10px 28px rgba(15,35,50,.22)}
+    @media(max-width:640px){.back-to-portfolio{right:12px;bottom:12px;padding:8px 13px;font-size:10px}}
+  </style>
+  <a class="back-to-portfolio" href="../../universe.html">← Back to portfolio</a>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
       <div class="brand">

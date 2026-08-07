@@ -677,6 +677,7 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
     <section class="rp-section">
       <div class="rp-section-label">Independent product builds</div>
       <ul class="ee-list">
+        <li><a class="ee-cert" href="apps/idep/index.html" target="_blank" rel="noopener">iDEP Digital Engagement Platform</a><span class="ee-cert-by">Banking · a white-label retail banking studio linking journeys, canonical data, APIs and events, tenant configuration and PM metrics, with persona-based access control.</span></li>
         <li><a class="ee-cert" href="apps/house-quotation-copilot/index.html" target="_blank" rel="noopener">House Quotation Copilot</a><span class="ee-cert-by">Proptech · AI pricing. A working prototype and 30-day validation kit for an AI house-quotation assistant.</span></li>
         <li><a class="ee-cert" href="apps/collections-cloud/index.html" target="_blank" rel="noopener">AI Collections Cloud</a><span class="ee-cert-by">Fintech · a collections operations surface with portfolio risk, next-best-action, and recovery evidence.</span></li>
         <li><a class="ee-cert" href="apps/lending-cloud/index.html" target="_blank" rel="noopener">Loan Origination System · Enterprise Lending Cloud</a><span class="ee-cert-by">Fintech · loan origination, underwriting, disbursal, and servicing in one command centre.</span></li>
@@ -739,55 +740,61 @@ const PROJECTS = [
     accent:'#3B82F6', live:'apps/papercraft/index.html'
   },
   {
-    id:'lending-cloud', no:'№ 02', title:'Enterprise Lending Cloud', tag:'Fintech · Loan origination',
+    id:'idep', no:'№ 02', title:'iDEP Digital Engagement Platform', tag:'Banking · White-label platform studio',
+    lede:'A retail banking platform studio: customer journeys, canonical data, APIs and events, tenant configuration and PM metrics, all in one surface.',
+    about:'A white-label digital engagement platform for retail banking, built as a working studio rather than a deck. It connects the customer-facing experience to what sits underneath it: journey orchestration with failure and fallback paths, a canonical data model, an API and event observatory, per-tenant branding and feature flags, and a PM command centre with incidents and decision simulators. Three fictional banks and five personas run on the same build, with access control enforced across navigation, routes, actions and data, so a customer sees only their own money and a platform PM sees the cross-tenant picture. It is the product surface behind the enterprise banking work on this résumé.',
+    accent:'#0F766E', live:'apps/idep/index.html'
+  },
+  {
+    id:'lending-cloud', no:'№ 03', title:'Enterprise Lending Cloud', tag:'Fintech · Loan origination',
     lede:'A loan-origination and servicing operations workspace: applications, underwriting, disbursal, and collections in one command centre.',
     about:'An end-to-end lending operations workspace covering the full loan lifecycle: a command centre with a risk-ordered work queue, application intake, credit decisions and underwriting, active-loan servicing, collections, customers, portfolio insights, and controls & audit. It shows enterprise product judgment for a regulated lending domain: the origination system, not a mockup.',
     accent:'#2C4BFF', live:'apps/lending-cloud/index.html'
   },
   {
-    id:'collections-cloud', no:'№ 03', title:'AI Collections Cloud', tag:'Fintech · Recovery OS',
+    id:'collections-cloud', no:'№ 04', title:'AI Collections Cloud', tag:'Fintech · Recovery OS',
     lede:'A collections operations surface: portfolio risk, next-best-action, collector guidance, and recovery evidence.',
     about:'A working AR collections operations app: prioritised recovery queues, portfolio risk, next-best-action guidance, and operating scorecards for recovery teams. It turns collections strategy into a usable daily workspace rather than a static deck.',
     accent:'#C8973A', live:'apps/collections-cloud/index.html'
   },
   {
-    id:'atlas', no:'№ 04', title:'Atlas', tag:'Agentic task management',
+    id:'atlas', no:'№ 05', title:'Atlas', tag:'Agentic task management',
     lede:'A platform delivery board built around how work actually moves: owner, priority, blocker, evidence, next action.',
     about:'Atlas is a delivery board / task-management surface shaped around real delivery state: owner, priority, blocker, evidence, and next action. It proves the product surface and domain model for an agentic operating layer.',
     accent:'#6D5BD0', live:'apps/atlas/index.html'
   },
   {
-    id:'dashboard-studio', no:'№ 05', title:'Dashboard Studio', tag:'Data · No-code BI',
+    id:'dashboard-studio', no:'№ 06', title:'Dashboard Studio', tag:'Data · No-code BI',
     lede:'Import a spreadsheet, then drag widgets onto a canvas or drop columns directly to build a live dashboard.',
     about:'A no-code dashboard builder that runs entirely in the browser: import xlsx/xls/csv/json, then compose a live dashboard by dragging widgets onto a canvas and dropping columns directly. It shows product thinking for self-serve analytics.',
     accent:'#0E9F6E', live:'apps/dashboard-studio/index.html'
   },
   {
-    id:'house-quotation-copilot', no:'№ 06', title:'House Quotation Copilot', tag:'Proptech · AI pricing',
+    id:'house-quotation-copilot', no:'№ 07', title:'House Quotation Copilot', tag:'Proptech · AI pricing',
     lede:'A 30-day execution kit for validating an AI-powered house quotation assistant: market research, validation workbook, and working prototype.',
     about:'An AI-powered house quotation copilot: structured around a 30-day validation playbook, market-research SSOT, and a working prototype. It shows how to move from a product hypothesis through market evidence to a testable surface. Relevant for anyone building AI tools in real estate, construction, or asset valuation.',
     accent:'#4A7C59', live:'apps/house-quotation-copilot/index.html'
   },
   {
-    id:'excel-merger', no:'№ 07', title:'Excel Merger', tag:'Data · In-browser tool',
+    id:'excel-merger', no:'№ 08', title:'Excel Merger', tag:'Data · In-browser tool',
     lede:'Merge sheets, fill gaps, generate data, and export: 100% in-browser, nothing leaves the machine.',
     about:'A privacy-first data utility that runs entirely in the browser: merge multiple spreadsheets, fill gaps, generate test data, and export. A focused, shippable tool that solves a real recurring operations pain without a backend.',
     accent:'#1F9D55', live:'apps/excel-merger/index.html'
   },
   {
-    id:'excel-transformer', no:'№ 08', title:'Excel Transformer', tag:'Data · In-browser tool',
+    id:'excel-transformer', no:'№ 09', title:'Excel Transformer', tag:'Data · In-browser tool',
     lede:'Drop, rename, filter, and export tabular data, entirely in your browser.',
     about:'A companion in-browser data tool for reshaping tabular data: drop a file, rename and filter columns, and export a clean result. No upload, no backend; the transformation runs client-side.',
     accent:'#38A169', live:'apps/excel-transformer/index.html'
   },
   {
-    id:'synthesis', no:'№ 09', title:'Synthesis', tag:'Strategy · Framework engine',
+    id:'synthesis', no:'№ 10', title:'Synthesis', tag:'Strategy · Framework engine',
     lede:'A strategic framework engine: pick a framework, work a decision through it, and produce a structured output.',
     about:'Synthesis is an interactive strategic-framework engine: choose a framework and drive a decision through its structure to a usable output. It packages consulting-grade thinking into a working tool.',
     accent:'#805AD5', live:'apps/synthesis/index.html'
   },
   {
-    id:'neuralpath', no:'№ 10', title:'NeuralPath', tag:'AI · Interactive concept',
+    id:'neuralpath', no:'№ 11', title:'NeuralPath', tag:'AI · Interactive concept',
     lede:'An interactive game that teaches core AI concepts through play.',
     about:'NeuralPath is a playable, interactive way to learn core AI concepts: a self-contained front-end experience that shows range beyond enterprise tooling into learning design.',
     accent:'#3182CE', live:'apps/neuralpath/index.html'

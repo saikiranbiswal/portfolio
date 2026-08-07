@@ -281,7 +281,7 @@ body.dark #menu-overlay{background:rgba(13,22,16,.97)}
 #resume-page .d-close:hover{color:var(--ink);border-color:var(--hair2);transform:rotate(90deg)}
 
 /* Resume hero */
-.rp-hero{padding-bottom:44px;border-bottom:1px solid var(--hair);margin-bottom:50px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:clamp(34px,5vw,64px);align-items:center}
+.rp-hero{padding-bottom:44px;border-bottom:1px solid var(--hair);margin-bottom:50px;display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:clamp(34px,5vw,64px);align-items:start}
 .rp-hero-copy{min-width:0}
 .rp-portrait-frame{position:relative;margin:0;border-radius:24px;overflow:hidden;aspect-ratio:4/5;
   border:1px solid var(--hair);background:var(--bg2);
@@ -297,13 +297,15 @@ body.dark .rp-portrait-frame{box-shadow:0 34px 80px -30px rgba(0,0,0,.7)}
 .rp-panel span{display:block;color:var(--ink3);font-size:11px;letter-spacing:.16em;text-transform:uppercase;margin-top:6px}
 .rp-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
 .rp-name{font-family:var(--serif);font-weight:300;font-size:clamp(42px,7vw,72px);line-height:.95;letter-spacing:-.03em}
-.rp-tagline{font-family:var(--serif);font-weight:400;font-size:clamp(17px,2.4vw,22px);color:var(--ink2);margin-top:18px;line-height:1.4;max-width:640px}
+.rp-tagline{font-family:var(--serif);font-weight:400;font-size:clamp(16px,1.9vw,19px);color:var(--ink2);margin-top:14px;line-height:1.4;max-width:520px}
 .rp-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
 .rp-chip{font-size:12px;font-weight:500;border:1px solid var(--hair);border-radius:999px;padding:7px 16px;color:var(--ink2);transition:.25s}
 a.rp-chip:hover{border-color:var(--sage-mid);color:var(--sage)}
 .rp-chip.hi{background:var(--sage-dim);border-color:var(--sage-mid);color:var(--sage)}
 .rp-chip.primary{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-.rp-summary{font-size:clamp(14px,1.6vw,15.5px);color:var(--ink2);margin-top:20px;line-height:1.6;max-width:660px;opacity:.9}
+/* Sits below .rp-tagline in the ramp: name > tagline > summary. Keep it that way.
+   There must be exactly ONE .rp-summary rule in this file. */
+.rp-summary{font-size:15.5px;color:var(--ink2);margin-top:20px;line-height:1.65;max-width:520px}
 .rp-creds{display:flex;flex-wrap:wrap;align-items:center;gap:9px 18px;margin-top:22px}
 .rp-cred{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:500;letter-spacing:.01em;color:var(--ink2)}
 .rp-cred::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sage-mid);flex:none}
@@ -330,7 +332,6 @@ a.rp-chip:hover{border-color:var(--sage-mid);color:var(--sage)}
 .rp-section.surface{border:1px solid var(--hair);border-radius:22px;background:rgba(255,255,255,.54);padding:28px;box-shadow:0 20px 60px -46px rgba(21,26,24,.42)}
 body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
 .rp-section-label{font-size:11px;letter-spacing:.26em;text-transform:uppercase;color:var(--sage);margin-bottom:28px;font-weight:600}
-.rp-summary{font-family:var(--serif);font-weight:400;font-size:clamp(19px,2.6vw,26px);line-height:1.38;letter-spacing:-.01em;color:var(--ink);max-width:780px}
 
 /* Philosophy callout */
 .rp-philosophy{border-left:3px solid var(--sage);padding:22px 28px;border-radius:0 14px 14px 0;
@@ -544,7 +545,7 @@ body.dark .rp-section.surface{background:rgba(19,29,21,.68)}
   <div class="rp-wrap">
     <header class="rp-hero">
       <div class="rp-hero-copy">
-        <div class="rp-name">Sai Kiran<br>Biswal</div>
+        <div class="rp-name">Sai Kiran Biswal</div>
         <p class="rp-tagline">Product Manager · Enterprise SaaS &amp; AI Workflow Automation</p>
         <p class="rp-summary">Product Manager with 5+ years across B2B SaaS in finance automation, digital banking and CX platforms, and an MBA from XIMB. I own product scope end to end: discovery, PRDs, roadmap prioritization and release, including AI agent workflows with human-in-the-loop and fallback design, in multi-stakeholder enterprise environments.</p>
         <div class="rp-creds">

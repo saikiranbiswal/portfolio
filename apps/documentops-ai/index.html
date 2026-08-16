@@ -1,0 +1,12 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>DocumentOps AI V2</title><style>html,body{height:100%;margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;background:#0f172a;color:#fff}.load{height:100%;display:grid;place-items:center;text-align:center;padding:24px}.spin{width:34px;height:34px;border:3px solid #ffffff33;border-top-color:#fff;border-radius:50%;animation:s 1s linear infinite;margin:0 auto 14px}@keyframes s{to{transform:rotate(360deg)}}small{color:#94a3b8}</style></head><body><div class="load"><div><div class="spin"></div><strong>Loading DocumentOps AI V2…</strong><br><small>Portfolio build artifact</small></div></div><script>
+(async()=>{
+const parts=['_payload/00.txt', '_payload/01.txt', '_payload/02.txt'];
+try{
+ const texts=await Promise.all(parts.map(p=>fetch(p,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error(p+' '+r.status);return r.text()})));
+ const b64=texts.join(''); const bin=atob(b64); const bytes=new Uint8Array(bin.length); for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);
+ if(!('DecompressionStream' in window))throw new Error('This browser does not support gzip decompression.');
+ const ds=new DecompressionStream('gzip'); const html=await new Response(new Blob([bytes]).stream().pipeThrough(ds)).text();
+ document.open(); document.write(html); document.close();
+}catch(e){document.body.innerHTML='<div class="load"><div><strong>Unable to load this prototype.</strong><p style="color:#94a3b8">'+String(e.message||e)+'</p><a style="color:#93c5fd" href="../../universe.html">← Back to portfolio</a></div></div>';console.error(e)}
+})();
+</script></body></html>

@@ -1,0 +1,44 @@
+House Quotation Copilot v4.2 — QA Report
+=========================================
+
+Scope: direct PDF delivery through a server-side WhatsApp Cloud API adapter, plus regression coverage for the existing governed quotation flow.
+
+BROWSER TESTS — PASS
+--------------------
+PASS  app v4.2 loads
+PASS  built-in tests pass
+PASS  standard quote approved
+PASS  WhatsApp integration shows ready
+PASS  actual generated PDF base64 is sent to backend adapter
+PASS  backend receives quote-revision PDF filename
+PASS  Indian mobile normalizes to 919876543210
+PASS  WhatsApp message ID persists on quote
+PASS  mock send transitions quote lifecycle to Sent
+PASS  delivery status reconciles from status endpoint
+PASS  Generic Share remains a separate application/pdf share flow
+PASS  390px mobile has no horizontal page overflow
+PASS  no uncaught JS errors
+
+BACKEND TESTS — PASS
+--------------------
+PASS  GET /api/whatsapp/config reports mock mode ready
+PASS  POST /api/whatsapp/send-document validates a PDF and returns wamid.mock.*
+PASS  GET /api/whatsapp/status/:id returns stored message state
+PASS  POST /webhooks/whatsapp processes a delivered status
+PASS  delivered webhook state is visible through status endpoint
+PASS  invalid/non-PDF payload returns HTTP 400
+PASS  server.js passes node --check
+PASS  index.html embedded JavaScript passes node --check
+
+VISUAL QA — PASS
+----------------
+Desktop screenshot: tests/output/desktop-v42.png
+Mobile screenshot:  tests/output/mobile-v42.png
+
+REAL META DELIVERY
+------------------
+Not executed because no user Meta access token / Phone Number ID was supplied. This is intentional: secrets were not fabricated or embedded. The exact real-mode code path is present and uses the same server endpoint tested in mock mode, then calls Meta's media + messages endpoints when WHATSAPP_MODE=real is configured.
+
+KNOWN EXTERNAL CONSTRAINT
+-------------------------
+WhatsApp conversation-window/template policy is enforced by Meta. If the customer conversation requires an approved message template, the direct free-form document send can be rejected by Meta. The adapter returns that real Meta error rather than reporting a false success.

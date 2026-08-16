@@ -1,0 +1,41 @@
+RoamRadio QA — 36/36 checks passed
+
+Browser E2E — 24/24 passed
+PASS | Title
+PASS | Popular stations load
+PASS | Countries load
+PASS | API status
+PASS | Night mode title
+PASS | Night mode results
+PASS | Search title
+PASS | Search result found
+PASS | Player visible
+PASS | Current station set
+PASS | Recent populated
+PASS | Favorite saved
+PASS | Favorite renders
+PASS | Data saver persists
+PASS | Sleep timer status
+PASS | Sleep timer off
+PASS | Nearby title
+PASS | Distance rendered
+PASS | Driving mode opens
+PASS | Driving mode closes
+PASS | Haversine sane | 111.19492664455873
+PASS | Offline indicator
+PASS | Mobile tabs visible
+PASS | No horizontal overflow
+
+Static/package checks
+PASS | Unique DOM ids | 38 ids
+PASS | Manifest parses
+PASS | Service worker present
+PASS | PWA icons present
+PASS | No external JS dependencies
+PASS | Radio Browser HTTPS filter
+PASS | Broken station filter
+PASS | Click counter used
+PASS | Geo distance available
+PASS | Country and language filters
+PASS | Favorites persisted
+PASS | Audio not service-worker cached

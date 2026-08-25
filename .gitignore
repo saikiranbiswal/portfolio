@@ -1,2 +1,6 @@
 .claude/
 .DS_Store
+
+# Vault metadata and the private Second Brain control tower: never publish these.
+_HUB.md
+control-tower.html

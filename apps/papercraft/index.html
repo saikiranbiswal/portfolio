@@ -42,7 +42,7 @@
         const binary=Uint8Array.from(atob(base64),character=>character.charCodeAt(0));
         const stream=new Blob([binary]).stream().pipeThrough(new DecompressionStream('gzip'));
         const html=await new Response(stream).text();
-        document.open();document.write(html);document.close();
+        document.open();document.write(html);document.close();/* The document was just replaced by document.write, which discards the loader's <head>. Re-attach the shared mobile baseline to the new document. */var __h=document.head||document.getElementsByTagName('head')[0];if(__h){var __m=document.createElement('link');__m.rel='stylesheet';__m.href='../_shared/mobile.css';__h.appendChild(__m);};
       }catch(loadError){
         console.error(loadError);error.textContent=loadError.message||'Papercraft failed to load.';retry.style.display='inline-flex';
       }
